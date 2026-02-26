@@ -143,7 +143,7 @@ export default function GardenDashboard({ initialData }: { initialData: any }) {
               <XAxis dataKey="month" hide />
               <YAxis tickFormatter={(val) => `${val / 1000000}M`} />
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <Tooltip formatter={(value: number) => formatCurrency(value)} labelFormatter={(label) => `Tháng ${label}`} />
+              <Tooltip formatter={(value: number) => value ? formatCurrency(value) : 'N/A'} labelFormatter={(label) => `Tháng ${label}`} />
               <Area type="monotone" dataKey="wealth" stroke="#82ca9d" fillOpacity={1} fill="url(#colorWealth)" name="Tài sản" />
               <Area type="monotone" dataKey="goal" stroke="#ff7300" strokeDasharray="5 5" fill="none" name="Mục tiêu" />
             </AreaChart>
