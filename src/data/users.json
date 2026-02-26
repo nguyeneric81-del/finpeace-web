@@ -1,0 +1,28 @@
+{
+  "yenle@finpeace.vn": {
+    "name": "Lê Hải Yến",
+    "password": "hashed_password_1987",
+    "first_login": true,
+    "income": 50000000,
+    "expense": 34000000,
+    "debt_payment": 25000000,
+    "debt_years": 5,
+    "current_invest": 6000000,
+    "target_amount": 3260000000,
+    "years_to_goal": 9,
+    "expected_return": 10.0
+  },
+  "tienvinh0108@gmail.com": {
+    "name": "Nguyễn Tiến Vinh",
+    "password": "hashed_password_1994",
+    "first_login": true,
+    "income": 100000000,
+    "expense": 80000000,
+    "debt_payment": 0,
+    "debt_years": 0,
+    "current_invest": 20000000,
+    "target_amount": 100000000000,
+    "years_to_goal": 10,
+    "expected_return": 20.0
+  }
+}
