@@ -7,7 +7,7 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone()
 
     // Khởi tạo Response mặc định hoặc Cấu hình Rewrite URL nếu là Subdomain Advisor
-    let supabaseResponse;
+    let supabaseResponse: NextResponse;
     const shouldRewriteToAdvisor = isAdvisorFlow && !url.pathname.startsWith('/advisor') && !url.pathname.startsWith('/_next') && !url.pathname.startsWith('/api');
 
     if (shouldRewriteToAdvisor) {
