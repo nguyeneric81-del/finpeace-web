@@ -15,7 +15,7 @@ export async function login(formData: FormData) {
     const { error } = await supabase.auth.signInWithPassword(data)
 
     if (error) {
-        redirect('/login?message=Sai thông tin đăng nhập hoặc tài khoản không tồn tại')
+        redirect('/login?message=' + encodeURIComponent('Sai thông tin đăng nhập hoặc tài khoản không tồn tại'))
     }
 
     revalidatePath('/', 'layout')
@@ -38,7 +38,7 @@ export async function signup(formData: FormData) {
     const { error } = await supabase.auth.signUp(data)
 
     if (error) {
-        redirect(`/login?message=Không thể tạo tài khoản: ${error.message}`)
+        redirect('/login?message=' + encodeURIComponent(`Không thể tạo tài khoản: ${error.message}`))
     }
 
     revalidatePath('/', 'layout')

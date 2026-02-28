@@ -1,0 +1,21 @@
+
+> finpeace-web@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.101.176:3000
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 532ms
+ POST /api/agent/update-financial-data 500 in 1472ms (compile: 78ms, proxy.ts: 40ms, render: 1355ms)
+ POST /api/agent/update-financial-data 500 in 298ms (compile: 8ms, proxy.ts: 10ms, render: 281ms)
+ POST /api/agent/update-financial-data 500 in 284ms (compile: 1406µs, proxy.ts: 2ms, render: 280ms)
+ POST /api/agent/update-financial-data 500 in 292ms (compile: 3ms, proxy.ts: 7ms, render: 282ms)
+ POST /api/agent/update-financial-data 500 in 296ms (compile: 4ms, proxy.ts: 7ms, render: 285ms)
+ POST /api/agent/update-financial-data 500 in 256ms (compile: 770µs, proxy.ts: 1595µs, render: 254ms)
+ POST /api/agent/update-financial-data 500 in 268ms (compile: 3ms, proxy.ts: 6ms, render: 259ms)
+ POST /api/agent/update-financial-data 200 in 1000ms (compile: 38ms, proxy.ts: 1961µs, render: 960ms)
+✓ Compiled in 128ms

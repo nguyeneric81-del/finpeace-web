@@ -1,0 +1,17 @@
+#!/usr/bin/expect -f
+set password "Tuananh@1305"
+set ip "76.13.181.13"
+spawn ssh-copy-id -o StrictHostKeyChecking=no root@$ip
+expect {
+    "password:" {
+        send "$password\r"
+        exp_continue
+    }
+    "Number of key(s) added:" {
+        puts "Key added successfully."
+    }
+    "All keys were skipped" {
+        puts "Key already exists."
+    }
+    eof
+}

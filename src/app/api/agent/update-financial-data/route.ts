@@ -54,15 +54,12 @@ export async function POST(req: Request) {
 
         // 4. Xử lý logic theo Action Name
         if (action === 'update_cashflow') {
-            // Ví dụ: Agent báo Cập nhật Thu Nhập / Chi Phí
-            // Ta sẽ Upsert vào bảng financial_records
+            // Lệnh cập nhật dòng tiền
             const { error: insertError } = await supabase
                 .from('financial_records')
-                .upsert({
+                .insert({
                     user_id: user.id,
-                    record_type: 'cashflow',
-                    amount: data.amount,
-                    currency: 'VND',
+                    cashflow: data.amount,
                     notes: data.notes || 'Agent tự động nhập',
                 })
             if (insertError) throw insertError
