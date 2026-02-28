@@ -46,36 +46,36 @@ export default function GardenDashboard({ initialData }: { initialData: any }) {
             <h3 className="font-semibold text-green-700 mb-3 flex items-center gap-2">
               <DollarSign className="w-4 h-4" /> Dòng Chảy Nước (Cashflow)
             </h3>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="text-sm text-gray-600 block mb-1">Thu nhập (VND)</label>
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   value={inputs.income}
-                  onChange={(e) => setInputs({...inputs, income: Number(e.target.value)})}
+                  onChange={(e) => setInputs({ ...inputs, income: Number(e.target.value) })}
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500"
                 />
               </div>
               <div>
                 <label className="text-sm text-gray-600 block mb-1">Chi phí Sinh hoạt (VND)</label>
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   value={inputs.expense}
-                  onChange={(e) => setInputs({...inputs, expense: Number(e.target.value)})}
+                  onChange={(e) => setInputs({ ...inputs, expense: Number(e.target.value) })}
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500"
                 />
               </div>
               <div>
                 <label className="text-sm text-gray-600 block mb-1">Trả nợ / Lãi vay (VND)</label>
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   value={inputs.debtPayment}
-                  onChange={(e) => setInputs({...inputs, debtPayment: Number(e.target.value)})}
+                  onChange={(e) => setInputs({ ...inputs, debtPayment: Number(e.target.value) })}
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500 border-red-200 bg-red-50"
                 />
               </div>
-              
+
               <div className={`p-3 rounded text-center font-bold ${isDeficit ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
                 Dư: {formatCurrency(netCashflow)} / tháng
               </div>
@@ -87,14 +87,14 @@ export default function GardenDashboard({ initialData }: { initialData: any }) {
             <h3 className="font-semibold text-blue-700 mb-3 flex items-center gap-2">
               <TrendingUp className="w-4 h-4" /> Gieo Trồng Tương Lai
             </h3>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="text-sm text-gray-600 block mb-1">Thời gian trả nợ (Năm)</label>
-                <input 
-                  type="range" min="0" max="20" 
+                <input
+                  type="range" min="0" max="20"
                   value={inputs.debtYears}
-                  onChange={(e) => setInputs({...inputs, debtYears: Number(e.target.value)})}
+                  onChange={(e) => setInputs({ ...inputs, debtYears: Number(e.target.value) })}
                   className="w-full accent-green-600"
                 />
                 <div className="text-right text-sm font-bold text-green-700">{inputs.debtYears} Năm</div>
@@ -102,20 +102,20 @@ export default function GardenDashboard({ initialData }: { initialData: any }) {
 
               <div>
                 <label className="text-sm text-gray-600 block mb-1">Đầu tư thêm (VND)</label>
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   value={inputs.monthlyInvest}
-                  onChange={(e) => setInputs({...inputs, monthlyInvest: Number(e.target.value)})}
+                  onChange={(e) => setInputs({ ...inputs, monthlyInvest: Number(e.target.value) })}
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
                 <label className="text-sm text-gray-600 block mb-1">Lãi suất kỳ vọng (%/năm)</label>
-                <input 
+                <input
                   type="range" min="5" max="25" step="0.5"
                   value={inputs.expectedReturn}
-                  onChange={(e) => setInputs({...inputs, expectedReturn: Number(e.target.value)})}
+                  onChange={(e) => setInputs({ ...inputs, expectedReturn: Number(e.target.value) })}
                   className="w-full accent-blue-600"
                 />
                 <div className="text-right text-sm font-bold text-blue-700">{inputs.expectedReturn}%</div>
@@ -131,19 +131,19 @@ export default function GardenDashboard({ initialData }: { initialData: any }) {
           <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
             <Leaf className="w-5 h-5 text-green-600" /> Sự Sinh Trưởng Của Tài Sản
           </h3>
-          
+
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={result.chartData}>
               <defs>
                 <linearGradient id="colorWealth" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <XAxis dataKey="month" hide />
               <YAxis tickFormatter={(val) => `${val / 1000000}M`} />
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <Tooltip formatter={(value: number | undefined) => value ? formatCurrency(value) : 'N/A'} labelFormatter={(label) => `Tháng ${label}`} />
+              <Tooltip formatter={(value: any) => value ? formatCurrency(value) : 'N/A'} labelFormatter={(label) => `Tháng ${label}`} />
               <Area type="monotone" dataKey="wealth" stroke="#82ca9d" fillOpacity={1} fill="url(#colorWealth)" name="Tài sản" />
               <Area type="monotone" dataKey="goal" stroke="#ff7300" strokeDasharray="5 5" fill="none" name="Mục tiêu" />
             </AreaChart>
@@ -156,7 +156,7 @@ export default function GardenDashboard({ initialData }: { initialData: any }) {
             <div className="text-sm opacity-80 mb-1">Tài sản sau {inputs.years} năm</div>
             <div className="text-3xl font-bold">{formatCurrency(result.finalWealth)}</div>
           </div>
-          
+
           <div className={`p-6 rounded-xl shadow-lg transform transition hover:scale-105 text-white ${result.gap > 0 ? 'bg-orange-500' : 'bg-blue-500'}`}>
             <div className="text-sm opacity-80 mb-1">So với Mục tiêu ({formatCurrency(inputs.targetAmount)})</div>
             <div className="text-3xl font-bold">
