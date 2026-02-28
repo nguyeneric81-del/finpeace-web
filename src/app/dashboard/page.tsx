@@ -5,6 +5,7 @@ import { OverviewCards } from '@/components/dashboard/OverviewCards'
 import { CashflowChart } from '@/components/dashboard/CashflowChart'
 import { InvestmentGarden } from '@/components/dashboard/InvestmentGarden'
 import { GoalTracker } from '@/components/dashboard/GoalTracker'
+import { WhatIfPanel } from '@/components/dashboard/WhatIfPanel'
 
 export default async function DashboardPage() {
     const supabase = await createClient()
@@ -51,33 +52,29 @@ export default async function DashboardPage() {
                 <OverviewCards />
             </div>
 
-            {/* Tầng 2: Điểm chạm Phân tích (Sông tiền & Vườn đầu tư) */}
+            {/* Tầng 2: Điểm chạm Phân tích & Tương tác "What-if" */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                {/* Bộ điều khiển thông số Tương Lai */}
+                <div className="col-span-2">
+                    <WhatIfPanel />
+                </div>
+
+                {/* Biểu đồ Sức mạnh Lãi kép Realtime */}
+                <div className="col-span-5">
+                    <InvestmentGarden />
+                </div>
+            </div>
+
+            {/* Tầng 3: Khả năng Hành động (Sông tiền, Cột mốc) */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                 <div className="col-span-4">
                     <CashflowChart />
                 </div>
                 <div className="col-span-3">
-                    <InvestmentGarden />
+                    <GoalTracker />
                 </div>
             </div>
 
-            {/* Tầng 3: Khả năng Hành động */}
-            <div className="grid gap-4 md:grid-cols-2">
-                <div className="col-span-1">
-                    <GoalTracker />
-                </div>
-                <div className="col-span-1">
-                    {/* Placeholder tính năng AI Cố vấn */}
-                    <div className="rounded-xl border bg-card text-card-foreground shadow-sm h-full flex flex-col justify-center items-center p-6 text-center space-y-3 bg-emerald-500/5 dark:bg-emerald-900/10 border-emerald-500/20">
-                        <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xl font-bold mb-2">AI</div>
-                        <h3 className="font-semibold text-lg text-emerald-800 dark:text-emerald-300">Cố vấn FinPeace AI</h3>
-                        <p className="text-sm text-muted-foreground max-w-[80%]">
-                            Trợ lý AI đang học hỏi dữ liệu của bạn và sẽ sớm đưa ra các khuyến nghị tối ưu dòng tiền, đầu tư sinh lời kép và dập nợ hiệu quả nhất.
-                        </p>
-                        <Button disabled variant="secondary" className="mt-4">Đang kích hoạt chức năng (Phase 4)</Button>
-                    </div>
-                </div>
-            </div>
         </div>
     )
 }
