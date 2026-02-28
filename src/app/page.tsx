@@ -1,13 +1,6 @@
-import GardenDashboard from '@/components/GardenDashboard';
-import users from '@/data/users.json';
+import { redirect } from "next/navigation"
 
 export default function Home() {
-  // Demo với dữ liệu của anh Vinh
-  const demoData = users["tienvinh0108@gmail.com"];
-
-  return (
-    <main className="min-h-screen">
-      <GardenDashboard initialData={demoData} />
-    </main>
-  );
+  // Redirect trực tiếp về dashboard, hệ thống middleware sẽ tự chèn và đẩy về /login nếu chưa đăng nhập.
+  redirect("/dashboard")
 }
