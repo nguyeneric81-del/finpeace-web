@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@supabase/supabase-js';
 
 // Khởi tạo Gemini AI (Yêu cầu biến môi trường GEMINI_API_KEY)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
@@ -74,8 +74,10 @@ export async function POST(request: Request) {
 
         console.log("🤖 AI đã phân tích JSON Payload:", payload);
 
-        // --- ĐẨY DATA VÀO SUPABASE QUA SERVER ROLE ---
-        const supabase = await createClient();
+        // --- ĐẨY DATA VÀO SUPABASE QUA SERVICE ROLE (bypass RLS) ---
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+        const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+        const supabase = createClient(supabaseUrl, serviceKey);
 
         // Mặc định Account Khách VIP (Nguyễn Tiến Vinh) Demo Sáng mai
         const defaultEmail = 'tienvinh0108@gmail.com';
