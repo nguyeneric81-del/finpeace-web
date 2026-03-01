@@ -38,6 +38,13 @@ export default async function DashboardPage() {
                     </p>
                 </div>
                 <div className="flex items-center space-x-2">
+                    {/* Nút vào Công cụ thiết kế Wealth Planning mới */}
+                    <a href="/dashboard/wealth-planning" className="mr-2">
+                        <Button className="bg-emerald-600 hover:bg-emerald-700 text-white shadow">
+                            ✧ Khởi tạo Kế Hoạch Tài Chính
+                        </Button>
+                    </a>
+
                     {/* Nút Đăng xuất */}
                     <form action="/auth/signout" method="post">
                         <Button variant="outline" type="submit" className="border-emerald-200 hover:bg-emerald-50 text-emerald-700">
