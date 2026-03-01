@@ -2,26 +2,13 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
-    const hostname = request.headers.get('host') || ''
-    const forwardedHost = request.headers.get('x-forwarded-host') || ''
-    const isAdvisorFlow = hostname === 'advisor.finpeace.cloud' || forwardedHost === 'advisor.finpeace.cloud' || hostname.startsWith('advisor.localhost')
     const url = request.nextUrl.clone()
-
-    // THAY ĐỔI LỚN: Nếu đây là luồng Advisor, ta lập tức cắt đường truyền lưu lượng và trả thẳng về NextResponse.rewrite, 
-    // không thèm khởi tạo CreateServerClient Supabase để kiểm tra Cookie Auth làm gì nữa.
-    if (isAdvisorFlow) {
-        // Trừ khi url gọi API thì thả qua để app hoạt động bình thường
-        if (!url.pathname.startsWith('/api') && !url.pathname.startsWith('/_next')) {
-            if (!url.pathname.startsWith('/advisor')) {
-                url.pathname = `/advisor${url.pathname === '/' ? '' : url.pathname}`
-                return NextResponse.rewrite(url, { request })
-            }
-            return NextResponse.next({ request });
-        }
-    }
-
-    // Khởi tạo Response mặc định cho luồng User thông thường
     let supabaseResponse = NextResponse.next({ request });
+
+    // Trả về luôn nếu là request tới next js assets / api
+    if (url.pathname.startsWith('/api') || url.pathname.startsWith('/_next')) {
+        return supabaseResponse;
+    }
 
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -57,6 +44,7 @@ export async function updateSession(request: NextRequest) {
         effectivePath.startsWith('/login') ||
         effectivePath.startsWith('/auth') ||
         effectivePath.startsWith('/api/agent') ||
+        effectivePath.startsWith('/advisor') || // Cho phép route advisor tư do
         effectivePath === '/';
 
     if (!user && !isPublicRoute) {
