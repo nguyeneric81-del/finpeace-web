@@ -4,6 +4,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Leaf, Sprout, Heart, Target, ChevronDown, CheckCircle2 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
+import { calculateNPER, calculateRealRate } from '@/utils/math/financial-math';
+import { useFinanceStore } from '@/store/useFinanceStore';
 
 export default function AdvisorPresentation({ initialEmail }: { initialEmail?: string }) {
     const [currentStep, setCurrentStep] = useState(0);
@@ -13,6 +15,28 @@ export default function AdvisorPresentation({ initialEmail }: { initialEmail?: s
     const [refreshTick, setRefreshTick] = useState(0);
 
     const supabase = createClient();
+    const { expectedReturn, inflationRate } = useFinanceStore();
+
+    // Tính tốc độ Năm Tự Do Tài Chính (NPER)
+    const realReturnRate = calculateRealRate(expectedReturn / 100, inflationRate / 100);
+    const calculateYearsToGoal = () => {
+        if (!scenario.id || scenario.targetAmount <= 0) return scenario.targetYears;
+        const totalMonthlyPMT = scenario.monthlyCashflow + (extraInvestment * 1000000);
+
+        const nperMonths = calculateNPER(
+            realReturnRate / 12,
+            -totalMonthlyPMT,
+            -scenario.initialCapital,
+            scenario.targetAmount
+        );
+
+        if (isNaN(nperMonths) || nperMonths <= 0 || !isFinite(nperMonths)) {
+            return 99; // Cảnh báo quá lâu
+        }
+        return Math.max(1, Math.ceil(nperMonths / 12));
+    };
+    const calculatedYears = calculateYearsToGoal();
+
 
     // 1. Data States
     const [clientData, setClientData] = useState({
@@ -239,7 +263,7 @@ export default function AdvisorPresentation({ initialEmail }: { initialEmail?: s
 
         // Màn hình 4: Điều khiển tương lai (Dữ liệu từ wealth_scenarios)
         <div key="step4" className="flex flex-col items-center justify-center min-h-[80vh] w-full max-w-3xl mx-auto px-6">
-            <h2 className="text-3xl font-light text-neutral-800 mb-8">Kiểm soát {scenario.targetYears} năm Tương lai</h2>
+            <h2 className="text-3xl font-light text-neutral-800 mb-8">Kiểm soát {calculatedYears} năm Tương lai</h2>
             <div className="bg-white p-8 rounded-3xl w-full border border-neutral-200 shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full -z-0"></div>
 
@@ -258,7 +282,8 @@ export default function AdvisorPresentation({ initialEmail }: { initialEmail?: s
                 </div>
 
                 <div className="border-t pt-8 mt-4">
-                    <p className="text-lg text-neutral-600 mb-6 text-center">Nếu bạn nín thở gieo thêm hạt giống mỗi tháng:</p>
+                    <p className="text-lg text-neutral-600 text-center">Nếu bạn nín thở gieo thêm hạt giống mỗi tháng:</p>
+                    <p className="text-xs text-neutral-400 text-center mb-6">Lãi suất Thực hiện tại: {(realReturnRate * 100).toFixed(1)}%</p>
                     <div className="flex items-center gap-6 mb-12">
                         <span className="text-xl font-medium text-neutral-400">0đ</span>
                         <input
@@ -274,7 +299,7 @@ export default function AdvisorPresentation({ initialEmail }: { initialEmail?: s
                     <div className="bg-emerald-600 text-white rounded-2xl p-6 text-center shadow-lg transform transition-all">
                         <p className="text-emerald-100 mb-2">Thời gian đạt Tự Do Tài Chính sẽ rút ngắn còn:</p>
                         <h3 className="text-6xl font-light">
-                            {Math.max(3, scenario.targetYears - Math.floor(extraInvestment / 5))} <span className="text-2xl">Năm</span>
+                            {calculatedYears === 99 ? 'Quá dài!' : calculatedYears} <span className="text-2xl">{calculatedYears !== 99 && 'Năm'}</span>
                         </h3>
                     </div>
                 </div>
@@ -302,9 +327,9 @@ export default function AdvisorPresentation({ initialEmail }: { initialEmail?: s
                 >
                     <div className="bg-white p-10 rounded-3xl shadow-xl border border-neutral-100 relative">
                         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-blue-500 rounded-t-3xl"></div>
-                        <h3 className="text-2xl font-serif text-neutral-800 mb-6 border-b pb-4 mt-2">Ngày 01 Tháng 03 Năm {new Date().getFullYear() + scenario.targetYears}</h3>
+                        <h3 className="text-2xl font-serif text-neutral-800 mb-6 border-b pb-4 mt-2">Ngày 01 Tháng 03 Năm {new Date().getFullYear() + calculatedYears}</h3>
                         <p className="text-lg text-neutral-600 leading-relaxed mb-6 font-serif italic">
-                            "Chào {clientData.name} của {scenario.targetYears} năm trước,<br /><br />
+                            "Chào {clientData.name} của {calculatedYears} năm trước,<br /><br />
                             Hôm nay, những mục tiêu tài chính của mình đã thực sự thành hiện thực. Số tiền {formatCurrency(scenario.targetAmount)} mà ta từng ước mơ nay đã nằm ngoan ngoãn trong tài khoản.<br /><br />
                             Cảm ơn cậu đã dũng cảm ưu tiên trả cho bản thân mình trước, và dũng cảm đặt bút bắt đầu hành trình Bình An này.<br /><br />
                             Cậu đã vất vả rồi. Hãy nghỉ ngơi nhẹ nhàng nhé."
