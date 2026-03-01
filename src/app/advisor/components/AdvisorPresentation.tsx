@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Leaf, Sprout, Heart, Target, ChevronDown, CheckCircle2 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
@@ -37,9 +37,10 @@ export default function AdvisorPresentation({ initialEmail }: { initialEmail?: s
 
     const [actionPlans, setActionPlans] = useState<any[]>([]);
 
-    // Tính tốc độ Năm Tự Do Tài Chính (NPER)
-    const realReturnRate = calculateRealRate(expectedReturn / 100, inflationRate / 100);
-    const calculateYearsToGoal = () => {
+    // Tính tốc độ Năm Tự Do Tài Chính (NPER) sử dụng useMemo để an toàn trên SSR
+    const realReturnRate = useMemo(() => calculateRealRate(expectedReturn / 100, inflationRate / 100), [expectedReturn, inflationRate]);
+
+    const calculatedYears = useMemo(() => {
         if (!scenario.id || scenario.targetAmount <= 0) return scenario.targetYears;
         const totalMonthlyPMT = scenario.monthlyCashflow + (extraInvestment * 1000000);
 
@@ -54,8 +55,7 @@ export default function AdvisorPresentation({ initialEmail }: { initialEmail?: s
             return 99; // Cảnh báo quá lâu
         }
         return Math.max(1, Math.ceil(nperMonths / 12));
-    };
-    const calculatedYears = calculateYearsToGoal();
+    }, [scenario.id, scenario.targetAmount, scenario.targetYears, scenario.monthlyCashflow, scenario.initialCapital, extraInvestment, realReturnRate]);
 
     // 2. Data Fetcher (Aggregate từ 3 bảng mới)
     const fetchData = useCallback(async () => {
@@ -134,15 +134,15 @@ export default function AdvisorPresentation({ initialEmail }: { initialEmail?: s
     }, [clientData.id, supabase]);
 
 
-    const formatCurrency = (amount: number) => {
+    const formatCurrency = useCallback((amount: number) => {
         return (amount / 1000000).toLocaleString('vi-VN') + 'Tr';
-    }
+    }, []);
 
-    const nextStep = () => {
+    const nextStep = useCallback(() => {
         if (currentStep < 4) setCurrentStep(prev => prev + 1);
-    };
+    }, [currentStep]);
 
-    const screens = [
+    const renderScreens = () => [
         // Màn hình 1: Lời chào Bản Ngã
         <div key="step1" className="flex flex-col items-center justify-center min-h-[80vh] text-center px-6">
             <motion.div
@@ -371,6 +371,8 @@ export default function AdvisorPresentation({ initialEmail }: { initialEmail?: s
             )}
         </div>
     ];
+
+    const screens = renderScreens();
 
     return (
         <div className="w-full relative pb-32 pt-20">
