@@ -53,43 +53,48 @@ export async function POST(req: Request) {
         }
 
         // 4. Xử lý logic theo Action Name
-        if (action === 'update_cashflow') {
-            // Lệnh cập nhật dòng tiền
+        if (action === 'add_client_asset') {
+            // Lệnh khai báo hoặc cập nhật một món tài sản / khoản nợ
             const { error: insertError } = await supabase
-                .from('financial_records')
+                .from('client_assets')
                 .insert({
                     user_id: user.id,
-                    cashflow: data.amount,
-                    notes: data.notes || 'Agent tự động nhập',
+                    asset_group: data.asset_group, // 'Thanh khoản', 'Đầu tư', 'Bảo vệ', 'Nợ', 'Tiêu dùng'
+                    asset_name: data.asset_name,
+                    amount: data.amount,
+                    risk_level: data.risk_level || 3,
+                    expected_return: data.expected_return || 0,
+                    notes: data.notes || 'Agent tự động nhập từ chia sẻ khách hàng',
                 })
             if (insertError) throw insertError
 
-            return NextResponse.json({ success: true, message: `Update dòng tiền thành công cho ${user.full_name}` })
+            return NextResponse.json({ success: true, message: `Thêm ${data.asset_name} thành công cho ${user.full_name}` })
         }
-
-        else if (action === 'update_financial_snapshot') {
+        else if (action === 'update_wealth_scenario') {
             // Lệnh cập nhật tổng quan số liệu tài chính thời gian thực
+            // Đầu tiên, set tất cả các scenarios cũ của user này thành is_selected = false
+            await supabase.from('wealth_scenarios').update({ is_selected: false }).eq('user_id', user.id);
+
+            // Sau đó thêm 1 scenario mới được chọn
             const { error: insertError } = await supabase
-                .from('financial_records')
+                .from('wealth_scenarios')
                 .insert({
                     user_id: user.id,
-                    total_debt: data.total_debt || 0,
-                    emergency_fund: data.emergency_fund || 0,
-                    cashflow: data.cashflow || 0,
-                    notes: data.notes || 'Agent Push Live Update Snapshot',
+                    plan_name: data.plan_name || 'Kịch bản Vô cực (Mặc định)',
+                    target_amount: data.target_amount,
+                    target_years: data.target_years || 15,
+                    monthly_cashflow: data.monthly_cashflow || 0,
+                    initial_capital: data.initial_capital || 0,
+                    inflation_rate: data.inflation_rate || 3.5,
+                    is_selected: true
                 })
             if (insertError) throw insertError
 
-            return NextResponse.json({ success: true, message: `Cập nhật Live Snapshot thành công cho ${user.full_name}` })
-        }
-
-        else if (action === 'update_net_worth') {
-            // Logic update Net Worth
-            return NextResponse.json({ success: true, message: `Update tài sản thành công cho ${user.full_name}` })
+            return NextResponse.json({ success: true, message: `Đã cập nhật mục tiêu Tài chính (${data.target_amount}) mới thành công` })
         }
 
         // Action không hợp lệ
-        return NextResponse.json({ error: `Action '${action}' chưa được lập trình.` }, { status: 400 })
+        return NextResponse.json({ error: `Action '${action}' chưa được lập trình. Chỉ dùng 'add_client_asset' hoặc 'update_wealth_scenario'.` }, { status: 400 })
 
     } catch (error: any) {
         return NextResponse.json({ error: error.message || 'Lỗi hệ thống Nội bộ API' }, { status: 500 })
