@@ -3,21 +3,89 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Leaf, Sprout, Heart, Target, ChevronDown, CheckCircle2 } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client';
 
-export default function AdvisorPresentation() {
+export default function AdvisorPresentation({ initialEmail }: { initialEmail?: string }) {
     const [currentStep, setCurrentStep] = useState(0);
     const [pyfCommitted, setPyfCommitted] = useState(false);
     const [extraInvestment, setExtraInvestment] = useState(0);
     const [lettersOpened, setLettersOpened] = useState(false);
 
-    // Dữ liệu mô phỏng Khách hàng (Đáng lẽ lấy từ DB)
-    const clientData = {
-        name: "Chị Lan",
+    const supabase = createClient();
+    const [clientData, setClientData] = useState({
+        name: "Khách hàng",
         discProfile: "Nhóm S (Nuôi Dưỡng)",
         coreValues: ["Gia đình", "An toàn", "Sức khỏe"],
-        emergencyFund: 15000000,
-        debt: 500000000,
-    };
+        emergencyFund: 0,
+        debt: 0,
+        id: ''
+    });
+
+    // 1. Fetch dữ liệu tài chính ban đầu
+    useEffect(() => {
+        if (!initialEmail) return;
+        const fetchData = async () => {
+            const { data: profile } = await supabase.from('profiles').select('*').eq('email', initialEmail).single();
+            if (profile) {
+                const { data: record } = await supabase.from('financial_records')
+                    .select('*')
+                    .eq('user_id', profile.id)
+                    .order('recorded_at', { ascending: false })
+                    .limit(1)
+                    .single();
+
+                setClientData({
+                    name: profile.full_name || "Khách hàng",
+                    discProfile: "Nhóm S (Nuôi Dưỡng)",
+                    coreValues: ["Gia đình", "An toàn", "Sức khỏe"],
+                    emergencyFund: record?.emergency_fund || 0,
+                    debt: record?.total_debt || 0,
+                    id: profile.id
+                });
+            }
+        }
+        fetchData();
+    }, [initialEmail, supabase]);
+
+    // 2. Thiết lập Real-time Listener (Lắng nghe sự thay đổi)
+    useEffect(() => {
+        if (!clientData.id) return;
+
+        const channel = supabase.channel('financial_updates')
+            .on('postgres_changes', {
+                event: 'INSERT',
+                schema: 'public',
+                table: 'financial_records',
+                filter: `user_id=eq.${clientData.id}`
+            }, (payload: any) => {
+                setClientData(prev => ({
+                    ...prev,
+                    emergencyFund: payload.new.emergency_fund ?? prev.emergencyFund,
+                    debt: payload.new.total_debt ?? prev.debt
+                }))
+            })
+            .on('postgres_changes', {
+                event: 'UPDATE',
+                schema: 'public',
+                table: 'financial_records',
+                filter: `user_id=eq.${clientData.id}`
+            }, (payload: any) => {
+                setClientData(prev => ({
+                    ...prev,
+                    emergencyFund: payload.new.emergency_fund ?? prev.emergencyFund,
+                    debt: payload.new.total_debt ?? prev.debt
+                }))
+            })
+            .subscribe()
+
+        return () => {
+            supabase.removeChannel(channel);
+        }
+    }, [clientData.id, supabase]);
+
+    const formatCurrency = (amount: number) => {
+        return (amount / 1000000).toLocaleString('vi-VN') + 'Tr';
+    }
 
     const nextStep = () => {
         if (currentStep < 4) setCurrentStep(prev => prev + 1);
@@ -68,11 +136,11 @@ export default function AdvisorPresentation() {
                 <div className="grid grid-cols-2 gap-8 mb-12">
                     <div className="bg-red-50 p-8 rounded-3xl border border-red-100">
                         <p className="text-red-800 text-lg mb-2">Đầm lầy Nợ Xấu</p>
-                        <h3 className="text-4xl font-semibold text-red-600">500Tr</h3>
+                        <h3 className="text-4xl font-semibold text-red-600">{formatCurrency(clientData.debt)}</h3>
                     </div>
                     <div className="bg-emerald-50 p-8 rounded-3xl border border-emerald-100">
                         <p className="text-emerald-800 text-lg mb-2">Quỹ phòng thủ Bão tố</p>
-                        <h3 className="text-4xl font-semibold text-emerald-600">15Tr</h3>
+                        <h3 className="text-4xl font-semibold text-emerald-600">{formatCurrency(clientData.emergencyFund)}</h3>
                     </div>
                 </div>
 

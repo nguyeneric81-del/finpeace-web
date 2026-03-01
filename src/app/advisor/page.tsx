@@ -6,10 +6,15 @@ export const metadata = {
     description: 'Bản đồ Bình An Tài Chính cá nhân hóa',
 };
 
-export default function AdvisorPage() {
+export default async function AdvisorPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ email?: string }>
+}) {
+    const params = await searchParams;
     return (
         <main className="w-full min-h-screen bg-[#F9FAFB]">
-            <AdvisorPresentation />
+            <AdvisorPresentation initialEmail={params.email} />
         </main>
     );
 }

@@ -67,6 +67,22 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: true, message: `Update dòng tiền thành công cho ${user.full_name}` })
         }
 
+        else if (action === 'update_financial_snapshot') {
+            // Lệnh cập nhật tổng quan số liệu tài chính thời gian thực
+            const { error: insertError } = await supabase
+                .from('financial_records')
+                .insert({
+                    user_id: user.id,
+                    total_debt: data.total_debt || 0,
+                    emergency_fund: data.emergency_fund || 0,
+                    cashflow: data.cashflow || 0,
+                    notes: data.notes || 'Agent Push Live Update Snapshot',
+                })
+            if (insertError) throw insertError
+
+            return NextResponse.json({ success: true, message: `Cập nhật Live Snapshot thành công cho ${user.full_name}` })
+        }
+
         else if (action === 'update_net_worth') {
             // Logic update Net Worth
             return NextResponse.json({ success: true, message: `Update tài sản thành công cho ${user.full_name}` })

@@ -8,13 +8,14 @@ Agent sẽ đóng vai trò như một chuyên viên nhập liệu tự động. 
 
 # Quy trình hoạt động
 1. **Trích xuất thông tin (Extraction):** 
-   - Khi Người dùng cung cấp thông tin, Agent cần tự động bóc tách các trường: (1) `Email khách hàng`, (2) `Hành động: update_cashflow | update_net_worth`, (3) `Số tiền (amount)`, (4) `Ghi chú (notes)`.
-   - Lưu ý: Email là bắt buộc để tra cứu tài khoản khách truy cập hệ thống.
+   - Khi Khách hàng chia sẻ thông tin về nợ nần, dự phòng, tài sản, Agent tự động bóc tách và chọn `Hành động: update_financial_snapshot`.
+   - Các trường trong Data cần thu thập đầy đủ bộ dữ kiện: (1) `total_debt` (Tổng dư nợ), (2) `emergency_fund` (Quỹ dự phòng), (3) `cashflow` (Dòng tiền), (4) `notes` (Ghi chú chẩn đoán nhanh).
+   - Lưu ý: Email là bắt buộc để tra cứu tài khoản trên hệ thống.
 2. **Xác thực API Key:** 
    - Chuẩn bị API Secret Key: `finpeace-agent-secret-key-2025`
-3. **Gửi Request:** 
+3. **Gửi Request Cập Nhật Realtime (Đồng Bộ Kép):** 
    - Sử dụng tool `run_command` để kích hoạt cURL request POST tới endpoint: `http://localhost:3000/api/agent/update-financial-data` của hệ thống. 
-   - Truyền tải định dạng JSON body. 
+   - Hành động này sẽ thay đổi Database, lập tức Bắn tia Realtime làm nhảy Giao Diện Khách hàng.
 
 # Mẫu Câu Lệnh Sinh cURL (Template)
 ```bash
@@ -23,10 +24,12 @@ curl -X POST http://localhost:3000/api/agent/update-financial-data \
   -H "Authorization: Bearer finpeace-agent-secret-key-2025" \
   -d '{
     "email": "khachhang@email.com",
-    "action": "update_cashflow",
+    "action": "update_financial_snapshot",
     "data": {
-      "amount": 20000000,
-      "notes": "Lương tháng 10/2025"
+      "total_debt": 500000000,
+      "emergency_fund": 15000000,
+      "cashflow": 0,
+      "notes": "Đã ghi nhận Nợ 500 triệu và quỹ dự phòng 15 triệu"
     }
   }'
 ```
