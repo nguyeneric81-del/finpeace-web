@@ -17,27 +17,6 @@ export default function AdvisorPresentation({ initialEmail }: { initialEmail?: s
     const supabase = createClient();
     const { expectedReturn, inflationRate } = useFinanceStore();
 
-    // Tính tốc độ Năm Tự Do Tài Chính (NPER)
-    const realReturnRate = calculateRealRate(expectedReturn / 100, inflationRate / 100);
-    const calculateYearsToGoal = () => {
-        if (!scenario.id || scenario.targetAmount <= 0) return scenario.targetYears;
-        const totalMonthlyPMT = scenario.monthlyCashflow + (extraInvestment * 1000000);
-
-        const nperMonths = calculateNPER(
-            realReturnRate / 12,
-            -totalMonthlyPMT,
-            -scenario.initialCapital,
-            scenario.targetAmount
-        );
-
-        if (isNaN(nperMonths) || nperMonths <= 0 || !isFinite(nperMonths)) {
-            return 99; // Cảnh báo quá lâu
-        }
-        return Math.max(1, Math.ceil(nperMonths / 12));
-    };
-    const calculatedYears = calculateYearsToGoal();
-
-
     // 1. Data States
     const [clientData, setClientData] = useState({
         name: "Khách hàng",
@@ -57,6 +36,26 @@ export default function AdvisorPresentation({ initialEmail }: { initialEmail?: s
     });
 
     const [actionPlans, setActionPlans] = useState<any[]>([]);
+
+    // Tính tốc độ Năm Tự Do Tài Chính (NPER)
+    const realReturnRate = calculateRealRate(expectedReturn / 100, inflationRate / 100);
+    const calculateYearsToGoal = () => {
+        if (!scenario.id || scenario.targetAmount <= 0) return scenario.targetYears;
+        const totalMonthlyPMT = scenario.monthlyCashflow + (extraInvestment * 1000000);
+
+        const nperMonths = calculateNPER(
+            realReturnRate / 12,
+            -totalMonthlyPMT,
+            -scenario.initialCapital,
+            scenario.targetAmount
+        );
+
+        if (isNaN(nperMonths) || nperMonths <= 0 || !isFinite(nperMonths)) {
+            return 99; // Cảnh báo quá lâu
+        }
+        return Math.max(1, Math.ceil(nperMonths / 12));
+    };
+    const calculatedYears = calculateYearsToGoal();
 
     // 2. Data Fetcher (Aggregate từ 3 bảng mới)
     const fetchData = useCallback(async () => {
