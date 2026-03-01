@@ -14,6 +14,7 @@ export async function updateSession(request: NextRequest) {
     const forwardedHost = request.headers.get('x-forwarded-host') || ''
     const isAdvisorFlow = hostname === 'advisor.finpeace.cloud' || forwardedHost === 'advisor.finpeace.cloud' || hostname.startsWith('advisor.localhost')
     const effectivePath = request.nextUrl.pathname;
+    const isProd = process.env.NODE_ENV === 'production';
 
     // --- TỐI ƯU HIỆU NĂNG CHO ADVISOR SUBDOMAIN ---
     // Bypass hoàn toàn Supabase Auth Check để tăng tốc độ tải
@@ -36,13 +37,16 @@ export async function updateSession(request: NextRequest) {
                     return request.cookies.getAll()
                 },
                 setAll(cookiesToSet) {
-                    cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+                    cookiesToSet.forEach(({ name, value }) => {
+                        request.cookies.set(name, value)
+                    })
                     supabaseResponse = NextResponse.next({
                         request,
                     })
-                    cookiesToSet.forEach(({ name, value, options }) =>
-                        supabaseResponse.cookies.set(name, value, options)
-                    )
+                    cookiesToSet.forEach(({ name, value, options }) => {
+                        const newOptions = isProd ? { ...options, domain: '.finpeace.cloud' } : options;
+                        supabaseResponse.cookies.set(name, value, newOptions)
+                    })
                 },
             },
         }
@@ -58,7 +62,7 @@ export async function updateSession(request: NextRequest) {
         effectivePath.startsWith('/login') ||
         effectivePath.startsWith('/auth') ||
         effectivePath.startsWith('/api/agent') ||
-        effectivePath.startsWith('/advisor') || // Cho phép route advisor tư do
+        effectivePath.startsWith('/advisor') || // Cho phép route advisor tự do
         effectivePath === '/';
 
     if (!user && !isPublicRoute) {
