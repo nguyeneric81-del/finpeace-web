@@ -5,6 +5,10 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone()
     let supabaseResponse = NextResponse.next({ request });
 
+    const hostname = request.headers.get('host') || ''
+    const forwardedHost = request.headers.get('x-forwarded-host') || ''
+    const isAdvisorFlow = hostname === 'advisor.finpeace.cloud' || forwardedHost === 'advisor.finpeace.cloud' || hostname.startsWith('advisor.localhost')
+
     // Trả về luôn nếu là request tới next js assets / api
     if (url.pathname.startsWith('/api') || url.pathname.startsWith('/_next')) {
         return supabaseResponse;
@@ -38,6 +42,17 @@ export async function updateSession(request: NextRequest) {
 
     // Lấy đường dẫn thực tế 
     const effectivePath = request.nextUrl.pathname;
+
+    // Nếu là Subdomain Advisor, bypass Auth nhưng cho phép truy cập public
+    if (isAdvisorFlow) {
+        // Chỉ redirect nếu nó đang cố gọi trang root '/' hoặc '/login'
+        if (effectivePath === '/' || effectivePath === '/login') {
+            const advisorUrl = request.nextUrl.clone()
+            advisorUrl.pathname = '/advisor'
+            return NextResponse.redirect(advisorUrl)
+        }
+        return supabaseResponse;
+    }
 
     // Danh sách các route public (không yêu cầu đăng nhập)
     const isPublicRoute =
