@@ -1,7 +1,3 @@
-'use client'
-
-import { useEffect, use } from 'react'
-import { useRouter } from 'next/navigation'
 import { login, signup } from './actions'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,23 +5,13 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export default function LoginPage({
+export default async function LoginPage({
     searchParams,
 }: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-    const router = useRouter()
-    const resolvedParams = use(searchParams);
-    const message = resolvedParams?.message as string | undefined;
-
-    useEffect(() => {
-        // Fallback Client-side Redirect: Nếu là Subdomain Advisor thì đẩy ngược về luồng Advisor
-        if (typeof window !== 'undefined') {
-            if (window.location.hostname === 'advisor.finpeace.cloud' || window.location.hostname.startsWith('advisor.localhost')) {
-                router.replace('/advisor')
-            }
-        }
-    }, [router])
+    const resolvedSearchParams = await searchParams;
+    const message = resolvedSearchParams?.message as string | undefined;
 
     return (
         <div className="flex min-h-screen items-center justify-center p-4 bg-gray-50 dark:bg-zinc-950">
