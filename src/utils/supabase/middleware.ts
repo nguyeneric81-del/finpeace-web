@@ -7,16 +7,21 @@ export async function updateSession(request: NextRequest) {
     const isAdvisorFlow = hostname === 'advisor.finpeace.cloud' || forwardedHost === 'advisor.finpeace.cloud' || hostname.startsWith('advisor.localhost')
     const url = request.nextUrl.clone()
 
-    // Khởi tạo Response mặc định hoặc Cấu hình Rewrite URL nếu là Subdomain Advisor
-    let supabaseResponse: NextResponse;
-    const shouldRewriteToAdvisor = isAdvisorFlow && !url.pathname.startsWith('/advisor') && !url.pathname.startsWith('/_next') && !url.pathname.startsWith('/api');
-
-    if (shouldRewriteToAdvisor) {
-        url.pathname = `/advisor${url.pathname === '/' ? '' : url.pathname}`
-        supabaseResponse = NextResponse.rewrite(url, { request })
-    } else {
-        supabaseResponse = NextResponse.next({ request })
+    // THAY ĐỔI LỚN: Nếu đây là luồng Advisor, ta lập tức cắt đường truyền lưu lượng và trả thẳng về NextResponse.rewrite, 
+    // không thèm khởi tạo CreateServerClient Supabase để kiểm tra Cookie Auth làm gì nữa.
+    if (isAdvisorFlow) {
+        // Trừ khi url gọi API thì thả qua để app hoạt động bình thường
+        if (!url.pathname.startsWith('/api') && !url.pathname.startsWith('/_next')) {
+            if (!url.pathname.startsWith('/advisor')) {
+                url.pathname = `/advisor${url.pathname === '/' ? '' : url.pathname}`
+                return NextResponse.rewrite(url, { request })
+            }
+            return NextResponse.next({ request });
+        }
     }
+
+    // Khởi tạo Response mặc định cho luồng User thông thường
+    let supabaseResponse = NextResponse.next({ request });
 
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,15 +33,9 @@ export async function updateSession(request: NextRequest) {
                 },
                 setAll(cookiesToSet) {
                     cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
-
-                    if (shouldRewriteToAdvisor) {
-                        const rewriteUrl = request.nextUrl.clone()
-                        rewriteUrl.pathname = `/advisor${rewriteUrl.pathname === '/' ? '' : rewriteUrl.pathname}`
-                        supabaseResponse = NextResponse.rewrite(rewriteUrl, { request })
-                    } else {
-                        supabaseResponse = NextResponse.next({ request })
-                    }
-
+                    supabaseResponse = NextResponse.next({
+                        request,
+                    })
                     cookiesToSet.forEach(({ name, value, options }) =>
                         supabaseResponse.cookies.set(name, value, options)
                     )
@@ -50,14 +49,8 @@ export async function updateSession(request: NextRequest) {
         data: { user },
     } = await supabase.auth.getUser()
 
-    // Lấy đường dẫn thực tế (đã rewrite hoặc chưa)
-    const effectivePath = shouldRewriteToAdvisor ? url.pathname : request.nextUrl.pathname;
-
-    // Nếu đang ở luồng Advisor Flow, ta Bypass auth ở cấp độ Middleware 
-    // Hệ thống Subdomain này phục vụ trình chiếu trên iPad, không cần đăng nhập auth cứng ngắc.
-    if (isAdvisorFlow) {
-        return supabaseResponse;
-    }
+    // Lấy đường dẫn thực tế 
+    const effectivePath = request.nextUrl.pathname;
 
     // Danh sách các route public (không yêu cầu đăng nhập)
     const isPublicRoute =
