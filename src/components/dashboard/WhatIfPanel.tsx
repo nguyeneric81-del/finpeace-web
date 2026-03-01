@@ -1,9 +1,10 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
 import { useFinanceStore } from "@/store/useFinanceStore"
+import { calculateFV, calculateRealRate } from "@/utils/math/financial-math"
 import { Sparkles, Sprout, HandCoins, TrendingUp } from "lucide-react"
 
 export function WhatIfPanel() {
@@ -13,6 +14,12 @@ export function WhatIfPanel() {
         debtPayment, setDebtPayment,
         inflationRate, setInflationRate
     } = useFinanceStore()
+
+    const TARGET_YEARS = 20; // Mô phỏng chung 20 năm
+    // Tính lãi thực (đã trừ lạm phát)
+    const realReturnRate = calculateRealRate(expectedReturn / 100, inflationRate / 100);
+    // Tính số dư (Future Value) sau 20 năm với Lãi thực (Trả mỗi tháng = pmt)
+    const futureWealth = calculateFV(realReturnRate / 12, TARGET_YEARS * 12, -monthlySaving, 0, 0);
 
     return (
         <Card className="shadow-sm border-emerald-100 dark:border-emerald-900 bg-gradient-to-br from-white to-emerald-50/30 dark:from-zinc-950 dark:to-emerald-950/20">
@@ -87,6 +94,18 @@ export function WhatIfPanel() {
                 </div>
 
             </CardContent>
+
+            <CardFooter className="bg-emerald-50/50 dark:bg-emerald-950/20 border-t border-emerald-100 dark:border-emerald-900 flex justify-between items-center py-4 px-6 rounded-b-xl mt-auto">
+                <div>
+                    <Label className="text-emerald-700 dark:text-emerald-400 font-semibold mb-1 block text-sm">Quả ngọt Tương Lai (Sau {TARGET_YEARS} năm)</Label>
+                    <p className="text-xs text-muted-foreground">Lãi suất Thực Tế: {(realReturnRate * 100).toFixed(1)}%</p>
+                </div>
+                <div className="text-right">
+                    <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                        {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND", maximumSignificantDigits: 3 }).format(futureWealth > 0 ? futureWealth : 0)}
+                    </p>
+                </div>
+            </CardFooter>
         </Card>
     )
 }

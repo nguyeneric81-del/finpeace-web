@@ -25,6 +25,7 @@ export default function GardenDashboard({ initialData }: { initialData: any }) {
     inputs.debtYears,
     inputs.debtPayment,
     inputs.expectedReturn,
+    3.5, // Thêm chỉ số Lạm phát tĩnh (3.5%) để đồng bộ
     inputs.years,
     inputs.targetAmount
   );

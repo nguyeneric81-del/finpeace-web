@@ -6,7 +6,7 @@ import { useFinanceStore } from "@/store/useFinanceStore"
 import { calculateWealth, formatCurrency } from "@/lib/calculator"
 
 export function InvestmentGarden() {
-    const { monthlySaving, expectedReturn, debtPayment } = useFinanceStore()
+    const { monthlySaving, expectedReturn, debtPayment, inflationRate } = useFinanceStore()
 
     // Tính toán sinh lời trong 20 năm dựa trên thông số từ Slider
     // Lấy hàm thư viện cũ của tác giả đã viết
@@ -18,6 +18,7 @@ export function InvestmentGarden() {
         5, // debtYears 
         debtPayment,
         expectedReturn,
+        inflationRate, // Áp dụng Lãi Suất Nhận Vào Sau Lạm Phát
         20, // years 
         10000000000 // targetAmount
     )
