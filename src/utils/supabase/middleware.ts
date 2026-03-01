@@ -52,12 +52,17 @@ export async function updateSession(request: NextRequest) {
     // Lấy đường dẫn thực tế (đã rewrite hoặc chưa)
     const effectivePath = shouldRewriteToAdvisor ? url.pathname : request.nextUrl.pathname;
 
+    // Nếu đang ở luồng Advisor Flow, ta Bypass auth ở cấp độ Middleware 
+    // Hệ thống Subdomain này phục vụ trình chiếu trên iPad, không cần đăng nhập auth cứng ngắc.
+    if (isAdvisorFlow) {
+        return supabaseResponse;
+    }
+
     // Danh sách các route public (không yêu cầu đăng nhập)
     const isPublicRoute =
         effectivePath.startsWith('/login') ||
         effectivePath.startsWith('/auth') ||
         effectivePath.startsWith('/api/agent') ||
-        effectivePath.startsWith('/advisor') || // Cho phép màn hình Advisor (iPad) được Public không cần Login chéo
         effectivePath === '/';
 
     if (!user && !isPublicRoute) {
@@ -70,7 +75,7 @@ export async function updateSession(request: NextRequest) {
     // Khỏi vào login nếu đã đăng nhập
     if (user && effectivePath.startsWith('/login')) {
         const redirectUrl = request.nextUrl.clone()
-        redirectUrl.pathname = isAdvisorFlow ? '/' : '/dashboard'
+        redirectUrl.pathname = '/dashboard'
         return NextResponse.redirect(redirectUrl)
     }
 
