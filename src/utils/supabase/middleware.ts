@@ -3,7 +3,8 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
     const hostname = request.headers.get('host') || ''
-    const isAdvisorFlow = hostname === 'advisor.finpeace.cloud' || hostname.startsWith('advisor.localhost')
+    const forwardedHost = request.headers.get('x-forwarded-host') || ''
+    const isAdvisorFlow = hostname === 'advisor.finpeace.cloud' || forwardedHost === 'advisor.finpeace.cloud' || hostname.startsWith('advisor.localhost')
     const url = request.nextUrl.clone()
 
     // Khởi tạo Response mặc định hoặc Cấu hình Rewrite URL nếu là Subdomain Advisor
