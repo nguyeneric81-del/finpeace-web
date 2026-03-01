@@ -2,40 +2,46 @@ import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@supabase/supabase-js';
 
-// Khởi tạo Gemini AI (Yêu cầu biến môi trường GEMINI_API_KEY)
+// Khởi tạo Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
-// Bổ sung Skill Nguyên thủy cho System Prompt của Gemini
+// System Prompt - Trích xuất cả Tên khách hàng + Dữ liệu tài chính
 const TELEGRAM_FINANCIAL_SKILL_PROMPT = `
-Hành động như một kế toán viên FinPeace. Bạn nhận được tin nhắn từ khách hàng qua Telegram.
-Nhiệm vụ: Trích xuất thông tin tài sản, nợ nần, thanh khoản, mục tiêu tương lai và trả về DUY NHẤT một chuỗi JSON chuẩn.
-KHÔNG GIẢI THÍCH MỘT TỪ NÀO KHÁC NGOÀI JSON TEXT.
+Hành động như một kế toán viên FinPeace. Bạn nhận tin nhắn từ Tư vấn viên báo cáo thông tin tài chính của khách hàng.
+Nhiệm vụ: Trích xuất TÊN KHÁCH HÀNG và thông tin tài chính rồi trả về DUY NHẤT một chuỗi JSON chuẩn.
+KHÔNG GIẢI THÍCH THÊM BẤT KỲ CHỮ NÀO NGOÀI JSON.
 
-CẤU TRÚC KẾT QUẢ TRẢ VỀ:
+CẤU TRÚC JSON:
 {
-  "action": "add_client_asset", // HOẶC "update_wealth_scenario"
+  "client_name": "Tên khách hàng được đề cập (chỉ HỌ TÊN, ví dụ: Yến Lê, Tiến Vinh)",
+  "action": "add_client_asset",
   "data": {
-    "asset_group": "...", // "Nợ" | "Thanh khoản" | "Đầu tư" | "Bảo vệ" | "Tiêu dùng"
-    "asset_name": "Tên được nhắc đến",
-    "amount": 50000000, // Số tiền dạng số nguyên
-    "risk_level": 3, // rủi ro 1->5
+    "asset_group": "...",
+    "asset_name": "Tên tài sản/khoản nợ",
+    "amount": 2000000000,
+    "risk_level": 2,
     "notes": "..."
   }
 }
 
-Chú ý: Nếu khách hàng đề cập mục tiêu nghỉ hưu/mua nhà lâu dài thì action là "update_wealth_scenario" kèm data: { "target_amount":..., "target_years":..., "monthly_cashflow":... }
+Quy tắc asset_group:
+- Bảo hiểm nhân thọ/sức khỏe → "Bảo vệ" (risk_level: 1)
+- Tiền gửi/tiết kiệm ngân hàng → "Thanh khoản" (risk_level: 1)
+- Đất đai/bất động sản → "Đầu tư" (risk_level: 3)
+- Cổ phiếu/chứng khoán → "Đầu tư" (risk_level: 5)
+- Vay nợ/thẻ tín dụng → "Nợ" (risk_level: 1)
+- Ô tô/xe/đồ dùng → "Tiêu dùng" (risk_level: 2)
+
+Chú ý: Nếu nhắc đến mục tiêu nghỉ hưu/mua nhà dài hạn → action = "update_wealth_scenario", data = { "target_amount":..., "target_years":..., "monthly_cashflow":... }
 `;
 
-// Nhận Webhook từ Telegram Platform
+// Nhận Webhook từ Telegram
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        console.log("📥 Nhận Webhook từ Telegram:", JSON.stringify(body, null, 2));
+        console.log("📥 Webhook Telegram:", JSON.stringify(body, null, 2));
 
-        // Telegram gửi Message Object bên trong Update
         const message = body.message;
-
-        // Nếu không có text (ví dụ user gửi ảnh), bỏ qua
         if (!message || !message.text) {
             return NextResponse.json({ message: "Ignored non-text event" }, { status: 200 });
         }
@@ -43,47 +49,69 @@ export async function POST(request: Request) {
         const userText = message.text;
         const chatId = message.chat.id;
 
-        // Bỏ qua các tin nhắn lệnh bot cơ bản
+        // Lệnh cơ bản
         if (userText === '/start' || userText === '/help') {
-            return await sendTelegramMessage(chatId, "👋 Chào mừng đến với Trợ lý FinPeace AI.\nHãy chat mọi giao dịch Tài sản/Nợ của bạn, tôi sẽ đưa nó vào Tháp Sinh Mệnh ngay lập tức!\n\nVí dụ: 'Tôi vừa mua xe VF8 trả góp 800 triệu'");
+            return await sendTelegramMessage(chatId,
+                "👋 Chào mừng đến với Trợ lý FinPeace AI!\n\n" +
+                "Hãy nhắn thông tin tài chính của khách, Bot sẽ tự nhận diện và cập nhật vào đúng account!\n\n" +
+                "📌 Ví dụ:\n" +
+                "• 'Chị Yến mua bảo hiểm Bảo Việt 2 tỷ'\n" +
+                "• 'Anh Vinh vay ngân hàng 500 triệu mua xe'\n" +
+                "• 'Chị Lan gửi tiết kiệm MBBank 300 triệu'\n\n" +
+                "Bot sẽ tự tìm đúng khách và cập nhật dữ liệu real-time!"
+            );
         }
 
-        // --- TÍCH HỢP GEMINI AI ---
         if (!process.env.GEMINI_API_KEY) {
-            console.error("❌ Thiếu GEMINI_API_KEY");
-            return await sendTelegramMessage(chatId, "Hệ thống AI đang bảo trì (Thiếu API Key).");
+            return await sendTelegramMessage(chatId, "❌ Thiếu GEMINI_API_KEY.");
         }
 
-        // Gửi thông báo 'Đang xử lý...'
-        await sendTelegramMessage(chatId, "⏳ Đang phân tích ngôn ngữ tự nhiên...");
+        await sendTelegramMessage(chatId, "🔍 Đang nhận diện khách hàng và phân tích dữ liệu...");
 
+        // --- GEMINI AI PARSE ---
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-        const result = await model.generateContent(`${TELEGRAM_FINANCIAL_SKILL_PROMPT}\n\nTin nhắn khách hàng: "${userText}"`);
+        const result = await model.generateContent(`${TELEGRAM_FINANCIAL_SKILL_PROMPT}\n\nTin nhắn từ Tư vấn viên: "${userText}"`);
         const responseText = result.response.text();
 
-        // --- XỬ LÝ CHUỖI JSON TỪ AI ---
         let payload;
         try {
-            // Lọc loại bỏ dấu markdown nếu có
-            const cleanJsonString = responseText.replace(/```json/gi, '').replace(/```/gi, '').trim();
-            payload = JSON.parse(cleanJsonString);
+            const cleanJson = responseText.replace(/```json/gi, '').replace(/```/gi, '').trim();
+            payload = JSON.parse(cleanJson);
         } catch (e) {
-            console.error("❌ AI không trả về chuẩn JSON:", responseText);
-            return await sendTelegramMessage(chatId, "❌ Rất tiếc, AI không hiểu được câu thoại này. Bạn có thể nói rõ hơn số tiền và phân loại không?");
+            console.error("❌ AI không parse được JSON:", responseText);
+            return await sendTelegramMessage(chatId, "❌ AI không hiểu tin nhắn này. Vui lòng thêm rõ tên khách và số tiền.");
         }
 
-        console.log("🤖 AI đã phân tích JSON Payload:", payload);
+        console.log("🤖 AI Payload:", payload);
 
-        // --- ĐẨY DATA VÀO SUPABASE QUA SERVICE ROLE (bypass RLS) ---
+        const clientName = payload.client_name;
+        if (!clientName) {
+            return await sendTelegramMessage(chatId, "❌ Không nhận ra tên khách hàng. Hãy nhắn rõ hơn, ví dụ: 'Chị Yến mua bảo hiểm...'");
+        }
+
+        // --- SUPABASE ADMIN CLIENT (bypass RLS) ---
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
         const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
         const supabase = createClient(supabaseUrl, serviceKey);
 
-        // Mặc định Account Khách VIP (Nguyễn Tiến Vinh) Demo Sáng mai
-        const defaultEmail = 'tienvinh0108@gmail.com';
+        // Tìm khách hàng theo tên (tìm kiếm mờ - ilike)
+        const searchName = clientName.trim();
+        const { data: profiles, error: profileError } = await supabase
+            .from('profiles')
+            .select('id, full_name, email')
+            .ilike('full_name', `%${searchName}%`)
+            .limit(1);
 
-        const { data: profile } = await supabase.from('profiles').select('id, full_name').eq('email', defaultEmail).single();
-        if (!profile) return NextResponse.json({ error: "User not found" }, { status: 404 });
+        if (profileError || !profiles || profiles.length === 0) {
+            console.error("❌ Không tìm thấy khách:", searchName, profileError);
+            return await sendTelegramMessage(chatId,
+                `❌ Không tìm thấy khách hàng tên "${clientName}" trong hệ thống.\n\n` +
+                `Tên trong hệ thống cần khớp chính xác. Kiểm tra lại tên hoặc đăng ký tài khoản trước.`
+            );
+        }
+
+        const profile = profiles[0];
+        console.log("✅ Tìm thấy khách:", profile.full_name, profile.email);
 
         let replyMsg = "";
 
@@ -91,41 +119,42 @@ export async function POST(request: Request) {
             const assetData = { user_id: profile.id, ...payload.data };
             const { error } = await supabase.from('client_assets').insert([assetData]);
             if (error) throw error;
-            replyMsg = `✅ (FinPeace AI) - Gieo thành công khối dữ liệu:\n💎 Nhóm: ${assetData.asset_group}\n🏢 Tên: ${assetData.asset_name}\n💰 Giá trị: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(assetData.amount)}\n\n(Tháp Tài Sản Real-time trên màn hình Khách hàng đang nới rộng!)`;
+            replyMsg = `✅ Cập nhật thành công cho ${profile.full_name}!\n\n` +
+                `💎 Nhóm: ${assetData.asset_group}\n` +
+                `🏢 Tài sản: ${assetData.asset_name}\n` +
+                `💰 Giá trị: ${new Intl.NumberFormat('vi-VN').format(assetData.amount)} VNĐ\n\n` +
+                `📊 Dashboard của ${profile.full_name} đang cập nhật real-time!`;
         }
 
         if (payload.action === 'update_wealth_scenario') {
             const scenarioData = { user_id: profile.id, ...payload.data };
             const { error } = await supabase.from('wealth_scenarios').insert([scenarioData]);
             if (error) throw error;
-            replyMsg = `✅ (FinPeace AI) - Đã tái cấu trúc Kịch Bản Sinh Mệnh theo Mục tiêu mới!`;
+            replyMsg = `✅ Đã cập nhật Kịch Bản Tương Lai cho ${profile.full_name}!`;
         }
 
-        // --- TRẢ LỜI NGƯỜI DÙNG QUẢ TELEGRAM ---
         await sendTelegramMessage(chatId, replyMsg);
+        return NextResponse.json({ success: true, client: profile.full_name }, { status: 200 });
 
-        return NextResponse.json({ success: true, message: "Handled Telegram Update" }, { status: 200 });
     } catch (error: any) {
-        console.error("❌ Lỗi Webhook Telegram:", error);
+        console.error("❌ Lỗi Webhook:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
 
-// Hàm Helpers gửi tin nhắn ngược về Telegram
+// Helper gửi tin nhắn Telegram
 async function sendTelegramMessage(chatId: number, text: string) {
     const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
     if (!BOT_TOKEN) return NextResponse.json({ error: "Missing Bot Token" }, { status: 500 });
 
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
     try {
-        await fetch(url, {
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ chat_id: chatId, text: text })
         });
-        return NextResponse.json({ success: true }, { status: 200 }); // Trả về cho Webhook
+        return NextResponse.json({ success: true }, { status: 200 });
     } catch (e) {
-        console.error("Lỗi gửi tin Teleram", e);
         return NextResponse.json({ error: "Send Reply Error" }, { status: 500 });
     }
 }
