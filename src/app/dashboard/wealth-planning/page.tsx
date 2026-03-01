@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { AssetManager } from '@/components/wealth-planning/AssetManager'
 import { ScenarioManager } from '@/components/wealth-planning/ScenarioManager'
 import { ActionPlanManager } from '@/components/wealth-planning/ActionPlanManager'
+import { PortfolioReview } from '@/components/wealth-planning/PortfolioReview'
 
 export default async function WealthPlanningPage() {
     const supabase = await createClient()
@@ -46,22 +47,27 @@ export default async function WealthPlanningPage() {
 
             {/* Tabs Content */}
             <Tabs defaultValue="kyc" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 max-w-2xl bg-white shadow-sm border border-slate-100">
-                    <TabsTrigger value="kyc" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">1. KYC Tài Sản</TabsTrigger>
-                    <TabsTrigger value="scenarios" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">2. Tùy Chỉnh Kịch Bản</TabsTrigger>
-                    <TabsTrigger value="actions" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">3. Kế Hoạch Hành Động</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-4 bg-white shadow-sm border border-slate-100 rounded-xl p-1">
+                    <TabsTrigger value="kyc" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">1. KYC Tài Sản</TabsTrigger>
+                    <TabsTrigger value="portfolio" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">2. Báo Cáo Danh Mục</TabsTrigger>
+                    <TabsTrigger value="scenarios" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">3. Tùy Chỉnh Kịch Bản</TabsTrigger>
+                    <TabsTrigger value="actions" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">4. Kế Hoạch Hành Động</TabsTrigger>
                 </TabsList>
 
-                <div className="mt-6 border rounded-xl bg-white p-6 shadow-sm min-h-[500px]">
-                    <TabsContent value="kyc" className="m-0 focus-visible:outline-none focus-visible:ring-0">
+                <div className="mt-6 border-none bg-transparent min-h-[500px]">
+                    <TabsContent value="kyc" className="m-0 focus-visible:outline-none focus-visible:ring-0 bg-white border rounded-xl p-6 shadow-sm">
                         <AssetManager userId={user.id} />
                     </TabsContent>
 
-                    <TabsContent value="scenarios" className="m-0 focus-visible:outline-none focus-visible:ring-0">
+                    <TabsContent value="portfolio" className="m-0 focus-visible:outline-none focus-visible:ring-0">
+                        <PortfolioReview userId={user.id} />
+                    </TabsContent>
+
+                    <TabsContent value="scenarios" className="m-0 focus-visible:outline-none focus-visible:ring-0 bg-white border rounded-xl p-6 shadow-sm">
                         <ScenarioManager userId={user.id} />
                     </TabsContent>
 
-                    <TabsContent value="actions" className="m-0 focus-visible:outline-none focus-visible:ring-0">
+                    <TabsContent value="actions" className="m-0 focus-visible:outline-none focus-visible:ring-0 bg-white border rounded-xl p-6 shadow-sm">
                         <ActionPlanManager userId={user.id} />
                     </TabsContent>
                 </div>
