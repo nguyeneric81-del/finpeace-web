@@ -45,7 +45,13 @@ export async function updateSession(request: NextRequest) {
 
     // Nếu là Subdomain Advisor, bypass Auth nhưng cho phép truy cập public
     if (isAdvisorFlow) {
-        // Chỉ redirect nếu nó đang cố gọi trang root '/' hoặc '/login'
+        // NGAY LẬP TỨC TRẢ VỀ NẾU NGINX ĐÃ TRỎ ĐÚNG ĐÍCH TỚI /ADVISOR
+        // ĐIỀU NÀY CẮT ĐỨT HOÀN TOÀN VÒNG LẶP ERR_TOO_MANY_REDIRECTS
+        if (effectivePath.startsWith('/advisor')) {
+            return supabaseResponse;
+        }
+
+        // Chỉ redirect nếu nó đang cố gọi trang root '/' hoặc '/login' do lỗi truyền Host
         if (effectivePath === '/' || effectivePath === '/login') {
             const advisorUrl = request.nextUrl.clone()
             advisorUrl.pathname = '/advisor'
