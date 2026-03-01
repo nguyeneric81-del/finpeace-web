@@ -5,13 +5,16 @@ import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Wallet, ShieldAlert, AlertCircle, ArrowUpRight, ArrowDownRight } from "lucide-react"
 
-export function OverviewCards() {
-    // Mock data - eventually fetched from Supabase
-    const netWorth = 1500000000 // 1.5 tỷ
-    const netWorthGrowth = 5.2 // %
-    const emergencyFund = 100000000 // 100 triệu (Mục tiêu: 150 tr)
-    const emergencyGoal = 150000000
-    const debtRatio = 35 // % (Trạng thái trung bình)
+interface OverviewCardsProps {
+    netWorth: number;
+    emergencyFund: number;
+    debtRatio: number;
+}
+
+export function OverviewCards({ netWorth = 0, emergencyFund = 0, debtRatio = 0 }: OverviewCardsProps) {
+    // Mock data for growth and goal constraints
+    const netWorthGrowth = 0; // % (Có thể tính bằng lịch sử sau này)
+    const emergencyGoal = 150000000; // 150 triệu (Có thể tùy biến từ user settings)
 
     return (
         <div className="grid gap-4 md:grid-cols-3">
@@ -74,7 +77,7 @@ export function OverviewCards() {
                 </CardHeader>
                 <CardContent>
                     <div className="text-2xl font-bold">{debtRatio}%
-                        <span className="text-sm font-normal text-muted-foreground ml-2">Tổng thu nhập</span>
+                        <span className="text-sm font-normal text-muted-foreground ml-2">Tổng tài sản</span>
                     </div>
                     <div className="mt-2">
                         {debtRatio > 40 ? (

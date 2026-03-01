@@ -25,6 +25,33 @@ export default async function DashboardPage() {
         .eq('id', user.id)
         .single()
 
+    // Fetch assets để tính toán Net Worth, Emergency Fund, Debt Ratio
+    const { data: assets } = await supabase
+        .from('client_assets')
+        .select('*')
+        .eq('user_id', user.id)
+
+    let totalAssets = 0
+    let totalLiabilities = 0
+    let emergencyFund = 0
+
+    if (assets) {
+        assets.forEach((a: any) => {
+            const amount = Number(a.amount || 0)
+            if (a.asset_group === 'Nợ') {
+                totalLiabilities += amount
+            } else {
+                totalAssets += amount
+                if (a.asset_group === 'Thanh khoản') {
+                    emergencyFund += amount
+                }
+            }
+        })
+    }
+
+    const netWorth = totalAssets - totalLiabilities
+    const debtRatio = totalAssets > 0 ? Math.round((totalLiabilities / totalAssets) * 100) : 0
+
     return (
         <div className="flex-1 space-y-8 p-8 pt-6 bg-slate-50/50 dark:bg-slate-900/50 min-h-screen">
             {/* Header */}
@@ -56,7 +83,11 @@ export default async function DashboardPage() {
 
             {/* Tầng 1: Góc nhìn sinh tồn */}
             <div className="space-y-4">
-                <OverviewCards />
+                <OverviewCards
+                    netWorth={netWorth}
+                    emergencyFund={emergencyFund}
+                    debtRatio={debtRatio}
+                />
             </div>
 
             {/* Tầng 2: Điểm chạm Phân tích & Tương tác "What-if" */}
