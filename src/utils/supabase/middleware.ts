@@ -32,6 +32,7 @@ export async function updateSession(request: NextRequest) {
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         {
+            cookieOptions: isProd ? { name: 'finpeace-auth', domain: '.finpeace.cloud' } : { name: 'finpeace-auth' },
             cookies: {
                 getAll() {
                     return request.cookies.getAll()
@@ -44,8 +45,7 @@ export async function updateSession(request: NextRequest) {
                         request,
                     })
                     cookiesToSet.forEach(({ name, value, options }) => {
-                        const newOptions = isProd ? { ...options, domain: '.finpeace.cloud' } : options;
-                        supabaseResponse.cookies.set(name, value, newOptions)
+                        supabaseResponse.cookies.set(name, value, options)
                     })
                 },
             },
