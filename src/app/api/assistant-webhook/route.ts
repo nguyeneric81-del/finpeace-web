@@ -13,6 +13,16 @@ const ASSISTANT_SYSTEM_PROMPT = `Bạn là Trợ Lý AI Cá Nhân thông minh c�
 
 Khi nhận tin nhắn, hãy xác định ý định thuộc loại nào:
 
+**LOẠI 0 — ĐẶT ALIAS/NICKNAME (set_alias):**
+Khi tin nhắn có dạng "đặt nick", "đặt tên gọi", "đặt alias", "nickname", "gọi tắt" cho khách hàng.
+(VD: "Đặt nick cho Lê Hải Yến là Yen01", "Đặt tên gọi anh Vinh thành Vinh01", "Alias của chị Lan là Lan_Bich")
+→ Trả về JSON (KHÔNG giải thích thêm):
+{
+  "mode": "set_alias",
+  "client_name": "Tên đầy đủ hoặc một phần của khách hàng",
+  "alias": "nickname_muon_dat"
+}
+
 **LOẠI 1 — GHI DỮ LIỆU TÀI CHÍNH (write_data):**
 Khi tin nhắn đề cập đến TÊN KHÁCH HÀNG + một trong các thông tin: tài sản, nợ, bảo hiểm, tiết kiệm, đầu tư, mục tiêu tài chính, nghỉ hưu, mua nhà...
 → Trả về JSON (KHÔNG giải thích thêm):
@@ -109,6 +119,34 @@ async function processWithAI(userText: string, chatId: number, botToken: string)
             }
         } catch (_) {
             parsed = null;
+        }
+
+        // ── MODE: SET_ALIAS ──
+        if (parsed?.mode === 'set_alias') {
+            const { client_name, alias } = parsed;
+            if (!client_name || !alias) {
+                await sendTelegramMessage(chatId, "❌ Không nhận ra tên khách hoặc alias. VD: 'Đặt nick cho Lê Hải Yến là Yen01'", botToken);
+                return;
+            }
+            const aliasRes = await fetch(`${INTERNAL_BASE_URL}/api/agent/set-client-alias`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AGENT_SECRET}` },
+                body: JSON.stringify({ client_name, alias })
+            });
+            const aliasJson = await aliasRes.json();
+            if (!aliasRes.ok || aliasJson.error) {
+                await sendTelegramMessage(chatId, `❌ ${aliasJson.error || 'Lỗi đặt alias'}`, botToken);
+                return;
+            }
+            const allAliasesStr = aliasJson.all_aliases.map((a: string) => `<code>${a}</code>`).join(', ');
+            await sendTelegramMessage(chatId,
+                `✅ <b>Đã đặt alias cho ${aliasJson.full_name}!</b>\n\n` +
+                `🏷️ Alias mới: <code>${alias}</code>\n` +
+                `📋 Tất cả alias: ${allAliasesStr}\n\n` +
+                `Từ giờ anh có thể dùng "${alias}" thay vì gõ tên đầy đủ!`,
+                botToken
+            );
+            return;
         }
 
         // ── MODE: WRITE_DATA ──
