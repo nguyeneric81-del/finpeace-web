@@ -50,7 +50,7 @@ export default async function WealthPlanningPage() {
             <Tabs defaultValue="kyc" className="w-full">
                 <TabsList className="grid w-full grid-cols-4 bg-white shadow-sm border border-slate-100 rounded-xl p-1">
                     <TabsTrigger value="kyc" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">1. Tài sản &amp; Dòng tiền</TabsTrigger>
-                    <TabsTrigger value="portfolio" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">2. Báo Cáo Danh Mục</TabsTrigger>
+                    <TabsTrigger value="portfolio" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">2. Nhận Diện Tài Chính</TabsTrigger>
                     <TabsTrigger value="scenarios" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">3. Tùy Chỉnh Kịch Bản</TabsTrigger>
                     <TabsTrigger value="actions" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">4. Kế Hoạch Hành Động</TabsTrigger>
                 </TabsList>
