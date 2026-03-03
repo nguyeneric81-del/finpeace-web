@@ -31,45 +31,70 @@ export async function GET(req: NextRequest) {
 
 // POST: tạo/sửa plan hoặc update pending status
 export async function POST(req: NextRequest) {
-    const body = await req.json()
-    const { action, ...payload } = body
+    try {
+        const body = await req.json()
+        const { action, ...payload } = body
 
-    if (action === 'upsert_plan') {
-        if (payload.id) {
+        if (action === 'upsert_plan') {
+            // Chỉ giữ lại các trường có giá trị, bỏ trường rỗng/undefined
+            const cleanPayload: Record<string, any> = {}
+            const ALLOWED_FIELDS = [
+                'ticker', 'company_name', 'strategy_name', 'timeframe',
+                'entry_zone', 'stop_loss', 'take_profit', 'risk_reward',
+                'max_position_pct', 'indicators', 'entry_criteria', 'exit_criteria',
+                'analyst_note', 'status', 'chart_image_url'
+            ]
+            for (const key of ALLOWED_FIELDS) {
+                if (payload[key] !== undefined && payload[key] !== null && payload[key] !== '') {
+                    cleanPayload[key] = payload[key]
+                }
+            }
+
+            if (payload.id) {
+                const { data, error } = await supabase
+                    .from('trading_plans')
+                    .update({ ...cleanPayload, updated_at: new Date().toISOString() })
+                    .eq('id', payload.id)
+                    .select().single()
+                if (error) {
+                    console.error('[Admin] update_plan error:', error)
+                    return NextResponse.json({ error: error.message }, { status: 500 })
+                }
+                return NextResponse.json(data)
+            } else {
+                const { data, error } = await supabase
+                    .from('trading_plans')
+                    .insert({ ...cleanPayload, status: cleanPayload.status || 'active' })
+                    .select().single()
+                if (error) {
+                    console.error('[Admin] insert_plan error:', error)
+                    return NextResponse.json({ error: error.message }, { status: 500 })
+                }
+                return NextResponse.json(data)
+            }
+        }
+
+        if (action === 'delete_plan') {
+            const { error } = await supabase.from('trading_plans').delete().eq('id', payload.id)
+            if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json({ success: true })
+        }
+
+        if (action === 'update_pending_status') {
             const { data, error } = await supabase
-                .from('trading_plans')
-                .update({ ...payload, updated_at: new Date().toISOString() })
+                .from('pending_tickers')
+                .update({ status: payload.status, updated_at: new Date().toISOString() })
                 .eq('id', payload.id)
                 .select().single()
             if (error) return NextResponse.json({ error: error.message }, { status: 500 })
             return NextResponse.json(data)
-        } else {
-            const { data, error } = await supabase
-                .from('trading_plans')
-                .insert({ ...payload, status: payload.status || 'active' })
-                .select().single()
-            if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-            return NextResponse.json(data)
         }
-    }
 
-    if (action === 'delete_plan') {
-        const { error } = await supabase.from('trading_plans').delete().eq('id', payload.id)
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-        return NextResponse.json({ success: true })
+        return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
+    } catch (err) {
+        console.error('[Admin] POST error:', err)
+        return NextResponse.json({ error: 'Lỗi máy chủ' }, { status: 500 })
     }
-
-    if (action === 'update_pending_status') {
-        const { data, error } = await supabase
-            .from('pending_tickers')
-            .update({ status: payload.status, updated_at: new Date().toISOString() })
-            .eq('id', payload.id)
-            .select().single()
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-        return NextResponse.json(data)
-    }
-
-    return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
 }
 
 // PUT: upload chart image cho trading plan
