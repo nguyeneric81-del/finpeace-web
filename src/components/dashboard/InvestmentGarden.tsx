@@ -1,106 +1,136 @@
 "use client"
 
+import { useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
-import { useFinanceStore } from "@/store/useFinanceStore"
-import { calculateWealth, formatCurrency } from "@/lib/calculator"
 
-export function InvestmentGarden() {
-    const { monthlySaving, expectedReturn, debtPayment, inflationRate } = useFinanceStore()
+interface InvestmentGardenProps {
+    // Total investment assets hiện tại (vốn gốc ban đầu)
+    initialInvestment: number
+    // Tiết kiệm tháng thực tế (annual_saving / 12)
+    monthlySaving: number
+    // Lãi suất giả định là trung bình thị trường Vietnam danh mục hỗn hợp ~10%/năm
+    expectedReturnRate?: number
+    // Số năm dự phóng
+    years?: number
+}
 
-    // Tính toán sinh lời trong 20 năm dựa trên thông số từ Slider
-    // Lấy hàm thư viện cũ của tác giả đã viết
-    // Giả định nợ trả hết trong 5 năm (debtYears = 5)
-    // Mục tiêu: 10 Tỷ VND (targetAmount = 10_000_000_000)
-    const result = calculateWealth(
-        0, // initialInvest
-        monthlySaving,
-        5, // debtYears 
-        debtPayment,
-        expectedReturn,
-        inflationRate, // Áp dụng Lãi Suất Nhận Vào Sau Lạm Phát
-        20, // years 
-        10000000000 // targetAmount
-    )
+function calculateFV(principal: number, monthlyContrib: number, annualRate: number, years: number) {
+    const r = annualRate / 12
+    const n = years * 12
+    const fvPrincipal = principal * Math.pow(1 + r, n)
+    const fvContrib = r > 0 ? monthlyContrib * ((Math.pow(1 + r, n) - 1) / r) : monthlyContrib * n
+    return fvPrincipal + fvContrib
+}
 
-    // Lấy dữ liệu mỗi năm thay vì mỗi tháng từ hàm cũ để biểu đồ đỡ lag
-    const annualData = result.chartData.filter(d => d.month % 12 === 0).map(d => ({
-        year: `Năm ${d.month / 12}`,
-        tai_san: d.wealth,
-        von_goc: d.invested,
-        muc_tieu: d.goal
-    }))
+export function InvestmentGarden({
+    initialInvestment = 0,
+    monthlySaving = 0,
+    expectedReturnRate = 0.10,
+    years = 20
+}: InvestmentGardenProps) {
+    const fmtVND = (val: number) => {
+        if (Math.abs(val) >= 1_000_000_000) return (val / 1_000_000_000).toFixed(1) + ' Tỷ ₫'
+        if (Math.abs(val) >= 1_000_000) return Math.round(val / 1_000_000) + ' Tr ₫'
+        return new Intl.NumberFormat('vi-VN').format(val) + ' ₫'
+    }
+
+    const chartData = useMemo(() => {
+        const data = []
+        for (let y = 0; y <= years; y += 1) {
+            const tai_san = calculateFV(initialInvestment, monthlySaving, expectedReturnRate, y)
+            const von_goc = initialInvestment + monthlySaving * 12 * y
+            data.push({
+                year: y === 0 ? 'Hiện tại' : `Năm ${y}`,
+                tai_san: Math.round(tai_san),
+                von_goc: Math.round(von_goc),
+            })
+        }
+        return data
+    }, [initialInvestment, monthlySaving, expectedReturnRate, years])
+
+    const finalWealth = chartData[chartData.length - 1]?.tai_san ?? 0
+    const totalContrib = chartData[chartData.length - 1]?.von_goc ?? 0
+    const gain = finalWealth - totalContrib
+    const gainRatio = totalContrib > 0 ? ((gain / totalContrib) * 100).toFixed(0) : '∞'
+    const hasData = initialInvestment > 0 || monthlySaving > 0
 
     return (
-        <Card className="shadow-sm border-blue-100 dark:border-blue-900 bg-white dark:bg-zinc-950">
-            <CardHeader>
-                <CardTitle className="text-blue-700 dark:text-blue-400">Khu vườn Khởi sinh</CardTitle>
+        <Card className="shadow-sm border-blue-100 h-full">
+            <CardHeader className="bg-gradient-to-r from-blue-50/70 to-white border-b">
+                <CardTitle className="text-blue-800">Khu Vườn Khởi Sinh 🌱</CardTitle>
                 <CardDescription>
-                    Mô phỏng sức mạnh Lãi Kép dựa trên thông số bạn thay đổi (trong 20 năm)
+                    Với tài sản và tiết kiệm <strong>hiện tại</strong>, trong {years} năm tới bạn sẽ có...
                 </CardDescription>
             </CardHeader>
-            <CardContent>
-                <div className="h-[300px] w-full mt-2">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={annualData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
-                            <defs>
-                                <linearGradient id="colorTaiSan" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4} />
-                                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                                </linearGradient>
-                                <linearGradient id="colorVon" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#94a3b8" stopOpacity={0.3} />
-                                    <stop offset="95%" stopColor="#94a3b8" stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                            <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#6b7280" }} dy={10} />
-                            <YAxis
-                                hide
-                                domain={[0, 'auto']}
-                            />
-                            <Tooltip
-                                contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
-                                formatter={(value: any, name: string) => {
-                                    if (name === "tai_san") return [formatCurrency(value), "Tài sản sinh lời"];
-                                    if (name === "von_goc") return [formatCurrency(value), "Vốn gốc đã góp"];
-                                    return [formatCurrency(value), name];
-                                }}
-                            />
-                            <Area
-                                type="monotone"
-                                dataKey="tai_san"
-                                stroke="#3b82f6"
-                                strokeWidth={3}
-                                fillOpacity={1}
-                                fill="url(#colorTaiSan)"
-                            />
-                            <Area
-                                type="monotone"
-                                dataKey="von_goc"
-                                stroke="#64748b"
-                                strokeDasharray="4 4"
-                                strokeWidth={2}
-                                fillOpacity={1}
-                                fill="url(#colorVon)"
-                            />
-                        </AreaChart>
-                    </ResponsiveContainer>
-                </div>
-
-                <div className="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center px-4">
-                    <div>
-                        <p className="text-sm text-muted-foreground mb-1">Dự kiến vốn góp (20 năm):</p>
-                        <p className="font-semibold text-slate-700">{formatCurrency(annualData[annualData.length - 1]?.von_goc || 0)}</p>
+            <CardContent className="pt-4">
+                {!hasData ? (
+                    <div className="h-[260px] flex items-center justify-center text-center p-8">
+                        <div>
+                            <p className="text-4xl mb-3">🌱</p>
+                            <p className="text-slate-600 font-medium">Chưa có dữ liệu Tài sản hoặc Tiết kiệm</p>
+                            <p className="text-slate-400 text-sm mt-1">Hãy khai báo tài sản & dòng tiền ở Tab 1 để xem vườn lớn như thế nào!</p>
+                        </div>
                     </div>
-                    <div className="text-right">
-                        <p className="text-sm text-muted-foreground mb-1">Tổng tài sản nhận được:</p>
-                        <p className="text-2xl font-bold text-blue-600">
-                            {formatCurrency(result.finalWealth)}
-                        </p>
-                    </div>
-                </div>
+                ) : (
+                    <>
+                        <div className="h-[220px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                                    <defs>
+                                        <linearGradient id="colorTaiSan" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.35} />
+                                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                        </linearGradient>
+                                        <linearGradient id="colorVon" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#94a3b8" stopOpacity={0.25} />
+                                            <stop offset="95%" stopColor="#94a3b8" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                                    <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#9ca3af" }} dy={8}
+                                        interval={Math.floor(years / 4)} />
+                                    <YAxis hide domain={[0, 'auto']} />
+                                    <Tooltip
+                                        contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)", fontSize: 12 }}
+                                        formatter={(value: any, name: string) => {
+                                            const fmtVal = value >= 1_000_000_000
+                                                ? (value / 1_000_000_000).toFixed(2) + ' Tỷ ₫'
+                                                : Math.round(value / 1_000_000) + ' Tr ₫'
+                                            if (name === "tai_san") return [fmtVal, "🌳 Tài sản sinh lời"]
+                                            if (name === "von_goc") return [fmtVal, "🪨 Vốn gốc đã góp"]
+                                            return [fmtVal, name]
+                                        }}
+                                    />
+                                    <Area type="monotone" dataKey="tai_san" stroke="#3b82f6" strokeWidth={2.5} fillOpacity={1} fill="url(#colorTaiSan)" />
+                                    <Area type="monotone" dataKey="von_goc" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="4 4" fillOpacity={1} fill="url(#colorVon)" />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
 
+                        <div className="mt-4 pt-4 border-t border-slate-100 grid grid-cols-3 gap-4">
+                            <div className="text-center">
+                                <p className="text-xs text-slate-400">Vốn gốc góp vào</p>
+                                <p className="text-sm font-semibold text-slate-600 mt-0.5">{fmtVND(totalContrib)}</p>
+                            </div>
+                            <div className="text-center border-x border-dashed border-slate-200">
+                                <p className="text-xs text-slate-400">Lãi kép tạo ra</p>
+                                <p className="text-sm font-semibold text-emerald-600 mt-0.5">+{fmtVND(gain)}</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-xs text-slate-400">Tổng tài sản</p>
+                                <p className="text-base font-bold text-blue-700 mt-0.5">{fmtVND(finalWealth)}</p>
+                            </div>
+                        </div>
+
+                        <div className="mt-3 p-3 bg-blue-50 rounded-lg text-center">
+                            <p className="text-xs text-blue-700">
+                                💡 Dự phóng với lãi suất <strong>{(expectedReturnRate * 100).toFixed(0)}%/năm</strong> (danh mục hỗn hợp thị trường).
+                                Vốn gốc của bạn sinh lời thêm <strong>{gainRatio}%</strong> nhờ sức mạnh lãi kép.
+                            </p>
+                        </div>
+                    </>
+                )}
             </CardContent>
         </Card>
     )
