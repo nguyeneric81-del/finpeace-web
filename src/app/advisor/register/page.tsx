@@ -59,7 +59,25 @@ export default function AdvisorRegisterPage() {
         const fd = new FormData()
         fd.append('image', imageFile)
         fd.append('user_id', uid || '')
-        await fetch('/api/advisor/analyze-portfolio', { method: 'POST', body: fd })
+        try {
+            const analysisRes = await fetch('/api/advisor/analyze-portfolio', { method: 'POST', body: fd })
+            const analysisData = await analysisRes.json()
+
+            // Lưu kết quả vào localStorage để dashboard đọc ngay khi login lần đầu
+            // (không phụ thuộc vào việc DB save có thành công không)
+            if (uid) {
+                localStorage.setItem(
+                    `advisor_portfolio_${uid}`,
+                    JSON.stringify({
+                        extracted_tickers: analysisData.extracted_tickers || [],
+                        matched_plans: analysisData.matched_plans || [],
+                        pending_tickers: analysisData.pending_tickers || []
+                    })
+                )
+            }
+        } catch (e) {
+            console.warn('[Register] analyze-portfolio failed:', e)
+        }
 
         setLoading(false)
         setStep(3)

@@ -141,8 +141,24 @@ export default function AdvisorDashboardPage() {
         loadLatestPortfolio(u.id)
     }, [])
 
-    // Tải kết quả phân tích gần nhất từ customer_portfolios
+    // Tải kết quả phân tích: ưu tiên localStorage (từ luồng đăng ký) → fallback DB
     async function loadLatestPortfolio(userId: string) {
+        // 1. Kiểm tra localStorage trước (được lưu ngay lúc đăng ký, đáng tin hơn DB)
+        const localKey = `advisor_portfolio_${userId}`
+        const cached = localStorage.getItem(localKey)
+        if (cached) {
+            try {
+                const parsed = JSON.parse(cached)
+                // Xoá sau khi đọc để tránh stale data lần sau
+                localStorage.removeItem(localKey)
+                applyResult(parsed)
+                return
+            } catch {
+                localStorage.removeItem(localKey)
+            }
+        }
+
+        // 2. Fallback: gọi API lấy từ DB
         try {
             const res = await fetch(`/api/advisor/portfolio?user_id=${userId}`)
             const data = await res.json()
