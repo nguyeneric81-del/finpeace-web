@@ -48,52 +48,52 @@ export async function POST(req: NextRequest) {
         }
 
         // ── Bước 2: Groq Llama Vision đọc ảnh ──
-        const completion = await groq.chat.completions.create({
-            model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-            messages: [
-                {
-                    role: 'user',
-                    content: [
-                        {
-                            type: 'text',
-                            text: `Đây là ảnh chụp màn hình danh mục đầu tư chứng khoán tại thị trường Việt Nam (HOSE/HNX/UPCOM).
-
-Nhiệm vụ: Liệt kê tất cả các mã chứng khoán (ticker/stock symbol) xuất hiện trong ảnh.
-- Mã chứng khoán VN thường có 2-4 ký tự in hoa (ví dụ: VNM, VIC, ACB, HPG, FPT, MWG, TCB, VHM...)
-- Chỉ trả về mã CK, KHÔNG bao gồm tên công ty hay số liệu
-- Trả về dạng JSON array như sau: {"tickers": ["VNM", "VIC", "ACB"]}
-- Nếu không thấy mã CK nào, trả về: {"tickers": []}
-- Chỉ trả về JSON, không thêm text giải thích`
-                        },
-                        {
-                            type: 'image_url',
-                            image_url: {
-                                url: `data:${mimeType};base64,${imageBase64}`
-                            }
-                        }
-                    ]
-                }
-            ],
-            temperature: 0.1,
-            max_tokens: 256
-        })
-
-        const rawText = completion.choices[0]?.message?.content?.trim() || ''
-        console.log('[Groq] Raw response:', rawText)
-
-        // Parse JSON từ Groq
+        // QUAN TRỌNG: Tách riêng try-catch để nếu AI lỗi,
+        // vẫn tiếp tục lưu portfolio record vào DB (bước 5)
         let extractedTickers: string[] = []
         try {
-            const jsonMatch = rawText.match(/\{[\s\S]*\}/)
-            if (jsonMatch) {
-                const parsed = JSON.parse(jsonMatch[0])
-                extractedTickers = (parsed.tickers || []).map((t: string) => t.toUpperCase().trim())
-            }
-        } catch {
-            console.warn('Groq JSON parse failed, raw:', rawText)
-        }
+            const completion = await groq.chat.completions.create({
+                model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+                messages: [
+                    {
+                        role: 'user',
+                        content: [
+                            {
+                                type: 'text',
+                                text: `Đây là ảnh chụp màn hình danh mục đầu tư chứng khoán tại thị trường Việt Nam (HOSE/HNX/UPCOM).\n\nNhiệm vụ: Liệt kê tất cả các mã chứng khoán (ticker/stock symbol) xuất hiện trong ảnh.\n- Mã chứng khoán VN thường có 2-4 ký tự in hoa (ví dụ: VNM, VIC, ACB, HPG, FPT, MWG, TCB, VHM...)\n- Chỉ trả về mã CK, KHÔNG bao gồm tên công ty hay số liệu\n- Trả về dạng JSON array như sau: {"tickers": ["VNM", "VIC", "ACB"]}\n- Nếu không thấy mã CK nào, trả về: {"tickers": []}\n- Chỉ trả về JSON, không thêm text giải thích`
+                            },
+                            {
+                                type: 'image_url',
+                                image_url: {
+                                    url: `data:${mimeType};base64,${imageBase64}`
+                                }
+                            }
+                        ]
+                    }
+                ],
+                temperature: 0.1,
+                max_tokens: 256
+            })
 
-        console.log('[Groq] Extracted tickers:', extractedTickers)
+            const rawText = completion.choices[0]?.message?.content?.trim() || ''
+            console.log('[Groq] Raw response:', rawText)
+
+            try {
+                const jsonMatch = rawText.match(/\{[\s\S]*\}/)
+                if (jsonMatch) {
+                    const parsed = JSON.parse(jsonMatch[0])
+                    extractedTickers = (parsed.tickers || []).map((t: string) => t.toUpperCase().trim())
+                }
+            } catch {
+                console.warn('[Groq] JSON parse failed, raw:', rawText)
+            }
+
+            console.log('[Groq] Extracted tickers:', extractedTickers)
+        } catch (aiErr) {
+            // AI lỗi (timeout, quota exceeded, model error...) → không throw,
+            // tiếp tục với tickers rỗng để vẫn lưu được portfolio record
+            console.error('[Groq] AI extraction failed (non-critical):', aiErr)
+        }
 
         // ── Bước 3: Match với Trading Plans ──
         const { data: plans } = await supabase
@@ -116,8 +116,7 @@ Nhiệm vụ: Liệt kê tất cả các mã chứng khoán (ticker/stock symbol
             if (existing) {
                 await supabase.from('pending_tickers').update({
                     requested_count: existing.requested_count + 1,
-                    requester_ids: userId ? [...(existing.requester_ids || []), userId] : existing.requester_ids,
-                    updated_at: new Date().toISOString()
+                    requester_ids: userId ? [...(existing.requester_ids || []), userId] : existing.requester_ids
                 }).eq('ticker', ticker)
             } else {
                 await supabase.from('pending_tickers').insert({
@@ -130,12 +129,14 @@ Nhiệm vụ: Liệt kê tất cả các mã chứng khoán (ticker/stock symbol
         }
 
         // ── Bước 5: Lưu portfolio record ──
+        // LUÔN LUÔN chạy bước này dù AI có lỗi hay không
         if (userId) {
-            await supabase.from('customer_portfolios').insert({
+            const { error: portfolioErr } = await supabase.from('customer_portfolios').insert({
                 user_id: userId,
                 image_url: imageUrl,
                 extracted_tickers: extractedTickers
             })
+            if (portfolioErr) console.error('[Portfolio] Save failed:', portfolioErr)
         }
 
         return NextResponse.json({
