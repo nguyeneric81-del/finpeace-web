@@ -35,7 +35,7 @@ const calculateFV = (P: number, PMT: number, r: number, n: number) => {
     return compoundPrincipal + compoundCashflow
 }
 
-export function ScenarioManager({ userId }: { userId: string }) {
+export function ScenarioManager({ userId, onNavigateToActionPlan }: { userId: string, onNavigateToActionPlan?: () => void }) {
     const supabase = createClient()
     const [loading, setLoading] = useState(true)
 
@@ -148,7 +148,11 @@ export function ScenarioManager({ userId }: { userId: string }) {
             setSavedScenarioId(data.id)
             alert("Đã lưu định hướng Ước Mơ thành công!")
             // Chuyển sang tab Kế Hoạch Hành Động (Action Plan)
-            document.getElementById('tab-actions')?.click()
+            if (onNavigateToActionPlan) {
+                onNavigateToActionPlan()
+            } else {
+                document.getElementById('tab-actions')?.click()
+            }
         }
     }
 

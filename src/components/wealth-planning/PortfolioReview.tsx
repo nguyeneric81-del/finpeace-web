@@ -207,7 +207,7 @@ function HealthIndicator({
 // ============================================================
 // MAIN COMPONENT
 // ============================================================
-export function PortfolioReview({ userId }: { userId: string }) {
+export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: string, onNavigateToScenarios?: () => void }) {
     const supabase = createClient()
     const [assets, setAssets] = useState<Asset[]>([])
     const [cashflow, setCashflow] = useState<Cashflow | null>(null)
@@ -616,7 +616,13 @@ export function PortfolioReview({ userId }: { userId: string }) {
                             <Button
                                 variant="ghost"
                                 className="flex items-center gap-1 text-xs text-emerald-600 font-semibold mt-auto group-hover:gap-2 p-0 h-auto justify-start hover:bg-transparent"
-                                onClick={() => document.getElementById('tab-scenarios')?.click()}
+                                onClick={() => {
+                                    if (onNavigateToScenarios) {
+                                        onNavigateToScenarios()
+                                    } else {
+                                        document.getElementById('tab-scenarios')?.click()
+                                    }
+                                }}
                             >
                                 Lên kế hoạch <ArrowRight className="w-3.5 h-3.5" />
                             </Button>
