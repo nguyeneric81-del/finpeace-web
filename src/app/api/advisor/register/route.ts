@@ -1,12 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
-const resend = new Resend(process.env.RESEND_API_KEY)
+
+// Gmail SMTP transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+    },
+})
 
 function generatePassword(length = 8): string {
     const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'
@@ -66,11 +74,11 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Không thể tạo tài khoản. Thử lại sau.' }, { status: 500 })
         }
 
-        // Gửi email chào mừng qua Resend (non-critical — không block nếu lỗi)
+        // Gửi email chào mừng qua Gmail SMTP (non-critical — không block nếu lỗi)
         try {
-            const emailResult = await resend.emails.send({
-                from: process.env.RESEND_FROM_EMAIL || 'FinPeace Advisor <onboarding@resend.dev>',
-                to: [email],
+            await transporter.sendMail({
+                from: `"FinPeace Advisor" <${process.env.GMAIL_USER}>`,
+                to: email,
                 subject: '🌱 Tài khoản FinPeace Advisor của bạn đã sẵn sàng!',
                 html: `
                 <div style="font-family: 'Segoe UI', sans-serif; max-width: 520px; margin: 0 auto; background: #f0fdf4; border-radius: 16px; overflow: hidden;">
@@ -91,7 +99,7 @@ export async function POST(req: NextRequest) {
                             <p style="margin: 0; font-size: 24px; font-weight: 700; color: #059669; letter-spacing: 4px;">${plainPassword}</p>
                         </div>
                         <p style="color: #6b7280; font-size: 13px;">⚠️ Vui lòng đổi mật khẩu sau khi đăng nhập lần đầu.</p>
-                        <a href="https://advisor.finpeace.cloud/advisor/login" 
+                        <a href="https://advisor.finpeace.cloud/advisor/login"
                            style="display: block; background: #059669; color: white; text-align: center; padding: 14px; border-radius: 10px; text-decoration: none; font-weight: 600; margin-top: 24px;">
                             🚀 Đăng Nhập Ngay
                         </a>
@@ -102,10 +110,10 @@ export async function POST(req: NextRequest) {
                 </div>
             `
             })
-            console.log('[Resend] Email sent:', emailResult)
+            console.log('[Gmail] Email sent to:', email)
         } catch (emailErr) {
             // Lỗi email không block đăng ký — KH vẫn nhận mật khẩu qua màn hình
-            console.error('[Resend] Email failed:', emailErr)
+            console.error('[Gmail] Email failed:', emailErr)
         }
 
         // Trả về temp_password để hiện trực tiếp trên màn hình (không phụ thuộc email)
