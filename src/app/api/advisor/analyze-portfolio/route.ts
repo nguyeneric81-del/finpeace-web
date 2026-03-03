@@ -8,6 +8,16 @@ const supabase = createClient(
 )
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
+const BUCKET_NAME = 'advisor-portfolios'
+
+async function ensureBucket() {
+    const { data: buckets } = await supabase.storage.listBuckets()
+    const exists = buckets?.some(b => b.name === BUCKET_NAME)
+    if (!exists) {
+        await supabase.storage.createBucket(BUCKET_NAME, { public: true })
+    }
+}
+
 export async function POST(req: NextRequest) {
     try {
         const formData = await req.formData()
@@ -23,15 +33,21 @@ export async function POST(req: NextRequest) {
         const imageBase64 = Buffer.from(imageBytes).toString('base64')
         const mimeType = imageFile.type as 'image/jpeg' | 'image/png' | 'image/webp'
 
-        // ── Bước 1: Upload ảnh lên Supabase Storage ──
-        const fileName = `portfolios/${userId || 'anonymous'}/${Date.now()}_${imageFile.name}`
-        const { data: storageData } = await supabase.storage
-            .from('advisor-portfolios')
-            .upload(fileName, imageFile, { contentType: mimeType, upsert: false })
-
-        const imageUrl = storageData?.path
-            ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/advisor-portfolios/${storageData.path}`
-            : null
+        // ── Bước 1: Upload ảnh lên Supabase Storage (non-critical) ──
+        // Không để lỗi upload block kết quả AI
+        let imageUrl: string | null = null
+        try {
+            await ensureBucket()
+            const fileName = `portfolios/${userId || 'anonymous'}/${Date.now()}_${imageFile.name}`
+            const { data: storageData } = await supabase.storage
+                .from(BUCKET_NAME)
+                .upload(fileName, imageFile, { contentType: mimeType, upsert: false })
+            imageUrl = storageData?.path
+                ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${storageData.path}`
+                : null
+        } catch (uploadErr) {
+            console.warn('Storage upload failed (non-critical):', uploadErr)
+        }
 
         // ── Bước 2: Gemini Vision đọc ảnh ──
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
