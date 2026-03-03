@@ -148,7 +148,7 @@ export function ScenarioManager({ userId }: { userId: string }) {
             setSavedScenarioId(data.id)
             alert("Đã lưu định hướng Ước Mơ thành công!")
             // Chuyển sang tab Kế Hoạch Hành Động (Action Plan)
-            document.querySelector<HTMLElement>('[role="tab"][value="actions"]')?.click()
+            document.getElementById('tab-actions')?.click()
         }
     }
 

@@ -616,7 +616,7 @@ export function PortfolioReview({ userId }: { userId: string }) {
                             <Button
                                 variant="ghost"
                                 className="flex items-center gap-1 text-xs text-emerald-600 font-semibold mt-auto group-hover:gap-2 p-0 h-auto justify-start hover:bg-transparent"
-                                onClick={() => document.querySelector<HTMLElement>('[role="tab"][value="scenarios"]')?.click()}
+                                onClick={() => document.getElementById('tab-scenarios')?.click()}
                             >
                                 Lên kế hoạch <ArrowRight className="w-3.5 h-3.5" />
                             </Button>

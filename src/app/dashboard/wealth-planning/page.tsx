@@ -49,10 +49,10 @@ export default async function WealthPlanningPage() {
             {/* Tabs Content */}
             <Tabs defaultValue="kyc" className="w-full">
                 <TabsList className="grid w-full grid-cols-4 bg-white shadow-sm border border-slate-100 rounded-xl p-1">
-                    <TabsTrigger value="kyc" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">1. Tài sản &amp; Dòng tiền</TabsTrigger>
-                    <TabsTrigger value="portfolio" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">2. Nhận Diện Tài Chính</TabsTrigger>
-                    <TabsTrigger value="scenarios" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">3. Thiết Kế Tương Lai</TabsTrigger>
-                    <TabsTrigger value="actions" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">4. Kế Hoạch Hành Động</TabsTrigger>
+                    <TabsTrigger id="tab-kyc" value="kyc" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">1. Tài sản &amp; Dòng tiền</TabsTrigger>
+                    <TabsTrigger id="tab-portfolio" value="portfolio" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">2. Nhận Diện Tài Chính</TabsTrigger>
+                    <TabsTrigger id="tab-scenarios" value="scenarios" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">3. Thiết Kế Tương Lai</TabsTrigger>
+                    <TabsTrigger id="tab-actions" value="actions" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">4. Kế Hoạch Hành Động</TabsTrigger>
                 </TabsList>
 
                 <div className="mt-6 border-none bg-transparent min-h-[500px]">
