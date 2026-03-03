@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import Groq from 'groq-sdk'
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 const BUCKET_NAME = 'advisor-portfolios'
 
@@ -28,13 +28,11 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Không có ảnh được upload' }, { status: 400 })
         }
 
-        // Chuyển File thành bytes
         const imageBytes = await imageFile.arrayBuffer()
         const imageBase64 = Buffer.from(imageBytes).toString('base64')
-        const mimeType = imageFile.type as 'image/jpeg' | 'image/png' | 'image/webp'
+        const mimeType = imageFile.type as string
 
         // ── Bước 1: Upload ảnh lên Supabase Storage (non-critical) ──
-        // Không để lỗi upload block kết quả AI
         let imageUrl: string | null = null
         try {
             await ensureBucket()
@@ -49,26 +47,41 @@ export async function POST(req: NextRequest) {
             console.warn('Storage upload failed (non-critical):', uploadErr)
         }
 
-        // ── Bước 2: Gemini Vision đọc ảnh ──
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+        // ── Bước 2: Groq Llama Vision đọc ảnh ──
+        const completion = await groq.chat.completions.create({
+            model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+            messages: [
+                {
+                    role: 'user',
+                    content: [
+                        {
+                            type: 'text',
+                            text: `Đây là ảnh chụp màn hình danh mục đầu tư chứng khoán tại thị trường Việt Nam (HOSE/HNX/UPCOM).
 
-        const prompt = `Đây là ảnh chụp màn hình danh mục đầu tư chứng khoán tại thị trường Việt Nam (HOSE/HNX/UPCOM).
-        
 Nhiệm vụ: Liệt kê tất cả các mã chứng khoán (ticker/stock symbol) xuất hiện trong ảnh.
 - Mã chứng khoán VN thường có 2-4 ký tự in hoa (ví dụ: VNM, VIC, ACB, HPG, FPT, MWG, TCB, VHM...)
 - Chỉ trả về mã CK, KHÔNG bao gồm tên công ty hay số liệu
 - Trả về dạng JSON array như sau: {"tickers": ["VNM", "VIC", "ACB"]}
 - Nếu không thấy mã CK nào, trả về: {"tickers": []}
 - Chỉ trả về JSON, không thêm text giải thích`
+                        },
+                        {
+                            type: 'image_url',
+                            image_url: {
+                                url: `data:${mimeType};base64,${imageBase64}`
+                            }
+                        }
+                    ]
+                }
+            ],
+            temperature: 0.1,
+            max_tokens: 256
+        })
 
-        const result = await model.generateContent([
-            prompt,
-            { inlineData: { data: imageBase64, mimeType } }
-        ])
+        const rawText = completion.choices[0]?.message?.content?.trim() || ''
+        console.log('[Groq] Raw response:', rawText)
 
-        const rawText = result.response.text().trim()
-
-        // Parse JSON từ Gemini
+        // Parse JSON từ Groq
         let extractedTickers: string[] = []
         try {
             const jsonMatch = rawText.match(/\{[\s\S]*\}/)
@@ -77,14 +90,16 @@ Nhiệm vụ: Liệt kê tất cả các mã chứng khoán (ticker/stock symbol
                 extractedTickers = (parsed.tickers || []).map((t: string) => t.toUpperCase().trim())
             }
         } catch {
-            console.warn('Gemini JSON parse failed, raw:', rawText)
+            console.warn('Groq JSON parse failed, raw:', rawText)
         }
+
+        console.log('[Groq] Extracted tickers:', extractedTickers)
 
         // ── Bước 3: Match với Trading Plans ──
         const { data: plans } = await supabase
             .from('trading_plans')
             .select('*')
-            .in('ticker', extractedTickers)
+            .in('ticker', extractedTickers.length > 0 ? extractedTickers : ['__none__'])
             .eq('status', 'active')
 
         const matchedTickers = (plans || []).map((p: any) => p.ticker)
