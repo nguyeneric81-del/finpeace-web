@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Slider } from "@/components/ui/slider"
 import { motion, AnimatePresence } from "framer-motion"
 import { Target, TrendingUp, ShieldCheck, Map, ArrowRight, Save, Coins, Clock, Sparkles, CheckCircle2 } from 'lucide-react'
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'
 
 // Constants
 const DEFAULT_INFLATION = 3.5
@@ -15,6 +16,12 @@ const DEFAULT_INFLATION = 3.5
 // Helper functions
 const fmtVND = (value: number) => {
     if (value >= 1_000_000_000) return `${(value / 1_000_000_000).toFixed(1).replace(/\.0$/, '')} Tỷ`
+    if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(0)} Tr`
+    return new Intl.NumberFormat('vi-VN').format(value)
+}
+
+const fmtVNDShort = (value: number) => {
+    if (value >= 1_000_000_000) return `${(value / 1_000_000_000).toFixed(1)} Tỷ`
     if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(0)} Tr`
     return new Intl.NumberFormat('vi-VN').format(value)
 }
@@ -103,6 +110,21 @@ export function ScenarioManager({ userId }: { userId: string }) {
         setStep(2)
     }
 
+    const chartData = useMemo(() => {
+        if (step === 1) return []
+        const data = []
+        for (let i = 0; i <= targetYears; i++) {
+            data.push({
+                year: `Năm ${i}`,
+                safe: calculateFV(scenarios.safe.capital, scenarios.safe.pmt, scenarios.safe.rate, i),
+                balanced: calculateFV(scenarios.balanced.capital, scenarios.balanced.pmt, scenarios.balanced.rate, i),
+                growth: calculateFV(scenarios.growth.capital, scenarios.growth.pmt, scenarios.growth.rate, i),
+                target: targetAmount
+            })
+        }
+        return data
+    }, [scenarios, targetYears, targetAmount, step])
+
     const handleSaveScenario = async (type: 'safe' | 'balanced' | 'growth') => {
         const selected = scenarios[type]
         const planFullName = `${dreamName} - ${selected.name}`
@@ -125,6 +147,8 @@ export function ScenarioManager({ userId }: { userId: string }) {
         if (!error && data) {
             setSavedScenarioId(data.id)
             alert("Đã lưu định hướng Ước Mơ thành công!")
+            // Chuyển sang tab Kế Hoạch Hành Động (Action Plan)
+            document.querySelector<HTMLElement>('[role="tab"][value="actions"]')?.click()
         }
     }
 
@@ -250,6 +274,38 @@ export function ScenarioManager({ userId }: { userId: string }) {
                             </div>
                         </div>
 
+                        {/* Biểu đồ so sánh 3 kịch bản */}
+                        <Card className="shadow-lg border-slate-100 overflow-hidden mt-6">
+                            <CardHeader className="bg-slate-50 border-b border-slate-100 pb-4">
+                                <CardTitle className="text-lg text-slate-800">Cỗ Máy Lãi Kép: So Sánh 3 Phương Án</CardTitle>
+                                <CardDescription>Sự thay đổi của tài sản sau {targetYears} năm theo Lãi Kép tự động.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="p-6 h-[400px]">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart data={chartData} margin={{ top: 20, right: 30, bottom: 20, left: 40 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                                        <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748B' }} dy={10} />
+                                        <YAxis
+                                            tickFormatter={(val) => fmtVNDShort(val)}
+                                            axisLine={false}
+                                            tickLine={false}
+                                            tick={{ fontSize: 12, fill: '#64748B' }}
+                                        />
+                                        <Tooltip
+                                            formatter={(value: number, name: string) => [fmtVND(value), name === 'target' ? 'Mục Tiêu' : name === 'safe' ? 'An Toàn' : name === 'balanced' ? 'Cân Bằng' : 'Tăng Trưởng']}
+                                            labelStyle={{ fontWeight: 'bold', color: '#0F172A', marginBottom: 8 }}
+                                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)' }}
+                                        />
+                                        <Legend wrapperStyle={{ paddingTop: 20 }} />
+                                        <Line type="monotone" name="An Toàn" dataKey="safe" stroke="#059669" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
+                                        <Line type="monotone" name="Cân Bằng" dataKey="balanced" stroke="#2563EB" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
+                                        <Line type="monotone" name="Tăng Trưởng" dataKey="growth" stroke="#D97706" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
+                                        <Line type="monotone" name="Mục Tiêu" dataKey="target" stroke="#EF4444" strokeWidth={2} strokeDasharray="5 5" dot={false} />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </CardContent>
+                        </Card>
+
                         {/* 3 Scenarios Grid */}
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4">
                             {(['safe', 'balanced', 'growth'] as const).map((type) => {
@@ -304,7 +360,7 @@ export function ScenarioManager({ userId }: { userId: string }) {
                                                     </div>
                                                     <Slider
                                                         value={[s.pmt]}
-                                                        max={realCashflow * 3} // Cho phép kéo gấp 3 lần thu nhập dư hiện tại
+                                                        max={Math.max(realCashflow * 3, 50000000)} // Ít nhất là 50 Tr/tháng cho slider hoạt động
                                                         step={1000000}
                                                         onValueChange={([val]) => setScenarios(prev => ({ ...prev, [type]: { ...prev[type], pmt: val } }))}
                                                         className="[&_[role=slider]]:h-5 [&_[role=slider]]:w-5"
@@ -320,7 +376,7 @@ export function ScenarioManager({ userId }: { userId: string }) {
                                                     </div>
                                                     <Slider
                                                         value={[s.capital]}
-                                                        max={realNetWorth * 1.5}
+                                                        max={Math.max(realNetWorth * 1.5, 1000000000)} // Ít nhất là 1 Tỷ cho slider hoạt động
                                                         step={10000000}
                                                         onValueChange={([val]) => setScenarios(prev => ({ ...prev, [type]: { ...prev[type], capital: val } }))}
                                                     />

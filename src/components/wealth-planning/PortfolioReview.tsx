@@ -8,6 +8,7 @@ import {
     TrendingUp, TrendingDown, Minus, MapPin, HeartPulse,
     Layers, ArrowRight, CheckCircle2, ChevronRight
 } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 // ============================================================
 // TYPES
@@ -612,9 +613,13 @@ export function PortfolioReview({ userId }: { userId: string }) {
                                 <p className="text-sm font-bold text-slate-800">{rec.title}</p>
                                 <p className="text-xs text-slate-500 leading-relaxed mt-1">{rec.detail}</p>
                             </div>
-                            <a href="/dashboard/wealth-planning" className="flex items-center gap-1 text-xs text-emerald-600 font-semibold mt-auto group-hover:gap-2 transition-all">
+                            <Button
+                                variant="ghost"
+                                className="flex items-center gap-1 text-xs text-emerald-600 font-semibold mt-auto group-hover:gap-2 p-0 h-auto justify-start hover:bg-transparent"
+                                onClick={() => document.querySelector<HTMLElement>('[role="tab"][value="scenarios"]')?.click()}
+                            >
                                 Lên kế hoạch <ArrowRight className="w-3.5 h-3.5" />
-                            </a>
+                            </Button>
                         </motion.div>
                     ))}
                 </div>
