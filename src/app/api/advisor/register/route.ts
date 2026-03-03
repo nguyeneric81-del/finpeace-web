@@ -66,12 +66,13 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Không thể tạo tài khoản. Thử lại sau.' }, { status: 500 })
         }
 
-        // Gửi email chào mừng qua Resend
-        await resend.emails.send({
-            from: 'FinPeace Advisor <onboarding@resend.dev>',
-            to: [email],
-            subject: '🌱 Tài khoản FinPeace Advisor của bạn đã sẵn sàng!',
-            html: `
+        // Gửi email chào mừng qua Resend (non-critical — không block nếu lỗi)
+        try {
+            const emailResult = await resend.emails.send({
+                from: 'FinPeace Advisor <onboarding@resend.dev>',
+                to: [email],
+                subject: '🌱 Tài khoản FinPeace Advisor của bạn đã sẵn sàng!',
+                html: `
                 <div style="font-family: 'Segoe UI', sans-serif; max-width: 520px; margin: 0 auto; background: #f0fdf4; border-radius: 16px; overflow: hidden;">
                     <div style="background: linear-gradient(135deg, #059669, #10b981); padding: 32px; text-align: center;">
                         <h1 style="color: white; font-size: 24px; margin: 0;">🌿 FinPeace Advisor</h1>
@@ -100,9 +101,19 @@ export async function POST(req: NextRequest) {
                     </div>
                 </div>
             `
-        })
+            })
+            console.log('[Resend] Email sent:', emailResult)
+        } catch (emailErr) {
+            // Lỗi email không block đăng ký — KH vẫn nhận mật khẩu qua màn hình
+            console.error('[Resend] Email failed:', emailErr)
+        }
 
-        return NextResponse.json({ success: true, message: 'Tài khoản đã được tạo. Kiểm tra email của bạn!' })
+        // Trả về temp_password để hiện trực tiếp trên màn hình (không phụ thuộc email)
+        return NextResponse.json({
+            success: true,
+            temp_password: plainPassword,
+            message: 'Tài khoản đã được tạo thành công!'
+        })
 
     } catch (err) {
         console.error('Register error:', err)

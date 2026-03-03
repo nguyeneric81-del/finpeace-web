@@ -9,6 +9,8 @@ export default function AdvisorRegisterPage() {
     const [form, setForm] = useState({ email: '', phone: '', full_name: '' })
     const [loading, setLoading] = useState(false)
     const [done, setDone] = useState(false)
+    const [tempPassword, setTempPassword] = useState('')
+    const [copied, setCopied] = useState(false)
     const [error, setError] = useState('')
 
     async function handleSubmit(e: React.FormEvent) {
@@ -28,8 +30,15 @@ export default function AdvisorRegisterPage() {
         if (!res.ok) {
             setError(data.error || 'Có lỗi xảy ra, vui lòng thử lại.')
         } else {
+            setTempPassword(data.temp_password || '')
             setDone(true)
         }
+    }
+
+    async function copyPassword() {
+        await navigator.clipboard.writeText(tempPassword)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
     }
 
     return (
@@ -56,13 +65,32 @@ export default function AdvisorRegisterPage() {
                         className="bg-white rounded-2xl shadow-sm border border-emerald-100 p-8 text-center"
                     >
                         <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
-                        <h2 className="text-xl font-semibold text-slate-800 mb-2">Kiểm tra hộp thư của bạn!</h2>
-                        <p className="text-slate-500 mb-6">
-                            Chúng tôi đã gửi mật khẩu đến <strong className="text-slate-700">{form.email}</strong>.
-                            Dùng mật khẩu đó để đăng nhập.
+                        <h2 className="text-xl font-semibold text-slate-800 mb-2">Tài khoản đã sẵn sàng!</h2>
+                        <p className="text-slate-500 text-sm mb-5">
+                            Đây là mật khẩu tạm thời của bạn. Hãy ghi lại trước khi thoát trang.
                         </p>
+
+                        {/* Hiện mật khẩu nổi bật */}
+                        <div className="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-5 mb-4">
+                            <p className="text-xs text-emerald-600 font-semibold uppercase tracking-wide mb-2">🔑 Mật khẩu tạm thời</p>
+                            <p className="text-3xl font-bold tracking-[0.3em] text-emerald-700 font-mono mb-3">
+                                {tempPassword}
+                            </p>
+                            <button
+                                onClick={copyPassword}
+                                className="text-xs bg-emerald-600 text-white px-4 py-1.5 rounded-lg hover:bg-emerald-700 transition-colors"
+                            >
+                                {copied ? '✓ Đã Copy!' : '📋 Copy mật khẩu'}
+                            </button>
+                        </div>
+
+                        <p className="text-xs text-slate-400 mb-5">
+                            Email xác nhận cũng đã được gửi tới <strong>{form.email}</strong>
+                            <br />(Kiểm tra cả thư mục Spam nếu không thấy)
+                        </p>
+
                         <Link href="/advisor/login"
-                            className="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-emerald-700 transition-colors">
+                            className="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-emerald-700 transition-colors w-full justify-center">
                             Đăng Nhập Ngay <ArrowRight className="w-4 h-4" />
                         </Link>
                     </motion.div>
