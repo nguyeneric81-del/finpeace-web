@@ -111,6 +111,7 @@ export async function POST(req: NextRequest) {
         // Trả về temp_password để hiện trực tiếp trên màn hình (không phụ thuộc email)
         return NextResponse.json({
             success: true,
+            user_id: newUser.id,
             temp_password: plainPassword,
             message: 'Tài khoản đã được tạo thành công!'
         })
