@@ -1,36 +1,55 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { createClient } from '@/utils/supabase/client'
 import {
-    Leaf, LogOut, Plus, Pencil, Trash2, CheckCircle2, Clock,
-    AlertCircle, Loader2, ChevronDown, ChevronUp, X, Save
+    Leaf, LogOut, Plus, Pencil, Trash2, Loader2,
+    X, Save, Upload, Image as ImageIcon, CheckCircle2, Clock
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-
-const supabase = createClient()
 
 type Plan = {
     id: string; ticker: string; company_name: string; strategy_name: string;
     timeframe: string; entry_zone: string; stop_loss: string; take_profit: string;
     risk_reward: string; max_position_pct: number; indicators: string[];
-    entry_criteria: string; exit_criteria: string; analyst_note: string; status: string;
+    entry_criteria: string; exit_criteria: string; analyst_note: string;
+    status: string; chart_image_url?: string;
 }
 type Pending = { id: string; ticker: string; requested_count: number; status: string; created_at: string }
 
 const EMPTY_PLAN: Omit<Plan, 'id' | 'status'> = {
     ticker: '', company_name: '', strategy_name: '', timeframe: 'Trung hạn (4-8 tuần)',
     entry_zone: '', stop_loss: '', take_profit: '', risk_reward: '',
-    max_position_pct: 10, indicators: [], entry_criteria: '', exit_criteria: '', analyst_note: ''
+    max_position_pct: 10, indicators: [], entry_criteria: '', exit_criteria: '',
+    analyst_note: '', chart_image_url: ''
 }
 
 function PlanForm({ initial, onSave, onCancel }: { initial: Partial<Plan>; onSave: (p: any) => void; onCancel: () => void }) {
     const [form, setForm] = useState<any>({ ...EMPTY_PLAN, ...initial })
     const [indicatorInput, setIndicatorInput] = useState('')
     const [saving, setSaving] = useState(false)
+    const [chartUploading, setChartUploading] = useState(false)
+    const [chartPreview, setChartPreview] = useState<string>(initial.chart_image_url || '')
 
     const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }))
+
+    async function handleChartUpload(file: File) {
+        if (!form.id) {
+            alert('Vui lòng lưu plan trước khi upload ảnh chart')
+            return
+        }
+        setChartUploading(true)
+        const fd = new FormData()
+        fd.append('file', file)
+        fd.append('plan_id', form.id)
+        const res = await fetch('/api/advisor/admin', { method: 'PUT', body: fd })
+        const data = await res.json()
+        setChartUploading(false)
+        if (data.chart_image_url) {
+            setChartPreview(data.chart_image_url)
+            set('chart_image_url', data.chart_image_url)
+        }
+    }
 
     async function handleSave() {
         if (!form.ticker || !form.strategy_name) return alert('Cần nhập Ticker và Tên chiến lược')
@@ -46,7 +65,8 @@ function PlanForm({ initial, onSave, onCancel }: { initial: Partial<Plan>; onSav
                     <h3 className="font-bold text-slate-800">{initial.id ? `Chỉnh sửa — ${initial.ticker}` : 'Thêm Trading Plan Mới'}</h3>
                     <button onClick={onCancel}><X className="w-5 h-5 text-slate-400 hover:text-slate-600" /></button>
                 </div>
-                <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                    {/* Form fields */}
                     <div className="grid grid-cols-2 gap-4">
                         {[
                             { key: 'ticker', label: 'Mã CK *', ph: 'VNM' },
@@ -104,6 +124,39 @@ function PlanForm({ initial, onSave, onCancel }: { initial: Partial<Plan>; onSav
                                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none" />
                         </div>
                     ))}
+
+                    {/* ── Chart Image Upload ── */}
+                    <div>
+                        <label className="text-xs font-semibold text-slate-500 block mb-2 flex items-center gap-1.5">
+                            <ImageIcon className="w-3.5 h-3.5" />Ảnh phân tích kỹ thuật (Chart)
+                        </label>
+                        {chartPreview ? (
+                            <div className="relative">
+                                <img src={chartPreview} alt="Chart" className="w-full max-h-64 object-contain rounded-xl border border-slate-200 bg-slate-50" />
+                                <button
+                                    onClick={() => { setChartPreview(''); set('chart_image_url', '') }}
+                                    className="absolute top-2 right-2 bg-rose-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-rose-600"
+                                >×</button>
+                                <label className="mt-2 flex items-center gap-2 text-xs text-emerald-600 cursor-pointer hover:text-emerald-700">
+                                    <input type="file" accept="image/*" className="hidden"
+                                        onChange={e => { const f = e.target.files?.[0]; if (f) handleChartUpload(f) }} />
+                                    <Upload className="w-3.5 h-3.5" />Thay ảnh khác
+                                </label>
+                            </div>
+                        ) : (
+                            <label className={`flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl p-6 cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/30 transition-all ${!form.id ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                <input type="file" accept="image/*" className="hidden" disabled={!form.id}
+                                    onChange={e => { const f = e.target.files?.[0]; if (f) handleChartUpload(f) }} />
+                                {chartUploading ? (
+                                    <><Loader2 className="w-8 h-8 text-emerald-400 animate-spin mb-2" /><p className="text-sm text-slate-500">Đang upload...</p></>
+                                ) : (
+                                    <><Upload className="w-8 h-8 text-slate-300 mb-2" />
+                                        <p className="text-sm text-slate-500">{form.id ? 'Upload ảnh chart phân tích kỹ thuật' : 'Lưu plan trước, rồi upload chart'}</p>
+                                        <p className="text-xs text-slate-400 mt-1">JPG, PNG, WebP</p></>
+                                )}
+                            </label>
+                        )}
+                    </div>
                 </div>
                 <div className="p-6 border-t flex gap-3 justify-end">
                     <button onClick={onCancel} className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50">Huỷ</button>
@@ -136,35 +189,44 @@ export default function AdvisorAdminPage() {
         loadData()
     }, [])
 
-    async function loadData() {
+    const loadData = useCallback(async () => {
         setLoading(true)
-        const [{ data: p }, { data: pend }] = await Promise.all([
-            supabase.from('trading_plans').select('*').order('created_at', { ascending: false }),
-            supabase.from('pending_tickers').select('*').order('requested_count', { ascending: false })
+        const [plansRes, pendingRes] = await Promise.all([
+            fetch('/api/advisor/admin?type=plans'),
+            fetch('/api/advisor/admin?type=pending')
         ])
-        if (p) setPlans(p)
-        if (pend) setPending(pend)
+        const [plansData, pendingData] = await Promise.all([plansRes.json(), pendingRes.json()])
+        if (Array.isArray(plansData)) setPlans(plansData)
+        if (Array.isArray(pendingData)) setPending(pendingData)
         setLoading(false)
-    }
+    }, [])
 
     async function handleSavePlan(form: any) {
-        if (form.id) {
-            await supabase.from('trading_plans').update({ ...form, updated_at: new Date().toISOString() }).eq('id', form.id)
-        } else {
-            await supabase.from('trading_plans').insert(form)
-        }
+        const res = await fetch('/api/advisor/admin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'upsert_plan', ...form })
+        })
+        const saved = await res.json()
         setEditPlan(null)
         loadData()
+        return saved
     }
 
     async function handleDeletePlan(id: string, ticker: string) {
         if (!confirm(`Xoá Trading Plan của ${ticker}?`)) return
-        await supabase.from('trading_plans').delete().eq('id', id)
+        await fetch('/api/advisor/admin', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete_plan', id })
+        })
         loadData()
     }
 
     async function handlePendingStatus(id: string, status: string) {
-        await supabase.from('pending_tickers').update({ status, updated_at: new Date().toISOString() }).eq('id', id)
+        await fetch('/api/advisor/admin', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'update_pending_status', id, status })
+        })
         loadData()
     }
 
@@ -181,7 +243,13 @@ export default function AdvisorAdminPage() {
 
     return (
         <div className="min-h-screen bg-slate-50">
-            {editPlan !== null && <PlanForm initial={editPlan} onSave={handleSavePlan} onCancel={() => setEditPlan(null)} />}
+            {editPlan !== null && (
+                <PlanForm
+                    initial={editPlan}
+                    onSave={handleSavePlan}
+                    onCancel={() => setEditPlan(null)}
+                />
+            )}
 
             {/* Navbar */}
             <nav className="bg-emerald-800 text-white sticky top-0 z-10">
@@ -206,7 +274,7 @@ export default function AdvisorAdminPage() {
                     <button onClick={() => setTab('pending')} className={`px-5 py-2 rounded-lg text-sm font-medium transition-all relative ${tab === 'pending' ? 'bg-white shadow text-slate-800' : 'text-slate-500 hover:text-slate-700'}`}>
                         Pending Tickers
                         {pending.filter(p => p.status === 'pending').length > 0 && (
-                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
+                            <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
                                 {pending.filter(p => p.status === 'pending').length}
                             </span>
                         )}
@@ -232,7 +300,14 @@ export default function AdvisorAdminPage() {
                                             {plan.ticker}
                                         </div>
                                         <div>
-                                            <p className="font-semibold text-slate-800">{plan.ticker} — {plan.company_name || '—'}</p>
+                                            <div className="flex items-center gap-2">
+                                                <p className="font-semibold text-slate-800">{plan.ticker} — {plan.company_name || '—'}</p>
+                                                {plan.chart_image_url && (
+                                                    <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full flex items-center gap-1">
+                                                        <ImageIcon className="w-3 h-3" />Chart
+                                                    </span>
+                                                )}
+                                            </div>
                                             <p className="text-xs text-slate-500 mt-0.5">{plan.strategy_name} · {plan.timeframe}</p>
                                         </div>
                                     </div>
@@ -252,34 +327,46 @@ export default function AdvisorAdminPage() {
                         </div>
                     </div>
                 ) : (
-                    <div className="space-y-3">
-                        <p className="text-slate-600 text-sm mb-4">{pending.filter(p => p.status === 'pending').length} mã đang chờ phân tích, sắp xếp theo số lượt yêu cầu</p>
-                        {pending.map(p => (
-                            <div key={p.id} className="bg-white rounded-xl border border-slate-100 p-4 flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center text-xs font-bold text-amber-700">{p.ticker}</div>
-                                    <div>
-                                        <p className="font-semibold text-slate-800">{p.ticker}</p>
-                                        <p className="text-xs text-slate-500">{p.requested_count} khách hàng yêu cầu · {new Date(p.created_at).toLocaleDateString('vi-VN')}</p>
+                    <div>
+                        <p className="text-slate-600 text-sm mb-4">
+                            <span className="font-semibold text-rose-600">{pending.filter(p => p.status === 'pending').length}</span> mã đang chờ phân tích · tổng {pending.length} yêu cầu
+                        </p>
+                        <div className="space-y-3">
+                            {pending.map(p => (
+                                <div key={p.id} className="bg-white rounded-xl border border-slate-100 p-4 flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center text-xs font-bold text-amber-700">{p.ticker}</div>
+                                        <div>
+                                            <p className="font-semibold text-slate-800">{p.ticker}</p>
+                                            <p className="text-xs text-slate-500">
+                                                {p.requested_count} khách hàng yêu cầu · {new Date(p.created_at).toLocaleDateString('vi-VN')}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusColor[p.status]}`}>{statusLabel[p.status]}</span>
+                                        {p.status === 'pending' && (
+                                            <button onClick={() => handlePendingStatus(p.id, 'in_progress')}
+                                                className="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                                Bắt đầu phân tích
+                                            </button>
+                                        )}
+                                        {p.status === 'in_progress' && (
+                                            <button onClick={() => setEditPlan({ ticker: p.ticker })}
+                                                className="text-xs px-3 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors">
+                                                Nhập Trading Plan
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusColor[p.status]}`}>{statusLabel[p.status]}</span>
-                                    {p.status === 'pending' && (
-                                        <button onClick={() => handlePendingStatus(p.id, 'in_progress')}
-                                            className="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                                            Bắt đầu phân tích
-                                        </button>
-                                    )}
-                                    {p.status === 'in_progress' && (
-                                        <button onClick={() => setEditPlan({ ticker: p.ticker })}
-                                            className="text-xs px-3 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors">
-                                            Nhập Trading Plan
-                                        </button>
-                                    )}
+                            ))}
+                            {pending.length === 0 && (
+                                <div className="text-center py-12 text-slate-400">
+                                    <CheckCircle2 className="w-12 h-12 mx-auto mb-3 text-emerald-300" />
+                                    <p>Không có mã nào đang chờ phân tích</p>
                                 </div>
-                            </div>
-                        ))}
+                            )}
+                        </div>
                     </div>
                 )}
             </div>
