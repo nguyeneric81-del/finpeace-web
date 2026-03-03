@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import {
     Leaf, LogOut, ChevronDown, ChevronUp, Loader2, Upload,
-    Camera, Clock, CheckCircle2, X, RefreshCw
+    Camera, Clock, CheckCircle2, X, RefreshCw, KeyRound
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -131,6 +131,12 @@ export default function AdvisorDashboardPage() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const fileRef = useRef<HTMLInputElement>(null)
     const router = useRouter()
+    // ── Đổi mật khẩu ──
+    const [showChangePw, setShowChangePw] = useState(false)
+    const [pwForm, setPwForm] = useState({ current: '', newPw: '', confirm: '' })
+    const [pwLoading, setPwLoading] = useState(false)
+    const [pwError, setPwError] = useState('')
+    const [pwSuccess, setPwSuccess] = useState('')
 
     useEffect(() => {
         const stored = sessionStorage.getItem('advisor_user')
@@ -195,6 +201,31 @@ export default function AdvisorDashboardPage() {
         router.push('/advisor/login')
     }
 
+    async function handleChangePw() {
+        setPwError(''); setPwSuccess('')
+        if (!pwForm.current || !pwForm.newPw || !pwForm.confirm) {
+            setPwError('Vui lòng điền đầy đủ thông tin'); return
+        }
+        if (pwForm.newPw !== pwForm.confirm) {
+            setPwError('Mật khẩu xác nhận không khớp'); return
+        }
+        if (pwForm.newPw.length < 6) {
+            setPwError('Mật khẩu mới phải có ít nhất 6 ký tự'); return
+        }
+        setPwLoading(true)
+        const res = await fetch('/api/advisor/change-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ current_password: pwForm.current, new_password: pwForm.newPw })
+        })
+        const data = await res.json()
+        setPwLoading(false)
+        if (!res.ok) { setPwError(data.error); return }
+        setPwSuccess('Đổi mật khẩu thành công!')
+        setPwForm({ current: '', newPw: '', confirm: '' })
+        setTimeout(() => { setShowChangePw(false); setPwSuccess('') }, 1800)
+    }
+
     function handleFileSelect(f: File) {
         setSelectedFile(f)
         setImagePreview(URL.createObjectURL(f))
@@ -204,6 +235,44 @@ export default function AdvisorDashboardPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30">
+            {/* Modal đổi mật khẩu */}
+            {showChangePw && (
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                        className="bg-white rounded-2xl shadow-xl w-full max-w-sm">
+                        <div className="flex items-center justify-between p-5 border-b border-slate-100">
+                            <div className="flex items-center gap-2">
+                                <KeyRound className="w-4 h-4 text-emerald-600" />
+                                <h3 className="font-bold text-slate-800">Đổi mật khẩu</h3>
+                            </div>
+                            <button onClick={() => { setShowChangePw(false); setPwError(''); setPwSuccess('') }}>
+                                <X className="w-4 h-4 text-slate-400 hover:text-slate-600" />
+                            </button>
+                        </div>
+                        <div className="p-5 space-y-3">
+                            {[{ key: 'current', label: 'Mật khẩu hiện tại', ph: 'Mật khẩu cũ' },
+                            { key: 'newPw', label: 'Mật khẩu mới', ph: 'Ít nhất 6 ký tự' },
+                            { key: 'confirm', label: 'Xác nhận mật khẩu mới', ph: 'Nhập lại mật khẩu mới' }
+                            ].map(f => (
+                                <div key={f.key}>
+                                    <label className="text-xs font-medium text-slate-600 block mb-1">{f.label}</label>
+                                    <input type="password" value={pwForm[f.key as keyof typeof pwForm]}
+                                        onChange={e => setPwForm(p => ({ ...p, [f.key]: e.target.value }))}
+                                        placeholder={f.ph}
+                                        className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+                                </div>
+                            ))}
+                            {pwError && <p className="text-rose-500 text-sm">{pwError}</p>}
+                            {pwSuccess && <p className="text-emerald-600 text-sm font-medium">{pwSuccess}</p>}
+                            <button onClick={handleChangePw} disabled={pwLoading}
+                                className="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-medium hover:bg-emerald-700 disabled:opacity-60 flex items-center justify-center gap-2 transition-colors mt-1">
+                                {pwLoading ? <><Loader2 className="w-4 h-4 animate-spin" />Đang xử lý...</> : 'Xác Nhận Đổi Mật Khẩu'}
+                            </button>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+
             {/* Navbar */}
             <nav className="bg-white/80 backdrop-blur-sm border-b border-slate-100 sticky top-0 z-10">
                 <div className="max-w-3xl mx-auto px-4 py-3.5 flex items-center justify-between">
@@ -215,6 +284,11 @@ export default function AdvisorDashboardPage() {
                         <span className="text-sm text-slate-500 hidden md:block">
                             Xin chào, <strong className="text-slate-700">{user.full_name || user.email}</strong>
                         </span>
+                        <button onClick={() => { setShowChangePw(true); setPwError(''); setPwSuccess('') }}
+                            title="Đổi mật khẩu"
+                            className="text-slate-400 hover:text-emerald-600 transition-colors">
+                            <KeyRound className="w-4 h-4" />
+                        </button>
                         <button onClick={handleLogout} className="text-slate-400 hover:text-slate-600 transition-colors">
                             <LogOut className="w-4 h-4" />
                         </button>

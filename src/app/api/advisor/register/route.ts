@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
         // Gửi email chào mừng qua Resend (non-critical — không block nếu lỗi)
         try {
             const emailResult = await resend.emails.send({
-                from: 'FinPeace Advisor <onboarding@resend.dev>',
+                from: process.env.RESEND_FROM_EMAIL || 'FinPeace Advisor <onboarding@resend.dev>',
                 to: [email],
                 subject: '🌱 Tài khoản FinPeace Advisor của bạn đã sẵn sàng!',
                 html: `
