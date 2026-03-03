@@ -1,20 +1,14 @@
-import React from 'react';
-import AdvisorPresentation from './components/AdvisorPresentation';
+import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 
-export const metadata = {
-    title: 'Hồ Sơ Năng Lực Tài Chính - FinPeace',
-    description: 'Bản đồ Bình An Tài Chính cá nhân hóa',
-};
+export default async function AdvisorIndexPage() {
+    // Kiểm tra cookie để redirect đúng
+    const cookieStore = await cookies()
+    const token = cookieStore.get('advisor_token')
 
-export default async function AdvisorPage({
-    searchParams,
-}: {
-    searchParams: Promise<{ email?: string }>
-}) {
-    const params = await searchParams;
-    return (
-        <main className="w-full min-h-screen bg-[#F9FAFB]">
-            <AdvisorPresentation initialEmail={params.email} />
-        </main>
-    );
+    if (token) {
+        redirect('/advisor/dashboard')
+    } else {
+        redirect('/advisor/register')
+    }
 }
