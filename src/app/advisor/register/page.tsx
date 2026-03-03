@@ -65,16 +65,16 @@ export default function AdvisorRegisterPage() {
 
             // Lưu kết quả vào localStorage để dashboard đọc ngay khi login lần đầu
             // (không phụ thuộc vào việc DB save có thành công không)
-            if (uid) {
-                localStorage.setItem(
-                    `advisor_portfolio_${uid}`,
-                    JSON.stringify({
-                        extracted_tickers: analysisData.extracted_tickers || [],
-                        matched_plans: analysisData.matched_plans || [],
-                        pending_tickers: analysisData.pending_tickers || []
-                    })
-                )
-            }
+            // Lưu kết quả vào sessionStorage với key cố định
+            // (không phụ thuộc vào userId UUID để tránh mismatch)
+            sessionStorage.setItem(
+                'advisor_pre_login_portfolio',
+                JSON.stringify({
+                    extracted_tickers: analysisData.extracted_tickers || [],
+                    matched_plans: analysisData.matched_plans || [],
+                    pending_tickers: analysisData.pending_tickers || []
+                })
+            )
         } catch (e) {
             console.warn('[Register] analyze-portfolio failed:', e)
         }
