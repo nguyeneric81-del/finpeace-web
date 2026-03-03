@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
         }
 
         // ── Bước 2: Gemini Vision đọc ảnh ──
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
 
         const prompt = `Đây là ảnh chụp màn hình danh mục đầu tư chứng khoán tại thị trường Việt Nam (HOSE/HNX/UPCOM).
         
