@@ -247,6 +247,18 @@ export default function AdvisorDashboardPage() {
                                     </p>
                                 )}
                             </div>
+                        ) : result.extracted_tickers.length === 0 ? (
+                            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-8 text-center">
+                                <p className="text-2xl mb-3">📷</p>
+                                <p className="font-semibold text-amber-800 mb-1">Không đọc được mã CK từ ảnh</p>
+                                <p className="text-sm text-amber-700 mb-4">AI chưa nhận diện được mã chứng khoán trong ảnh bạn đã upload. Hãy thử lại với ảnh rõ hơn.</p>
+                                <button
+                                    onClick={() => { setResult(null); setDisplayedPlans([]) }}
+                                    className="text-sm bg-amber-600 text-white px-5 py-2 rounded-xl hover:bg-amber-700 transition-colors"
+                                >
+                                    📤 Upload ảnh mới
+                                </button>
+                            </div>
                         ) : (
                             <div className="bg-white rounded-2xl border border-slate-100 p-10 text-center">
                                 <CheckCircle2 className="w-12 h-12 text-slate-200 mx-auto mb-3" />

@@ -22,11 +22,23 @@ export async function GET(req: NextRequest) {
         .limit(1)
         .single()
 
-    if (!portfolio || !portfolio.extracted_tickers?.length) {
+    if (!portfolio) {
         return NextResponse.json({ result: null })
     }
 
-    const tickers: string[] = portfolio.extracted_tickers
+    const tickers: string[] = portfolio.extracted_tickers || []
+
+    // Nếu không extract được mã nào, vẫn trả về result (không phải null)
+    // để dashboard biết portfolio đã được upload
+    if (!tickers.length) {
+        return NextResponse.json({
+            result: {
+                extracted_tickers: [],
+                matched_plans: [],
+                pending_tickers: []
+            }
+        })
+    }
 
     // Lấy trading plans phù hợp
     const { data: plans } = await supabase
