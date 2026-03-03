@@ -13,6 +13,7 @@ type TradingPlan = {
     timeframe: string; entry_zone: string; stop_loss: string; take_profit: string;
     risk_reward: string; max_position_pct: number; indicators: string[];
     entry_criteria: string; exit_criteria: string; analyst_note: string;
+    chart_image_url?: string;
 }
 
 type AnalysisResult = {
@@ -23,6 +24,7 @@ type AnalysisResult = {
 
 function TradingPlanCard({ plan }: { plan: TradingPlan }) {
     const [open, setOpen] = useState(false)
+    const [imgExpanded, setImgExpanded] = useState(false)
     return (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <button onClick={() => setOpen(o => !o)} className="w-full flex items-center justify-between p-5 hover:bg-slate-50/50 transition-colors text-left">
@@ -36,6 +38,11 @@ function TradingPlanCard({ plan }: { plan: TradingPlan }) {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
+                    {plan.chart_image_url && (
+                        <span className="text-xs bg-blue-100 text-blue-600 px-2.5 py-1 rounded-full font-medium hidden md:flex items-center gap-1">
+                            📊 Có chart
+                        </span>
+                    )}
                     <span className="text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-medium hidden md:block">{plan.timeframe}</span>
                     {open ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
                 </div>
@@ -43,6 +50,40 @@ function TradingPlanCard({ plan }: { plan: TradingPlan }) {
 
             {open && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-t border-slate-100 p-5 space-y-4">
+
+                    {/* ── Ảnh Chart Phân Tích Kỹ Thuật ── */}
+                    {plan.chart_image_url && (
+                        <div>
+                            <p className="text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wide flex items-center gap-1.5">
+                                📊 Biểu đồ phân tích kỹ thuật
+                            </p>
+                            <div
+                                className={`relative cursor-pointer rounded-xl overflow-hidden border border-slate-200 bg-slate-900 transition-all ${imgExpanded ? 'max-h-[600px]' : 'max-h-48'}`}
+                                onClick={() => setImgExpanded(e => !e)}
+                            >
+                                <img
+                                    src={plan.chart_image_url}
+                                    alt={`Chart phân tích ${plan.ticker}`}
+                                    className="w-full object-contain"
+                                />
+                                {!imgExpanded && (
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent flex items-end justify-center pb-3">
+                                        <span className="text-white text-xs bg-slate-800/70 px-3 py-1 rounded-full backdrop-blur-sm">
+                                            🔍 Click để xem đầy đủ
+                                        </span>
+                                    </div>
+                                )}
+                                {imgExpanded && (
+                                    <div className="absolute top-2 right-2">
+                                        <span className="text-white text-xs bg-slate-800/70 px-3 py-1 rounded-full backdrop-blur-sm">
+                                            ↑ Thu gọn
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Thông số chính */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         {[
