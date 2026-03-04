@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { createClient } from '@/utils/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Target, TrendingUp, AlertCircle, CheckCircle2, Compass, ShieldAlert, ArrowRight, Wallet, Percent, PiggyBank } from 'lucide-react'
+import { Target, TrendingUp, AlertCircle, CheckCircle2, Compass, ShieldAlert, ArrowRight, Wallet, Percent, PiggyBank, Maximize2 } from 'lucide-react'
 
 // Các Type định dạng dữ liệu
 type ActionPlan = {
@@ -153,91 +154,131 @@ export function ActionPlanManager({ userId }: { userId: string }) {
                 </CardHeader>
             </Card>
 
-            {/* PHẦN 1.1: CHIẾN LƯỢC GIAO DỊCH CỔ PHIẾU (Mẫu mới) */}
+            {/* PHẦN 1.1: CHIẾN LƯỢC GIAO DỊCH CỔ PHIẾU (Premium Design) */}
             {tradingPlans.length > 0 && (
-                <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-slate-800">
-                        <TrendingUp className="w-5 h-5 text-emerald-500" />
-                        <h3 className="font-bold text-lg text-slate-800">Kế hoạch Giao dịch Cổ phiếu</h3>
-                    </div>
-                    {tradingPlans.map((plan: any) => (
-                        <Card key={plan.id} className="overflow-hidden border-emerald-100">
-                            <div className="bg-emerald-50/50 p-4 border-b border-emerald-100 flex justify-between items-center">
-                                <div className="flex items-center gap-3">
-                                    <div className="bg-emerald-500 text-white font-bold px-3 py-1 rounded-lg">
-                                        {plan.ticker}
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="font-bold text-slate-800">{plan.company_name || plan.ticker}</span>
-                                        <div className="flex gap-2">
-                                            {plan.wave_index && (
-                                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${plan.wave_index.toLowerCase().includes('trending') ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
-                                                    {plan.wave_index}
-                                                </span>
-                                            )}
-                                            {plan.is_confirmed && (
-                                                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase bg-emerald-100 text-emerald-700 flex items-center gap-0.5">
-                                                    <CheckCircle2 className="w-2.5 h-2.5" /> Confirmed
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-xs text-slate-500 uppercase font-semibold">Chiến lược</p>
-                                    <p className="text-sm font-bold text-emerald-700">{plan.strategy_name}</p>
-                                </div>
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                            <div className="p-2 bg-emerald-500/10 rounded-lg">
+                                <TrendingUp className="w-5 h-5 text-emerald-600" />
                             </div>
-                            <CardContent className="p-6">
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <div className="space-y-4 col-span-2">
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                                                <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Vùng mua</p>
-                                                <p className="text-lg font-bold text-slate-800 tracking-tight">{plan.entry_zone}</p>
-                                            </div>
-                                            <div className="bg-rose-50 p-3 rounded-xl border border-rose-100">
-                                                <p className="text-[10px] text-rose-400 font-bold uppercase mb-1">Cắt lỗ (SL)</p>
-                                                <p className="text-lg font-bold text-rose-700 tracking-tight">{plan.stop_loss}</p>
-                                            </div>
-                                            <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
-                                                <p className="text-[10px] text-emerald-400 font-bold uppercase mb-1">Chốt lời (TP)</p>
-                                                <p className="text-lg font-bold text-emerald-700 tracking-tight">{plan.take_profit}</p>
-                                            </div>
-                                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                                                <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">R:R</p>
-                                                <p className="text-lg font-bold text-slate-800 tracking-tight">{plan.risk_reward}</p>
-                                            </div>
-                                        </div>
+                            <h3 className="font-bold text-xl text-slate-900 tracking-tight">Kế hoạch Giao dịch Cổ phiếu</h3>
+                        </div>
+                    </div>
 
-                                        {plan.area_symmetry_note && (
-                                            <div className="bg-amber-50/30 p-4 rounded-xl border border-amber-100/50">
-                                                <div className="flex items-center gap-2 mb-2">
-                                                    <Compass className="w-4 h-4 text-amber-600" />
-                                                    <span className="text-xs font-bold text-amber-700 uppercase tracking-tight">Logic Tương xứng diện tích (Area Symmetry)</span>
+                    <div className="grid grid-cols-1 gap-6">
+                        {tradingPlans.map((plan: any, idx) => (
+                            <motion.div
+                                key={plan.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.1 }}
+                            >
+                                <Card className="overflow-hidden border-emerald-100 shadow-xl shadow-emerald-900/5 hover:shadow-emerald-900/10 transition-all duration-300">
+                                    <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-5 flex justify-between items-center text-white">
+                                        <div className="flex items-center gap-4">
+                                            <div className="bg-white/20 backdrop-blur-md text-white font-black text-xl px-4 py-1.5 rounded-xl border border-white/30 shadow-inner">
+                                                {plan.ticker}
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-lg leading-tight">{plan.company_name || plan.ticker}</span>
+                                                <div className="flex gap-2 mt-1">
+                                                    {plan.wave_index && (
+                                                        <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider backdrop-blur-md border ${plan.wave_index.toLowerCase().includes('trending')
+                                                            ? 'bg-amber-400/20 border-amber-400 text-amber-100'
+                                                            : 'bg-white/10 border-white/20 text-white/80'
+                                                            }`}>
+                                                            {plan.wave_index}
+                                                        </span>
+                                                    )}
                                                 </div>
-                                                <p className="text-sm text-slate-700 italic">{plan.area_symmetry_note}</p>
                                             </div>
-                                        )}
-                                    </div>
-
-                                    {plan.chart_image_url && (
-                                        <div className="space-y-2">
-                                            <p className="text-[10px] text-slate-400 font-bold uppercase">Đồ thị phân tích</p>
-                                            <img src={plan.chart_image_url} alt={`Analysis for ${plan.ticker}`} className="w-full rounded-xl border border-slate-100 shadow-sm transition-transform hover:scale-[1.02] cursor-zoom-in" />
                                         </div>
-                                    )}
-                                </div>
-
-                                {plan.analyst_note && (
-                                    <div className="mt-6 pt-6 border-t border-slate-100">
-                                        <p className="text-[10px] text-slate-400 font-bold uppercase mb-2">Luận điểm của Advisor</p>
-                                        <p className="text-sm text-slate-600 leading-relaxed">{plan.analyst_note}</p>
+                                        <div className="text-right hidden sm:block">
+                                            <p className="text-[10px] text-white/60 uppercase font-black tracking-widest mb-0.5">Chiến lược</p>
+                                            <p className="text-sm font-bold bg-white/15 px-3 py-1 rounded-lg border border-white/10">{plan.strategy_name}</p>
+                                        </div>
                                     </div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    ))}
+
+                                    <CardContent className="p-0">
+                                        <div className="grid grid-cols-1 lg:grid-cols-5 h-full">
+                                            {/* Left: Key Metrics (2 cols) */}
+                                            <div className="lg:col-span-2 p-6 bg-slate-50/50 border-r border-slate-100 space-y-6">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="group relative">
+                                                        <p className="text-[10px] text-slate-400 font-black uppercase mb-1.5 tracking-tighter">Vùng mua</p>
+                                                        <p className="text-xl font-black text-slate-800 tracking-tight">{plan.entry_zone}</p>
+                                                        <div className="absolute -bottom-1 left-0 w-8 h-0.5 bg-emerald-500 rounded-full"></div>
+                                                    </div>
+                                                    <div className="group relative">
+                                                        <p className="text-[10px] text-rose-400 font-black uppercase mb-1.5 tracking-tighter">Cắt lỗ (SL)</p>
+                                                        <p className="text-xl font-black text-rose-700 tracking-tight">{plan.stop_loss}</p>
+                                                        <div className="absolute -bottom-1 left-0 w-8 h-0.5 bg-rose-500 rounded-full"></div>
+                                                    </div>
+                                                    <div className="group relative">
+                                                        <p className="text-[10px] text-emerald-400 font-black uppercase mb-1.5 tracking-tighter">Chốt lời (TP)</p>
+                                                        <p className="text-xl font-black text-emerald-700 tracking-tight">{plan.take_profit}</p>
+                                                        <div className="absolute -bottom-1 left-0 w-8 h-0.5 bg-emerald-500 rounded-full"></div>
+                                                    </div>
+                                                    <div className="group relative">
+                                                        <p className="text-[10px] text-slate-400 font-black uppercase mb-1.5 tracking-tighter">Tỉ lệ R:R</p>
+                                                        <p className="text-xl font-black text-slate-800 tracking-tight">{plan.risk_reward}</p>
+                                                        <div className="absolute -bottom-1 left-0 w-8 h-0.5 bg-slate-800 rounded-full"></div>
+                                                    </div>
+                                                </div>
+
+                                                {plan.area_symmetry_note && (
+                                                    <div className="bg-amber-50 rounded-2xl p-4 border border-amber-100 relative overflow-hidden group">
+                                                        <div className="absolute top-0 right-0 p-1 opacity-10 group-hover:rotate-12 transition-transform duration-500">
+                                                            <Compass className="w-12 h-12 text-amber-900" />
+                                                        </div>
+                                                        <div className="flex items-center gap-2 mb-2 relative z-10">
+                                                            <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></div>
+                                                            <span className="text-[10px] font-black text-amber-800 uppercase tracking-widest">Logic Area Symmetry</span>
+                                                        </div>
+                                                        <p className="text-sm text-amber-900 leading-relaxed font-medium relative z-10">{plan.area_symmetry_note}</p>
+                                                    </div>
+                                                )}
+
+                                                {plan.analyst_note && (
+                                                    <div className="space-y-2">
+                                                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Luận điểm của Advisor</p>
+                                                        <p className="text-sm text-slate-600 leading-relaxed italic border-l-4 border-slate-200 pl-4">{plan.analyst_note}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Right: Chart Image (3 cols) */}
+                                            <div className="lg:col-span-3 p-6 flex flex-col justify-center">
+                                                {plan.chart_image_url ? (
+                                                    <div className="space-y-3">
+                                                        <div className="flex justify-between items-center">
+                                                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Đồ thị phân tích kỹ thuật</p>
+                                                            <span className="text-[10px] text-emerald-500 font-bold flex items-center gap-1">
+                                                                <Maximize2 className="w-3 h-3" /> Nhấn để xem chi tiết
+                                                            </span>
+                                                        </div>
+                                                        <div className="rounded-2xl overflow-hidden shadow-2xl shadow-emerald-900/10 border border-slate-100 group cursor-zoom-in relative">
+                                                            <img
+                                                                src={plan.chart_image_url}
+                                                                alt={`Analysis for ${plan.ticker}`}
+                                                                className="w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                            />
+                                                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="h-full min-h-[200px] flex items-center justify-center border-2 border-dashed border-slate-100 rounded-2xl bg-slate-50">
+                                                        <p className="text-slate-400 text-sm italic">Đang cập nhật đồ thị...</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </motion.div>
+                        ))}
+                    </div>
                 </div>
             )}
 

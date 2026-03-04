@@ -75,71 +75,68 @@ function PlanForm({ initial, onSave, onCancel }: { initial: Partial<Plan>; onSav
                 </div>
                 <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
                     {/* Form fields */}
-                    <div className="grid grid-cols-2 gap-4">
-                        {[
-                            { key: 'ticker', label: 'Mã CK *', ph: 'VNM' },
-                            { key: 'company_name', label: 'Tên công ty', ph: 'Vinamilk' },
-                            { key: 'strategy_name', label: 'Tên chiến lược *', ph: 'Mua tích lũy vùng đáy' },
-                            { key: 'timeframe', label: 'Khung thời gian', ph: 'Trung hạn (4-8 tuần)' },
-                            { key: 'entry_zone', label: 'Vùng mua', ph: '55,000 - 57,000' },
-                            { key: 'stop_loss', label: 'Cắt lỗ', ph: '52,500 (-7%)' },
-                            { key: 'take_profit', label: 'Chốt lời', ph: '65,000 (+15%)' },
-                            { key: 'risk_reward', label: 'R:R', ph: '1:2.1' },
-                            { key: 'wave_index', label: 'Hệ thống sóng (VD: Trending 3)', ph: 'Sideway 4' },
-                            { key: 'area_symmetry_note', label: 'Tương xứng diện tích', ph: 'Cần tích lũy thêm' },
-                        ].map(f => (
-                            <div key={f.key}>
-                                <label className="text-xs font-semibold text-slate-500 block mb-1">{f.label}</label>
-                                <input value={form[f.key] || ''} onChange={e => set(f.key, e.target.value)}
-                                    placeholder={f.ph}
-                                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <div>
-                            <label className="text-xs font-semibold text-slate-500 block mb-1">% Tối đa danh mục</label>
-                            <input type="number" min="1" max="100" value={form.max_position_pct}
-                                onChange={e => set('max_position_pct', Number(e.target.value))}
-                                className="border border-slate-200 rounded-lg px-3 py-2 text-sm w-32 focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+                    {/* Group 1: Thông tin cơ bản & Kỹ thuật */}
+                    <div className="space-y-4">
+                        <p className="text-[10px] font-black uppercase text-emerald-600 tracking-widest border-b border-emerald-50 pb-1">Phân tích Kỹ thuật</p>
+                        <div className="grid grid-cols-2 gap-4">
+                            {[
+                                { key: 'ticker', label: 'Mã CK *', ph: 'VNM' },
+                                { key: 'company_name', label: 'Tên công ty', ph: 'Vinamilk' },
+                                { key: 'wave_index', label: 'Hệ thống sóng (VD: Trending 3)', ph: 'Sideway 4' },
+                                { key: 'area_symmetry_note', label: 'Tương xứng diện tích', ph: 'Cần tích lũy thêm' },
+                            ].map(f => (
+                                <div key={f.key}>
+                                    <label className="text-[10px] font-bold text-slate-400 block mb-1 uppercase tracking-tight">{f.label}</label>
+                                    <input value={form[f.key] || ''} onChange={e => set(f.key, e.target.value)}
+                                        placeholder={f.ph}
+                                        className="w-full border border-slate-100 bg-slate-50/50 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all" />
+                                </div>
+                            ))}
                         </div>
-                        <div className="flex items-center gap-2 mt-4">
+                        <div className="flex items-center gap-4 bg-emerald-50/30 p-3 rounded-xl border border-emerald-100/50">
                             <input type="checkbox" id="is_confirmed" checked={form.is_confirmed || false}
                                 onChange={e => set('is_confirmed', e.target.checked)}
-                                className="w-4 h-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded" />
-                            <label htmlFor="is_confirmed" className="text-sm font-medium text-slate-700">Xác nhận thoát Sideway</label>
+                                className="w-4 h-4 text-emerald-600 focus:ring-emerald-500 border-emerald-300 rounded" />
+                            <label htmlFor="is_confirmed" className="text-sm font-bold text-emerald-900">Xác nhận thoát Sideway (Publish Plan)</label>
                         </div>
                     </div>
 
-                    <div>
-                        <label className="text-xs font-semibold text-slate-500 block mb-1">Chỉ báo kỹ thuật</label>
-                        <div className="flex gap-2 mb-2">
-                            <input value={indicatorInput} onChange={e => setIndicatorInput(e.target.value)}
-                                onKeyDown={e => { if (e.key === 'Enter' && indicatorInput.trim()) { set('indicators', [...(form.indicators || []), indicatorInput.trim()]); setIndicatorInput('') } }}
-                                placeholder="VD: MA20 (Enter để thêm)"
-                                className="flex-1 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                            {(form.indicators || []).map((ind: string, i: number) => (
-                                <span key={i} className="bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full flex items-center gap-1">
-                                    {ind}
-                                    <button onClick={() => set('indicators', form.indicators.filter((_: string, j: number) => j !== i))} className="text-slate-400 hover:text-rose-500">×</button>
-                                </span>
+                    {/* Group 2: Chiến lược giao dịch */}
+                    <div className="space-y-4">
+                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest border-b border-slate-50 pb-1">Chiến lược & Quản trị rủi ro</p>
+                        <div className="grid grid-cols-2 gap-4">
+                            {[
+                                { key: 'strategy_name', label: 'Tên chiến lược *', ph: 'Mua tích lũy vùng đáy' },
+                                { key: 'timeframe', label: 'Khung thời gian', ph: '4-8 tuần' },
+                                { key: 'entry_zone', label: 'Vùng mua', ph: '55.000 - 57.000' },
+                                { key: 'stop_loss', label: 'Cắt lỗ', ph: '52.500' },
+                                { key: 'take_profit', label: 'Chốt lời', ph: '65.000' },
+                                { key: 'risk_reward', label: 'R:R', ph: '1:2.5' },
+                            ].map(f => (
+                                <div key={f.key}>
+                                    <label className="text-[10px] font-bold text-slate-400 block mb-1 uppercase tracking-tight">{f.label}</label>
+                                    <input value={form[f.key] || ''} onChange={e => set(f.key, e.target.value)}
+                                        placeholder={f.ph}
+                                        className="w-full border border-slate-100 bg-slate-50/50 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all" />
+                                </div>
                             ))}
+                        </div>
+                        <div>
+                            <label className="text-[10px] font-bold text-slate-400 block mb-1 uppercase tracking-tight">% Tối đa danh mục</label>
+                            <input type="number" min="1" max="100" value={form.max_position_pct}
+                                onChange={e => set('max_position_pct', Number(e.target.value))}
+                                className="border border-slate-100 bg-slate-50/50 rounded-xl px-3 py-2 text-sm w-32 focus:outline-none focus:ring-2 focus:ring-emerald-400" />
                         </div>
                     </div>
 
                     {[
-                        { key: 'entry_criteria', label: 'Điều kiện vào lệnh', ph: 'RSI < 35, MACD giao cắt dương...' },
-                        { key: 'exit_criteria', label: 'Điều kiện thoát lệnh', ph: 'RSI > 70 hoặc giá đạt TP...' },
-                        { key: 'analyst_note', label: 'Nhận xét phân tích', ph: 'Thêm thông tin cơ bản, macro...' },
+                        { key: 'analyst_note', label: 'Nhận xét phân tích', ph: 'Luận điểm macro, FA...' },
                     ].map(f => (
                         <div key={f.key}>
-                            <label className="text-xs font-semibold text-slate-500 block mb-1">{f.label}</label>
-                            <textarea rows={3} value={form[f.key] || ''} onChange={e => set(f.key, e.target.value)}
+                            <label className="text-[10px] font-bold text-slate-400 block mb-1 uppercase tracking-tight">{f.label}</label>
+                            <textarea rows={2} value={form[f.key] || ''} onChange={e => set(f.key, e.target.value)}
                                 placeholder={f.ph}
-                                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none" />
+                                className="w-full border border-slate-100 bg-slate-50/50 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 resize-none transition-all" />
                         </div>
                     ))}
 

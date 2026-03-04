@@ -50,39 +50,36 @@ export async function POST(req: NextRequest) {
                 }
             }
 
+            // Xác định status dựa trên is_confirmed
+            const planStatus = cleanPayload.is_confirmed ? 'active' : 'draft'
+            const finalPayload: any = { ...cleanPayload, status: planStatus }
+
+            // Logic ghi đè (Ticker-based overwrite):
+            // Chỉ archive bản cũ nếu bản mới này được publish (active)
+            if (finalPayload.ticker && (!payload.id) && planStatus === 'active') {
+                await supabase
+                    .from('trading_plans')
+                    .update({ status: 'archived' })
+                    .eq('ticker', finalPayload.ticker)
+                    .eq('status', 'active')
+            }
+
             if (payload.id) {
                 const { data, error } = await supabase
                     .from('trading_plans')
-                    .update({ ...cleanPayload, updated_at: new Date().toISOString() })
+                    .update(finalPayload)
                     .eq('id', payload.id)
                     .select().single()
                 if (error) return NextResponse.json({ error: error.message }, { status: 500 })
                 return NextResponse.json(data)
-            } else if (cleanPayload.ticker) {
-                const { data: existing } = await supabase
+            } else {
+                const { data, error } = await supabase
                     .from('trading_plans')
-                    .select('id')
-                    .eq('ticker', cleanPayload.ticker)
-                    .eq('status', 'active')
-                    .limit(1)
-
-                if (existing && existing.length > 0) {
-                    const { data, error } = await supabase
-                        .from('trading_plans')
-                        .update({ ...cleanPayload, updated_at: new Date().toISOString() })
-                        .eq('id', existing[0].id)
-                        .select().single()
-                    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-                    return NextResponse.json(data)
-                }
+                    .insert(finalPayload)
+                    .select().single()
+                if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+                return NextResponse.json(data)
             }
-
-            const { data, error } = await supabase
-                .from('trading_plans')
-                .insert({ ...cleanPayload, status: cleanPayload.status || 'active' })
-                .select().single()
-            if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-            return NextResponse.json(data)
         }
 
         if (action === 'delete_plan') {
