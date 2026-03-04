@@ -8,63 +8,79 @@ export interface PortfolioOptimizationResult {
     error?: string;
 }
 
-/**
- * Calculates the Minimum Variance Portfolio for a given set of tickers.
- * Note: In a real-world scenario, you would fetch real historical price data
- * for these tickers and calculate the empirical covariance matrix.
- * For this MVP, we are generating a simulated covariance matrix based on the tickers.
- * 
- * @param tickers Array of stock tickers (e.g., ['FPT', 'TCB', 'HPG'])
- * @returns Optimal weights for each ticker
- */
-export async function calculateMinimumVariancePortfolio(tickers: string[]): Promise<PortfolioOptimizationResult> {
-    if (!tickers || tickers.length < 2) {
-        return { tickers, weights: tickers.map(() => 1 / (tickers.length || 1)), error: 'Need at least 2 tickers for optimization.' };
+export interface TickerData {
+    ticker: string;
+    price_series?: number[];
+}
+
+export interface PortfolioOptimizationResult {
+    tickers: string[];
+    weights: number[];
+    error?: string;
+}
+
+export async function calculateMinimumVariancePortfolio(assets: TickerData[]): Promise<PortfolioOptimizationResult> {
+    const tickers = assets.map(a => a.ticker);
+    const n = tickers.length;
+
+    if (!assets || n < 2) {
+        return { tickers, weights: tickers.map(() => 1 / (n || 1)), error: 'Need at least 2 tickers for optimization.' };
     }
 
-    // 1. Generate a simulated positive semi-definite covariance matrix
-    // In production, replace this with actual historical return covariance calculation!
-    const n = tickers.length;
-    const covarianceMatrix: number[][] = Array(n).fill(0).map(() => Array(n).fill(0));
+    // Prepare returns data
+    const assetsReturns: number[][] = [];
+    const minLen = Math.min(...assets.map(a => Array.isArray(a.price_series) ? a.price_series.length : 0));
 
-    // Create a symmetric diagonally dominant matrix (which is positive definite)
+    // Fallback if price_series is missing or too short
+    if (minLen < 5) {
+        console.warn('Missing or too short price_series data. Falling back to simple even weights.');
+        return { tickers, weights: tickers.map(() => 1 / n), error: 'Insufficient price data.' };
+    }
+
+    // Calculate logarithmic returns: r_t = ln(P_t / P_{t-1})
     for (let i = 0; i < n; i++) {
-        for (let j = 0; j < n; j++) {
-            const hashI = tickers[i].split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-            const hashJ = tickers[j].split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-
-            if (i === j) {
-                // Variance (diagonal) - assign random but consistent variance
-                // To ensure positive definiteness, value must be reasonably high compared to covariances
-                covarianceMatrix[i][j] = 0.050 + (hashI % 10) * 0.010;
-            } else {
-                // Covariance (off-diagonal) - Must be symmetric
-                const cov = 0.001 + ((hashI + hashJ) % 5) * 0.002;
-                covarianceMatrix[i][j] = cov;
-                covarianceMatrix[j][i] = cov; // Ensure symmetry
-            }
+        const prices = assets[i].price_series!.slice(0, minLen);
+        const returns: number[] = [];
+        for (let t = 1; t < minLen; t++) {
+            const pt1 = Math.max(prices[t - 1], 0.0001); // Avoid div by zero or log negative
+            const pt = Math.max(prices[t], 0.0001);
+            returns.push(Math.log(pt / pt1));
         }
+        assetsReturns.push(returns);
     }
 
     try {
-        const response = await fetch('https://api.portfoliooptimizer.io/v1/portfolio/optimization/minimum-variance', {
+        // Step 1: Calculate Empirical Covariance Matrix
+        const covResponse = await fetch('https://api.portfoliooptimizer.io/v1/assets/covariance/matrix/estimation/empirical', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ assets, assetsReturns }),
+        });
+
+        if (!covResponse.ok) {
+            console.error('Portfolio Optimizer Covariance Error:', await covResponse.text());
+            return { tickers, weights: tickers.map(() => 1 / n), error: `Covariance API Error: ${covResponse.statusText}` };
+        }
+
+        const covData = await covResponse.json();
+        const covarianceMatrix = covData.assetsCovarianceMatrix;
+
+        // Step 2: Calculate Minimum Variance Portfolio
+        const minVarResponse = await fetch('https://api.portfoliooptimizer.io/v1/portfolio/optimization/minimum-variance', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 assets: n,
                 assetsCovarianceMatrix: covarianceMatrix,
             }),
         });
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Portfolio Optimizer API Error:', errorText);
-            return { tickers, weights: tickers.map(() => 1 / n), error: `API Error: ${response.statusText}` };
+        if (!minVarResponse.ok) {
+            console.error('Portfolio Optimizer MinVar Error:', await minVarResponse.text());
+            return { tickers, weights: tickers.map(() => 1 / n), error: `MinVar API Error: ${minVarResponse.statusText}` };
         }
 
-        const data = await response.json();
+        const data = await minVarResponse.json();
 
         if (data && data.assetsWeights) {
             return {
@@ -73,7 +89,7 @@ export async function calculateMinimumVariancePortfolio(tickers: string[]): Prom
             };
         }
 
-        return { tickers, weights: tickers.map(() => 1 / n), error: 'Invalid response format from API' };
+        return { tickers, weights: tickers.map(() => 1 / n), error: 'Invalid response format from optimization API' };
 
     } catch (error) {
         console.error('Error calling Portfolio Optimizer:', error);

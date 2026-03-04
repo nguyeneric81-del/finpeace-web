@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import Groq from 'groq-sdk'
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
+
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 // GET: lấy danh sách
 export async function GET(req: NextRequest) {
@@ -52,7 +55,7 @@ export async function POST(req: NextRequest) {
                 'entry_zone', 'stop_loss', 'take_profit', 'risk_reward',
                 'max_position_pct', 'indicators', 'entry_criteria', 'exit_criteria',
                 'analyst_note', 'status', 'chart_image_url',
-                'wave_index', 'area_symmetry_note', 'is_confirmed'
+                'wave_index', 'area_symmetry_note', 'is_confirmed', 'price_series'
             ]
             for (const key of ALLOWED_FIELDS) {
                 if (payload[key] !== undefined && payload[key] !== null && payload[key] !== '') {
@@ -148,15 +151,54 @@ export async function PUT(req: NextRequest) {
 
     if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 })
 
-    // Giả lập AI sinh dữ liệu dự thảo (Draft) từ ảnh chart
-    const draft_plan = {
-        strategy_name: 'Dự thảo theo cấu trúc đồ thị',
-        entry_zone: 'Vùng hỗ trợ hiện tại',
-        stop_loss: 'Đáy gần nhất',
-        take_profit: 'Đỉnh cũ tương xứng',
-        wave_index: 'Đang xác định...',
-        area_symmetry_note: 'Cần tích lũy thêm về thời gian',
-        analyst_note: 'AI gợi ý: Giá đang retest vùng hỗ trợ mạnh trên chart.'
+    let draft_plan = {}
+    try {
+        const arrayBuffer = await file.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+        const base64Image = buffer.toString('base64')
+
+        const completion = await groq.chat.completions.create({
+            model: "llama-3.2-90b-vision-preview",
+            messages: [
+                {
+                    role: 'user',
+                    content: [
+                        {
+                            type: 'text',
+                            text: `Bạn là trợ lý phân tích đồ thị chứng khoán chuyên nghiệp. Hãy đọc đồ thị này và trả về 1 JSON hợp lệ với cấu trúc sau:
+{
+  "strategy_name": "Tên chiến lược ngắn gọn (VD: Vượt cản, Tích lũy đáy)",
+  "entry_zone": "Mức giá điểm vào (khoảng giá)",
+  "stop_loss": "Mức giá cắt lỗ",
+  "take_profit": "Mức giá chốt lời",
+  "wave_index": "Tình trạng sóng (VD: Trending 3, Sideway 4)",
+  "area_symmetry_note": "Ghi chú tương xứng diện tích/thời gian",
+  "analyst_note": "Vài dòng phân tích lý do chọn điểm vào này.",
+  "price_series": [mảng CHÍNH XÁC 20 số]
+}
+QUAN TRỌNG VỀ 'price_series': Hãy dùng mắt ước lượng hình dạng đường giá (đóng cửa/thân nến) từ trái qua phải trên toàn bộ đồ thị, chia đều thành 20 điểm thời gian. Mỗi điểm là 1 con số tương đối phản ánh ĐỘ CAO của giá so với trục tung bên phải. Ví dụ: [60, 62, 59, 65, ...]. Đảm bảo có đúng 20 phần tử số. TRẢ VỀ DUY NHẤT CHUỖI JSON.`
+                        },
+                        {
+                            type: 'image_url',
+                            image_url: { url: `data:${file.type};base64,${base64Image}` }
+                        }
+                    ]
+                }
+            ],
+            temperature: 0.1,
+            max_tokens: 1500,
+        })
+
+        let aiText = completion.choices[0]?.message?.content || ''
+        aiText = aiText.replace(/```json/g, '').replace(/```/g, '').trim()
+        draft_plan = JSON.parse(aiText)
+    } catch (err) {
+        console.error('[Admin Groq Vision Error]:', err)
+        // Fallback
+        draft_plan = {
+            strategy_name: 'Dự thảo tự động',
+            analyst_note: 'AI cập nhật lỗi, vui lòng điền thủ công.'
+        }
     }
 
     return NextResponse.json({ success: true, chart_image_url: chartUrl, draft_plan })

@@ -140,8 +140,8 @@ export async function POST(req: NextRequest) {
         }
 
         let optimalAllocation = null;
-        if (matchedTickers.length >= 2) {
-            const optResult = await calculateMinimumVariancePortfolio(matchedTickers);
+        if (matchedPlans.length >= 2) {
+            const optResult = await calculateMinimumVariancePortfolio(matchedPlans);
             if (!optResult.error) {
                 optimalAllocation = optResult;
             }

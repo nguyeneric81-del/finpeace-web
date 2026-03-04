@@ -15,6 +15,7 @@ type Plan = {
     entry_criteria: string; exit_criteria: string; analyst_note: string;
     status: string; chart_image_url?: string;
     wave_index?: string; area_symmetry_note?: string; is_confirmed?: boolean;
+    price_series?: number[];
 }
 type Pending = { id: string; ticker: string; requested_count: number; status: string; created_at: string }
 
@@ -23,7 +24,8 @@ const EMPTY_PLAN: Omit<Plan, 'id' | 'status'> = {
     entry_zone: '', stop_loss: '', take_profit: '', risk_reward: '',
     max_position_pct: 10, indicators: [], entry_criteria: '', exit_criteria: '',
     analyst_note: '', chart_image_url: '',
-    wave_index: '', area_symmetry_note: '', is_confirmed: false
+    wave_index: '', area_symmetry_note: '', is_confirmed: false,
+    price_series: []
 }
 
 function PlanForm({ initial, onSave, onCancel }: { initial: Partial<Plan>; onSave: (p: any) => void; onCancel: () => void }) {
