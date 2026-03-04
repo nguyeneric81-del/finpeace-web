@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import {
     Leaf, LogOut, ChevronDown, ChevronUp, Loader2, Upload,
-    Camera, Clock, CheckCircle2, X, RefreshCw, KeyRound
+    Camera, Clock, CheckCircle2, X, RefreshCw, KeyRound, AlertTriangle, TrendingUp
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -25,6 +25,13 @@ type AnalysisResult = {
         sectors: string[];
         risk_level: string;
         advice: string;
+        risk_alerts?: string[];
+        profit_opportunities?: string[];
+        balance_assessment?: {
+            trending_count: number;
+            sideway_count: number;
+            note: string;
+        };
     };
 }
 
@@ -134,7 +141,7 @@ function PortfolioAssessment({ assessment }: { assessment: NonNullable<AnalysisR
             {/* Background pattern */}
             <div className="absolute -right-12 -top-12 w-48 h-48 bg-emerald-800/20 rounded-full blur-3xl" />
 
-            <div className="relative z-10 space-y-5">
+            <div className="relative z-10 space-y-6">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="p-2 bg-emerald-800 rounded-lg">
@@ -153,8 +160,26 @@ function PortfolioAssessment({ assessment }: { assessment: NonNullable<AnalysisR
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2.5">
+                {/* Risk & Profit Alerts */}
+                {((assessment.risk_alerts?.length || 0) > 0 || (assessment.profit_opportunities?.length || 0) > 0) && (
+                    <div className="grid grid-cols-1 gap-3">
+                        {assessment.risk_alerts?.map((alert, i) => (
+                            <div key={`risk-${i}`} className="bg-rose-500/20 border border-rose-500/30 rounded-xl p-3 flex gap-3 items-start">
+                                <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                                <p className="text-xs text-rose-100 leading-relaxed">{alert}</p>
+                            </div>
+                        ))}
+                        {assessment.profit_opportunities?.map((opp, i) => (
+                            <div key={`profit-${i}`} className="bg-blue-500/20 border border-blue-500/30 rounded-xl p-3 flex gap-3 items-start">
+                                <TrendingUp className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                                <p className="text-xs text-blue-100 leading-relaxed">{opp}</p>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
                         <p className="text-[10px] font-bold text-emerald-400/70 uppercase tracking-widest pl-1">Cơ cấu nhóm ngành</p>
                         <div className="flex flex-wrap gap-2">
                             {assessment.sectors.map((s, i) => (
@@ -164,16 +189,20 @@ function PortfolioAssessment({ assessment }: { assessment: NonNullable<AnalysisR
                             ))}
                         </div>
                     </div>
-                    <div className="space-y-2.5">
-                        <p className="text-[10px] font-bold text-emerald-400/70 uppercase tracking-widest pl-1">Mức độ rủi ro</p>
-                        <div className="flex items-center gap-2">
-                            <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border ${assessment.risk_level.toLowerCase().includes('cao') ? 'bg-rose-500/20 text-rose-300 border-rose-500/30' :
-                                    assessment.risk_level.toLowerCase().includes('thấp') ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' :
-                                        'bg-amber-500/20 text-amber-300 border-emerald-500/30'
-                                }`}>
-                                {assessment.risk_level}
+                    <div className="space-y-3">
+                        <p className="text-[10px] font-bold text-emerald-400/70 uppercase tracking-widest pl-1">Cân bằng Trending & Sideway</p>
+                        <div className="flex items-center gap-3">
+                            <div className="flex-1 h-2 bg-emerald-950 rounded-full overflow-hidden flex">
+                                <div
+                                    className="h-full bg-emerald-400 transition-all duration-1000"
+                                    style={{ width: `${(assessment.balance_assessment?.trending_count || 0) / ((assessment.balance_assessment?.trending_count || 0) + (assessment.balance_assessment?.sideway_count || 0) || 1) * 100}%` }}
+                                />
                             </div>
+                            <span className="text-[10px] font-bold text-emerald-100 uppercase">
+                                {assessment.balance_assessment?.trending_count}T / {assessment.balance_assessment?.sideway_count}S
+                            </span>
                         </div>
+                        <p className="text-[10px] text-emerald-300 leading-relaxed italic">{assessment.balance_assessment?.note}</p>
                     </div>
                 </div>
 

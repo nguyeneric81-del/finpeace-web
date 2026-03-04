@@ -48,9 +48,7 @@ export async function POST(req: NextRequest) {
         }
 
         // ── Bước 2: Groq Llama Vision đọc ảnh ──
-        // QUAN TRỌNG: Tách riêng try-catch để nếu AI lỗi,
-        // vẫn tiếp tục lưu portfolio record vào DB (bước 5)
-        let extractedTickers: string[] = []
+        let extractedData: any = { tickers: [], assessment: null, items: [] }
         let allocationAssessment: any = null
         try {
             const completion = await groq.chat.completions.create({
@@ -61,7 +59,7 @@ export async function POST(req: NextRequest) {
                         content: [
                             {
                                 type: 'text',
-                                text: `Đây là ảnh chụp màn hình danh mục đầu tư chứng khoán tại thị trường Việt Nam (HOSE/HNX/UPCOM).\n\nNhiệm vụ:\n1. Liệt kê tất cả các mã chứng khoán (ticker/stock symbol) xuất hiện trong ảnh.\n2. Phân tích cơ cấu danh mục dựa trên các mã này (nhóm ngành, rủi ro, đa dạng hóa).\n\nYêu cầu trả về định dạng JSON duy nhất như sau:\n{\n  "tickers": ["VNM", "VIC", "ACB"],\n  "assessment": {\n    "summary": "Mô tả ngắn gọn về phong cách danh mục (vd: Tập trung nhóm Bank, Rủi ro cao...)",\n    "sectors": ["Ngân hàng (40%)", "Bất động sản (30%)", "Khác (30%)"],\n    "risk_level": "Trung bình / Cao / Thấp",\n    "advice": "Lời khuyên ngắn gọn theo phong cách coaching của FinPeace (vd: Nên đa dạng hóa thêm nhóm ngành phòng vệ...)"\n  }\n}\n\n- Chỉ trả về JSON, không thêm text giải thích.`
+                                text: `Đây là ảnh chụp màn hình danh mục đầu tư chứng khoán tại thị trường Việt Nam.\n\nNhiệm vụ:\n1. Liệt kê tất cả các mã chứng khoán (tickers).\n2. Trích xuất "Giá vốn" (Avg Cost) và "Giá hiện tại" (Current Price) cho từng mã nếu có.\n3. Phân tích cơ cấu danh mục.\n\nYêu cầu trả về định dạng JSON duy nhất:\n{\n  "items": [\n    {"ticker": "VNM", "avg_cost": 72.5, "current_price": 71.2},\n    {"ticker": "HPG", "avg_cost": 28.1, "current_price": 30.5}\n  ],\n  "assessment": {\n    "summary": "Mô tả phong cách danh mục...",\n    "sectors": ["Ngân hàng (40%)", "..."],\n    "risk_level": "Trung bình / Cao / Thấp",\n    "advice": "Lời khuyên chiến lược..."\n  }\n}\n\n- Chỉ trả về JSON, không thêm text giải thích.`
                             },
                             {
                                 type: 'image_url',
@@ -77,35 +75,79 @@ export async function POST(req: NextRequest) {
             })
 
             const rawText = completion.choices[0]?.message?.content?.trim() || ''
-            console.log('[Groq] Raw response:', rawText)
-
             try {
                 const jsonMatch = rawText.match(/\{[\s\S]*\}/)
                 if (jsonMatch) {
-                    const parsed = JSON.parse(jsonMatch[0])
-                    extractedTickers = (parsed.tickers || []).map((t: string) => t.toUpperCase().trim())
-                    allocationAssessment = parsed.assessment || null
+                    extractedData = JSON.parse(jsonMatch[0])
                 }
             } catch {
-                console.warn('[Groq] JSON parse failed, raw:', rawText)
+                console.warn('[Groq] JSON parse failed')
             }
-
-            console.log('[Groq] Extracted tickers:', extractedTickers)
         } catch (aiErr) {
-            // AI lỗi (timeout, quota exceeded, model error...) → không throw,
-            // tiếp tục với tickers rỗng để vẫn lưu được portfolio record
-            console.error('[Groq] AI extraction failed (non-critical):', aiErr)
+            console.error('[Groq] AI failed:', aiErr)
         }
 
-        // ── Bước 3: Match với Trading Plans ──
+        const extractedTickers = (extractedData.items || []).map((i: any) => i.ticker.toUpperCase())
+        allocationAssessment = extractedData.assessment || { summary: 'Chưa có đánh giá', sectors: [], risk_level: 'N/A', advice: '' }
+
+        // ── Bước 3: Match với Trading Plans & Logic Nâng cao ──
         const { data: plans } = await supabase
             .from('trading_plans')
             .select('*')
             .in('ticker', extractedTickers.length > 0 ? extractedTickers : ['__none__'])
             .eq('status', 'active')
 
-        const matchedTickers = (plans || []).map((p: any) => p.ticker)
-        const pendingTickers = extractedTickers.filter(t => !matchedTickers.includes(t))
+        const matchedPlans = plans || []
+        const matchedTickers = matchedPlans.map((p: any) => p.ticker)
+        const pendingTickers = extractedTickers.filter((t: string) => !matchedTickers.includes(t))
+
+        // Logic Nâng cao: Risk Alerts & Balance
+        const risk_alerts: string[] = []
+        const profit_opportunities: string[] = []
+        let trendingCount = 0
+        let sidewayCount = 0
+
+        matchedPlans.forEach(plan => {
+            const item = (extractedData.items || []).find((i: any) => i.ticker.toUpperCase() === plan.ticker)
+            const cost = item?.avg_cost || item?.current_price
+
+            // Check Risk/Profit based on stop_loss/take_profit strings (simple parsing)
+            const sl = parseFloat(plan.stop_loss?.replace(/[^0-9.]/g, ''))
+            const tp = parseFloat(plan.take_profit?.replace(/[^0-9.]/g, ''))
+
+            if (cost && sl && cost <= sl * 1.03 && cost >= sl * 0.97) {
+                risk_alerts.push(`Mã ${plan.ticker} đang gần vùng Stop Loss (${plan.stop_loss}). Cần lưu ý quản trị rủi ro.`)
+            }
+            if (cost && tp && cost >= tp * 0.95) {
+                profit_opportunities.push(`Mã ${plan.ticker} đang tiến sát mục tiêu Take Profit (${plan.take_profit}). Cân nhắc hiện thực hóa lợi nhuận.`)
+            }
+
+            // Strategy Balance
+            const strategy = (plan.strategy_name || '').toLowerCase()
+            if (strategy.includes('sideway')) sidewayCount++
+            else if (strategy.includes('trending')) trendingCount++
+        })
+
+        // Phân bổ Sideway vs Trending
+        let balance_note = ''
+        const totalIdentified = trendingCount + sidewayCount
+        if (totalIdentified > 0) {
+            const trendingPct = (trendingCount / totalIdentified) * 100
+            if (trendingPct > 80) balance_note = 'Danh mục đang nghiêng hẳn về phía Tấn công (Trending). Cần bổ sung các mã Sideway/Phòng vệ để cân bằng.'
+            else if (trendingPct < 20) balance_note = 'Danh mục đang quá nặng về các mã Sideway. Có thể bỏ lỡ cơ hội khi thị trường vào sóng tăng mạnh.'
+            else balance_note = 'Danh mục có sự kết hợp khá cân bằng giữa các vị thế Trending và Sideway.'
+        }
+
+        allocationAssessment = {
+            ...allocationAssessment,
+            risk_alerts,
+            profit_opportunities,
+            balance_assessment: {
+                trending_count: trendingCount,
+                sideway_count: sidewayCount,
+                note: balance_note
+            }
+        }
 
         // ── Bước 4: Upsert pending tickers ──
         for (const ticker of pendingTickers) {
