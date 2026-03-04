@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import Groq from 'groq-sdk'
+import { calculateMinimumVariancePortfolio } from '@/lib/portfolioOptimizer'
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -138,10 +139,19 @@ export async function POST(req: NextRequest) {
             else balance_note = 'Danh mục có sự kết hợp khá cân bằng giữa các vị thế Trending và Sideway.'
         }
 
+        let optimalAllocation = null;
+        if (matchedTickers.length >= 2) {
+            const optResult = await calculateMinimumVariancePortfolio(matchedTickers);
+            if (!optResult.error) {
+                optimalAllocation = optResult;
+            }
+        }
+
         allocationAssessment = {
             ...allocationAssessment,
             risk_alerts,
             profit_opportunities,
+            optimal_allocation: optimalAllocation,
             balance_assessment: {
                 trending_count: trendingCount,
                 sideway_count: sidewayCount,

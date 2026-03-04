@@ -32,6 +32,11 @@ type AnalysisResult = {
             sideway_count: number;
             note: string;
         };
+        optimal_allocation?: {
+            tickers: string[];
+            weights: number[];
+            error?: string;
+        } | null;
     };
 }
 
@@ -205,6 +210,34 @@ function PortfolioAssessment({ assessment }: { assessment: NonNullable<AnalysisR
                         <p className="text-[10px] text-emerald-300 leading-relaxed italic">{assessment.balance_assessment?.note}</p>
                     </div>
                 </div>
+
+                {assessment.optimal_allocation && !assessment.optimal_allocation.error && (
+                    <div className="bg-emerald-800/30 rounded-2xl p-4 border border-emerald-700/50">
+                        <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+                            <Leaf className="w-3 h-3" /> Phân Bổ Tối Ưu (Minimum Variance Portfolio)
+                        </p>
+                        <div className="flex flex-col gap-2">
+                            {assessment.optimal_allocation.tickers.map((ticker, idx) => {
+                                const weightScore = (assessment.optimal_allocation!.weights[idx] * 100).toFixed(1);
+                                return (
+                                    <div key={ticker} className="flex items-center justify-between text-sm">
+                                        <span className="text-emerald-100 font-medium w-12">{ticker}</span>
+                                        <div className="flex-1 h-1.5 mx-3 bg-emerald-950 rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-emerald-400 transition-all duration-1000"
+                                                style={{ width: `${weightScore}%` }}
+                                            />
+                                        </div>
+                                        <span className="text-emerald-200 text-xs w-10 text-right">{weightScore}%</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <p className="text-[10px] text-emerald-400/80 mt-3 italic leading-relaxed">
+                            💡 Gợi ý AI: Cấu trúc phân bổ trên (mô phỏng) giúp giảm thiểu rủi ro biến động dựa trên dữ liệu tương quan lịch sử của {assessment.optimal_allocation.tickers.length} mã này.
+                        </p>
+                    </div>
+                )}
 
                 <div className="pt-2">
                     <div className="bg-gradient-to-r from-emerald-800/50 to-transparent p-4 rounded-2xl border-l-4 border-emerald-400">
