@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import Groq from 'groq-sdk'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 import { calculateMinimumVariancePortfolio } from '@/lib/portfolioOptimizer'
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
 const BUCKET_NAME = 'advisor-portfolios'
 
@@ -48,44 +48,34 @@ export async function POST(req: NextRequest) {
             console.warn('Storage upload failed (non-critical):', uploadErr)
         }
 
-        // ── Bước 2: Groq Llama Vision đọc ảnh ──
+        // ── Bước 2: Gemini Vision đọc ảnh ──
         let extractedData: any = { tickers: [], assessment: null, items: [] }
         let allocationAssessment: any = null
         try {
-            const completion = await groq.chat.completions.create({
-                model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-                messages: [
-                    {
-                        role: 'user',
-                        content: [
-                            {
-                                type: 'text',
-                                text: `Đây là ảnh chụp màn hình danh mục đầu tư chứng khoán tại thị trường Việt Nam.\n\nNhiệm vụ:\n1. Liệt kê tất cả các mã chứng khoán (tickers).\n2. Trích xuất "Giá vốn" (Avg Cost) và "Giá hiện tại" (Current Price) cho từng mã nếu có.\n3. Phân tích cơ cấu danh mục.\n\nYêu cầu trả về định dạng JSON duy nhất:\n{\n  "items": [\n    {"ticker": "VNM", "avg_cost": 72.5, "current_price": 71.2},\n    {"ticker": "HPG", "avg_cost": 28.1, "current_price": 30.5}\n  ],\n  "assessment": {\n    "summary": "Mô tả phong cách danh mục...",\n    "sectors": ["Ngân hàng (40%)", "..."],\n    "risk_level": "Trung bình / Cao / Thấp",\n    "advice": "Lời khuyên chiến lược..."\n  }\n}\n\n- Chỉ trả về JSON, không thêm text giải thích.`
-                            },
-                            {
-                                type: 'image_url',
-                                image_url: {
-                                    url: `data:${mimeType};base64,${imageBase64}`
-                                }
-                            }
-                        ]
-                    }
-                ],
-                temperature: 0.1,
-                max_tokens: 1024
-            })
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const prompt = `Đây là ảnh chụp màn hình danh mục đầu tư chứng khoán tại thị trường Việt Nam.\n\nNhiệm vụ:\n1. Liệt kê tất cả các mã chứng khoán (tickers).\n2. Trích xuất "Giá vốn" (Avg Cost) và "Giá hiện tại" (Current Price) cho từng mã nếu có.\n3. Phân tích cơ cấu danh mục.\n\nYêu cầu trả về định dạng JSON duy nhất:\n{\n  "items": [\n    {"ticker": "VNM", "avg_cost": 72.5, "current_price": 71.2},\n    {"ticker": "HPG", "avg_cost": 28.1, "current_price": 30.5}\n  ],\n  "assessment": {\n    "summary": "Mô tả phong cách danh mục...",\n    "sectors": ["Ngân hàng (40%)", "..."],\n    "risk_level": "Trung bình / Cao / Thấp",\n    "advice": "Lời khuyên chiến lược..."\n  }\n}\n\n- Chỉ trả về JSON, không thêm text giải thích.`
 
-            const rawText = completion.choices[0]?.message?.content?.trim() || ''
+            const result = await model.generateContent([
+                prompt,
+                {
+                    inlineData: {
+                        data: imageBase64,
+                        mimeType: mimeType
+                    }
+                }
+            ]);
+
+            const rawText = result.response.text().trim();
             try {
                 const jsonMatch = rawText.match(/\{[\s\S]*\}/)
                 if (jsonMatch) {
                     extractedData = JSON.parse(jsonMatch[0])
                 }
             } catch {
-                console.warn('[Groq] JSON parse failed')
+                console.warn('[Gemini] JSON parse failed')
             }
         } catch (aiErr) {
-            console.error('[Groq] AI failed:', aiErr)
+            console.error('[Gemini] AI failed:', aiErr)
         }
 
         const extractedTickers = (extractedData.items || []).map((i: any) => i.ticker.toUpperCase())

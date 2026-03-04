@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import Groq from 'groq-sdk'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
 // GET: lấy danh sách
 export async function GET(req: NextRequest) {
@@ -157,15 +157,8 @@ export async function PUT(req: NextRequest) {
         const buffer = Buffer.from(arrayBuffer)
         const base64Image = buffer.toString('base64')
 
-        const completion = await groq.chat.completions.create({
-            model: "meta-llama/llama-4-scout-17b-16e-instruct",
-            messages: [
-                {
-                    role: 'user',
-                    content: [
-                        {
-                            type: 'text',
-                            text: `Bạn là trợ lý phân tích đồ thị chứng khoán chuyên nghiệp. Hãy đọc đồ thị này và trả về 1 JSON hợp lệ với cấu trúc sau:
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const prompt = `Bạn là trợ lý phân tích đồ thị chứng khoán chuyên nghiệp. Hãy đọc đồ thị này và trả về 1 JSON hợp lệ với cấu trúc sau:
 {
   "strategy_name": "Tên chiến lược ngắn gọn (VD: Vượt cản, Tích lũy đáy)",
   "entry_zone": "Mức giá điểm vào (khoảng giá)",
@@ -176,24 +169,23 @@ export async function PUT(req: NextRequest) {
   "analyst_note": "Vài dòng phân tích lý do chọn điểm vào này.",
   "price_series": [mảng CHÍNH XÁC 20 số]
 }
-QUAN TRỌNG VỀ 'price_series': Hãy dùng mắt ước lượng hình dạng đường giá (đóng cửa/thân nến) từ trái qua phải trên toàn bộ đồ thị, chia đều thành 20 điểm thời gian. Mỗi điểm là 1 con số tương đối phản ánh ĐỘ CAO của giá so với trục tung bên phải. Ví dụ: [60, 62, 59, 65, ...]. Đảm bảo có đúng 20 phần tử số. TRẢ VỀ DUY NHẤT CHUỖI JSON.`
-                        },
-                        {
-                            type: 'image_url',
-                            image_url: { url: `data:${file.type};base64,${base64Image}` }
-                        }
-                    ]
-                }
-            ],
-            temperature: 0.1,
-            max_tokens: 1500,
-        })
+QUAN TRỌNG VỀ 'price_series': Hãy dùng mắt ước lượng hình dạng đường giá (đóng cửa/thân nến) từ trái qua phải trên toàn bộ đồ thị, chia đều thành 20 điểm thời gian. Mỗi điểm là 1 con số tương đối phản ánh ĐỘ CAO của giá so với biểu đồ. Ví dụ: [60, 62, 59, 65, ...]. Đảm bảo có đúng 20 phần tử số. TRẢ VỀ DUY NHẤT CHUỖI JSON.`
 
-        let aiText = completion.choices[0]?.message?.content || ''
+        const result = await model.generateContent([
+            prompt,
+            {
+                inlineData: {
+                    data: base64Image,
+                    mimeType: file.type
+                }
+            }
+        ]);
+
+        let aiText = result.response.text();
         aiText = aiText.replace(/```json/g, '').replace(/```/g, '').trim()
         draft_plan = JSON.parse(aiText)
     } catch (err) {
-        console.error('[Admin Groq Vision Error]:', err)
+        console.error('[Admin Gemini Vision Error]:', err)
         // Fallback
         draft_plan = {
             strategy_name: 'Dự thảo tự động',
