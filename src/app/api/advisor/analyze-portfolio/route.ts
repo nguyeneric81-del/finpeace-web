@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
         let extractedData: any = { tickers: [], assessment: null, items: [] }
         let allocationAssessment: any = null
         try {
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+            const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
             const prompt = `Đây là ảnh chụp màn hình danh mục đầu tư chứng khoán tại thị trường Việt Nam.\n\nNhiệm vụ:\n1. Liệt kê tất cả các mã chứng khoán (tickers).\n2. Trích xuất "Giá vốn" (Avg Cost) và "Giá hiện tại" (Current Price) cho từng mã nếu có.\n3. Phân tích cơ cấu danh mục.\n\nYêu cầu trả về định dạng JSON duy nhất:\n{\n  "items": [\n    {"ticker": "VNM", "avg_cost": 72.5, "current_price": 71.2},\n    {"ticker": "HPG", "avg_cost": 28.1, "current_price": 30.5}\n  ],\n  "assessment": {\n    "summary": "Mô tả phong cách danh mục...",\n    "sectors": ["Ngân hàng (40%)", "..."],\n    "risk_level": "Trung bình / Cao / Thấp",\n    "advice": "Lời khuyên chiến lược..."\n  }\n}\n\n- Chỉ trả về JSON, không thêm text giải thích.`
 
             const result = await model.generateContent([
