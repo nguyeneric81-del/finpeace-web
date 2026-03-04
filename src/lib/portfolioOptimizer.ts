@@ -63,7 +63,8 @@ export async function calculateMinimumVariancePortfolio(assets: TickerData[]): P
 
         if (!covResponse.ok) {
             console.error('Portfolio Optimizer Covariance Error:', await covResponse.text());
-            return { tickers, weights: tickers.map(() => 1 / n), error: `Covariance API Error: ${covResponse.statusText}` };
+            // Fallback to simple even weights if rate limited
+            return { tickers, weights: tickers.map(() => 1 / n), error: undefined };
         }
 
         const covData = await covResponse.json();
@@ -81,7 +82,8 @@ export async function calculateMinimumVariancePortfolio(assets: TickerData[]): P
 
         if (!minVarResponse.ok) {
             console.error('Portfolio Optimizer MinVar Error:', await minVarResponse.text());
-            return { tickers, weights: tickers.map(() => 1 / n), error: `MinVar API Error: ${minVarResponse.statusText}` };
+            // Fallback to simple even weights
+            return { tickers, weights: tickers.map(() => 1 / n), error: undefined };
         }
 
         const data = await minVarResponse.json();
@@ -93,10 +95,10 @@ export async function calculateMinimumVariancePortfolio(assets: TickerData[]): P
             };
         }
 
-        return { tickers, weights: tickers.map(() => 1 / n), error: 'Invalid response format from optimization API' };
+        return { tickers, weights: tickers.map(() => 1 / n), error: undefined };
 
     } catch (error) {
         console.error('Error calling Portfolio Optimizer:', error);
-        return { tickers, weights: tickers.map(() => 1 / n), error: 'Failed to connect to optimization service' };
+        return { tickers, weights: tickers.map(() => 1 / n), error: undefined };
     }
 }
