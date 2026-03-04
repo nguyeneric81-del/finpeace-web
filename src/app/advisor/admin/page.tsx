@@ -14,6 +14,7 @@ type Plan = {
     risk_reward: string; max_position_pct: number; indicators: string[];
     entry_criteria: string; exit_criteria: string; analyst_note: string;
     status: string; chart_image_url?: string;
+    wave_index?: string; area_symmetry_note?: string; is_confirmed?: boolean;
 }
 type Pending = { id: string; ticker: string; requested_count: number; status: string; created_at: string }
 
@@ -21,7 +22,8 @@ const EMPTY_PLAN: Omit<Plan, 'id' | 'status'> = {
     ticker: '', company_name: '', strategy_name: '', timeframe: 'Trung hạn (4-8 tuần)',
     entry_zone: '', stop_loss: '', take_profit: '', risk_reward: '',
     max_position_pct: 10, indicators: [], entry_criteria: '', exit_criteria: '',
-    analyst_note: '', chart_image_url: ''
+    analyst_note: '', chart_image_url: '',
+    wave_index: '', area_symmetry_note: '', is_confirmed: false
 }
 
 function PlanForm({ initial, onSave, onCancel }: { initial: Partial<Plan>; onSave: (p: any) => void; onCancel: () => void }) {
@@ -48,6 +50,12 @@ function PlanForm({ initial, onSave, onCancel }: { initial: Partial<Plan>; onSav
         if (data.chart_image_url) {
             setChartPreview(data.chart_image_url)
             set('chart_image_url', data.chart_image_url)
+        }
+        if (data.draft_plan) {
+            // Tự động điền dữ liệu từ AI Draft
+            Object.entries(data.draft_plan).forEach(([k, v]) => {
+                if (!form[k]) set(k, v)
+            })
         }
     }
 
@@ -77,6 +85,8 @@ function PlanForm({ initial, onSave, onCancel }: { initial: Partial<Plan>; onSav
                             { key: 'stop_loss', label: 'Cắt lỗ', ph: '52,500 (-7%)' },
                             { key: 'take_profit', label: 'Chốt lời', ph: '65,000 (+15%)' },
                             { key: 'risk_reward', label: 'R:R', ph: '1:2.1' },
+                            { key: 'wave_index', label: 'Hệ thống sóng (VD: Trending 3)', ph: 'Sideway 4' },
+                            { key: 'area_symmetry_note', label: 'Tương xứng diện tích', ph: 'Cần tích lũy thêm' },
                         ].map(f => (
                             <div key={f.key}>
                                 <label className="text-xs font-semibold text-slate-500 block mb-1">{f.label}</label>
@@ -87,11 +97,19 @@ function PlanForm({ initial, onSave, onCancel }: { initial: Partial<Plan>; onSav
                         ))}
                     </div>
 
-                    <div>
-                        <label className="text-xs font-semibold text-slate-500 block mb-1">% Tối đa danh mục</label>
-                        <input type="number" min="1" max="100" value={form.max_position_pct}
-                            onChange={e => set('max_position_pct', Number(e.target.value))}
-                            className="border border-slate-200 rounded-lg px-3 py-2 text-sm w-32 focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+                    <div className="flex items-center gap-4">
+                        <div>
+                            <label className="text-xs font-semibold text-slate-500 block mb-1">% Tối đa danh mục</label>
+                            <input type="number" min="1" max="100" value={form.max_position_pct}
+                                onChange={e => set('max_position_pct', Number(e.target.value))}
+                                className="border border-slate-200 rounded-lg px-3 py-2 text-sm w-32 focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+                        </div>
+                        <div className="flex items-center gap-2 mt-4">
+                            <input type="checkbox" id="is_confirmed" checked={form.is_confirmed || false}
+                                onChange={e => set('is_confirmed', e.target.checked)}
+                                className="w-4 h-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded" />
+                            <label htmlFor="is_confirmed" className="text-sm font-medium text-slate-700">Xác nhận thoát Sideway</label>
+                        </div>
                     </div>
 
                     <div>

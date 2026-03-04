@@ -36,13 +36,13 @@ export async function POST(req: NextRequest) {
         const { action, ...payload } = body
 
         if (action === 'upsert_plan') {
-            // Chỉ giữ lại các trường có giá trị, bỏ trường rỗng/undefined
             const cleanPayload: Record<string, any> = {}
             const ALLOWED_FIELDS = [
                 'ticker', 'company_name', 'strategy_name', 'timeframe',
                 'entry_zone', 'stop_loss', 'take_profit', 'risk_reward',
                 'max_position_pct', 'indicators', 'entry_criteria', 'exit_criteria',
-                'analyst_note', 'status', 'chart_image_url'
+                'analyst_note', 'status', 'chart_image_url',
+                'wave_index', 'area_symmetry_note', 'is_confirmed'
             ]
             for (const key of ALLOWED_FIELDS) {
                 if (payload[key] !== undefined && payload[key] !== null && payload[key] !== '') {
@@ -56,22 +56,33 @@ export async function POST(req: NextRequest) {
                     .update({ ...cleanPayload, updated_at: new Date().toISOString() })
                     .eq('id', payload.id)
                     .select().single()
-                if (error) {
-                    console.error('[Admin] update_plan error:', error)
-                    return NextResponse.json({ error: error.message }, { status: 500 })
-                }
+                if (error) return NextResponse.json({ error: error.message }, { status: 500 })
                 return NextResponse.json(data)
-            } else {
-                const { data, error } = await supabase
+            } else if (cleanPayload.ticker) {
+                const { data: existing } = await supabase
                     .from('trading_plans')
-                    .insert({ ...cleanPayload, status: cleanPayload.status || 'active' })
-                    .select().single()
-                if (error) {
-                    console.error('[Admin] insert_plan error:', error)
-                    return NextResponse.json({ error: error.message }, { status: 500 })
+                    .select('id')
+                    .eq('ticker', cleanPayload.ticker)
+                    .eq('status', 'active')
+                    .limit(1)
+
+                if (existing && existing.length > 0) {
+                    const { data, error } = await supabase
+                        .from('trading_plans')
+                        .update({ ...cleanPayload, updated_at: new Date().toISOString() })
+                        .eq('id', existing[0].id)
+                        .select().single()
+                    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+                    return NextResponse.json(data)
                 }
-                return NextResponse.json(data)
             }
+
+            const { data, error } = await supabase
+                .from('trading_plans')
+                .insert({ ...cleanPayload, status: cleanPayload.status || 'active' })
+                .select().single()
+            if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+            return NextResponse.json(data)
         }
 
         if (action === 'delete_plan') {
@@ -130,5 +141,16 @@ export async function PUT(req: NextRequest) {
 
     if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 })
 
-    return NextResponse.json({ success: true, chart_image_url: chartUrl })
+    // Giả lập AI sinh dữ liệu dự thảo (Draft) từ ảnh chart
+    const draft_plan = {
+        strategy_name: 'Dự thảo theo cấu trúc đồ thị',
+        entry_zone: 'Vùng hỗ trợ hiện tại',
+        stop_loss: 'Đáy gần nhất',
+        take_profit: 'Đỉnh cũ tương xứng',
+        wave_index: 'Đang xác định...',
+        area_symmetry_note: 'Cần tích lũy thêm về thời gian',
+        analyst_note: 'AI gợi ý: Giá đang retest vùng hỗ trợ mạnh trên chart.'
+    }
+
+    return NextResponse.json({ success: true, chart_image_url: chartUrl, draft_plan })
 }

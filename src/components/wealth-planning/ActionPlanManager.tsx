@@ -39,6 +39,21 @@ export function ActionPlanManager({ userId }: { userId: string }) {
     const [task, setTask] = useState('')
     const [amount, setAmount] = useState('')
 
+    // 4. Lấy Trading Plans từ API mới cập nhật
+    const [tradingPlans, setTradingPlans] = useState<any[]>([])
+
+    useEffect(() => {
+        async function fetchTradingPlans() {
+            const res = await fetch(`/api/advisor/portfolio?user_id=${userId}`)
+            if (!res.ok) return
+            const data = await res.json()
+            if (data.result?.matched_plans) {
+                setTradingPlans(data.result.matched_plans)
+            }
+        }
+        fetchTradingPlans()
+    }, [userId])
+
     useEffect(() => {
         fetchAllData()
     }, [userId])
@@ -137,6 +152,94 @@ export function ActionPlanManager({ userId }: { userId: string }) {
                     </CardDescription>
                 </CardHeader>
             </Card>
+
+            {/* PHẦN 1.1: CHIẾN LƯỢC GIAO DỊCH CỔ PHIẾU (Mẫu mới) */}
+            {tradingPlans.length > 0 && (
+                <div className="space-y-4">
+                    <div className="flex items-center gap-2 text-slate-800">
+                        <TrendingUp className="w-5 h-5 text-emerald-500" />
+                        <h3 className="font-bold text-lg text-slate-800">Kế hoạch Giao dịch Cổ phiếu</h3>
+                    </div>
+                    {tradingPlans.map((plan: any) => (
+                        <Card key={plan.id} className="overflow-hidden border-emerald-100">
+                            <div className="bg-emerald-50/50 p-4 border-b border-emerald-100 flex justify-between items-center">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-emerald-500 text-white font-bold px-3 py-1 rounded-lg">
+                                        {plan.ticker}
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="font-bold text-slate-800">{plan.company_name || plan.ticker}</span>
+                                        <div className="flex gap-2">
+                                            {plan.wave_index && (
+                                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${plan.wave_index.toLowerCase().includes('trending') ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}`}>
+                                                    {plan.wave_index}
+                                                </span>
+                                            )}
+                                            {plan.is_confirmed && (
+                                                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase bg-emerald-100 text-emerald-700 flex items-center gap-0.5">
+                                                    <CheckCircle2 className="w-2.5 h-2.5" /> Confirmed
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-xs text-slate-500 uppercase font-semibold">Chiến lược</p>
+                                    <p className="text-sm font-bold text-emerald-700">{plan.strategy_name}</p>
+                                </div>
+                            </div>
+                            <CardContent className="p-6">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div className="space-y-4 col-span-2">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">Vùng mua</p>
+                                                <p className="text-lg font-bold text-slate-800 tracking-tight">{plan.entry_zone}</p>
+                                            </div>
+                                            <div className="bg-rose-50 p-3 rounded-xl border border-rose-100">
+                                                <p className="text-[10px] text-rose-400 font-bold uppercase mb-1">Cắt lỗ (SL)</p>
+                                                <p className="text-lg font-bold text-rose-700 tracking-tight">{plan.stop_loss}</p>
+                                            </div>
+                                            <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                                                <p className="text-[10px] text-emerald-400 font-bold uppercase mb-1">Chốt lời (TP)</p>
+                                                <p className="text-lg font-bold text-emerald-700 tracking-tight">{plan.take_profit}</p>
+                                            </div>
+                                            <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase mb-1">R:R</p>
+                                                <p className="text-lg font-bold text-slate-800 tracking-tight">{plan.risk_reward}</p>
+                                            </div>
+                                        </div>
+
+                                        {plan.area_symmetry_note && (
+                                            <div className="bg-amber-50/30 p-4 rounded-xl border border-amber-100/50">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <Compass className="w-4 h-4 text-amber-600" />
+                                                    <span className="text-xs font-bold text-amber-700 uppercase tracking-tight">Logic Tương xứng diện tích (Area Symmetry)</span>
+                                                </div>
+                                                <p className="text-sm text-slate-700 italic">{plan.area_symmetry_note}</p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {plan.chart_image_url && (
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] text-slate-400 font-bold uppercase">Đồ thị phân tích</p>
+                                            <img src={plan.chart_image_url} alt={`Analysis for ${plan.ticker}`} className="w-full rounded-xl border border-slate-100 shadow-sm transition-transform hover:scale-[1.02] cursor-zoom-in" />
+                                        </div>
+                                    )}
+                                </div>
+
+                                {plan.analyst_note && (
+                                    <div className="mt-6 pt-6 border-t border-slate-100">
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase mb-2">Luận điểm của Advisor</p>
+                                        <p className="text-sm text-slate-600 leading-relaxed">{plan.analyst_note}</p>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            )}
 
             {/* PHẦN 2: CHIẾN LƯỢC HUY ĐỘNG VỐN (HÀNH ĐỘNG) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
