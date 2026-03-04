@@ -51,10 +51,14 @@ export async function calculateMinimumVariancePortfolio(assets: TickerData[]): P
 
     try {
         // Step 1: Calculate Empirical Covariance Matrix
+        const formattedAssets = assetsReturns.map(returns => ({
+            assetReturns: returns
+        }));
+
         const covResponse = await fetch('https://api.portfoliooptimizer.io/v1/assets/covariance/matrix/estimation/empirical', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ assets, assetsReturns }),
+            body: JSON.stringify({ assets: formattedAssets }),
         });
 
         if (!covResponse.ok) {
