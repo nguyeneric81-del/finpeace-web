@@ -64,7 +64,7 @@ export async function calculateMinimumVariancePortfolio(assets: TickerData[]): P
         if (!covResponse.ok) {
             console.error('Portfolio Optimizer Covariance Error:', await covResponse.text());
             // Fallback to simple even weights if rate limited
-            return { tickers, weights: tickers.map(() => 1 / n), error: undefined };
+            return { tickers, weights: tickers.map(() => 1 / n), error: 'Hệ thống Toán học quá tải (Rate Limit), đang kích hoạt chế độ Cân bằng tỷ trọng.' };
         }
 
         const covData = await covResponse.json();
@@ -83,7 +83,7 @@ export async function calculateMinimumVariancePortfolio(assets: TickerData[]): P
         if (!minVarResponse.ok) {
             console.error('Portfolio Optimizer MinVar Error:', await minVarResponse.text());
             // Fallback to simple even weights
-            return { tickers, weights: tickers.map(() => 1 / n), error: undefined };
+            return { tickers, weights: tickers.map(() => 1 / n), error: 'Hệ thống Toán học quá tải (Rate Limit), đang kích hoạt chế độ Cân bằng tỷ trọng.' };
         }
 
         const data = await minVarResponse.json();
@@ -95,10 +95,10 @@ export async function calculateMinimumVariancePortfolio(assets: TickerData[]): P
             };
         }
 
-        return { tickers, weights: tickers.map(() => 1 / n), error: undefined };
+        return { tickers, weights: tickers.map(() => 1 / n), error: 'Lỗi định dạng phản hồi từ API Toán học. Kích hoạt Cân bằng tỷ trọng.' };
 
     } catch (error) {
         console.error('Error calling Portfolio Optimizer:', error);
-        return { tickers, weights: tickers.map(() => 1 / n), error: undefined };
+        return { tickers, weights: tickers.map(() => 1 / n), error: 'Không thể kết nối API Toán học. Kích hoạt Cân bằng tỷ trọng.' };
     }
 }

@@ -211,8 +211,16 @@ function PortfolioAssessment({ assessment }: { assessment: NonNullable<AnalysisR
                     </div>
                 </div>
 
-                {assessment.optimal_allocation && !assessment.optimal_allocation.error && (
+                {assessment.optimal_allocation && (
                     <div className="bg-emerald-800/30 rounded-2xl p-4 border border-emerald-700/50">
+                        {assessment.optimal_allocation.error && (
+                            <div className="mb-4 bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex gap-3 items-start">
+                                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                                <p className="text-xs text-amber-100/90 leading-relaxed text-left">
+                                    {assessment.optimal_allocation.error}
+                                </p>
+                            </div>
+                        )}
                         <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
                             <Leaf className="w-3 h-3" /> Phân Bổ Tối Ưu (Minimum Variance Portfolio)
                         </p>
