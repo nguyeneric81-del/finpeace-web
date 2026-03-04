@@ -56,7 +56,10 @@ function PlanForm({ initial, onSave, onCancel }: { initial: Partial<Plan>; onSav
         if (data.draft_plan) {
             // Tự động điền dữ liệu từ AI Draft
             Object.entries(data.draft_plan).forEach(([k, v]) => {
-                if (!form[k]) set(k, v)
+                const isArrayEmpty = Array.isArray(form[k]) && form[k].length === 0;
+                if (!form[k] || isArrayEmpty || k === 'price_series') {
+                    set(k, v);
+                }
             })
         }
     }
