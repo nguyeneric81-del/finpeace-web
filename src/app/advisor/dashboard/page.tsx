@@ -20,6 +20,12 @@ type AnalysisResult = {
     extracted_tickers: string[];
     matched_plans: TradingPlan[];
     pending_tickers: string[];
+    allocation_assessment?: {
+        summary: string;
+        sectors: string[];
+        risk_level: string;
+        advice: string;
+    };
 }
 
 // ── Shuffle helper ──
@@ -118,6 +124,69 @@ function TradingPlanCard({ plan }: { plan: TradingPlan }) {
                 </motion.div>
             )}
         </div>
+    )
+}
+
+function PortfolioAssessment({ assessment }: { assessment: NonNullable<AnalysisResult['allocation_assessment']> }) {
+    return (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            className="bg-emerald-900 text-white rounded-3xl p-6 shadow-xl border border-emerald-800 overflow-hidden relative">
+            {/* Background pattern */}
+            <div className="absolute -right-12 -top-12 w-48 h-48 bg-emerald-800/20 rounded-full blur-3xl" />
+
+            <div className="relative z-10 space-y-5">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <div className="p-2 bg-emerald-800 rounded-lg">
+                            <Leaf className="w-5 h-5 text-emerald-400" />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg leading-tight text-emerald-50">Đánh giá chung từ Advisor</h3>
+                            <p className="text-emerald-400/80 text-xs font-medium uppercase tracking-widest mt-0.5">Premium Portfolio Insights</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-emerald-950/40 rounded-2xl p-4 border border-emerald-800/50">
+                    <p className="text-emerald-100/90 text-sm leading-relaxed italic">
+                        "{assessment.summary}"
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2.5">
+                        <p className="text-[10px] font-bold text-emerald-400/70 uppercase tracking-widest pl-1">Cơ cấu nhóm ngành</p>
+                        <div className="flex flex-wrap gap-2">
+                            {assessment.sectors.map((s, i) => (
+                                <span key={i} className="bg-emerald-800/40 border border-emerald-700/50 text-emerald-100 text-xs px-3 py-1.5 rounded-full font-medium">
+                                    {s}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="space-y-2.5">
+                        <p className="text-[10px] font-bold text-emerald-400/70 uppercase tracking-widest pl-1">Mức độ rủi ro</p>
+                        <div className="flex items-center gap-2">
+                            <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border ${assessment.risk_level.toLowerCase().includes('cao') ? 'bg-rose-500/20 text-rose-300 border-rose-500/30' :
+                                    assessment.risk_level.toLowerCase().includes('thấp') ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' :
+                                        'bg-amber-500/20 text-amber-300 border-emerald-500/30'
+                                }`}>
+                                {assessment.risk_level}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="pt-2">
+                    <div className="bg-gradient-to-r from-emerald-800/50 to-transparent p-4 rounded-2xl border-l-4 border-emerald-400">
+                        <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Lời khuyên chiến lược</p>
+                        <p className="text-emerald-50 text-sm leading-relaxed font-medium">
+                            {assessment.advice}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </motion.div>
     )
 }
 
@@ -305,7 +374,7 @@ export default function AdvisorDashboardPage() {
                         <div className="bg-white rounded-2xl border border-slate-100 p-5">
                             <div className="flex items-center justify-between flex-wrap gap-3">
                                 <div>
-                                    <h2 className="font-bold text-slate-800 text-lg">📊 Kế hoạch giao dịch của bạn</h2>
+                                    <h2 className="font-bold text-slate-800 text-lg">📊 Kết quả phân tích danh mục</h2>
                                     <p className="text-sm text-slate-500 mt-0.5">
                                         Phân tích {result.extracted_tickers.length} mã · <span className="text-emerald-600 font-medium">{result.matched_plans.length} mã có Trading Plan</span>
                                         {result.pending_tickers.length > 0 && ` · ${result.pending_tickers.length} mã đang phân tích`}
@@ -318,6 +387,11 @@ export default function AdvisorDashboardPage() {
                                 </button>
                             </div>
                         </div>
+
+                        {/* Assessment Section */}
+                        {result.allocation_assessment && (
+                            <PortfolioAssessment assessment={result.allocation_assessment} />
+                        )}
 
                         {/* 3 Trading Plans (random) */}
                         {displayedPlans.length > 0 ? (

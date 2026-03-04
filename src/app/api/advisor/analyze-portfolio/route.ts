@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
         // QUAN TRỌNG: Tách riêng try-catch để nếu AI lỗi,
         // vẫn tiếp tục lưu portfolio record vào DB (bước 5)
         let extractedTickers: string[] = []
+        let allocationAssessment: any = null
         try {
             const completion = await groq.chat.completions.create({
                 model: 'meta-llama/llama-4-scout-17b-16e-instruct',
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
                         content: [
                             {
                                 type: 'text',
-                                text: `Đây là ảnh chụp màn hình danh mục đầu tư chứng khoán tại thị trường Việt Nam (HOSE/HNX/UPCOM).\n\nNhiệm vụ: Liệt kê tất cả các mã chứng khoán (ticker/stock symbol) xuất hiện trong ảnh.\n- Mã chứng khoán VN thường có 2-4 ký tự in hoa (ví dụ: VNM, VIC, ACB, HPG, FPT, MWG, TCB, VHM...)\n- Chỉ trả về mã CK, KHÔNG bao gồm tên công ty hay số liệu\n- Trả về dạng JSON array như sau: {"tickers": ["VNM", "VIC", "ACB"]}\n- Nếu không thấy mã CK nào, trả về: {"tickers": []}\n- Chỉ trả về JSON, không thêm text giải thích`
+                                text: `Đây là ảnh chụp màn hình danh mục đầu tư chứng khoán tại thị trường Việt Nam (HOSE/HNX/UPCOM).\n\nNhiệm vụ:\n1. Liệt kê tất cả các mã chứng khoán (ticker/stock symbol) xuất hiện trong ảnh.\n2. Phân tích cơ cấu danh mục dựa trên các mã này (nhóm ngành, rủi ro, đa dạng hóa).\n\nYêu cầu trả về định dạng JSON duy nhất như sau:\n{\n  "tickers": ["VNM", "VIC", "ACB"],\n  "assessment": {\n    "summary": "Mô tả ngắn gọn về phong cách danh mục (vd: Tập trung nhóm Bank, Rủi ro cao...)",\n    "sectors": ["Ngân hàng (40%)", "Bất động sản (30%)", "Khác (30%)"],\n    "risk_level": "Trung bình / Cao / Thấp",\n    "advice": "Lời khuyên ngắn gọn theo phong cách coaching của FinPeace (vd: Nên đa dạng hóa thêm nhóm ngành phòng vệ...)"\n  }\n}\n\n- Chỉ trả về JSON, không thêm text giải thích.`
                             },
                             {
                                 type: 'image_url',
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
                     }
                 ],
                 temperature: 0.1,
-                max_tokens: 256
+                max_tokens: 1024
             })
 
             const rawText = completion.choices[0]?.message?.content?.trim() || ''
@@ -83,6 +84,7 @@ export async function POST(req: NextRequest) {
                 if (jsonMatch) {
                     const parsed = JSON.parse(jsonMatch[0])
                     extractedTickers = (parsed.tickers || []).map((t: string) => t.toUpperCase().trim())
+                    allocationAssessment = parsed.assessment || null
                 }
             } catch {
                 console.warn('[Groq] JSON parse failed, raw:', rawText)
@@ -134,7 +136,8 @@ export async function POST(req: NextRequest) {
             const { error: portfolioErr } = await supabase.from('customer_portfolios').insert({
                 user_id: userId,
                 image_url: imageUrl,
-                extracted_tickers: extractedTickers
+                extracted_tickers: extractedTickers,
+                allocation_assessment: allocationAssessment
             })
             if (portfolioErr) console.error('[Portfolio] Save failed:', portfolioErr)
         }
@@ -143,7 +146,8 @@ export async function POST(req: NextRequest) {
             success: true,
             extracted_tickers: extractedTickers,
             matched_plans: plans || [],
-            pending_tickers: pendingTickers
+            pending_tickers: pendingTickers,
+            allocation_assessment: allocationAssessment
         })
 
     } catch (err) {

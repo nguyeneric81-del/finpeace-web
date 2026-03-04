@@ -12,12 +12,22 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get('type') // 'plans' | 'pending'
 
     if (type === 'pending') {
-        const { data, error } = await supabase
+        const { data: pendingData, error: pendingError } = await supabase
             .from('pending_tickers')
             .select('*')
             .order('requested_count', { ascending: false })
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-        return NextResponse.json(data)
+        if (pendingError) return NextResponse.json({ error: pendingError.message }, { status: 500 })
+
+        // Lọc bỏ những mã đã có trading plan active
+        const { data: activePlans } = await supabase
+            .from('trading_plans')
+            .select('ticker')
+            .eq('status', 'active')
+
+        const activeTickers = new Set((activePlans || []).map((p: any) => p.ticker))
+        const filteredPending = (pendingData || []).filter(p => !activeTickers.has(p.ticker))
+
+        return NextResponse.json(filteredPending)
     }
 
     // default: trading plans

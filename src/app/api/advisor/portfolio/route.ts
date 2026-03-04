@@ -54,7 +54,8 @@ export async function GET(req: NextRequest) {
         result: {
             extracted_tickers: tickers,
             matched_plans: plans || [],
-            pending_tickers: pendingTickers
+            pending_tickers: pendingTickers,
+            allocation_assessment: portfolio.allocation_assessment
         }
     })
 }
