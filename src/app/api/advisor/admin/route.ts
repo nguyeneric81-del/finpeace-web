@@ -157,7 +157,7 @@ export async function PUT(req: NextRequest) {
         const buffer = Buffer.from(arrayBuffer)
         const base64Image = buffer.toString('base64')
 
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
         const prompt = `Bạn là trợ lý phân tích đồ thị chứng khoán chuyên nghiệp. Hãy đọc đồ thị này và trả về 1 JSON hợp lệ với cấu trúc sau:
 {
   "strategy_name": "Tên chiến lược ngắn gọn (VD: Vượt cản, Tích lũy đáy)",
