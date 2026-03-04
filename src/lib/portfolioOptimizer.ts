@@ -30,12 +30,16 @@ export async function calculateMinimumVariancePortfolio(tickers: string[]): Prom
     // Create a symmetric diagonally dominant matrix (which is positive definite)
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
+            const hashI = tickers[i].split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            const hashJ = tickers[j].split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+
             if (i === j) {
-                // Variance (diagonal) - assign random but consistent variance based on ticker string length for simulation
-                covarianceMatrix[i][j] = 0.005 + (tickers[i].charCodeAt(0) % 10) * 0.001;
+                // Variance (diagonal) - assign random but consistent variance
+                // To ensure positive definiteness, value must be reasonably high compared to covariances
+                covarianceMatrix[i][j] = 0.050 + (hashI % 10) * 0.010;
             } else {
-                // Covariance (off-diagonal)
-                const cov = 0.001 + ((tickers[i].charCodeAt(0) + tickers[j].charCodeAt(0)) % 5) * 0.0005;
+                // Covariance (off-diagonal) - Must be symmetric
+                const cov = 0.001 + ((hashI + hashJ) % 5) * 0.002;
                 covarianceMatrix[i][j] = cov;
                 covarianceMatrix[j][i] = cov; // Ensure symmetry
             }
