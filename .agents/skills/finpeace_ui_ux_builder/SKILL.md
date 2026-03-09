@@ -35,3 +35,53 @@ Với mọi giao diện Dashboard hay Cây Sinh Mệnh, Gemini PHẢI áp dụng
 # 5. Khắc phục lỗi Frontend thường gặp
 - Hãy nhớ bọc `useMemo`, `useCallback` cho mọi logic tính toán nặng bên trong function Component để né lỗi đứt gãy SSR của Next.js (Temporal Dead Zone).
 - Không nhồi nhét quá nhiều logic fetch dữ liệu vào UI Component; ưu tiên tách ra Hook riêng.
+
+# 6. Landing Page Layout Patterns (Học từ Keynote Presentation)
+
+Khi thiết kế landing page cho Advisor Trading (`landing-plan`, `landing-trust`, `landing-discipline`), Agent phải áp dụng 3 pattern sau:
+
+## Pattern A — Centered Title + 3-Column Cards
+```tsx
+// Tag pill (elevated header on card, same as slide title pill)
+<div className="bg-teal-50 border-b border-teal-100 px-6 py-4 flex items-center gap-3">
+  <div className="w-8 h-8 bg-white rounded-xl shadow-sm">...</div>
+  <h3 className="font-bold text-teal-700 text-sm">{card.title}</h3>
+</div>
+<div className="px-6 py-5">...</div>
+```
+
+## Pattern B — Split Layout (Text Left + Panel Right)
+```tsx
+<div className="grid lg:grid-cols-2 gap-16 items-start">
+  {/* Left: big title + numbered list 01→04 */}
+  {/* Right: stat panel / citations / image */}
+</div>
+```
+
+## Pattern C — Thin HR Frame (Slide Border)
+```tsx
+// Adaptive HR — dark prop cho dark sections
+const HR = ({ dark = false }) =>
+  <div className={`w-full h-px ${dark ? 'bg-white/10' : 'bg-slate-200/60'}`} />
+// Đặt HR ở đầu và cuối mỗi section
+```
+
+## Quy Tắc Tương Phản Section (QUAN TRỌNG)
+Các section phải xen kẽ sáng/tối để tạo nhịp điệu trực quan rõ ràng:
+
+| Section | Background | Text chính |
+|---|---|---|
+| Hero | `from-teal-50 via-white to-emerald-50` | `text-slate-800` |
+| Section 2 | `bg-slate-800` hoặc `bg-slate-900` | `text-white` |
+| Section 3 (3-col) | `bg-white` | `text-slate-800` |
+| Section 4 | `bg-teal-900` hoặc `bg-emerald-900` | `text-white` |
+| CTA | `bg-gradient-to-br from-teal-600 to-emerald-600` | `text-white` |
+
+> **Lỗi thường gặp:** Không dùng `bg-white` xen kẽ `bg-neutral-50` — user không thấy sự khác biệt. Phải có dark section thực sự (`slate-800`, `teal-900`).
+
+## Dark Section Color Adaptation
+Khi section có dark background, tất cả elements phải đổi màu:
+- Cards: `bg-white/5 border-white/10` thay vì `bg-white border-slate-100`
+- Numbered badges: `bg-teal-400/20 text-teal-300` thay vì `bg-teal-50 text-teal-600`
+- Body text: `text-slate-300` hoặc `text-teal-300/70`
+- Section label: `text-teal-400/60`
