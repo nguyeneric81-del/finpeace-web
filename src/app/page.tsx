@@ -175,11 +175,11 @@ export default function HomePage() {
             </section>
 
             {/* ── BẢN ĐỒ 3 BƯỚC ── */}
-            <section className="py-20 bg-emerald-50">
+            <section className="py-20 bg-slate-950">
                 <div className="max-w-5xl mx-auto px-6">
-                    <p className="text-emerald-600 text-xs font-bold uppercase tracking-widest mb-3">Từ sách &ldquo;Bình An Tài Chính&rdquo;</p>
-                    <h2 className="text-3xl font-black text-slate-900 mb-2">Bản Đồ 3 Bước Đến Bình An</h2>
-                    <p className="text-slate-500 mb-12 max-w-xl">Không phải về việc kiếm được bao nhiêu — đây là hành trình từ lo âu đến tự do.</p>
+                    <p className="text-emerald-400 text-xs font-bold uppercase tracking-widest mb-3">Từ sách &ldquo;Bình An Tài Chính&rdquo;</p>
+                    <h2 className="text-3xl font-black text-white mb-2">Bản Đồ 3 Bước Đến Bình An</h2>
+                    <p className="text-slate-400 mb-12 max-w-xl">Không phải về việc kiếm được bao nhiêu — đây là hành trình từ lo âu đến tự do.</p>
                     <div className="space-y-5">
                         {/* BƯỚC 1 */}
                         <div className="bg-slate-900 border border-rose-900/50 rounded-3xl p-8">
