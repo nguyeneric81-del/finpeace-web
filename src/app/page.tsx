@@ -65,7 +65,7 @@ export default function HomePage() {
             {/* ── NAV ── */}
             <nav className="border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
                 <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-                <Link href="/"><Image src="/logo.svg" alt="FinPeace" width={130} height={32} priority /></Link>
+                <Link href="/"><Image src="/logo.png" alt="FinPeace" width={144} height={24} priority /></Link>
 
                     <Link
                         href="/login"
@@ -234,7 +234,7 @@ export default function HomePage() {
             {/* ── FOOTER ── */}
             <footer className="bg-slate-900 py-8">
                 <div className="max-w-5xl mx-auto px-6 flex items-center justify-between text-slate-500 text-xs">
-                    <Image src="/logo.svg" alt="FinPeace" width={100} height={24} />
+                    <Image src="/logo.png" alt="FinPeace" width={110} height={18} />
 
                     <span>© 2025 FinPeace · Bình An Tài Chính</span>
                     <Link href="/knowledgebase" className="hover:text-slate-300 transition-colors">Thư Viện Kiến Thức →</Link>
