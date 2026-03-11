@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 60" width="260" height="60">
+  <text
+    y="48"
+    font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+    font-weight="900"
+    font-size="52"
+    fill="#00E84C"
+    letter-spacing="-1"
+  >Fin</text>
+  <text
+    x="103"
+    y="48"
+    font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+    font-weight="900"
+    font-size="52"
+    fill="#00D444"
+  >|</text>
+  <text
+    x="118"
+    y="48"
+    font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif"
+    font-weight="900"
+    font-size="52"
+    fill="#00E84C"
+    letter-spacing="-1"
+  >Peace</text>
+</svg>

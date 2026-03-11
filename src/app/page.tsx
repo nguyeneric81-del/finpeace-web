@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -64,7 +65,8 @@ export default function HomePage() {
             {/* ── NAV ── */}
             <nav className="border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
                 <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-                    <span className="text-emerald-600 font-black text-xl tracking-tight">Fin<span className="text-slate-400">|</span>Peace</span>
+                <Link href="/"><Image src="/logo.svg" alt="FinPeace" width={130} height={32} priority /></Link>
+
                     <Link
                         href="/login"
                         className="text-sm font-semibold text-slate-600 hover:text-emerald-600 transition-colors"
@@ -232,7 +234,8 @@ export default function HomePage() {
             {/* ── FOOTER ── */}
             <footer className="bg-slate-900 py-8">
                 <div className="max-w-5xl mx-auto px-6 flex items-center justify-between text-slate-500 text-xs">
-                    <span className="text-emerald-500 font-black text-base">Fin|Peace</span>
+                    <Image src="/logo.svg" alt="FinPeace" width={100} height={24} />
+
                     <span>© 2025 FinPeace · Bình An Tài Chính</span>
                     <Link href="/knowledgebase" className="hover:text-slate-300 transition-colors">Thư Viện Kiến Thức →</Link>
                 </div>
