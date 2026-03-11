@@ -225,6 +225,7 @@ export default function HomePage() {
                                         title: 'Lời nói dối của chiếc máy tính',
                                         hook: 'Tại sao bạn cộng trừ rất giỏi, nhưng tài khoản thì luôn bằng 0?',
                                         core: 'Quản lý tiền bạc là 80% Tâm lý và chỉ có 20% là Toán học.',
+                                        quote: 'Tôi từng tin rằng nếu học thêm một khóa Excel, dùng thêm một app quản lý chi tiêu, mọi thứ sẽ thay đổi. Mãi đến khi tôi nhận ra mình đang né tránh một câu hỏi thực sự khó hơn nhiều: Tôi đang sợ điều gì?',
                                         content: 'Công thức ai cũng biết: Thu nhập - Chi tiêu = Tiết kiệm (phép tính lớp 3). Giống như giảm cân là Ăn ít - Tập nhiều. Tại sao biết mà không làm được? Vì khi đứng trước áo Sale 50% hay lúc buồn chán, não bộ không dùng toán học — mà dùng cảm xúc. Đừng cố lập Excel phức tạp khi "bãi rác tâm lý" chưa được dọn dẹp.',
                                         cta: '💭 Nhớ lại lần gần nhất bạn mua đồ đắt rồi hối hận — bạn tính sai giá, hay cảm xúc mách "chốt đơn đi"?',
                                     },
@@ -234,6 +235,7 @@ export default function HomePage() {
                                         title: '"Thuốc giảm đau" mang tên Mua sắm',
                                         hook: 'Bạn đang mua món đồ đó, hay đang mua "thuốc giảm đau" cho cảm xúc?',
                                         core: 'Dùng tiền để xoa dịu cảm xúc sẽ tạo ra vòng lặp nghèo khó.',
+                                        quote: 'Lần đó tôi vừa bị sếp chỉ trích trước cả phòng. Trên đường về, tôi đặt một đơn hàng 800 nghìn đồng. Khi hàng về, tôi chẳng còn nhớ mình đã đặt gì. Đó là lúc tôi hiểu ra — tôi không mua quần áo. Tôi đang mua sự bình yên tạm thời.',
                                         content: 'Vòng lặp ác tính: Ngày làm việc mệt, sếp mắng → Lướt Shopee chốt đơn để "chữa lành" → Tài khoản cạn → Cảm giác tội lỗi, stress → Lại tiêu để xoa dịu. Dopamine lúc chốt đơn chỉ kéo dài 5 phút — nhưng hóa đơn thẻ tín dụng ám ảnh cả tháng.',
                                         cta: '🧊 Thử thách "Đóng băng 48h": Khi định mua thứ không thiết yếu, bỏ vào giỏ hàng và đợi 48 tiếng. Nếu cơn bốc đồng qua đi — đó chính xác là chi tiêu cảm xúc cần cắt.',
                                     },
@@ -243,6 +245,7 @@ export default function HomePage() {
                                         title: 'Bạn đang trả tiền cho "vở kịch" của ai?',
                                         hook: 'Bạn đang trả góp cho cuộc đời bạn, hay trả góp cho "ước mơ của người khác"?',
                                         core: 'Ngừng dùng tiền xương máu của mình để mua ánh nhìn của người khác.',
+                                        quote: 'Tôi có một người bạn luôn đăng ảnh du lịch đẹp. Chúng tôi không nói chuyện nhiều. Vậy mà mỗi khi thấy story của anh ấy, tôi lại thấy tài khoản của mình bị co rút lại. Tôi đang chi tiêu cho cuộc đời của tôi, hay đang diễn một vở kịch mà tôi không nhớ là mình đã đăng ký vai?',
                                         content: 'Nhiều người vay trả góp đổi iPhone mới nhất, mua xe xịn, du lịch sang chảnh — chỉ để "bằng bạn bằng bè", dù ví đang "khóc thét". Đây là khoản đầu tư lỗ nặng nhất cuộc đời: dùng tiền mồ hôi để mua "sự công nhận" giả tạo từ những người thực sự không quan tâm đến bạn.',
                                         cta: '🏝️ Trò chơi "Hòn đảo hoang": Hãy nhìn món đồ đắt nhất bạn định mua. Nếu ngày mai ra đảo hoang — không ai nhìn thấy để khen hay chê — bạn có còn muốn mua không? Nếu không, bạn đang mua vì người khác.',
                                     },
@@ -252,6 +255,7 @@ export default function HomePage() {
                                         title: '"Ngọn hải đăng" bảo vệ tài khoản',
                                         hook: 'Bí quyết để việc "Tiết kiệm" trở nên kiêu hãnh thay vì khổ sở.',
                                         core: 'Kỷ luật thép rồi cũng sẽ nản — chỉ có "Ước mơ chân thật" mới neo giữ được tiền của bạn.',
+                                        quote: 'Khi được hỏi “Bạn muốn gì?”, hầu hết mọi người trả lời bằng những thứ người khác muốn cho họ: nhà đẹp, xe xịn, địa vị. Ước mơ chân thật thường nhỏ hơn, yên tĩnh hơn — và chính xác vì vậy, nó mới đủ mạnh để thay đổi hành vi của bạn.',
                                         content: 'Não bộ ghét việc "thắt lưng buộc bụng" vì coi đó là sự tước đoạt niềm vui. Kỷ luật bằng ý chí suông chắc chắn thất bại. Giải pháp: gắn tiền với GIÁ TRỊ CỐT LÕI của BẠN — sự an tâm khi cha mẹ ốm đau, quỹ "Tự do" để tự tin nghỉ việc nếu môi trường độc hại, nghỉ hưu sớm về quê trồng rau... Khi từ chối một cuộc nhậu hay món đồ hiệu — đó không còn là tủi thân. Đó là sự kiêu hãnh vì bạn đang bảo vệ ước mơ của chính mình.',
                                         cta: '✍️ Nhắm mắt và viết ra 1 điều khiến bạn hạnh phúc nhất mà không cần chứng minh với ai. Đó chính là "Ước mơ chân thật" — cơ sở để thiết kế Bước 2.',
                                     },
@@ -271,9 +275,13 @@ export default function HomePage() {
                                         </summary>
                                         <div className="px-8 pb-6 pt-2">
                                             <div className="ml-13 pl-4 border-l-2" style={{ borderColor: '#ff7d5040' }}>
-                                                <div className="mb-3 px-3 py-2 rounded-lg inline-block" style={{ background: '#fff6f3' }}>
+                                                <div className="mb-4 px-3 py-2 rounded-lg inline-block" style={{ background: '#fff6f3' }}>
                                                     <p className="text-xs font-bold" style={{ color: '#ff7d50' }}>💡 Thông điệp cốt lõi</p>
                                                     <p className="text-sm font-semibold mt-0.5" style={{ color: navy }}>{lesson.core}</p>
+                                                </div>
+                                                <div className="mb-4 rounded-xl p-4" style={{ background: 'rgba(19,25,70,0.04)', borderLeft: `3px solid ${navy}` }}>
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: navy }}>📖 Trích sách “Bình An Tài Chính”</p>
+                                                    <p className="text-sm italic leading-relaxed" style={{ color: '#131946CC' }}>“{lesson.quote}”</p>
                                                 </div>
                                                 <p className="text-sm leading-relaxed mb-4" style={{ color: '#4F4F4F' }}>{lesson.content}</p>
                                                 <div className="rounded-xl p-4" style={{ background: mint }}>
