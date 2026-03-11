@@ -1,75 +1,94 @@
 // Article content: quan-tri-rui-ro / cat-lo
 // "Cắt Lỗ — Kỹ Năng Quan Trọng Nhất Mà Ít Người Học"
-// Ref: Trading in the Zone (Mark Douglas), Elder's Trading for a Living
+// Ref: Kahneman Prospect Theory, Darvas, Turtle Traders, Elder
 
 import type { ContentBlock } from '../../data'
 
 export const content: ContentBlock[] = [
     {
         type: 'intro',
-        content: `Hỏi bất kỳ trader thành công nào: "Kỹ năng quan trọng nhất bạn học được là gì?" — Câu trả lời gần như đồng nhất: **Cắt lỗ kịp thời**.
+        content: `Không chịu cắt lỗ không phải do bạn kém thông minh — mà do bộ não được **lập trình sinh học để chống lại nó**.
 
-Nhưng điều nghịch lý là: đây cũng là kỹ năng mà não người có bản năng chống lại mạnh mẽ nhất. Bài học này giải thích tại sao, và quan trọng hơn — làm thế nào để vượt qua bản năng đó.`,
+Hiểu được tại sao não phản ứng như vậy là bước đầu tiên. Xây dựng một quy trình cơ học để vượt qua bản năng đó là bước quyết định tài khoản của bạn còn hay mất.`,
     },
     {
         type: 'concept',
-        title: '📖 Phần 1: Tại Sao Não Người Ghét Cắt Lỗ (Về Mặt Sinh Học)',
-        content: `**Loss Aversion (Kahneman):** Não người cảm nhận nỗi đau mất 1 đồng mạnh gấp 2.5 lần niềm vui kiếm được 1 đồng. Điều này có nghĩa: khi cổ phiếu đang lỗ, não bộ sẽ kích hoạt cơ chế "fight or flight" — và "fight" trong ngữ cảnh này là giữ lại cổ phiếu, hy vọng nó hồi.
+        title: '📖 Phần 1: Tại Sao Não Bộ Căm Ghét Việc Cắt Lỗ?',
+        content: `**Ác cảm thua lỗ (Loss Aversion — Kahneman & Tversky):**
+Thuyết triển vọng chứng minh: nỗi đau mất 1 đồng lớn gấp **2.5 lần** niềm vui kiếm được 1 đồng. Vì đau đớn quá lớn, nhà đầu tư sẵn sàng chấp nhận thêm rủi ro (gồng lỗ) chỉ để tránh phải chính thức ghi nhận khoản lỗ.
 
-**"Lỗ trên giấy không phải lỗ thật":** Đây là sự tự lừa dối phổ biến nhất. Sự thật: lỗ trên giấy là **lỗ thật 100%** — nó đang chiếm đóng vốn của bạn, ngăn bạn tái đầu tư vào cơ hội tốt hơn.
+**Né tránh sự hối tiếc & cú sốc cái tôi:**
+Ấn nút "Bán" để chốt lỗ = thừa nhận công khai mình đã sai. Đặc biệt khó khi phải thừa nhận với vợ/chồng hoặc cơ quan thuế. Cái tôi và nỗi sợ bị phán xét khiến con người né tránh hành động đúng đắn.
 
-**Toán học của việc gồng lỗ:**
-- Lỗ 10% → cần lãi 11.1% để hòa vốn
-- Lỗ 25% → cần lãi 33% để hòa vốn
-- Lỗ 50% → cần lãi 100% để hòa vốn
-- Lỗ 75% → cần lãi 300% để hòa vốn
+**Ảo giác "Lỗ trên giấy":**
+Não tự lừa dối: *"Chưa bán = chưa lỗ thật."* Nhà đầu tư bám víu hy vọng giá sẽ hồi phục, và từng bước biến một giao dịch tồi ngắn hạn thành "đầu tư dài hạn bất đắc dĩ" — giam vốn không có điểm thoát.
 
-Càng để lỗ chạy dài, bài toán hồi phục càng bất khả thi.`,
+**Toán học khắc nghiệt của gồng lỗ:**
+- Lỗ 10% → cần lãi 11.1% để hòa
+- Lỗ 25% → cần lãi 33% để hòa
+- Lỗ 50% → cần lãi **100%** để hòa
+- Lỗ 75% → cần lãi **300%** để hòa`,
     },
     {
         type: 'steps',
-        title: '⚙️ 3 Kỹ Thuật Đặt Stop-Loss Khoa Học',
+        title: '⚙️ Phần 2: 3 Kỹ Thuật Đặt Stop-Loss Khoa Học',
         content: '',
         items: [
             {
                 icon: '📏',
-                title: 'Phương pháp 1: % Cố Định',
-                highlight: 'Đơn giản nhất, dễ thực thi nhất',
-                body: 'Đặt stop-loss ở -7% đến -8% từ giá mua (theo nghiên cứu của William O\'Neil về CANSLIM). Ưu điểm: đơn giản, nhất quán. Nhược điểm: không tính đến biến động của từng cổ phiếu riêng lẻ (cổ phiếu cao beta sẽ bị stop thường xuyên hơn).',
-            },
-            {
-                icon: '📊',
-                title: 'Phương pháp 2: ATR-Based (Volatility Stop)',
-                highlight: 'Khoa học và thích nghi nhất',
-                body: 'Stop-loss = Giá mua - (ATR × 2 hoặc 3). ATR (Average True Range) đo biến động thực tế của cổ phiếu. Cổ phiếu biến động cao → stop xa hơn tự động. Cổ phiếu ổn định → stop gần hơn. Đây là cách Turtle Traders dùng.',
+                title: 'Kỹ thuật 1: % Cố Định',
+                highlight: 'Đơn giản nhất — phù hợp người mới bắt đầu',
+                body: '• Xác định trước mức sụt giảm tối đa (ví dụ: 7-8%) so với giá mua\n• William O\'Neil (CANSLIM): cắt lỗ ở -7% đến -8% là ngưỡng tối ưu\n• Ưu điểm: đơn giản, nhất quán, dễ thực thi\n• Nhược điểm: không tính đến biến động riêng của từng cổ phiếu — cổ phiếu beta cao bị stop thường xuyên hơn cần thiết',
             },
             {
                 icon: '🗺️',
-                title: 'Phương pháp 3: S/R Based (Price Action Stop)',
-                highlight: 'Stop tại điểm "vô hiệu hóa thesis"',
-                body: 'Đặt stop ngay dưới vùng hỗ trợ gần nhất. Logic: nếu giá phá vỡ hỗ trợ đó, luận điểm mua ban đầu của bạn đã sai. Đây là cách stop-loss "có ý nghĩa" nhất về mặt kỹ thuật. Kết hợp tốt với phân tích S/R từ bài trước.',
+                title: 'Kỹ thuật 2: S/R & Darvas Box (Price Action Stop)',
+                highlight: 'Stop tại điểm "vô hiệu hóa luận điểm mua"',
+                body: '• Darvas Box: đặt stop ngay dưới đáy hộp (vùng hỗ trợ gần nhất)\n• Khi giá xuyên thủng đáy hộp → lực cầu trợ giá biến mất → không ai biết giá rơi đến đâu\n• Bollinger Bands: thoát lệnh khi cấu trúc giá bị phá vỡ ngoài dải\n• Đây là stop-loss "có ý nghĩa" nhất: nó xác nhận luận điểm mua của bạn đã sai',
+            },
+            {
+                icon: '📊',
+                title: 'Kỹ thuật 3: ATR-Based (Volatility Stop)',
+                highlight: 'Khoa học nhất — Turtle Traders dùng',
+                body: '• Stop = Giá mua − (ATR × 2 hoặc 3)\n• ATR đo biên độ dao động thực tế: cổ phiếu biến động cao → stop xa tự động | ổn định → stop gần\n• Tránh bị "whipsawed" (stop bị quét oan bởi nhiễu bình thường của thị trường)\n• Phù hợp nhất khi kết hợp với position sizing theo ATR (xem bài Position Sizing)',
             },
         ],
     },
     {
-        type: 'concept',
-        title: '📖 Phần 2: Quy Trình Tâm Lý Để Cắt Lỗ "Không Run Tay"',
-        content: `**Bước 1 — Đặt stop-loss TRƯỚC khi vào lệnh:**
-Quyết định mức cắt lỗ khi bạn còn bình tĩnh và chưa bị cảm xúc chi phối, không phải sau khi cổ phiếu đã giảm và bạn đang hoảng loạn.
-
-**Bước 2 — Đặt lệnh stop-loss ngay khi mua:**
-Nhiều người "tự nhắc nhở" mình cắt lỗ nhưng khi đến lúc thì không làm được. Giải pháp: dùng lệnh stop tự động (GTC Stop Order nếu sàn hỗ trợ).
-
-**Bước 3 — Câu hỏi "Nếu tôi đang có tiền mặt":**
-Khi đang gồng lỗ, hãy hỏi: *"Nếu hôm nay tôi đang có tiền mặt, tôi có mua cổ phiếu này ở mức giá HIỆN TẠI không?"* Nếu câu trả lời là Không → bán ngay.
-
-**Bước 4 — Không bao giờ di chuyển stop-loss ra xa hơn:**
-Đây là lỗi tử thần. Khi giá đang tiếp cận stop-loss, bản năng mách "dãn stop ra một chút". Đừng làm vậy — đó là bản năng, không phải kỷ luật.`,
+        type: 'steps',
+        title: '🧠 Phần 3: Quy Trình Tâm Lý Để Cắt Lỗ "Không Run Tay"',
+        content: 'Biến việc cắt lỗ từ quyết định cảm xúc thành phản xạ cơ học:',
+        items: [
+            {
+                icon: '⏰',
+                title: 'Bước 1: Ra quyết định TRƯỚC khi thị trường mở cửa',
+                highlight: 'Lúc bình tĩnh nhất = lúc quyết định tốt nhất',
+                body: 'Xác định chính xác điểm cắt lỗ ngay tại thời điểm mua cổ phiếu — khi đầu óc còn khách quan. Không được để "thị trường quyết định" khi bạn đang hoảng loạn nhìn giá rơi.',
+            },
+            {
+                icon: '🤖',
+                title: 'Bước 2: Đặt lệnh stop tự động — Cơ học hóa kỷ luật',
+                highlight: 'Đừng tin vào sức mạnh ý chí',
+                body: 'Giống Nicolas Darvas: đặt "Stop-loss order" qua môi giới ngay sau khi mua. Lệnh hoạt động như "cầu dao điện tự động" — chém đứt thua lỗ ở đúng điểm đã định, loại bỏ sự chần chừ. Bạn ngủ ngon bất kể thị trường xảy ra chuyện gì.',
+            },
+            {
+                icon: '🔄',
+                title: 'Bước 3: Tái định khung — Cắt lỗ là "Học phí", không phải Thất bại',
+                highlight: 'Thay đổi ý nghĩa = thay đổi hành vi',
+                body: 'Coi số tiền mất đi là học phí bắt buộc để mua kinh nghiệm. Cắt lỗ sớm = giải phóng vốn và tâm trí khỏi căng thẳng, sẵn sàng đón cơ hội tốt hơn. Mỗi lệnh cắt lỗ nhỏ đang bảo vệ bạn khỏi thảm họa lớn.',
+            },
+            {
+                icon: '⚔️',
+                title: 'Bước 4: Tuân thủ quy tắc "Mù quáng"',
+                highlight: '"Thiếu kiên nhẫn với vị thế thua lỗ"',
+                body: 'Quy tắc thép của các triệu phú giao dịch: không bao giờ giữ vị thế đang lỗ quá vài ngày. Tuân thủ điều này một cách mù quáng và vô điều kiện. Chính sự tuân thủ máy móc này sẽ cứu bạn khỏi thảm họa phá hủy toàn bộ tài khoản.',
+            },
+        ],
     },
     {
         type: 'key-insight',
         title: '💡 Thiên Tài Của Cắt Lỗ Nhỏ: Toán Học Kỳ Vọng',
-        content: 'Giả sử bạn cắt lỗ mỗi lệnh ở -5%, và để lãi chạy trung bình +15% khi đúng. Win rate chỉ cần 25% là bạn đã hòa vốn. Win rate 35% là bạn đã có lợi nhuận. Đây chính xác là mô hình của Turtle Traders (40% win rate) và hầu hết các systematic traders thành công: không phải nhờ đoán đúng nhiều, mà nhờ THUA NHỎ và THẮNG LỚN.',
+        content: 'Giả sử cắt lỗ mỗi lệnh ở -5%, để lãi chạy trung bình +15% khi đúng. Win rate chỉ cần 25% là bạn đã hòa vốn. Win rate 35% là có lợi nhuận. Đây chính xác là mô hình Turtle Traders (40% win rate): không nhờ đoán đúng nhiều, mà nhờ THUA NHỎ và THẮNG LỚN.',
     },
     {
         type: 'quote',
@@ -81,12 +100,12 @@ Khi đang gồng lỗ, hãy hỏi: *"Nếu hôm nay tôi đang có tiền mặt,
         type: 'summary',
         title: '📋 Ghi Nhớ Sau Bài Này',
         content: [
-            'Loss Aversion: não ghét cắt lỗ vì nỗi đau mất tiền gấp 2.5x niềm vui lời — cần hệ thống cơ học để vượt qua',
-            'Toán học của gồng lỗ: lỗ 50% cần lãi 100% để hòa vốn — càng để dài, càng không thể hồi phục',
-            '3 phương pháp: % cố định (đơn giản) | ATR-based (khoa học) | S/R-based (có ý nghĩa nhất)',
-            'Quy trình quan trọng nhất: đặt stop TRƯỚC khi vào lệnh, khi còn bình tĩnh',
-            '"Nếu có tiền mặt, tôi có mua ở giá này không?" → Không → Bán ngay, không cần biện bạch',
-            'Không di chuyển stop ra xa hơn — đó là bản năng phá hủy tài khoản, không phải trí tuệ',
+            'Loss Aversion (Kahneman): đau mất 1 đồng = 2.5x vui kiếm 1 đồng → não lập trình để gồng lỗ, không phải cắt lỗ',
+            '"Lỗ trên giấy" là ảo giác: vốn bị giam = cơ hội mất = lỗ thật 100%; lỗ 50% cần lãi 100% để hòa',
+            '3 kỹ thuật stop: % cố định (đơn giản) | S/R & Darvas Box (có ý nghĩa) | ATR-based (khoa học nhất)',
+            'Quy trình 4 bước: quyết định trước khi mở cửa → đặt lệnh tự động → tái khung nhận thức → tuân thủ mù quáng',
+            '"Mù quáng" ở đây là đức hạnh, không phải sự ngu ngốc — nó bảo vệ bạn khỏi thảm họa do cảm xúc gây ra',
+            'Kỳ vọng toán học: cắt lỗ nhỏ ở -5% + để lãi chạy +15% → với win rate 35% vẫn có lợi nhuận dài hạn',
         ],
     },
 ]
