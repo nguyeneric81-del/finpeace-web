@@ -295,33 +295,110 @@ export default function HomePage() {
                         </div>
 
                         {/* BƯỚC 2 */}
-                        <div className="bg-white rounded-3xl p-8 shadow-sm border-l-4" style={{ borderLeftColor: green }}>
-                            <div className="flex items-start gap-5">
-                                <div className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{ background: mint, border: `2px solid ${green}` }}>🏗️</div>
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-3 mb-2 flex-wrap">
-                                        <span className="text-xs font-black uppercase tracking-widest" style={{ color: green }}>Bước 2</span>
-                                        <span className="text-xs" style={{ color: '#4F4F4F' }}>· Vùng Đất Kiểm Soát</span>
-                                    </div>
-                                    <h3 className="font-black text-xl mb-3" style={{ color: navy }}>Xây dựng Cỗ máy tài chính</h3>
-                                    <p className="text-sm leading-relaxed mb-5" style={{ color: '#4F4F4F' }}>5 trụ cột thực chiến — FinPeace giúp bạn theo dõi và tối ưu cả 5.</p>
-                                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                                        {[
-                                            { icon: '🌾', name: 'Thu nhập', label: 'Cánh đồng', desc: 'Tăng kỹ năng + tạo thu nhập thụ động' },
-                                            { icon: '🌊', name: 'Chi tiêu & Tiết kiệm', label: 'Dòng sông', desc: 'PYF: cất 20% ngay khi nhận lương' },
-                                            { icon: '🌿', name: 'Nợ nần', label: 'Đầm lầy', desc: 'Tránh nợ xấu, dùng nợ tốt đúng cách' },
-                                            { icon: '🪴', name: 'Đầu tư', label: 'Khu vườn', desc: 'Kỷ luật đều đặn — không lướt sóng' },
-                                            { icon: '🏰', name: 'Rủi ro', label: 'Hầm trú ẩn', desc: 'Quỹ khẩn cấp + bảo hiểm trước tiên' },
-                                        ].map((t, i) => (
-                                            <div key={i} className="rounded-xl p-3 text-center" style={{ background: mint }}>
-                                                <span className="text-xl block mb-1">{t.icon}</span>
-                                                <p className="text-[9px] font-bold uppercase tracking-wide mb-0.5" style={{ color: green }}>{t.label}</p>
-                                                <p className="text-xs font-bold mb-1 leading-tight" style={{ color: navy }}>{t.name}</p>
-                                                <p className="text-[10px] leading-snug" style={{ color: '#4F4F4F' }}>{t.desc}</p>
-                                            </div>
-                                        ))}
+                        <div className="bg-white rounded-3xl shadow-sm border-l-4 overflow-hidden" style={{ borderLeftColor: green }}>
+                            {/* Step header */}
+                            <div className="p-8 border-b" style={{ borderColor: 'rgba(56,198,139,0.15)' }}>
+                                <div className="flex items-start gap-5">
+                                    <div className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{ background: mint, border: `2px solid ${green}` }}>🏗️</div>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-3 mb-2 flex-wrap">
+                                            <span className="text-xs font-black uppercase tracking-widest" style={{ color: green }}>Bước 2</span>
+                                            <span className="text-xs" style={{ color: '#4F4F4F' }}>· Vùng Đất Kiểm Soát</span>
+                                            <span className="ml-auto text-xs px-2 py-0.5 rounded-full font-bold" style={{ background: mint, color: green }}>5 bài học</span>
+                                        </div>
+                                        <h3 className="font-black text-xl mb-2" style={{ color: navy }}>Xây dựng Cỗ máy tài chính</h3>
+                                        <p className="text-sm leading-relaxed" style={{ color: '#4F4F4F' }}>
+                                            Thu nhập là nhiên liệu, nhưng <strong>5 trụ cột này</strong> mới là cỗ máy — FinPeace giúp bạn theo dõi và tối ưu từng trụ cột một.
+                                        </p>
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* 5 bài học accordion */}
+                            <div className="divide-y" style={{ borderColor: 'rgba(56,198,139,0.15)' }}>
+                                {[
+                                    {
+                                        num: '01',
+                                        emoji: '🌾',
+                                        title: 'CÁNH ĐỒNG — Thu nhập',
+                                        hook: 'Kỹ năng mới là cỗ máy in tiền thực sự — không phải tờ lương bạn nhận mỗi tháng.',
+                                        core: 'Thu nhập đến từ Vốn con người (kỹ năng, thời gian) và Vốn tài chính (tài sản sinh lời). Khi bạn già đi, chỉ Vốn tài chính mới không cạn kiệt.',
+                                        quote: 'Thu nhập là nhiên liệu khởi đầu để cỗ máy chạy, nhưng kỹ năng mới là cỗ máy in tiền thực sự.',
+                                        content: 'Khi còn trẻ, bạn dùng Vốn con người — đi làm đổi thời gian lấy tiền. Nhưng sức người và thời gian là hữu hạn ("ráo mồ hôi là hết tiền"). Nếu chỉ dựa vào nguồn này, cánh đồng của bạn sẽ cạn kiệt khi bạn già đi hoặc ốm đau. Thu nhập luôn tương xứng với giá trị bạn tạo ra — phát triển bản thân và nâng cao kỹ năng là mấu chốt để tăng thu nhập chủ động.',
+                                        cta: '🌱 Giai đoạn 1: Đầu tư vào kỹ năng để tăng giá trị sức lao động. Giai đoạn 2: Dùng một phần thu nhập mua tài sản sinh lời để "tiền làm việc cùng bạn" — đây chính là cách bạn scale up cánh đồng mà không tốn thêm sức lực.',
+                                    },
+                                    {
+                                        num: '02',
+                                        emoji: '🌊',
+                                        title: 'DÒNG SÔNG — Chi tiêu & Tiết kiệm',
+                                        hook: 'Người ta không giàu lên nhờ số tiền kiếm được — mà nhờ số tiền giữ lại được.',
+                                        core: 'Tiết kiệm không phải "sự hy sinh" hay "kìm nén", mà là hành động yêu thương bản thân trong tương lai.',
+                                        quote: 'Người ta không giàu lên nhờ số tiền kiếm được, mà giàu lên nhờ số tiền giữ lại được.',
+                                        content: 'Tiền bạc giống một dòng sông: thu nhập là nước chảy vào, chi tiêu là nước tràn ra, tiết kiệm là hồ chứa bạn xây để giữ nước phòng hạn hán. Giáo sư Burton Malkiel (tác giả "Bước đi ngẫu nhiên trên Phố Wall") nhấn mạnh: yếu tố quan trọng nhất của tăng trưởng tài sản chính là bạn tiết kiệm được bao nhiêu. Dù đầu tư giỏi kiếm 10–15%/năm nhưng không có tiền tiết kiệm định kỳ thì cũng vô nghĩa.',
+                                        cta: '💡 Ngay khi nhận lương, hãy áp dụng PYF (Pay Yourself First — Trả cho mình trước): tự động trích tối thiểu 20% vào tài khoản tiết kiệm/đầu tư trước, sau đó mới phân bổ chi tiêu cho phần còn lại.',
+                                    },
+                                    {
+                                        num: '03',
+                                        emoji: '🌿',
+                                        title: 'ĐẦM LẦY — Nợ nần',
+                                        hook: 'Nợ là xiềng xích nếu dùng sai — nhưng là đòn bẩy nếu dùng đúng.',
+                                        core: 'Nợ xấu mua tiêu sản (điện thoại, xe khoe mẽ) kéo bạn xuống vũng lầy. Nợ tốt mua tài sản sinh lời (nhà cho thuê, học vấn) là con đường tắt đến giàu có.',
+                                        quote: 'Nợ là xiềng xích nếu dùng sai, nhưng là đòn bẩy nếu dùng đúng.',
+                                        content: 'Warren Buffett từng nói: "Nợ tốt là nợ giúp bạn giàu lên, nợ xấu là nợ làm bạn nghèo đi." Nợ xấu (Đầm lầy): vay mua tiêu sản với lãi suất cao — giá trị tài sản giảm dần trong khi nợ lãi chồng chất. Nợ tốt (Đòn bẩy): vay để đầu tư vào tài sản sinh lời — lợi nhuận sinh ra vượt xa chi phí lãi vay.',
+                                        cta: '⚠️ Tuyệt đối tránh xa nợ xấu. Khi cân nhắc nợ tốt, nguyên tắc sống còn: khoản trả nợ hàng tháng KHÔNG BAO GIỜ vượt quá 30–40% thu nhập để tránh căng thẳng dòng tiền.',
+                                    },
+                                    {
+                                        num: '04',
+                                        emoji: '🪴',
+                                        title: 'KHU VƯỜN — Đầu tư',
+                                        hook: 'Đầu tư không phải sòng bạc để lướt sóng — mà là khu vườn cần sự kiên nhẫn.',
+                                        core: 'Thách thức lớn nhất không phải đánh bại thị trường — mà là ngăn bản thân trở thành kẻ thù của chính mình (không mua cao vì hưng phấn, không bán tháo vì hoảng loạn).',
+                                        quote: 'Đầu tư không phải là sòng bạc để lướt sóng, mà là một khu vườn cần sự kiên nhẫn.',
+                                        content: 'Tiền để trong két sắt hay ngân hàng sẽ bị lạm phát gặm nhấm — đầu tư là việc gieo hạt giống tiền bạc để nó nảy mầm, sinh sôi qua thời gian. Benjamin Graham dạy rằng cố gắng dự đoán đỉnh/đáy hay lướt sóng ngắn hạn là con đường nhanh nhất dẫn đến thua lỗ.',
+                                        cta: '📅 Trở thành người làm vườn kiên nhẫn bằng DCA (Bình quân chi phí đô-la): trích một số tiền cố định mỗi tháng mua tài sản tự động, bất chấp thị trường lên hay xuống. Kỷ luật đều đặn 10–20 năm kết hợp lãi kép sẽ biến hạt giống nhỏ thành rừng tài sản khổng lồ.',
+                                    },
+                                    {
+                                        num: '05',
+                                        emoji: '🏰',
+                                        title: 'HẦM TRÚ ẨN — Rủi ro',
+                                        hook: 'Bạn không thể ngăn cơn bão ập đến — nhưng bạn có thể xây một hầm trú ẩn vững chắc.',
+                                        core: 'Đầu tư mà không có hầm trú ẩn thì giống như xây lâu đài trên cát — một cú sốc tài chính sẽ buộc bạn bán tháo tài sản ở đáy.',
+                                        quote: 'Bạn không thể ngăn cơn bão ập đến, nhưng bạn có thể xây một hầm trú ẩn vững chắc.',
+                                        content: 'Rủi ro (mất việc, ốm đau, thị trường sụp đổ) là điều tất yếu của cuộc sống. Giáo sư Burton Malkiel cảnh báo: những nhu cầu tài chính ngoài dự kiến luôn xảy ra, và điều tồi tệ nhất ập đến khi bạn phải chịu chi phí y tế cao hoặc thất nghiệp. Không có lớp bảo vệ, bạn sẽ bán tháo tài sản ở đáy hoặc rơi vào đầm lầy nợ nần.',
+                                        cta: '🛡️ Xây hầm trú ẩn 2 lớp: (1) Quỹ khẩn cấp: tiết kiệm 6–12 tháng chi phí sinh hoạt ở nơi an toàn, thanh khoản cao. (2) Bảo hiểm: bảo hiểm y tế/sức khỏe và bảo hiểm nhân thọ (nếu là trụ cột gia đình) — đảm bảo chi phí không vượt quá 5–10% thu nhập.',
+                                    },
+                                ].map((lesson, i) => (
+                                    <details key={i} className="group">
+                                        <summary className="flex items-center gap-4 px-8 py-5 cursor-pointer list-none transition-colors hover:bg-emerald-50">
+                                            <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-lg font-black" style={{ background: mint, color: green }}>
+                                                {lesson.emoji}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 mb-0.5">
+                                                    <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: green }}>Bài học {lesson.num}</span>
+                                                </div>
+                                                <p className="font-bold text-sm leading-tight" style={{ color: navy }}>{lesson.hook}</p>
+                                            </div>
+                                            <span className="shrink-0 text-lg transition-transform group-open:rotate-90" style={{ color: green }}>›</span>
+                                        </summary>
+                                        <div className="px-8 pb-6 pt-2">
+                                            <div className="ml-13 pl-4 border-l-2" style={{ borderColor: 'rgba(56,198,139,0.25)' }}>
+                                                <div className="mb-4 px-3 py-2 rounded-lg inline-block" style={{ background: mint }}>
+                                                    <p className="text-xs font-bold" style={{ color: green }}>💡 Thông điệp cốt lõi</p>
+                                                    <p className="text-sm font-semibold mt-0.5" style={{ color: navy }}>{lesson.core}</p>
+                                                </div>
+                                                <div className="mb-4 rounded-xl p-4" style={{ background: 'rgba(19,25,70,0.04)', borderLeft: `3px solid ${navy}` }}>
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: navy }}>📖 Trích sách "Bình An Tài Chính"</p>
+                                                    <p className="text-sm italic leading-relaxed" style={{ color: '#131946CC' }}>"{lesson.quote}"</p>
+                                                </div>
+                                                <p className="text-sm leading-relaxed mb-4" style={{ color: '#4F4F4F' }}>{lesson.content}</p>
+                                                <div className="rounded-xl p-4" style={{ background: mint }}>
+                                                    <p className="text-sm leading-relaxed" style={{ color: navy }}>{lesson.cta}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </details>
+                                ))}
                             </div>
                         </div>
 
