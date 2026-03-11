@@ -168,10 +168,8 @@ export default function HomePage() {
                         {FEATURES.map((f, i) => (
                             <div
                                 key={i}
-                                className="border rounded-2xl p-6 transition-all hover:shadow-md group"
+                                className="border-2 rounded-2xl p-6 transition-all hover:shadow-md hover:border-emerald-400"
                                 style={{ borderColor: 'rgba(56,198,139,0.2)' }}
-                                onMouseEnter={e => (e.currentTarget.style.borderColor = green)}
-                                onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(56,198,139,0.2)')}
                             >
                                 <div className="flex items-start justify-between mb-4">
                                     <span className="text-3xl">{f.icon}</span>
