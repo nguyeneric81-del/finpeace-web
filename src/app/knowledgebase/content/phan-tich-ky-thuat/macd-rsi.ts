@@ -7,85 +7,81 @@ import type { ContentBlock } from '../../data'
 export const content: ContentBlock[] = [
     {
         type: 'intro',
-        content: `MACD và RSI là hai chỉ báo kỹ thuật được sử dụng nhiều nhất thế giới — không phải vì chúng thần kỳ, mà vì chúng giải quyết được hai câu hỏi cốt lõi mà mọi trader đều cần trả lời:
+        content: `RSI và MACD là hai chỉ báo kỹ thuật được sử dụng nhiều nhất thế giới. Chúng trả lời hai câu hỏi cốt lõi:
 
-**RSI hỏi:** "Thị trường đang mua quá nhiều hay bán quá nhiều?"
-**MACD hỏi:** "Đà (Momentum) của xu hướng đang tăng hay đang yếu dần?"
+**RSI hỏi:** "Thị trường đang mua quá nhiều hay bán quá nhiều — và momentum có đang phân kỳ với giá không?"
+**MACD hỏi:** "Xu hướng đang tăng tốc hay giảm tốc — và đường nhanh đang vượt đường chậm chưa?"
 
-Hiểu đúng hai chỉ báo này — và quan trọng hơn, hiểu đúng **giới hạn** của chúng — chính là nền tảng để không bị chúng lừa.`,
+Dùng riêng lẻ, chúng thường cho tín hiệu nhiễu. Kết hợp đúng cách trong bộ lọc 3 tầng, chúng trở thành công cụ xác nhận đáng tin cậy nhất trong phân tích kỹ thuật.`,
     },
     {
         type: 'concept',
-        title: '📖 Phần 1: RSI — "Nhiệt Kế" Đo Sức Nóng Của Thị Trường',
-        content: `**RSI (Relative Strength Index)** do J. Welles Wilder phát triển năm 1978. Nó đo tốc độ và biên độ của các biến động giá, dao động trong khoảng 0 đến 100.
+        title: '📖 Phần 1: RSI — Bộ Đo Sức Nóng Thị Trường',
+        content: `**RSI (Relative Strength Index)** do J. Welles Wilder phát triển, dao động từ 0 đến 100, khung 14 ngày hoạt động tốt nhất.
 
-**Đọc RSI theo 3 vùng:**
+**Cách đọc cơ bản theo 3 vùng:**
+• **RSI > 70 — Overbought (Quá mua):** Thị trường có thể bị kéo ngược hoặc bước vào giai đoạn củng cố đi ngang.
+• **RSI < 30 — Oversold (Quá bán):** Phản ánh tiềm năng phục hồi giá lên.
+• **RSI 30–70 — Vùng trung tính:** Không có tín hiệu cực đoan.
 
-• **Vùng Overbought (Mua quá mức) — RSI > 70:** Giá đã tăng nhanh và mạnh, áp lực chốt lời có thể xuất hiện. Không có nghĩa là bán ngay — cổ phiếu trong uptrend mạnh có thể duy trì RSI > 70 trong nhiều tuần.
-
-• **Vùng Oversold (Bán quá mức) — RSI < 30:** Giá đã giảm nhanh và mạnh, khả năng bật phục xuất hiện. Không có nghĩa là mua ngay — downtrend mạnh có thể giữ RSI < 30 kéo dài.
-
-• **Vùng Trung tính (30–70):** Xu hướng bình thường, RSI không đưa ra tín hiệu rõ ràng.
-
-**Sai lầm phổ biến nhất:** Bán ngay khi RSI > 70 hoặc mua ngay khi RSI < 30. Đây là cách mất tiền nhanh nhất với RSI. Cổ phiếu "Overbought" có thể tiếp tục tăng thêm 50% trong một xu hướng thực sự mạnh.`,
+**⚠️ Bẫy trong xu hướng mạnh — Dịch chuyển ngưỡng:**
+Sai lầm chết người là bán khống ngay khi RSI chạm 70. Trong bull market mạnh, RSI có thể nằm lỳ ở vùng overbought rất lâu. Khi đó phải điều chỉnh:
+- **Bull market:** ngưỡng overbought = **80**, ngưỡng oversold thực sự = **40**
+- **Bear market:** ngưỡng oversold = **20**, ngưỡng kháng cự (overbought) = **60**`,
     },
     {
         type: 'key-insight',
-        title: '💡 RSI Divergence — Tín Hiệu Đảo Chiều Mạnh Nhất',
-        content: 'Khi giá lập đỉnh mới cao hơn (Higher High) nhưng RSI lại tạo đỉnh thấp hơn (Lower High) → Bearish Divergence: momentum đang suy yếu dù giá còn tăng. Ngược lại: giá lập đáy mới thấp hơn nhưng RSI tạo đáy cao hơn → Bullish Divergence: lực bán đang cạn. Divergence không phải tín hiệu vào lệnh — đó là cảnh báo "hãy chú ý".',
+        title: '💡 Bí Mật RSI: Phân Kỳ (Divergence) — Tín Hiệu Mạnh Nhất',
+        content: 'Phân kỳ tăng (Bullish): giá tạo đáy thấp hơn nhưng RSI (dưới 30) tạo đáy cao hơn → RSI cắt lên khỏi đỉnh trước = tín hiệu mua ngắn hạn đáng tin. Phân kỳ giảm (Bearish): giá tạo đỉnh cao hơn nhưng RSI (trên 70) tạo đỉnh thấp hơn = cảnh báo đảo chiều giảm. Đây là tín hiệu đáng tin nhất vì nó đo lường sự suy yếu momentum trước khi giá xác nhận.',
     },
     {
         type: 'concept',
-        title: '📖 Phần 2: MACD — "Địa Chấn Kế" Đo Động Lực Xu Hướng',
-        content: `**MACD (Moving Average Convergence Divergence)** do Gerald Appel phát triển, gồm 3 thành phần:
+        title: '📖 Phần 2: MACD — Bộ Đo Động Lực và Xu Hướng',
+        content: `**MACD (Moving Average Convergence Divergence)** do Gerald Appel phát triển — kết hợp hệ thống giao cắt MA với đánh giá momentum.
 
-• **MACD Line** = EMA(12) – EMA(26): khoảng cách giữa hai đường trung bình nhanh và chậm.
-• **Signal Line** = EMA(9) của MACD Line: đường tín hiệu làm mượt MACD.
-• **Histogram** = MACD Line – Signal Line: thanh cột biểu thị khoảng cách giữa hai đường.
+**3 thành phần:**
+• **MACD Line** = EMA(12) – EMA(26)
+• **Signal Line** = EMA(9) của MACD Line
+• **Histogram** = MACD Line – Signal Line (khoảng cách hai đường)
 
-**3 cách đọc MACD:**
+**Tín hiệu Crossover:**
+• **Mua:** Đường nhanh cắt lên đường chậm — đặc biệt mạnh khi cả hai đang nằm dưới 0.
+• **Bán:** Đường nhanh cắt xuống đường chậm từ phía trên đường 0.
 
-**① Crossover (Giao cắt):** MACD cắt lên trên Signal Line → tín hiệu mua. MACD cắt xuống dưới Signal Line → tín hiệu bán. *Nhược điểm: crossover thường đến muộn, sau khi giá đã di chuyển đáng kể.*
+**Histogram — Vũ khí cảnh báo SỚM hơn crossover:**
+MACD-Histogram cho tín hiệu thay đổi xu hướng sớm hơn cả hai đường MACD. Dấu hiệu: Histogram đang thu hẹp dần (dù giá còn tăng) = momentum đang yếu đi. Phân kỳ Histogram (giá đỉnh cao hơn nhưng Histogram đỉnh thấp hơn) = cảnh báo đảo chiều cực kỳ mạnh.
 
-**② Zero Line Cross:** MACD cắt lên trên đường 0 → xu hướng tăng xác nhận. Cắt xuống 0 → xu hướng giảm. Đây là tín hiệu xu hướng dài hạn hơn crossover.
-
-**③ Histogram Divergence:** Histogram đang thu hẹp dù xu hướng vẫn tiếp tục → momentum đang yếu dần, cảnh báo sớm trước khi crossover xảy ra.`,
+**Lưu ý chống nhiễu:** Không dùng RSI lẫn MACD lẫn Bollinger Bands cùng lúc — chúng đều đo momentum giá, gây trùng lặp. Hãy kết hợp **1 chỉ báo xu hướng (MACD)** với **1 chỉ báo dao động (RSI)**.`,
     },
     {
         type: 'steps',
-        title: '🎯 Kết Hợp MACD + RSI + S/R: Bộ Lọc 3 Tầng',
-        content: 'Dùng từng chỉ báo riêng lẻ thường sinh ra nhiều tín hiệu nhiễu. Kết hợp 3 tầng lọc sẽ tăng độ chính xác đáng kể:',
+        title: '🎯 Bộ Lọc 3 Tầng: Cách Tránh Tín Hiệu Nhiễu',
+        content: 'Điểm yếu lớn nhất của MACD và RSI: chúng có độ trễ và cho tín hiệu sai khi dùng riêng lẻ. Bộ lọc 3 tầng này giúp bạn chỉ bóp cò khi cả 3 yếu tố hội tụ:',
         items: [
             {
-                icon: '🗺️',
-                title: 'Tầng 1: Xác định xu hướng bằng S/R & Price Action',
-                highlight: 'Context trước, indicator sau',
-                body: 'Xác định xu hướng lớn (uptrend/downtrend/sideway) trước. Chỉ tìm tín hiệu MUA trong uptrend, tín hiệu BÁN trong downtrend. MACD và RSI không nên dùng để "chống lại" xu hướng chính.',
-            },
-            {
-                icon: '📊',
-                title: 'Tầng 2: MACD xác nhận momentum',
-                highlight: 'Momentum đúng chiều',
-                body: 'Trong uptrend: chờ MACD Histogram đang mở rộng (tăng) = momentum đang tăng. Crossover MACD cắt lên Signal Line từ vùng âm là tín hiệu chất lượng nhất.',
+                icon: '🗓️',
+                title: 'Tầng 1: Lọc xu hướng lớn bằng khung thời gian Tuần',
+                highlight: 'Weekly > Daily (luôn luôn)',
+                body: 'Tín hiệu biểu đồ tuần luôn có giá trị cao hơn biểu đồ ngày. Dùng MACD tuần để xác định xu hướng chủ đạo: MACD tuần đang hướng lên → chỉ tìm lệnh MUA trên biểu đồ ngày. MACD tuần đang xuống → chỉ tìm lệnh BÁN. Không bao giờ dùng RSI để xác định xu hướng — đó là việc của MACD hoặc MA.',
             },
             {
                 icon: '🌡️',
-                title: 'Tầng 3: RSI xác nhận không trong vùng cực đoan',
-                highlight: 'Tránh mua đỉnh, bán đáy',
-                body: 'Trong uptrend: lý tưởng là mua khi RSI kéo về vùng 40-50 (điều chỉnh), không mua khi RSI > 70 (đã overbought). Kết hợp RSI Bullish Divergence tại vùng hỗ trợ = setup chất lượng cao nhất.',
+                title: 'Tầng 2: Tìm điểm vào bằng RSI tại vùng cực đoan',
+                highlight: 'RSI xác nhận sự kiệt sức của phe đối lập',
+                body: 'Sau khi đã có xu hướng lớn từ MACD tuần, dùng RSI để tìm điểm vào lệnh rủi ro thấp nhất. Trong uptrend: chờ RSI kéo về 40-50 (điều chỉnh) thay vì mua khi RSI > 70. Tín hiệu chất lượng cao nhất: RSI Bullish Divergence tại vùng oversold.',
             },
             {
-                icon: '✅',
-                title: 'Entry: Khi cả 3 tầng cùng chiều',
-                highlight: 'High probability setup',
-                body: 'Upstream xác nhận (S/R) + MACD momentum thuận chiều + RSI không cực đoan → đây là điểm vào lệnh có xác suất cao nhất. Stop-loss đặt dưới S/R gần nhất.',
+                icon: '🗺️',
+                title: 'Tầng 3: Hội tụ tại vùng S/R — "Điểm bóp cò"',
+                highlight: 'Confluence = xác suất cao nhất',
+                body: 'Chỉ báo chỉ có nghĩa khi hội tụ với vùng S/R vật lý. Case study: giá chạm kháng cự tĩnh + RSI > 70 + RSI Bearish Divergence = tín hiệu bán xác suất rất cao. Ngược lại: giá chạm hỗ trợ + RSI < 30 + MACD cắt lên = setup mua chất lượng cao.',
             },
         ],
     },
     {
         type: 'warning',
-        title: '⚠️ Bẫy Phổ Biến: Over-reliance on Indicators',
-        content: 'MACD và RSI là các chỉ báo trễ (lagging indicators) — chúng tính toán dựa trên dữ liệu giá đã qua. Trong thị trường sideway (đi ngang), chúng sinh ra vô số tín hiệu giả. Không bao giờ dùng MACD hoặc RSI làm tín hiệu duy nhất để vào lệnh. Luôn kết hợp với Price Action, S/R và Volume để lọc nhiễu.',
+        title: '⚠️ Đừng Giao Dịch Chỉ Vì RSI Cắt Lên 30 hay MACD Giao Cắt',
+        content: 'MACD và RSI là lagging indicators. Trong sideway market, chúng sinh ra vô số tín hiệu nhiễu. Nguyên tắc: chờ giá về vùng S/R → kiểm tra MACD tuần có đồng thuận không → RSI có cho thấy kiệt sức của phe đối lập (Divergence / Oversold) không. Sự hội tụ của 3 yếu tố = điểm bóp cò chính xác. Thiếu một yếu tố → đứng ngoài chờ đợi.',
     },
     {
         type: 'quote',
@@ -97,12 +93,12 @@ Hiểu đúng hai chỉ báo này — và quan trọng hơn, hiểu đúng **gi�
         type: 'summary',
         title: '📋 Ghi Nhớ Sau Bài Này',
         content: [
-            'RSI (0-100): >70 = overbought, <30 = oversold — nhưng không phải tín hiệu mua/bán ngay lập tức',
-            'RSI Divergence (giá tăng/RSI giảm) = cảnh báo momentum suy yếu, tín hiệu đảo chiều sớm nhất',
-            'MACD = EMA12 – EMA26 | Signal = EMA9 của MACD | Histogram = khoảng cách hai đường',
-            'MACD Crossover (muộn nhưng an toàn) | Histogram thu hẹp (sớm hơn, nhưng nhiều nhiễu hơn)',
-            'Bộ lọc 3 tầng: S/R xác định context → MACD xác nhận momentum → RSI tránh vùng cực đoan',
-            'MACD & RSI là lagging indicators — luôn kết hợp với Price Action và Volume, không dùng riêng lẻ',
+            'RSI (14 ngày): >70 = overbought, <30 = oversold — điều chỉnh ngưỡng theo sức mạnh xu hướng (Bull: 80/40; Bear: 60/20)',
+            'RSI Divergence = tín hiệu mạnh nhất: giá tăng + RSI giảm → sắp đảo chiều giảm (và ngược lại)',
+            'MACD Crossover (chậm nhưng an toàn) | MACD Histogram thu hẹp (sớm hơn, nhưng nhiều nhiễu hơn)',
+            'Không dùng RSI xác định xu hướng — đó là nhiệm vụ của MACD hoặc MA; không chồng nhiều indicator cùng loại',
+            'Bộ lọc 3 tầng: MACD tuần (xu hướng lớn) → RSI ngày (điểm vào) → S/R hội tụ (bóp cò)',
+            'Tín hiệu xác suất cao nhất: giá tại vùng S/R + RSI cực đoan/divergence + MACD đồng chiều xu hướng tuần',
         ],
     },
 ]
