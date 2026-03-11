@@ -197,23 +197,92 @@ export default function HomePage() {
                     <div className="space-y-5">
 
                         {/* BƯỚC 1 */}
-                        <div className="bg-white rounded-3xl p-8 shadow-sm border-l-4" style={{ borderLeftColor: '#ff7d50' }}>
-                            <div className="flex items-start gap-5">
-                                <div className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{ background: '#fff6f3', border: '2px solid #ff7d50' }}>🛑</div>
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-3 mb-2 flex-wrap">
-                                        <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#ff7d50' }}>Bước 1</span>
-                                        <span className="text-xs" style={{ color: '#4F4F4F' }}>· Vùng Đất Hoang</span>
-                                    </div>
-                                    <h3 className="font-black text-xl mb-3" style={{ color: navy }}>Dọn dẹp rào cản tâm lý</h3>
-                                    <p className="text-sm leading-relaxed mb-4" style={{ color: '#4F4F4F' }}>
-                                        Nhiều người nghèo đi không vì dốt tính toán — mà do bị kẹt bởi <span style={{ color: '#ff7d50' }}>nỗi sợ vô hình</span> và <span style={{ color: '#ff7d50' }}>niềm tin sai lệch</span>. Bẫy &ldquo;trì hoãn&rdquo; và chi tiêu cảm xúc khiến tài khoản về 0 rồi lại hối hận, lặp đi lặp lại.
-                                    </p>
-                                    <div className="rounded-xl px-4 py-3 inline-block" style={{ background: mint }}>
-                                        <p className="text-xs font-bold" style={{ color: green }}>Giải pháp: Tìm &ldquo;ước mơ chân thật&rdquo;</p>
-                                        <p className="text-xs mt-1" style={{ color: '#4F4F4F' }}>Gắn tiền với giá trị cốt lõi của bạn, không phải áp lực xã hội</p>
+                        <div className="bg-white rounded-3xl shadow-sm border-l-4 overflow-hidden" style={{ borderLeftColor: '#ff7d50' }}>
+                            {/* Step header */}
+                            <div className="p-8 border-b" style={{ borderColor: 'rgba(255,125,80,0.15)' }}>
+                                <div className="flex items-start gap-5">
+                                    <div className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{ background: '#fff6f3', border: '2px solid #ff7d50' }}>🛑</div>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-3 mb-2 flex-wrap">
+                                            <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#ff7d50' }}>Bước 1</span>
+                                            <span className="text-xs" style={{ color: '#4F4F4F' }}>· Vùng Đất Hoang</span>
+                                            <span className="ml-auto text-xs px-2 py-0.5 rounded-full font-bold" style={{ background: '#fff6f3', color: '#ff7d50' }}>4 bài học</span>
+                                        </div>
+                                        <h3 className="font-black text-xl mb-2" style={{ color: navy }}>Dọn dẹp rào cản tâm lý</h3>
+                                        <p className="text-sm leading-relaxed" style={{ color: '#4F4F4F' }}>
+                                            Quản lý tiền bạc là <strong>80% Tâm lý</strong> và chỉ 20% Toán học. Trước khi lập bảng Excel, hãy dọn sạch &ldquo;bãi rác tâm lý&rdquo; đang kìm hãm bạn.
+                                        </p>
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* 4 bài học accordion */}
+                            <div className="divide-y divide-orange-100">
+                                {[
+                                    {
+                                        num: '01',
+                                        emoji: '🧮',
+                                        title: 'Lời nói dối của chiếc máy tính',
+                                        hook: 'Tại sao bạn cộng trừ rất giỏi, nhưng tài khoản thì luôn bằng 0?',
+                                        core: 'Quản lý tiền bạc là 80% Tâm lý và chỉ có 20% là Toán học.',
+                                        content: 'Công thức ai cũng biết: Thu nhập - Chi tiêu = Tiết kiệm (phép tính lớp 3). Giống như giảm cân là Ăn ít - Tập nhiều. Tại sao biết mà không làm được? Vì khi đứng trước áo Sale 50% hay lúc buồn chán, não bộ không dùng toán học — mà dùng cảm xúc. Đừng cố lập Excel phức tạp khi "bãi rác tâm lý" chưa được dọn dẹp.',
+                                        cta: '💭 Nhớ lại lần gần nhất bạn mua đồ đắt rồi hối hận — bạn tính sai giá, hay cảm xúc mách "chốt đơn đi"?',
+                                    },
+                                    {
+                                        num: '02',
+                                        emoji: '💊',
+                                        title: '"Thuốc giảm đau" mang tên Mua sắm',
+                                        hook: 'Bạn đang mua món đồ đó, hay đang mua "thuốc giảm đau" cho cảm xúc?',
+                                        core: 'Dùng tiền để xoa dịu cảm xúc sẽ tạo ra vòng lặp nghèo khó.',
+                                        content: 'Vòng lặp ác tính: Ngày làm việc mệt, sếp mắng → Lướt Shopee chốt đơn để "chữa lành" → Tài khoản cạn → Cảm giác tội lỗi, stress → Lại tiêu để xoa dịu. Dopamine lúc chốt đơn chỉ kéo dài 5 phút — nhưng hóa đơn thẻ tín dụng ám ảnh cả tháng.',
+                                        cta: '🧊 Thử thách "Đóng băng 48h": Khi định mua thứ không thiết yếu, bỏ vào giỏ hàng và đợi 48 tiếng. Nếu cơn bốc đồng qua đi — đó chính xác là chi tiêu cảm xúc cần cắt.',
+                                    },
+                                    {
+                                        num: '03',
+                                        emoji: '🎭',
+                                        title: 'Bạn đang trả tiền cho "vở kịch" của ai?',
+                                        hook: 'Bạn đang trả góp cho cuộc đời bạn, hay trả góp cho "ước mơ của người khác"?',
+                                        core: 'Ngừng dùng tiền xương máu của mình để mua ánh nhìn của người khác.',
+                                        content: 'Nhiều người vay trả góp đổi iPhone mới nhất, mua xe xịn, du lịch sang chảnh — chỉ để "bằng bạn bằng bè", dù ví đang "khóc thét". Đây là khoản đầu tư lỗ nặng nhất cuộc đời: dùng tiền mồ hôi để mua "sự công nhận" giả tạo từ những người thực sự không quan tâm đến bạn.',
+                                        cta: '🏝️ Trò chơi "Hòn đảo hoang": Hãy nhìn món đồ đắt nhất bạn định mua. Nếu ngày mai ra đảo hoang — không ai nhìn thấy để khen hay chê — bạn có còn muốn mua không? Nếu không, bạn đang mua vì người khác.',
+                                    },
+                                    {
+                                        num: '04',
+                                        emoji: '🏮',
+                                        title: '"Ngọn hải đăng" bảo vệ tài khoản',
+                                        hook: 'Bí quyết để việc "Tiết kiệm" trở nên kiêu hãnh thay vì khổ sở.',
+                                        core: 'Kỷ luật thép rồi cũng sẽ nản — chỉ có "Ước mơ chân thật" mới neo giữ được tiền của bạn.',
+                                        content: 'Não bộ ghét việc "thắt lưng buộc bụng" vì coi đó là sự tước đoạt niềm vui. Kỷ luật bằng ý chí suông chắc chắn thất bại. Giải pháp: gắn tiền với GIÁ TRỊ CỐT LÕI của BẠN — sự an tâm khi cha mẹ ốm đau, quỹ "Tự do" để tự tin nghỉ việc nếu môi trường độc hại, nghỉ hưu sớm về quê trồng rau... Khi từ chối một cuộc nhậu hay món đồ hiệu — đó không còn là tủi thân. Đó là sự kiêu hãnh vì bạn đang bảo vệ ước mơ của chính mình.',
+                                        cta: '✍️ Nhắm mắt và viết ra 1 điều khiến bạn hạnh phúc nhất mà không cần chứng minh với ai. Đó chính là "Ước mơ chân thật" — cơ sở để thiết kế Bước 2.',
+                                    },
+                                ].map((lesson, i) => (
+                                    <details key={i} className="group">
+                                        <summary className="flex items-center gap-4 px-8 py-5 cursor-pointer list-none hover:bg-orange-50/50 transition-colors">
+                                            <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-lg font-black" style={{ background: '#fff6f3', color: '#ff7d50' }}>
+                                                {lesson.emoji}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 mb-0.5">
+                                                    <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: '#ff7d50' }}>Bài học {lesson.num}</span>
+                                                </div>
+                                                <p className="font-bold text-sm leading-tight" style={{ color: navy }}>{lesson.hook}</p>
+                                            </div>
+                                            <span className="shrink-0 text-lg transition-transform group-open:rotate-90" style={{ color: '#ff7d50' }}>›</span>
+                                        </summary>
+                                        <div className="px-8 pb-6 pt-2">
+                                            <div className="ml-13 pl-4 border-l-2" style={{ borderColor: '#ff7d5040' }}>
+                                                <div className="mb-3 px-3 py-2 rounded-lg inline-block" style={{ background: '#fff6f3' }}>
+                                                    <p className="text-xs font-bold" style={{ color: '#ff7d50' }}>💡 Thông điệp cốt lõi</p>
+                                                    <p className="text-sm font-semibold mt-0.5" style={{ color: navy }}>{lesson.core}</p>
+                                                </div>
+                                                <p className="text-sm leading-relaxed mb-4" style={{ color: '#4F4F4F' }}>{lesson.content}</p>
+                                                <div className="rounded-xl p-4" style={{ background: mint }}>
+                                                    <p className="text-sm leading-relaxed" style={{ color: navy }}>{lesson.cta}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </details>
+                                ))}
                             </div>
                         </div>
 
