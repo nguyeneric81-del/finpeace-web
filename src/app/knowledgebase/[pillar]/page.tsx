@@ -1,197 +1,91 @@
-'use client'
-
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import { ArrowLeft, ArrowRight, BookOpen, Clock, Tag } from 'lucide-react'
-import { getPillarBySlug, PILLARS, type Pillar } from '../data'
+import type { Metadata } from 'next'
+import { getPillarBySlug } from '../data'
+import PillarPageClient from './PillarPageClient'
 import { notFound } from 'next/navigation'
-import { use } from 'react'
 
-const fadeUp = (delay = 0) => ({
-    initial: { opacity: 0, y: 25 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.5, delay },
-})
-
-const HR = ({ dark = false }: { dark?: boolean }) =>
-    <div className={`w-full h-px ${dark ? 'bg-white/10' : 'bg-slate-200/60'}`} />
-
-const DIFFICULTY_COLOR: Record<string, string> = {
-    'Cơ bản': 'bg-emerald-100 text-emerald-700',
-    'Trung cấp': 'bg-amber-100 text-amber-700',
-    'Nâng cao': 'bg-rose-100 text-rose-700',
+// SEO per-pillar descriptions
+const PILLAR_SEO: Record<string, { description: string; keywords: string }> = {
+    'tam-ly-thi-truong': {
+        description: 'Vượt qua FOMO, loss aversion và bầy đàn để đưa ra quyết định đầu tư lý trí. Tâm lý học hành vi áp dụng vào thị trường chứng khoán Việt Nam.',
+        keywords: 'tâm lý đầu tư, FOMO chứng khoán, loss aversion, kỷ luật giao dịch, tâm lý thị trường',
+    },
+    'co-che-thi-truong': {
+        description: 'Hiểu cổ phiếu là gì, cách đặt lệnh ATO/ATC/MP và cơ chế khớp lệnh trên HOSE/HNX. Nền tảng bắt buộc cho mọi nhà đầu tư Việt Nam.',
+        keywords: 'cổ phiếu là gì, cách đặt lệnh chứng khoán, ATO ATC, khớp lệnh HOSE, cơ chế thị trường',
+    },
+    'phan-tich-co-ban': {
+        description: 'Học cách đọc báo cáo tài chính, tính toán biên lợi nhuận và định giá cổ phiếu theo phương pháp Graham, Buffett. Phân tích cơ bản cho nhà đầu tư Việt Nam.',
+        keywords: 'phân tích cơ bản, đọc báo cáo tài chính, P/E ratio, định giá cổ phiếu, EPS ROE',
+    },
+    'dau-tu-gia-tri': {
+        description: 'Triết lý đầu tư giá trị của Benjamin Graham và Warren Buffett: biên độ an toàn, lợi thế cạnh tranh bền vững và đầu tư dài hạn.',
+        keywords: 'đầu tư giá trị, margin of safety, moat lợi thế cạnh tranh, Warren Buffett, Benjamin Graham',
+    },
+    'dau-tu-tang-truong': {
+        description: '15 tiêu chí Fisher và triết lý "mua những gì bạn biết" của Peter Lynch để tìm cổ phiếu tăng trưởng vượt trội thị trường.',
+        keywords: 'đầu tư tăng trưởng, Philip Fisher, Peter Lynch, growth stock, cổ phiếu tăng trưởng Việt Nam',
+    },
+    'phan-tich-ky-thuat': {
+        description: 'Nến Nhật, hỗ trợ kháng cự, khối lượng giao dịch và các chỉ báo MACD/RSI. Phân tích kỹ thuật thực chiến cho thị trường chứng khoán Việt Nam.',
+        keywords: 'phân tích kỹ thuật, nến nhật, hỗ trợ kháng cự, MACD RSI, volume giao dịch',
+    },
+    'giao-dich-theo-xu-huong': {
+        description: 'Lý thuyết hộp Darvas và phương pháp Turtle Traders: giao dịch theo xu hướng với kỷ luật sắt đá và quản trị vốn.',
+        keywords: 'giao dịch xu hướng, Darvas box, Turtle Traders, trend following, breakout trading',
+    },
+    'quan-ly-danh-muc': {
+        description: 'Đa dạng hóa đúng cách, Dollar-Cost Averaging và tái cân bằng danh mục theo 3 trường phái Bogle, Lynch và Buffett.',
+        keywords: 'quản lý danh mục đầu tư, đa dạng hóa, DCA dollar cost averaging, tái cân bằng danh mục',
+    },
+    'quan-tri-rui-ro': {
+        description: 'Cắt lỗ khoa học, Position Sizing theo Quy tắc 2% và Kelly Criterion. Bảo vệ tài khoản là điều kiện tiên quyết để sống sót trên thị trường.',
+        keywords: 'quản trị rủi ro, cắt lỗ stop loss, position sizing, quy tắc 2%, quản lý vốn',
+    },
+    'ke-hoach-thuc-chien': {
+        description: 'Viết Investment Policy Statement và lộ trình Paper Trading 90 ngày trước khi dùng tiền thật. Kế hoạch thực chiến cho nhà đầu tư nghiêm túc.',
+        keywords: 'kế hoạch đầu tư, investment policy statement IPS, paper trading, kế hoạch thực chiến',
+    },
 }
 
-function RelatedPillars({ currentSlug }: { currentSlug: string }) {
-    const related = PILLARS.filter(p => p.slug !== currentSlug).slice(0, 3)
-    return (
-        <div className="grid md:grid-cols-3 gap-4">
-            {related.map((p, i) => (
-                <motion.div key={p.id} {...fadeUp(i * 0.08)}>
-                    <Link href={`/knowledgebase/${p.slug}`}
-                        className={`block h-full bg-white border ${p.borderColor} rounded-2xl p-5 hover:shadow-md transition-shadow group`}>
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className="text-xl">{p.icon}</span>
-                            <span className={`text-xs font-bold ${p.accentColor}`}>{p.title}</span>
-                        </div>
-                        <p className="text-slate-500 text-xs leading-relaxed line-clamp-2">{p.description}</p>
-                        <p className={`text-xs font-semibold ${p.accentColor} mt-3 flex items-center gap-1`}>
-                            {p.articleCount} bài <ArrowRight className="w-3 h-3" />
-                        </p>
-                    </Link>
-                </motion.div>
-            ))}
-        </div>
-    )
+export async function generateMetadata(
+    { params }: { params: Promise<{ pillar: string }> }
+): Promise<Metadata> {
+    const { pillar: pillarSlug } = await params
+    const pillar = getPillarBySlug(pillarSlug)
+
+    if (!pillar) return { title: 'Không tìm thấy | FinPeace' }
+
+    const seo = PILLAR_SEO[pillarSlug]
+    const title = `${pillar.title} | FinPeace — Thư Viện Kiến Thức`
+    const description = seo?.description ?? pillar.description
+    const url = `https://finpeace.cloud/knowledgebase/${pillarSlug}`
+
+    return {
+        title,
+        description,
+        keywords: seo?.keywords,
+        alternates: { canonical: url },
+        openGraph: {
+            title,
+            description,
+            url,
+            type: 'website',
+            siteName: 'FinPeace',
+            locale: 'vi_VN',
+        },
+        twitter: {
+            card: 'summary',
+            title,
+            description,
+        },
+    }
 }
 
-export default function PillarPage({ params }: { params: Promise<{ pillar: string }> }) {
-    const { pillar: pillarSlug } = use(params)
+export default async function PillarPage({ params }: { params: Promise<{ pillar: string }> }) {
+    const { pillar: pillarSlug } = await params
     const pillar = getPillarBySlug(pillarSlug)
 
     if (!pillar) notFound()
 
-    return (
-        <div className="min-h-screen bg-neutral-50 font-sans">
-
-            {/* ── HERO ── */}
-            <section className={`relative overflow-hidden ${pillar.color}`}>
-                <HR />
-                <div className="max-w-5xl mx-auto px-6 py-16">
-                    {/* Breadcrumb */}
-                    <motion.div {...fadeUp(0)} className="flex items-center gap-2 text-xs text-slate-400 mb-6">
-                        <Link href="/knowledgebase" className="hover:text-slate-600 transition-colors flex items-center gap-1">
-                            <ArrowLeft className="w-3 h-3" /> Thư Viện
-                        </Link>
-                        <span>/</span>
-                        <span className={pillar.accentColor}>{pillar.title}</span>
-                    </motion.div>
-
-                    <div className="grid lg:grid-cols-2 gap-12 items-center">
-                        <div>
-                            <motion.div {...fadeUp(0.05)} className="flex items-center gap-3 mb-4">
-                                <div className={`w-12 h-12 bg-white/80 rounded-2xl flex items-center justify-center text-2xl shadow-sm`}>
-                                    {pillar.icon}
-                                </div>
-                                <div>
-                                    <p className={`text-xs font-bold uppercase tracking-widest ${pillar.accentColor} opacity-70`}>
-                                        Level {pillar.level}
-                                    </p>
-                                    <p className="text-slate-400 text-xs">{pillar.subtitle}</p>
-                                </div>
-                            </motion.div>
-
-                            <motion.h1 {...fadeUp(0.1)} className="text-4xl lg:text-5xl font-black text-slate-800 leading-tight mb-4">
-                                {pillar.title}
-                            </motion.h1>
-
-                            <motion.p {...fadeUp(0.15)} className="text-slate-600 leading-relaxed mb-6">
-                                {pillar.description}
-                            </motion.p>
-
-                            <motion.div {...fadeUp(0.2)} className="flex items-center gap-4">
-                                <div className={`flex items-center gap-1.5 ${pillar.accentColor}`}>
-                                    <BookOpen className="w-4 h-4" />
-                                    <span className="text-sm font-semibold">{pillar.articleCount} bài học</span>
-                                </div>
-                                <div className="w-px h-4 bg-slate-300" />
-                                <span className="text-slate-400 text-sm">Đọc từ đầu đến cuối</span>
-                            </motion.div>
-                        </div>
-
-                        {/* Stats panel */}
-                        <motion.div {...fadeUp(0.2)}>
-                            <div className="bg-white/80 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
-                                <p className={`text-xs font-bold uppercase tracking-widest ${pillar.accentColor} mb-4`}>
-                                    Bạn sẽ học được
-                                </p>
-                                <div className="space-y-3">
-                                    {pillar.articles.slice(0, 3).map((article, i) => (
-                                        <div key={i} className="flex items-start gap-3">
-                                            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black shrink-0 mt-0.5 ${pillar.color} ${pillar.accentColor}`}>
-                                                {i + 1}
-                                            </div>
-                                            <p className="text-slate-700 text-sm leading-snug">{article.title}</p>
-                                        </div>
-                                    ))}
-                                    {pillar.articles.length > 3 && (
-                                        <p className={`text-xs ${pillar.accentColor} ml-8`}>
-                                            +{pillar.articles.length - 3} bài học nữa...
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                        </motion.div>
-                    </div>
-                </div>
-                <HR />
-            </section>
-
-            {/* ── ARTICLE LIST ── */}
-            <section className="bg-white">
-                <HR />
-                <div className="max-w-5xl mx-auto px-6 py-16">
-                    <motion.h2 {...fadeUp()} className="text-2xl font-black text-slate-800 mb-8">
-                        Danh Sách Bài Học
-                    </motion.h2>
-
-                    <div className="space-y-4">
-                        {pillar.articles.map((article, i) => (
-                            <motion.div key={article.slug} {...fadeUp(i * 0.05)} whileHover={{ x: 4 }}>
-                                <Link href={`/knowledgebase/${pillar.slug}/${article.slug}`}>
-                                    <div className={`bg-white border ${pillar.borderColor} hover:border-${pillar.accentColor.replace('text-', '')} rounded-2xl p-5 hover:shadow-md transition-all group`}>
-                                        <div className="flex items-start gap-4">
-                                            {/* Number */}
-                                            <div className={`w-8 h-8 rounded-xl ${pillar.color} ${pillar.accentColor} flex items-center justify-center font-black text-sm shrink-0`}>
-                                                {String(i + 1).padStart(2, '0')}
-                                            </div>
-
-                                            <div className="flex-1 min-w-0">
-                                                <h3 className="font-bold text-slate-800 text-sm leading-snug mb-2 group-hover:text-emerald-700 transition-colors">
-                                                    {article.title}
-                                                </h3>
-                                                <p className="text-slate-500 text-xs leading-relaxed mb-3">
-                                                    {article.summary}
-                                                </p>
-
-                                                <div className="flex flex-wrap items-center gap-2">
-                                                    <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${DIFFICULTY_COLOR[article.difficulty]}`}>
-                                                        {article.difficulty}
-                                                    </span>
-                                                    <span className="flex items-center gap-1 text-xs text-slate-400">
-                                                        <Clock className="w-3 h-3" /> {article.readTime} phút
-                                                    </span>
-                                                    {article.tags.slice(0, 2).map(tag => (
-                                                        <span key={tag} className="flex items-center gap-0.5 text-xs text-slate-400">
-                                                            <Tag className="w-2.5 h-2.5" /> {tag}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-
-                                            <ArrowRight className={`w-4 h-4 ${pillar.accentColor} opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mt-1`} />
-                                        </div>
-                                    </div>
-                                </Link>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-                <HR />
-            </section>
-
-            {/* ── RELATED ── */}
-            <section className="bg-neutral-50">
-                <HR />
-                <div className="max-w-5xl mx-auto px-6 py-16">
-                    <motion.h2 {...fadeUp()} className="text-xl font-black text-slate-700 mb-6">
-                        Chủ Đề Liên Quan
-                    </motion.h2>
-                    <RelatedPillars currentSlug={pillar.slug} />
-                </div>
-                <HR />
-            </section>
-        </div>
-    )
+    return <PillarPageClient pillar={pillar} />
 }
