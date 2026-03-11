@@ -1,83 +1,106 @@
 // Article content: quan-ly-danh-muc / da-dang-hoa
 // "Đa Dạng Hóa Danh Mục — Bao Nhiêu Cổ Phiếu Là Đủ?"
-// Ref: Peter Lynch, Warren Buffett, Index Fund Research
+// Ref: Malkiel, Peter Lynch, Graham, Fisher, Buffett, Greenblatt
 
 import type { ContentBlock } from '../../data'
 
 export const content: ContentBlock[] = [
     {
         type: 'intro',
-        content: `Peter Lynch nói 8-12 cổ phiếu là đủ. Warren Buffett tập trung vào chỉ 5-6 cổ phiếu lớn nhất. John Bogle nói hãy mua cả thị trường qua Index Fund. Vậy ai đúng?
+        content: `Peter Lynch nói 10-15 cổ phiếu là đủ. Benjamin Graham khuyên 10-30. Warren Buffett tập trung vào 5-8. John Bogle nói hãy mua cả thị trường qua ETF. Vậy ai đúng?
 
-Câu trả lời là: **tất cả đều đúng** — nhưng dành cho những người khác nhau, với mục tiêu khác nhau và kỹ năng khác nhau. Hiểu được tại sao lại như vậy chính là bước đầu để bạn xây dựng danh mục phù hợp với chính mình.`,
+Câu trả lời không nằm ở con số — mà nằm ở **loại nhà đầu tư bạn là**. Khoa học đã xác định điểm tới hạn của đa dạng hóa. Sau đó, 3 trường phái lớn đưa ra 3 chiến lược tương ứng với 3 cấp độ kiến thức và thời gian khác nhau.`,
     },
     {
         type: 'concept',
-        title: '📖 Phần 1: Tại Sao Đa Dạng Hóa? (Và Giới Hạn Của Nó)',
-        content: `**Rủi ro trong đầu tư gồm 2 loại:**
+        title: '📖 Phần 1: Khoa Học Về Điểm Tới Hạn Của Đa Dạng Hóa',
+        content: `**Thuyết Danh Mục Hiện Đại (MPT)** đã chứng minh bằng toán học:
 
-**Rủi ro hệ thống (Systematic Risk):** Rủi ro của toàn thị trường — khủng hoảng kinh tế, chiến tranh, đại dịch. Không thể loại bỏ bằng đa dạng hóa.
+Đa dạng hóa giúp giảm **rủi ro phi hệ thống** (rủi ro riêng của từng công ty), nhưng có một điểm tới hạn sau đó lợi ích biên gần như bằng 0.
 
-**Rủi ro phi hệ thống (Unsystematic Risk):** Rủi ro riêng của từng công ty — CEO từ chức, sản phẩm thất bại, scandal kế toán. **Có thể loại bỏ hoàn toàn** bằng đa dạng hóa.
+**Con số 15 thần kỳ:** Chỉ cần ~15 cổ phiếu ở các ngành khác nhau đã đạt mức đa dạng hóa **85%** — loại bỏ 85% rủi ro phi hệ thống.
 
-**Kết quả nghiên cứu:** Chỉ cần 15-20 cổ phiếu không tương quan nhau là đã loại bỏ được ~90% rủi ro phi hệ thống. Từ 20 cổ phiếu trở lên, lợi ích biên của đa dạng hóa giảm dần rất mạnh.
+**Con số 50-60 tối đa (Giáo sư Burton Malkiel):** Khi đạt 30 cổ phiếu, rủi ro phi hệ thống đã bị loại trừ phần lớn. Ở 50-60 cổ phiếu có giá trị bằng nhau, rủi ro phi hệ thống gần như bị triệt tiêu hoàn toàn — danh mục bắt đầu chuyển động đồng điệu với thị trường chung.
 
-**Điểm mấu chốt:** Nếu bạn có hơn 30 cổ phiếu, bạn đang gần như tái tạo lại index — nhưng với chi phí cao hơn và effort nhiều hơn.`,
+**Kết luận:** Mua 200 cổ phiếu không an toàn gấp 10 lần mua 20 cổ phiếu. Sau 50-60 cổ phiếu, bạn chỉ đang tái tạo lại Index — nhưng với chi phí giao dịch và effort cao hơn Index Fund rất nhiều.`,
     },
     {
         type: 'concept',
-        title: '📖 Phần 2: Ba Trường Phái — Ai Phù Hợp Với Ai?',
-        content: `**Trường phái 1 — Index Fund (Bogle):** Mua ETF theo dõi toàn thị trường (VN-Index, S&P 500). Không cần phân tích, chi phí thấp, đánh bại 90% quỹ chủ động trong dài hạn. Phù hợp: nhà đầu tư dài hạn không có thời gian nghiên cứu.
+        title: '📖 Phần 2: 3 Trường Phái — Ai Phù Hợp Với Ai?',
+        content: `**Trường phái 1 — Mua "Cả Thị Trường" qua ETF (Bogle, Malkiel, Buffett)**
 
-**Trường phái 2 — Tập trung (Buffett):** "Đa dạng hóa là sự bảo vệ chống lại sự thiếu hiểu biết. Nó không hợp lý với người biết họ đang làm gì." 5-10 cổ phiếu chất lượng cao, nghiên cứu kỹ. Phù hợp: nhà đầu tư giá trị có thời gian nghiên cứu sâu từng công ty.
+Dành cho: Người bận rộn, chưa có kiến thức chuyên sâu, không muốn rủi ro chọn sai cổ phiếu.
 
-**Trường phái 3 — Đa dạng có chọn lọc (Lynch):** 8-15 cổ phiếu thuộc nhiều ngành khác nhau, cập nhật thường xuyên. "Mua những gì bạn hiểu." Phù hợp: nhà đầu tư bán thời gian có khả năng theo dõi định kỳ.`,
+Triết lý: Hơn 2/3 nhà quản lý quỹ chuyên nghiệp thất bại trong việc đánh bại S&P 500 trong dài hạn. Thay vì mò kim đáy bể, hãy "mua luôn cả đống cỏ khô" — ETF Index Fund với chi phí cực thấp, thu về mức lợi nhuận trung bình thị trường (~10%/năm trong lịch sử).
+
+Buffett: *"Khi đầu tư theo từng giai đoạn trong một quỹ chỉ số, nhà đầu tư không biết gì cũng có thể đầu tư như chuyên gia."*
+
+---
+
+**Trường phái 2 — Đa dạng hóa vừa đủ: 10-30 cổ phiếu (Lynch, Graham, Greenblatt)**
+
+Dành cho: Nhà đầu tư có kiến thức, có thời gian nghiên cứu, muốn vượt trội thị trường nhưng vẫn cần màng lưới an toàn.
+
+Graham khuyên nhà đầu tư phòng vệ: 10-30 cổ phiếu của các công ty lớn, ổn định, tài chính vững mạnh. Greenblatt (công thức magic formula): 20-30 cổ phiếu để đạt kết quả trung bình theo xác suất toán học. 10-30 cổ phiếu đảm bảo: nếu 1-2 công ty phá sản, danh mục không bị ảnh hưởng quá nặng — nhưng vẫn đủ tập trung để theo dõi được.
+
+---
+
+**Trường phái 3 — Đầu tư Tập trung: 5-10 cổ phiếu (Buffett, Fisher, Munger)**
+
+Dành cho: "Know-something investor" — người có khả năng phân tích kinh doanh sâu và kiểm soát tâm lý xuất sắc.
+
+Philip Fisher: Sở hữu hơn 20 cổ phiếu là "dấu hiệu không khôn ngoan về tài chính". Con số tốt hơn là 10-12. "Mua cổ phiếu một công ty mà bạn không có hiểu biết còn nguy hiểm hơn không đa dạng hóa."
+
+Buffett gọi sở hữu 50-70 cổ phiếu là "đầu tư kiểu thuyền Nô-ê" — sẽ khiến bạn trắng tay. Câu hỏi của Buffett: *"Nếu doanh nghiệp tốt nhất bạn có triển vọng sáng sủa nhất, tại sao bạn đổ tiền vào công ty yêu thích thứ 20 thay vì dồn thêm cho lựa chọn số 1?"*
+
+**Cảnh báo:** Chiến lược tập trung đi kèm biến động ngắn hạn cực cao. Chỉ được phép khi bạn đặt cược lớn cho những sự kiện có khả năng xảy ra nhất — và khi bạn đủ tâm lý để chịu đựng danh mục giảm 30-40% tạm thời mà không bán.`,
     },
     {
         type: 'key-insight',
         title: '💡 "Diworsification" — Khi Đa Dạng Hóa Trở Thành Tự Phá Mình',
-        content: 'Peter Lynch đặt ra thuật ngữ "diworsification" (đa dạng hóa thành tồi hơn): khi các công ty mua lại những mảng kinh doanh không liên quan chỉ vì có tiền — và thường thua lỗ. Với cá nhân: mua quá nhiều cổ phiếu chỉ để "không bỏ trứng vào một giỏ" mà không hiểu công ty nào, thực ra là giảm kỳ vọng lợi nhuận của mình xuống mức trung bình thị trường — nhưng với effort và chi phí giao dịch cao hơn index fund.',
+        content: 'Peter Lynch đặt ra thuật ngữ "diworsification": mua quá nhiều cổ phiếu mà không hiểu công ty nào = chủ động hạ kỳ vọng lợi nhuận về mức trung bình thị trường, nhưng với effort và phí giao dịch cao hơn Index Fund. Nếu bạn đang sở hữu 50 cổ phiếu, tự hỏi: "Tôi có hiểu được business model của 50 công ty này không?" Nếu không — hãy mua ETF thay vì tự lừa mình là đang "đầu tư".',
     },
     {
         type: 'steps',
-        title: '🗺️ Nguyên Tắc Xây Dựng Danh Mục Phân Bổ Thực Chiến',
+        title: '🎯 Tổng Kết: Chiến Lược Nào Phù Hợp Với Bạn?',
         content: '',
         items: [
             {
+                icon: '📦',
+                title: 'Không đọc được báo cáo tài chính, không có thời gian',
+                highlight: '→ 1-2 quỹ ETF Index Fund',
+                body: 'Mua ETF VN30, VNINDEX, hoặc S&P 500. Chi phí thấp nhất, effort thấp nhất, và lịch sử cho thấy đánh bại 2/3 quỹ chủ động. Tái cân bằng 1 lần/năm là đủ.',
+            },
+            {
+                icon: '🔍',
+                title: 'Thích nghiên cứu nhưng chưa tự tin tuyệt đối vào định giá',
+                highlight: '→ 10-20 cổ phiếu, đa ngành',
+                body: 'Chọn cổ phiếu từ ít nhất 5-6 ngành khác nhau. Đủ để bảo vệ khỏi rủi ro tập trung ngành, nhưng vẫn theo dõi được. Tái cân bằng mỗi quý khi một ngành lệch quá 20% target.',
+            },
+            {
                 icon: '🎯',
-                title: 'Phân bổ theo mục tiêu thời gian',
-                highlight: 'Ngắn hạn vs Dài hạn',
-                body: 'Tiền cần trong 1-3 năm: giữ tiền mặt hoặc trái phiếu ngắn hạn. Tiền 3-7 năm: cổ phiếu phòng thủ + ETF. Tiền 7+ năm: cổ phiếu tăng trưởng, có thể concentrated hơn. Không dùng tiền ngắn hạn đầu tư cổ phiếu.',
-            },
-            {
-                icon: '🏭',
-                title: 'Phân bổ theo ngành — tránh tương quan cao',
-                highlight: 'Không bỏ 80% vào ngân hàng',
-                body: 'Chọn các cổ phiếu thuộc các ngành khác nhau (tài chính, tiêu dùng, công nghệ, bất động sản, năng lượng). Tránh mua nhiều cổ phiếu trong cùng ngành — khi ngành đó gặp khó, cả danh mục cùng đau.',
-            },
-            {
-                icon: '⚖️',
-                title: 'Tái cân bằng định kỳ (Rebalancing)',
-                highlight: '6 tháng hoặc khi lệch >20%',
-                body: 'Nếu cổ phiếu A tăng từ 10% lên 25% danh mục, cần bán bớt để đưa về target ban đầu. Tái cân bằng ép bạn "bán khi giá cao, mua khi giá thấp" — từ động tác cơ học thay vì cảm tính.',
+                title: 'Thấu hiểu ngành và doanh nghiệp đến từng chi tiết',
+                highlight: '→ 5-8 cổ phiếu xuất sắc nhất',
+                body: 'Dồn vốn lớn vào ý tưởng tự tin nhất. Chấp nhận biến động ngắn hạn cực cao. Chỉ phù hợp khi bạn đã paper trade ít nhất 1-2 năm và có track record thực sự, không phải cảm giác.',
             },
         ],
     },
     {
         type: 'quote',
-        content: '"Đa dạng hóa là sự bảo vệ duy nhất bạn có chống lại sự thiếu hiểu biết của chính mình."',
-        author: 'Peter Lynch',
-        source: 'One Up On Wall Street',
+        content: '"Đa dạng hóa là sự bảo vệ duy nhất bạn có chống lại sự thiếu hiểu biết của chính mình. Với người biết mình đang làm gì, đa dạng hóa không có nhiều ý nghĩa."',
+        author: 'Warren Buffett',
+        source: 'Berkshire Hathaway Annual Letter',
     },
     {
         type: 'summary',
         title: '📋 Ghi Nhớ Sau Bài Này',
         content: [
-            'Đa dạng hóa loại bỏ rủi ro phi hệ thống (rủi ro công ty) — không loại bỏ được rủi ro thị trường',
-            '15-20 cổ phiếu không tương quan = đã loại bỏ ~90% rủi ro phi hệ thống; trên 30 cổ phiếu = gần như tái tạo Index',
-            '"Diworsification": mua quá nhiều cổ phiếu mù quáng = giảm kỳ vọng lợi nhuận về mức trung bình với cost cao hơn Index',
-            'Nếu không có thời gian nghiên cứu → Index ETF là lựa chọn tốt hơn mua 30+ cổ phiếu ngẫu nhiên',
-            'Tái cân bằng 6 tháng/lần hoặc khi lệch >20% target — ép bạn mua thấp bán cao một cách cơ học',
+            'MPT: 15 cổ phiếu = 85% đa dạng hóa | 50-60 cổ phiếu = gần 100% — sau đó không thêm được gì',
+            'Trường phái ETF: dành cho "Know-nothing investor" — đơn giản, chi phí thấp, đánh bại 2/3 quỹ chủ động',
+            'Trường phái 10-30: Graham/Lynch — màng lưới an toàn cho nhà đầu tư bán thời gian',
+            'Trường phái 5-8: Buffett/Fisher — chỉ khi bạn thực sự hiểu sâu từng doanh nghiệp',
+            '"Diworsification": >30 cổ phiếu mà không hiểu = tái tạo Index với chi phí cao hơn Index Fund',
+            'Câu hỏi Buffett: "Tại sao bỏ tiền vào công ty thứ 20 khi không dồn thêm cho deal số 1?"',
         ],
     },
 ]
