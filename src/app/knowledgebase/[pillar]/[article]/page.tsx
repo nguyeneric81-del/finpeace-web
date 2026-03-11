@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, BookOpen, Clock, Tag, Quote, ChevronLeft, ChevronRight } from 'lucide-react'
-import { getPillarBySlug, getArticleBySlug, type ContentBlock, type ContentBlockItem, type CandlePatternItem, type CandleShape } from '../../data'
+import { getPillarBySlug, getArticleBySlug, type ContentBlock, type ContentBlockItem, type CandlePatternItem, type CandleShape, type ContractClause } from '../../data'
 import { getArticleContent } from '../../content'
 import { notFound } from 'next/navigation'
 import { use } from 'react'
@@ -260,6 +260,65 @@ function ContentBlockRenderer({ block }: { block: ContentBlock }) {
                             </div>
                         ))}
                     </div>
+                </div>
+            )
+
+        case 'contract':
+            return (
+                <div className="border-2 border-slate-300 rounded-2xl overflow-hidden">
+                    {/* Header giống tờ hợp đồng */}
+                    <div className="bg-slate-800 px-6 py-4 flex items-center justify-between">
+                        <div>
+                            <p className="text-white font-black text-sm tracking-wide">{block.title ?? 'BẢN TUYÊN BỐ PHƯƠNG CHÂM ĐẦU TƯ'}</p>
+                            <p className="text-slate-400 text-xs mt-0.5">Hợp Đồng Với Chính Mình</p>
+                        </div>
+                        <span className="text-2xl">📜</span>
+                    </div>
+
+                    {/* Intro text */}
+                    {block.content && (
+                        <div className="bg-amber-50 border-b border-amber-200 px-6 py-3">
+                            <p className="text-amber-800 text-xs italic leading-relaxed">{block.content as string}</p>
+                        </div>
+                    )}
+
+                    {/* Các điều khoản */}
+                    <div className="divide-y divide-slate-100">
+                        {(block.clauses ?? []).map((clause: ContractClause, i: number) => (
+                            <div key={i} className="px-6 py-4 hover:bg-slate-50 transition-colors">
+                                <div className="flex items-start gap-3">
+                                    <div className="shrink-0 min-w-[72px]">
+                                        <span className="inline-block bg-slate-800 text-white text-[10px] font-black px-2 py-0.5 rounded-md">
+                                            {clause.number}
+                                        </span>
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-slate-800 font-bold text-sm mb-1">{clause.label}</p>
+                                        <p className="text-slate-600 text-sm leading-relaxed">{clause.content}</p>
+                                        {clause.fillable && (
+                                            <div className="mt-2 border-b-2 border-dashed border-slate-300 py-1">
+                                                <p className="text-slate-400 text-xs italic">✍️ Điền vào đây: ................................................................</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Dòng ký tên */}
+                    {block.signatureFields && block.signatureFields.length > 0 && (
+                        <div className="bg-slate-50 border-t border-slate-200 px-6 py-5">
+                            <div className="grid gap-4">
+                                {block.signatureFields.map((field: string, i: number) => (
+                                    <div key={i} className="flex items-end gap-3">
+                                        <span className="text-slate-500 text-xs font-semibold shrink-0 min-w-[140px]">{field}:</span>
+                                        <div className="flex-1 border-b border-dashed border-slate-400 pb-0.5"> </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             )
 

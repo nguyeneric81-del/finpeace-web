@@ -11,6 +11,13 @@ export interface ContentBlockItem {
     highlight?: string   // optional: con số / metric nổi bật
 }
 
+export interface ContractClause {
+    number: string      // e.g. "Điều 1"
+    label: string       // e.g. "Nhận thức về Cảm xúc"
+    content: string     // nội dung điều khoản
+    fillable?: boolean  // có ô điền không?
+}
+
 export interface CandlePatternItem {
     name: string        // tên mô hình (tiếng Việt)
     signal: 'bullish' | 'bearish' | 'neutral'  // tín hiệu
@@ -27,13 +34,15 @@ export interface CandleShape {
 }
 
 export interface ContentBlock {
-    type: 'intro' | 'key-insight' | 'concept' | 'quote' | 'checklist' | 'warning' | 'summary' | 'steps' | 'candle-patterns'
+    type: 'intro' | 'key-insight' | 'concept' | 'quote' | 'checklist' | 'warning' | 'summary' | 'steps' | 'candle-patterns' | 'contract'
     title?: string
     content: string | string[]
     author?: string
     source?: string
     items?: ContentBlockItem[]       // dùng cho type: 'steps'
     patterns?: CandlePatternItem[]   // dùng cho type: 'candle-patterns'
+    clauses?: ContractClause[]       // dùng cho type: 'contract'
+    signatureFields?: string[]       // dùng cho type: 'contract' — các dòng ký tên
 }
 
 export interface Article {
