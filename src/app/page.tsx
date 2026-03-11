@@ -188,10 +188,10 @@ export default function HomePage() {
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-2 flex-wrap">
                                         <span className="text-rose-400 text-xs font-black uppercase tracking-widest">Bước 1</span>
-                                        <span className="text-slate-500 text-xs">· Vùng Đất Hoang</span>
+                                        <span className="text-white/60 text-xs">· Vùng Đất Hoang</span>
                                     </div>
                                     <h3 className="text-white font-black text-xl mb-3">Dọn dẹp rào cản tâm lý</h3>
-                                    <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                                    <p className="text-white/80 text-sm leading-relaxed mb-4">
                                         Nhiều người nghèo đi không vì dốt tính toán — mà do bị kẹt bởi <span className="text-rose-300">nỗi sợ vô hình</span> và <span className="text-rose-300">niềm tin sai lệch</span>. Bẫy &ldquo;trì hoãn&rdquo; và chi tiêu cảm xúc khiến tài khoản về 0 rồi lại hối hận, lặp đi lặp lại.
                                     </p>
                                     <div className="bg-white/15 border border-white/20 rounded-xl px-4 py-3 inline-block">
@@ -208,10 +208,10 @@ export default function HomePage() {
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-2 flex-wrap">
                                         <span className="text-emerald-400 text-xs font-black uppercase tracking-widest">Bước 2</span>
-                                        <span className="text-slate-500 text-xs">· Vùng Đất Kiểm Soát</span>
+                                        <span className="text-white/60 text-xs">· Vùng Đất Kiểm Soát</span>
                                     </div>
                                     <h3 className="text-white font-black text-xl mb-3">Xây dựng Cỗ máy tài chính</h3>
-                                    <p className="text-slate-400 text-sm leading-relaxed mb-5">5 trụ cột thực chiến — FinPeace giúp bạn theo dõi và tối ưu cả 5.</p>
+                                    <p className="text-white/80 text-sm leading-relaxed mb-5">5 trụ cột thực chiến — FinPeace giúp bạn theo dõi và tối ưu cả 5.</p>
                                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                                         {[
                                             { icon: '🌾', name: 'Thu nhập', label: 'Cánh đồng', desc: 'Tăng kỹ năng + tạo thu nhập thụ động' },
@@ -238,10 +238,10 @@ export default function HomePage() {
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-2 flex-wrap">
                                         <span className="text-blue-400 text-xs font-black uppercase tracking-widest">Bước 3</span>
-                                        <span className="text-slate-500 text-xs">· Vùng Đất Bình An</span>
+                                        <span className="text-white/60 text-xs">· Vùng Đất Bình An</span>
                                     </div>
                                     <h3 className="text-white font-black text-xl mb-3">Sống tự do và hạnh phúc</h3>
-                                    <p className="text-slate-400 text-sm leading-relaxed mb-4">Khi tiền không còn là nguồn lo âu — bạn có không gian để yêu thương tốt hơn.</p>
+                                    <p className="text-white/80 text-sm leading-relaxed mb-4">Khi tiền không còn là nguồn lo âu — bạn có không gian để yêu thương tốt hơn.</p>
                                     <div className="grid sm:grid-cols-3 gap-3">
                                         {[
                                             { icon: '💑', title: 'Vợ chồng minh bạch', desc: 'Không giấu giếm. Cùng lập kế hoạch. Không ngại nói chuyện về tiền.' },
