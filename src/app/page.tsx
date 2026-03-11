@@ -175,16 +175,16 @@ export default function HomePage() {
             </section>
 
             {/* ── BẢN ĐỒ 3 BƯỚC ── */}
-            <section className="py-20 bg-emerald-50">
+            <section className="py-20" style={{background: 'linear-gradient(135deg, #F8E6CB 0%, #f0f9ff 100%)'}}>
                 <div className="max-w-5xl mx-auto px-6">
                     <p className="text-emerald-600 text-xs font-bold uppercase tracking-widest mb-3">Từ sách &ldquo;Bình An Tài Chính&rdquo;</p>
                     <h2 className="text-3xl font-black text-slate-900 mb-2">Bản Đồ 3 Bước Đến Bình An</h2>
                     <p className="text-slate-500 mb-12 max-w-xl">Không phải về việc kiếm được bao nhiêu — đây là hành trình từ lo âu đến tự do.</p>
                     <div className="space-y-5">
                         {/* BƯỚC 1 */}
-                        <div className="bg-emerald-700 border border-rose-400/30 rounded-3xl p-8">
+                        <div className="rounded-3xl p-8" style={{background: '#5193B3'}}>
                             <div className="flex items-start gap-5">
-                                <div className="shrink-0 w-14 h-14 bg-rose-950 border border-rose-800 rounded-2xl flex items-center justify-center text-2xl">🛑</div>
+                                <div className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)'}}>🛑</div>
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-2 flex-wrap">
                                         <span className="text-rose-400 text-xs font-black uppercase tracking-widest">Bước 1</span>
@@ -194,17 +194,17 @@ export default function HomePage() {
                                     <p className="text-white/80 text-sm leading-relaxed mb-4">
                                         Nhiều người nghèo đi không vì dốt tính toán — mà do bị kẹt bởi <span className="text-rose-300">nỗi sợ vô hình</span> và <span className="text-rose-300">niềm tin sai lệch</span>. Bẫy &ldquo;trì hoãn&rdquo; và chi tiêu cảm xúc khiến tài khoản về 0 rồi lại hối hận, lặp đi lặp lại.
                                     </p>
-                                    <div className="bg-white/15 border border-white/20 rounded-xl px-4 py-3 inline-block">
-                                        <p className="text-emerald-100 text-xs font-bold">Giải pháp: Tìm &ldquo;ước mơ chân thật&rdquo;</p>
-                                        <p className="text-emerald-200 text-xs mt-1">Gắn tiền với giá trị cốt lõi của bạn, không phải áp lực xã hội</p>
+                                    <div className="rounded-xl px-4 py-3 inline-block" style={{background: '#F8D49B', border: '1px solid rgba(255,255,255,0.3)'}}>
+                                        <p className="text-amber-900 text-xs font-bold">Giải pháp: Tìm &ldquo;ước mơ chân thật&rdquo;</p>
+                                        <p className="text-amber-800 text-xs mt-1">Gắn tiền với giá trị cốt lõi của bạn, không phải áp lực xã hội</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         {/* BƯỚC 2 */}
-                        <div className="bg-emerald-700 border border-emerald-400/30 rounded-3xl p-8">
+                        <div className="rounded-3xl p-8" style={{background: '#62C4C3'}}>
                             <div className="flex items-start gap-5">
-                                <div className="shrink-0 w-14 h-14 bg-emerald-950 border border-emerald-800 rounded-2xl flex items-center justify-center text-2xl">🏗️</div>
+                                <div className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)'}}>🏗️</div>
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-2 flex-wrap">
                                         <span className="text-emerald-400 text-xs font-black uppercase tracking-widest">Bước 2</span>
@@ -220,11 +220,11 @@ export default function HomePage() {
                                             { icon: '🪴', name: 'Đầu tư', label: 'Khu vườn', desc: 'Kỷ luật đều đặn — không lướt sóng' },
                                             { icon: '🏰', name: 'Rủi ro', label: 'Hầm trú ẩn', desc: 'Quỹ khẩn cấp + bảo hiểm trước tiên' },
                                         ].map((t, i) => (
-                                            <div key={i} className="bg-white/15 border border-white/20 rounded-xl p-3 text-center">
+                                            <div key={i} className="rounded-xl p-3 text-center" style={{background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)'}}>
                                                 <span className="text-xl block mb-1">{t.icon}</span>
-                                                <p className="text-emerald-200 text-[9px] font-bold uppercase tracking-wide mb-0.5">{t.label}</p>
+                                                <p className="text-white font-bold text-[9px] uppercase tracking-wide mb-0.5">{t.label}</p>
                                                 <p className="text-white text-xs font-bold mb-1 leading-tight">{t.name}</p>
-                                                <p className="text-emerald-200/70 text-[10px] leading-snug">{t.desc}</p>
+                                                <p className="text-white/80 text-[10px] leading-snug">{t.desc}</p>
                                             </div>
                                         ))}
                                     </div>
@@ -232,9 +232,9 @@ export default function HomePage() {
                             </div>
                         </div>
                         {/* BƯỚC 3 */}
-                        <div className="bg-emerald-700 border border-blue-400/30 rounded-3xl p-8">
+                        <div className="rounded-3xl p-8" style={{background: 'linear-gradient(135deg, #3B4DB8 0%, #5B6DD4 100%)'}}>
                             <div className="flex items-start gap-5">
-                                <div className="shrink-0 w-14 h-14 bg-blue-950 border border-blue-800 rounded-2xl flex items-center justify-center text-2xl">🕊️</div>
+                                <div className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)'}}>🕊️</div>
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-2 flex-wrap">
                                         <span className="text-blue-400 text-xs font-black uppercase tracking-widest">Bước 3</span>
@@ -248,7 +248,7 @@ export default function HomePage() {
                                             { icon: '👨‍👧', title: 'Dạy con về tiền', desc: 'Chia 3 phần: Tiết kiệm – Chi tiêu – Cho đi. Học từ sớm.' },
                                             { icon: '🙏', title: 'Báo hiếu đúng cách', desc: 'Làm trong khả năng. Đừng kiệt quệ vì áp lực — ba mẹ không muốn vậy.' },
                                         ].map((r, i) => (
-                                            <div key={i} className="bg-white/15 border border-white/20 rounded-xl p-3">
+                                            <div key={i} className="rounded-xl p-3" style={{background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)'}}>
                                                 <span className="text-xl block mb-1.5">{r.icon}</span>
                                                 <p className="text-white text-xs font-bold mb-1">{r.title}</p>
                                                 <p className="text-emerald-200/80 text-[11px] leading-relaxed">{r.desc}</p>
