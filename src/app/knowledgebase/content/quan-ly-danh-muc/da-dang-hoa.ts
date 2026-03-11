@@ -25,35 +25,29 @@ Câu trả lời không nằm ở con số — mà nằm ở **loại nhà đầ
 **Kết luận:** Mua 200 cổ phiếu không an toàn gấp 10 lần mua 20 cổ phiếu. Sau 50-60 cổ phiếu, bạn chỉ đang tái tạo lại Index — nhưng với chi phí giao dịch và effort cao hơn Index Fund rất nhiều.`,
     },
     {
-        type: 'concept',
+        type: 'steps',
         title: '📖 Phần 2: 3 Trường Phái — Ai Phù Hợp Với Ai?',
-        content: `**Trường phái 1 — Mua "Cả Thị Trường" qua ETF (Bogle, Malkiel, Buffett)**
-
-Dành cho: Người bận rộn, chưa có kiến thức chuyên sâu, không muốn rủi ro chọn sai cổ phiếu.
-
-Triết lý: Hơn 2/3 nhà quản lý quỹ chuyên nghiệp thất bại trong việc đánh bại S&P 500 trong dài hạn. Thay vì mò kim đáy bể, hãy "mua luôn cả đống cỏ khô" — ETF Index Fund với chi phí cực thấp, thu về mức lợi nhuận trung bình thị trường (~10%/năm trong lịch sử).
-
-Buffett: *"Khi đầu tư theo từng giai đoạn trong một quỹ chỉ số, nhà đầu tư không biết gì cũng có thể đầu tư như chuyên gia."*
-
----
-
-**Trường phái 2 — Đa dạng hóa vừa đủ: 10-30 cổ phiếu (Lynch, Graham, Greenblatt)**
-
-Dành cho: Nhà đầu tư có kiến thức, có thời gian nghiên cứu, muốn vượt trội thị trường nhưng vẫn cần màng lưới an toàn.
-
-Graham khuyên nhà đầu tư phòng vệ: 10-30 cổ phiếu của các công ty lớn, ổn định, tài chính vững mạnh. Greenblatt (công thức magic formula): 20-30 cổ phiếu để đạt kết quả trung bình theo xác suất toán học. 10-30 cổ phiếu đảm bảo: nếu 1-2 công ty phá sản, danh mục không bị ảnh hưởng quá nặng — nhưng vẫn đủ tập trung để theo dõi được.
-
----
-
-**Trường phái 3 — Đầu tư Tập trung: 5-10 cổ phiếu (Buffett, Fisher, Munger)**
-
-Dành cho: "Know-something investor" — người có khả năng phân tích kinh doanh sâu và kiểm soát tâm lý xuất sắc.
-
-Philip Fisher: Sở hữu hơn 20 cổ phiếu là "dấu hiệu không khôn ngoan về tài chính". Con số tốt hơn là 10-12. "Mua cổ phiếu một công ty mà bạn không có hiểu biết còn nguy hiểm hơn không đa dạng hóa."
-
-Buffett gọi sở hữu 50-70 cổ phiếu là "đầu tư kiểu thuyền Nô-ê" — sẽ khiến bạn trắng tay. Câu hỏi của Buffett: *"Nếu doanh nghiệp tốt nhất bạn có triển vọng sáng sủa nhất, tại sao bạn đổ tiền vào công ty yêu thích thứ 20 thay vì dồn thêm cho lựa chọn số 1?"*
-
-**Cảnh báo:** Chiến lược tập trung đi kèm biến động ngắn hạn cực cao. Chỉ được phép khi bạn đặt cược lớn cho những sự kiện có khả năng xảy ra nhất — và khi bạn đủ tâm lý để chịu đựng danh mục giảm 30-40% tạm thời mà không bán.`,
+        content: 'Dựa trên nền tảng khoa học của MPT, 3 trường phái lớn đã hình thành — tương ứng với 3 cấp độ kiến thức và thời gian khác nhau:',
+        items: [
+            {
+                icon: '📦',
+                title: 'Trường phái 1: Mua "Cả Thị Trường" qua ETF',
+                highlight: 'Bogle · Malkiel · Buffett',
+                body: '• Dành cho: Người bận rộn, chưa có kiến thức chuyên sâu, không muốn rủi ro chọn sai cổ phiếu\n• Triết lý: Hơn 2/3 quỹ chủ động thất bại trước S&P 500 trong dài hạn → "mua cả đống cỏ khô" thay vì mò kim đáy bể\n• ETF Index Fund: chi phí cực thấp, ~10%/năm trong lịch sử\n• Buffett: "Nhà đầu tư không biết gì đầu tư định kỳ vào quỹ chỉ số cũng có thể đạt kết quả như chuyên gia"',
+            },
+            {
+                icon: '⚖️',
+                title: 'Trường phái 2: Đa Dạng Hóa Vừa Đủ — 10 đến 30 cổ phiếu',
+                highlight: 'Lynch · Graham · Greenblatt',
+                body: '• Dành cho: Nhà đầu tư có thời gian nghiên cứu, muốn vượt trội thị trường nhưng vẫn cần màng lưới an toàn\n• Graham: 10-30 cổ phiếu của các công ty lớn, ổn định, tài chính vững mạnh\n• Greenblatt (magic formula): 20-30 cổ phiếu để đạt kết quả trung bình theo xác suất toán học\n• Bảo vệ: nếu 1-2 công ty phá sản, danh mục không bị ảnh hưởng quá nặng — vẫn đủ tập trung để theo dõi được',
+            },
+            {
+                icon: '🎯',
+                title: 'Trường phái 3: Đầu Tư Tập Trung — 5 đến 10 cổ phiếu xuất sắc',
+                highlight: 'Buffett · Fisher · Munger',
+                body: '• Dành cho: "Know-something investor" — phân tích kinh doanh sâu, kiểm soát tâm lý xuất sắc\n• Fisher: sở hữu >20 cổ phiếu là "dấu hiệu không khôn ngoan"; mua CP không hiểu còn nguy hiểm hơn không đa dạng hóa\n• Buffett: 50-70 cổ phiếu = "đầu tư kiểu thuyền Nô-ê" → trắng tay; câu hỏi: "Tại sao đổ tiền vào CP thứ 20 thay vì dồn thêm cho lựa chọn số 1?"\n• ⚠️ Cảnh báo: biến động ngắn hạn cực cao — chỉ phù hợp khi bạn chịu được -30 đến -40% tạm thời mà không bán tháo',
+            },
+        ],
     },
     {
         type: 'key-insight',
