@@ -8,6 +8,11 @@ import {
     type CandleShape, type ContractClause, type Pillar, type Article
 } from '../../data'
 import { getArticleContent } from '../../content'
+import { useState, useCallback, useEffect } from 'react'
+import ContentGate, { isKbUnlocked } from '@/components/knowledgebase/ContentGate'
+
+const GATED_TRACKS = ['investor', 'trader', 'mastery']
+const FREE_BLOCKS_COUNT = 3  // số block hiển thị trước khi gate
 
 const fadeUp = (delay = 0) => ({
     initial: { opacity: 0, y: 20 },
@@ -236,6 +241,21 @@ interface Props {
 }
 
 export default function ArticlePageClient({ pillar, article, pillarSlug, articleSlug, prevArticle, nextArticle }: Props) {
+    const isGated = GATED_TRACKS.includes(pillar.track)
+    const [unlocked, setUnlocked] = useState(false)
+
+    useEffect(() => {
+        if (isKbUnlocked()) setUnlocked(true)
+    }, [])
+
+    const handleUnlock = useCallback(() => setUnlocked(true), [])
+
+    // Tất cả blocks của bài
+    const allBlocks = getArticleContent(pillarSlug, articleSlug) ?? TEMPLATE_BLOCKS
+    // Free blocks (hiển thị không blur)
+    const freeBlocks = isGated && !unlocked ? allBlocks.slice(0, FREE_BLOCKS_COUNT) : allBlocks
+    const hasLockedContent = isGated && !unlocked && allBlocks.length > FREE_BLOCKS_COUNT
+
     return (
         <div className="min-h-screen bg-neutral-50 font-sans">
 
@@ -292,11 +312,24 @@ export default function ArticlePageClient({ pillar, article, pillarSlug, article
                 <div className="max-w-4xl mx-auto px-6 py-12">
                     <div className="grid lg:grid-cols-3 gap-12">
                         <div className="lg:col-span-2 space-y-6">
-                            {(getArticleContent(pillarSlug, articleSlug) ?? TEMPLATE_BLOCKS).map((block, i) => (
+                            {freeBlocks.map((block, i) => (
                                 <motion.div key={i} {...fadeUp(i * 0.06)}>
                                     <ContentBlockRenderer block={block} />
                                 </motion.div>
                             ))}
+
+                            {/* Content Gate — chỉ hiển thị khi có nội dung bị khóa */}
+                            {hasLockedContent && (
+                                <div className="mt-2">
+                                    <ContentGate
+                                        pillarTitle={pillar.title}
+                                        pillarSlug={pillarSlug}
+                                        articleSlug={articleSlug}
+                                        track={pillar.track}
+                                        onUnlock={handleUnlock}
+                                    />
+                                </div>
+                            )}
                         </div>
                         <div className="space-y-5">
                             <motion.div {...fadeUp(0.1)} className={`${pillar.color} border ${pillar.borderColor} rounded-2xl p-5`}>
