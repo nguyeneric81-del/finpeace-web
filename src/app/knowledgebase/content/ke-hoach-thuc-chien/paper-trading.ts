@@ -1,64 +1,66 @@
 // Article content: ke-hoach-thuc-chien / paper-trading
 // "Paper Trading 90 Ngày — Giao Dịch Thật, Tiền Giả, Bài Học Thật"
+// Ref: Jens Clever, Benjamin Graham, Market Wizards
 
 import type { ContentBlock } from '../../data'
 
 export const content: ContentBlock[] = [
     {
         type: 'intro',
-        content: `Bạn có thể đọc 10 cuốn sách về bơi lội và vẫn sẽ chìm nghỉm khi nhảy xuống nước. Trading cũng vậy.
+        content: `Bạn có thể đọc 10 cuốn sách về bơi lội và vẫn sẽ chìm khi nhảy xuống nước. Trading cũng vậy.
 
-Paper Trading (giao dịch mô phỏng bằng tiền giả) là bước bắt buộc giữa lý thuyết và thực tế. Không phải để "thắng ảo" cho vui — mà để hiểu tâm lý của bạn phản ứng thế nào với rủi ro, trước khi tiền thật vào cuộc.`,
-    },
-    {
-        type: 'concept',
-        title: '📖 Paper Trading Dùng Đúng Cách vs Sai Cách',
-        content: `**Sai cách (phổ biến):** Mở tài khoản ảo 1 tỷ đồng, giao dịch vô tội vạ không có kế hoạch, thắng nhiều vì "không sợ mất", rồi tự tin nhảy vào tiền thật và thua vì cảm xúc hoàn toàn khác.
-
-**Đúng cách:** Paper trade với MỤC TIÊU HỌC CỤ THỂ — kiểm tra một hệ thống giao dịch định trước, ghi nhật ký mọi lệnh, đánh giá kết quả bằng metrics thực sự (win rate, R:R, max drawdown) sau 90 ngày.
-
-Sự khác biệt nằm ở **structure và kỷ luật**, không phải công cụ.`,
+Paper Trading (giao dịch mô phỏng) không phải để "thắng ảo" cho vui — mà để thu thập dữ liệu về chính mình: tâm lý của bạn phản ứng thế nào với rủi ro, trước khi tiền thật vào cuộc.`,
     },
     {
         type: 'steps',
-        title: '📋 Chương Trình Paper Trading 90 Ngày Có Cấu Trúc',
+        title: '🗺️ 4 Bước Paper Trading Đúng Cách Trong 90 Ngày',
         content: '',
         items: [
             {
-                icon: '📌',
-                title: 'Tháng 1 (30 ngày đầu): Thiết lập hệ thống',
-                highlight: 'Chọn một hệ thống duy nhất và tuân thủ tuyệt đối',
-                body: 'Chọn ONE hệ thống (ví dụ: chỉ giao dịch theo S/R breakout với volume xác nhận). Viết ra các quy tắc RÕ RÀNG: điều kiện vào lệnh, cách tính stop-loss, cách tính position size. Không được thay đổi hệ thống trong 30 ngày, dù kết quả xấu.',
+                icon: '🖥️',
+                title: 'Bước 1: Chọn công cụ mô phỏng',
+                highlight: 'Không cần phần mềm đắt tiền',
+                body: '• Portfolio Tracker miễn phí: Morningstar, Yahoo Finance, tài khoản demo của CTCK\n• Đơn giản nhất: bảng tính Excel — ghi lệnh mua/bán tại mức giá và thời gian cụ thể\n• Mục tiêu cốt lõi không phải phần mềm — mà là kiểm tra tính kỷ luật của bạn',
+            },
+            {
+                icon: '🎭',
+                title: 'Bước 2: Nguyên tắc "Giao dịch thật, tiền giả"',
+                highlight: 'Đánh lừa bộ não — loại bỏ lỗ hổng cảm xúc',
+                body: '• Trung thực tuyệt đối: không đặt lệnh mô phỏng nếu biết chắc sẽ không dám bấm khi dùng tiền thật\n• Trừ phí môi giới và trượt giá (slippage) — đây là sai lầm phổ biến khiến kết quả giả luôn đẹp hơn thực tế\n• Khi giá chạm stop-loss trên biểu đồ → bắt buộc ghi nhận lệnh thua lỗ ngay lập tức, không chờ đợi',
             },
             {
                 icon: '📔',
-                title: 'Tháng 2 (30 ngày tiếp): Nhật ký giao dịch nghiêm túc',
-                highlight: 'Ghi lại mọi thứ — kể cả cảm xúc',
-                body: 'Mỗi lệnh ghi: Ngày, Cổ phiếu, Lý do vào lệnh (phân tích gì?), Điểm vào, Stop-loss, Target, Kết quả, và quan trọng nhất — CẢM XÚC của bạn khi vào/trong/sau lệnh. Sau 30 ngày, đọc lại nhật ký để tìm patterns trong sai lầm.',
+                title: 'Bước 3: Ghi Nhật Ký Giao Dịch (Trade Log)',
+                highlight: 'Bạn đang thu thập dữ liệu về chính mình',
+                body: '• Ghi đầy đủ: tín hiệu vào lệnh, tín hiệu thoát, lý do — và đặc biệt là CẢM XÚC lúc đó\n• Mổ xẻ mọi lệnh thua lỗ: "điều gì đã xảy ra và tại sao tôi lỗ?" — đây là bài học thật sự\n• Theo dõi chuỗi thắng/thua liên tiếp (streaks) và tác động lên tâm lý để nhận ra mình behave ra sao',
             },
             {
                 icon: '📊',
-                title: 'Tháng 3 (30 ngày cuối): Đánh giá và quyết định',
-                highlight: 'Phân tích metrics thực sự',
-                body: 'Tính: Win Rate (%), Average Win / Average Loss (R:R ratio), Profit Factor (tổng lãi / tổng lỗ), Max Drawdown (giảm tối đa từ đỉnh). Nếu Profit Factor > 1.5 và bạn tuân thủ rules nhất quán → sẵn sàng trade thật với vốn nhỏ. Nếu không → identify vấn đề và lặp lại.',
+                title: 'Bước 4: Đánh Giá Sau 90 Ngày',
+                highlight: 'Ngưỡng tối thiểu để chuyển tiền thật: Win Rate ≥ 75%',
+                body: '• Chuyên gia Jens Clever: chỉ chuyển sang trade live khi Win Rate trên giấy ≥ 75% — vì con số này chắc chắn giảm mạnh khi trade thật\n• So sánh với thị trường chung: nếu tốn hàng giờ/ngày mà lợi nhuận vẫn thấp hơn mua ETF rồi đi ngủ → tự chọn cổ phiếu không dành cho bạn\n• Kết quả giả luôn tốt hơn thực tế vì không có áp lực tâm lý — hãy tự cộng thêm một "discount" tâm lý 20-30%',
             },
         ],
     },
     {
-        type: 'key-insight',
-        title: '💡 Bài Học Không Thể Học Từ Sách: Tâm Lý Khi Thắng và Thua Liên Tiếp',
-        content: 'Khi paper trade nghiêm túc, bạn sẽ phát hiện: sau 3-4 lệnh thắng liên tiếp, bạn có xu hướng tăng size quá mức (overconfidence). Sau 3-4 lệnh thua liên tiếp, bạn muốn bỏ qua một lệnh "để dừng chuỗi xui" (thiếu nhất quán). Cả hai cảm xúc này đều sẽ phá hủy lợi nhuận kỳ vọng của hệ thống. Nhận ra chúng khi còn tiền giả — trước khi tiền thật vào cuộc.',
+        type: 'concept',
+        title: '💡 Kết Luận: Sau 90 Ngày, Bạn Thuộc Nhóm Nào?',
+        content: `Nhóm 1 — Nên từ bỏ tự chọn cổ phiếu: Thiếu kỷ luật, không bám sát chiến lược, kết quả thua thị trường chung. Không có gì đáng xấu hổ — Graham khuyên: đặt toàn bộ tiền vào quỹ chỉ số thụ động và dành thời gian cho cuộc sống.
+
+Nhóm 2 — Sẵn sàng "Ra chiến trường": Duy trì được kỷ luật, ghi chép nghiêm túc, Win Rate ≥ 75%, và đã nhận ra được các lỗi tâm lý của mình. Bạn đã sẵn sàng mở tài khoản tiền thật.
+
+Nhưng dù thuộc nhóm nào: Đừng paper trade quá lâu. Bắt đầu với số vốn nhỏ nhất có thể để nếm trải cảm giác thực tế — khi đồng tiền thật đầu tiên bị đe dọa, cảm xúc mới thực sự ập đến, và không có bài tập nào chuẩn bị cho bạn hoàn toàn điều đó.`,
     },
     {
         type: 'checklist',
-        title: '✅ Điều Kiện "Tốt Nghiệp" Paper Trading — Sẵn Sàng Trade Thật',
+        title: '✅ Điều Kiện "Tốt Nghiệp" — Sẵn Sàng Trade Tiền Thật',
         content: [
-            'Đã giao dịch ít nhất 30 lệnh theo cùng một hệ thống nhất quán',
-            'Profit Factor > 1.5 trong 90 ngày (tổng lãi / tổng lỗ)',
-            'Max Drawdown < 20% tài khoản ảo (nếu hơn, position sizing cần xem lại)',
-            'Win Rate đã biết cụ thể (không phải cảm giác) và phù hợp với R:R của hệ thống',
-            'Đã phát hiện ít nhất 1 pattern sai lầm tâm lý trong nhật ký và có kế hoạch khắc phục',
-            'Cam kết bắt đầu trade thật với vốn ≤ 10% số tiền dự định đầu tư trong năm đầu tiên',
+            'Đã giao dịch ít nhất 30 lệnh theo cùng một hệ thống, nhất quán trong 90 ngày',
+            'Win Rate trên giấy ≥ 75% (Jens Clever) — biết rằng con số này sẽ giảm khi trade thật',
+            'Profit Factor > 1.5 (tổng lãi / tổng lỗ) sau toàn bộ giai đoạn',
+            'Đã ghi Trade Log đầy đủ và mổ xẻ ít nhất 3 lệnh thua lỗ lớn nhất',
+            'Đã nhận ra ít nhất 1 pattern lỗi tâm lý (overconfidence, revenge trading, hesitation...)',
+            'Bắt đầu với vốn thật ≤ 10% tổng vốn dự định — để nếm trải cảm xúc trước khi all-in',
         ],
     },
     {
@@ -71,12 +73,12 @@ Sự khác biệt nằm ở **structure và kỷ luật**, không phải công c
         type: 'summary',
         title: '📋 Ghi Nhớ Sau Bài Này',
         content: [
-            'Paper trade ĐÚNG CÁCH = kiểm tra một hệ thống cụ thể với kỷ luật — không phải giao dịch vô tội vạ',
-            '90 ngày: 30 ngày thiết lập → 30 ngày nhật ký → 30 ngày đánh giá metrics',
-            'Metrics cần đo: Win Rate, R:R, Profit Factor (>1.5), Max Drawdown (<20%)',
-            'Mục tiêu chính: học TÂMLÝ của bạn — overconfidence sau thắng, hesitation sau thua',
-            '"Tốt nghiệp" khi: 30+ lệnh nhất quán + Profit Factor > 1.5 + đã nhận ra và có plan cho các lỗi tâm lý',
-            'Trade thật đầu tiên với vốn ≤ 10% tổng vốn đầu tư — cảm xúc tiền thật KHÁC hoàn toàn tiền ảo',
+            '4 bước 90 ngày: chọn công cụ → nguyên tắc tiền giả-thực tế → Trade Log → đánh giá số liệu',
+            'Nguyên tắc quan trọng nhất: trừ phí + slippage, thực thi stop-loss nghiêm túc dù là tiền giả',
+            'Trade Log không phải ghi số liệu — mà ghi CẢM XÚC để nhận ra pattern tâm lý của mình',
+            'Win Rate ≥ 75% trên giấy mới đủ điều kiện trade thật (vì sẽ giảm mạnh với áp lực tâm lý)',
+            'So sánh với ETF: nếu tốn hàng giờ mà vẫn thua ETF → tự chọn cổ phiếu không dành cho bạn',
+            'Đừng paper trade mãi — bắt đầu vốn thật nhỏ để nếm trải cảm xúc thực sự, không có gì thay thế được',
         ],
     },
 ]
