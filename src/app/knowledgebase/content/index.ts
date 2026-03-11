@@ -20,6 +20,13 @@ import { content as khoiLuongGiaoDich } from './phan-tich-ky-thuat/khoi-luong-gi
 import { content as macdRsi } from './phan-tich-ky-thuat/macd-rsi'
 import { content as lyThuyetHopDarvas } from './giao-dich-theo-xu-huong/ly-thuyet-hop-darvas'
 import { content as turtleTraders } from './giao-dich-theo-xu-huong/turtle-traders'
+// Tháng 4 — Mastery Track
+import { content as daDangHoa } from './quan-ly-danh-muc/da-dang-hoa'
+import { content as dollarCostAveraging } from './quan-ly-danh-muc/dollar-cost-averaging'
+import { content as catLo } from './quan-tri-rui-ro/cat-lo'
+import { content as positionSizing } from './quan-tri-rui-ro/position-sizing'
+import { content as investmentPolicyStatement } from './ke-hoach-thuc-chien/investment-policy-statement'
+import { content as paperTrading } from './ke-hoach-thuc-chien/paper-trading'
 
 export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     'tam-ly-thi-truong/nguoi-ban-co-phieu': nguoiBanCoPHieu,
@@ -43,6 +50,13 @@ export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     'phan-tich-ky-thuat/macd-rsi': macdRsi,
     'giao-dich-theo-xu-huong/ly-thuyet-hop-darvas': lyThuyetHopDarvas,
     'giao-dich-theo-xu-huong/turtle-traders': turtleTraders,
+    // Tháng 4 — Mastery Track
+    'quan-ly-danh-muc/da-dang-hoa': daDangHoa,
+    'quan-ly-danh-muc/dollar-cost-averaging': dollarCostAveraging,
+    'quan-tri-rui-ro/cat-lo': catLo,
+    'quan-tri-rui-ro/position-sizing': positionSizing,
+    'ke-hoach-thuc-chien/investment-policy-statement': investmentPolicyStatement,
+    'ke-hoach-thuc-chien/paper-trading': paperTrading,
 }
 
 export function getArticleContent(pillarSlug: string, articleSlug: string): ContentBlock[] | null {

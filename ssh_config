@@ -1,0 +1,6 @@
+Host finpeace-vps
+    HostName 76.13.181.13
+    User root
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+    StrictHostKeyChecking no

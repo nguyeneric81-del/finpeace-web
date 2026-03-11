@@ -63,6 +63,7 @@ export async function updateSession(request: NextRequest) {
         effectivePath.startsWith('/auth') ||
         effectivePath.startsWith('/api/agent') ||
         effectivePath.startsWith('/advisor') || // Cho phép route advisor tự do
+        effectivePath.startsWith('/knowledgebase') || // KB là public content
         effectivePath === '/';
 
     if (!user && !isPublicRoute) {
