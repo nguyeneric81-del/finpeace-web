@@ -182,7 +182,7 @@ export default function HomePage() {
                     <p className="text-slate-500 mb-12 max-w-xl">Không phải về việc kiếm được bao nhiêu — đây là hành trình từ lo âu đến tự do.</p>
                     <div className="space-y-5">
                         {/* BƯỚC 1 */}
-                        <div className="bg-emerald-900 border border-rose-700/50 rounded-3xl p-8">
+                        <div className="bg-slate-900 border border-rose-900/50 rounded-3xl p-8">
                             <div className="flex items-start gap-5">
                                 <div className="shrink-0 w-14 h-14 bg-rose-950 border border-rose-800 rounded-2xl flex items-center justify-center text-2xl">🛑</div>
                                 <div className="flex-1">
@@ -202,7 +202,7 @@ export default function HomePage() {
                             </div>
                         </div>
                         {/* BƯỚC 2 */}
-                        <div className="bg-emerald-900 border border-emerald-600/40 rounded-3xl p-8">
+                        <div className="bg-slate-900 border border-emerald-900/50 rounded-3xl p-8">
                             <div className="flex items-start gap-5">
                                 <div className="shrink-0 w-14 h-14 bg-emerald-950 border border-emerald-800 rounded-2xl flex items-center justify-center text-2xl">🏗️</div>
                                 <div className="flex-1">
@@ -232,7 +232,7 @@ export default function HomePage() {
                             </div>
                         </div>
                         {/* BƯỚC 3 */}
-                        <div className="bg-emerald-900 border border-blue-700/50 rounded-3xl p-8">
+                        <div className="bg-slate-900 border border-blue-900/50 rounded-3xl p-8">
                             <div className="flex items-start gap-5">
                                 <div className="shrink-0 w-14 h-14 bg-blue-950 border border-blue-800 rounded-2xl flex items-center justify-center text-2xl">🕊️</div>
                                 <div className="flex-1">
