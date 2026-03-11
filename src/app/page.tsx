@@ -403,30 +403,90 @@ export default function HomePage() {
                         </div>
 
                         {/* BƯỚC 3 */}
-                        <div className="bg-white rounded-3xl p-8 shadow-sm border-l-4" style={{ borderLeftColor: '#3B82F6' }}>
-                            <div className="flex items-start gap-5">
-                                <div className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{ background: '#EFF6FF', border: '2px solid #3B82F6' }}>🕊️</div>
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-3 mb-2 flex-wrap">
-                                        <span className="text-xs font-black uppercase tracking-widest text-blue-600">Bước 3</span>
-                                        <span className="text-xs" style={{ color: '#4F4F4F' }}>· Vùng Đất Bình An</span>
-                                    </div>
-                                    <h3 className="font-black text-xl mb-3" style={{ color: navy }}>Sống tự do và hạnh phúc</h3>
-                                    <p className="text-sm leading-relaxed mb-4" style={{ color: '#4F4F4F' }}>Khi tiền không còn là nguồn lo âu — bạn có không gian để yêu thương tốt hơn.</p>
-                                    <div className="grid sm:grid-cols-3 gap-3">
-                                        {[
-                                            { icon: '💑', title: 'Vợ chồng minh bạch', desc: 'Không giấu giếm. Cùng lập kế hoạch. Không ngại nói chuyện về tiền.' },
-                                            { icon: '👨‍👧', title: 'Dạy con về tiền', desc: 'Chia 3 phần: Tiết kiệm – Chi tiêu – Cho đi. Học từ sớm.' },
-                                            { icon: '🙏', title: 'Báo hiếu đúng cách', desc: 'Làm trong khả năng. Đừng kiệt quệ vì áp lực — ba mẹ không muốn vậy.' },
-                                        ].map((r, i) => (
-                                            <div key={i} className="rounded-xl p-3" style={{ background: '#EFF6FF' }}>
-                                                <span className="text-xl block mb-1.5">{r.icon}</span>
-                                                <p className="text-xs font-bold mb-1" style={{ color: navy }}>{r.title}</p>
-                                                <p className="text-[11px] leading-relaxed" style={{ color: '#4F4F4F' }}>{r.desc}</p>
-                                            </div>
-                                        ))}
+                        <div className="bg-white rounded-3xl shadow-sm border-l-4 overflow-hidden" style={{ borderLeftColor: '#3B82F6' }}>
+                            {/* Step header */}
+                            <div className="p-8 border-b" style={{ borderColor: 'rgba(59,130,246,0.15)' }}>
+                                <div className="flex items-start gap-5">
+                                    <div className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{ background: '#EFF6FF', border: '2px solid #3B82F6' }}>🕊️</div>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-3 mb-2 flex-wrap">
+                                            <span className="text-xs font-black uppercase tracking-widest text-blue-500">Bước 3</span>
+                                            <span className="text-xs" style={{ color: '#4F4F4F' }}>· Vùng Đất Bình An</span>
+                                            <span className="ml-auto text-xs px-2 py-0.5 rounded-full font-bold" style={{ background: '#EFF6FF', color: '#3B82F6' }}>3 bài học</span>
+                                        </div>
+                                        <h3 className="font-black text-xl mb-2" style={{ color: navy }}>Sống tự do và hạnh phúc</h3>
+                                        <p className="text-sm leading-relaxed" style={{ color: '#4F4F4F' }}>
+                                            Khi tiền không còn là nguồn lo âu — bạn có không gian để <strong>yêu thương tốt hơn</strong>, dạy con khôn ngoan hơn và báo hiếu từ trái tim.
+                                        </p>
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* 3 bài học accordion */}
+                            <div className="divide-y" style={{ borderColor: 'rgba(59,130,246,0.12)' }}>
+                                {[
+                                    {
+                                        num: '01',
+                                        emoji: '💑',
+                                        title: 'Vợ chồng minh bạch',
+                                        hook: 'Tiền bạc là cầu nối, không phải bức tường — nhưng chỉ khi hai người dám nói thật với nhau.',
+                                        core: 'Sắp xếp tài chính minh bạch, chân thành không làm mất đi sự lãng mạn — đó chính là cách biến tình yêu thành hành động thực tế.',
+                                        quote: 'Hôn nhân là một sự hợp tác, và sự hợp tác này khó có thể đi đến thành công nếu không lên kế hoạch như một đội.',
+                                        content: 'Ở Việt Nam, ly hôn do yếu tố kinh tế chiếm đến 13%, chỉ xếp sau mâu thuẫn lối sống và ngoại tình. Nhiều cặp vợ chồng coi tiền bạc là chủ đề "cấm kỵ", ngại nói ra vì sợ bị phán xét là thực dụng. Việc giấu giếm chi tiêu cá nhân hay một khoản nợ dần tạo ra "bức tường vô hình" ngăn cách hai người dưới cùng một mái nhà.',
+                                        cta: '💬 Giao tiếp "Tâm-Trí-Thành": Tạo không gian an toàn để nói chuyện về tiền — không phán xét, mở lòng thấu hiểu thói quen chi tiêu của nhau. Cùng thiết lập mục tiêu chung (mua nhà, quỹ học vấn) và đóng góp theo năng lực thu nhập để không ai cảm thấy bị thiệt thòi.',
+                                    },
+                                    {
+                                        num: '02',
+                                        emoji: '👨‍👧',
+                                        title: 'Dạy con về tiền',
+                                        hook: 'Hãy dạy con về tiền bạc trước khi cuộc sống làm điều đó một cách khắc nghiệt.',
+                                        core: 'Dạy con về tiền không phải là gieo áp lực, mà là tiêm một "liều vắc-xin" để con tự lập và vững vàng trong tương lai.',
+                                        quote: 'Hãy dạy con bạn về tiền bạc trước khi cuộc sống làm điều đó một cách khắc nghiệt.',
+                                        content: 'Nhiều cha mẹ Việt Nam có tư duy "bao bọc" — giấu con những lúc gia đình eo hẹp hoặc đáp ứng mọi mong muốn vô điều kiện. Hậu quả: trẻ lớn lên với tư duy tiền luôn sẵn có, không biết trân trọng sức lao động. Nghiên cứu chỉ ra trẻ bắt đầu hình thành thói quen tài chính từ năm 7 tuổi — đây chính là cửa sổ vàng.',
+                                        cta: '🏺 Quy tắc 3 lọ từ tiền tiêu vặt: Dạy con chia tiền thành Tiết kiệm (mục tiêu lớn) + Chi tiêu (nhu cầu cá nhân) + Cho đi (từ thiện). Khi con muốn mua đồ đắt tiền, khuyến khích con làm việc nhà để tự "kiếm" tiền. Nếu con tiêu hết quá sớm, đừng trách — hãy hỏi: "Con thấy sao? Lần sau con sẽ làm gì khác đi?"',
+                                    },
+                                    {
+                                        num: '03',
+                                        emoji: '🙏',
+                                        title: 'Báo hiếu đúng cách',
+                                        hook: 'Cách báo hiếu ý nghĩa nhất là sống sao cho cha mẹ tự hào — không phải oằn mình gửi tiền về.',
+                                        core: 'Một người con độc lập, hạnh phúc, không nợ nần mang lại sự an tâm cho cha mẹ lớn hơn rất nhiều so với việc con phải kiệt quệ tài chính.',
+                                        quote: 'Cách báo hiếu ý nghĩa nhất là sống sao cho cha mẹ tự hào. Sự phát triển và hiện diện của bạn còn quý hơn những món quà đắt tiền.',
+                                        content: 'Trong văn hóa Việt Nam, báo hiếu thường gắn liền với vật chất. Rất nhiều người trẻ mang áp lực nặng nề phải cắt 20% thu nhập gửi về cho bố mẹ dù bản thân đang chật vật — dẫn đến cảm giác mất tự do và kiệt quệ tài chính. Báo hiếu là hành trình của tình yêu và sự thấu hiểu, không phải gánh nặng ép buộc.',
+                                        cta: '💰 Đưa "quỹ báo hiếu" vào ngân sách (5–10% thu nhập): trích ra một tỷ lệ vừa sức để sẵn sàng khi cha mẹ cần, mà không làm ảnh hưởng cỗ máy tài chính gia đình nhỏ. Và hãy hỏi cha mẹ họ thực sự mong muốn gì — đôi khi chỉ là thời gian bạn ở bên cạnh.',
+                                    },
+                                ].map((lesson, i) => (
+                                    <details key={i} className="group">
+                                        <summary className="flex items-center gap-4 px-8 py-5 cursor-pointer list-none transition-colors hover:bg-blue-50">
+                                            <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-lg font-black" style={{ background: '#EFF6FF', color: '#3B82F6' }}>
+                                                {lesson.emoji}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 mb-0.5">
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-blue-500">Bài học {lesson.num}</span>
+                                                </div>
+                                                <p className="font-bold text-sm leading-tight" style={{ color: navy }}>{lesson.hook}</p>
+                                            </div>
+                                            <span className="shrink-0 text-lg transition-transform group-open:rotate-90 text-blue-400">›</span>
+                                        </summary>
+                                        <div className="px-8 pb-6 pt-2">
+                                            <div className="ml-13 pl-4 border-l-2 border-blue-100">
+                                                <div className="mb-4 px-3 py-2 rounded-lg inline-block" style={{ background: '#EFF6FF' }}>
+                                                    <p className="text-xs font-bold text-blue-500">💡 Thông điệp cốt lõi</p>
+                                                    <p className="text-sm font-semibold mt-0.5" style={{ color: navy }}>{lesson.core}</p>
+                                                </div>
+                                                <div className="mb-4 rounded-xl p-4" style={{ background: 'rgba(19,25,70,0.04)', borderLeft: `3px solid ${navy}` }}>
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: navy }}>📖 Trích sách "Bình An Tài Chính"</p>
+                                                    <p className="text-sm italic leading-relaxed" style={{ color: '#131946CC' }}>"{lesson.quote}"</p>
+                                                </div>
+                                                <p className="text-sm leading-relaxed mb-4" style={{ color: '#4F4F4F' }}>{lesson.content}</p>
+                                                <div className="rounded-xl p-4" style={{ background: '#EFF6FF' }}>
+                                                    <p className="text-sm leading-relaxed" style={{ color: navy }}>{lesson.cta}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </details>
+                                ))}
                             </div>
                         </div>
                     </div>
