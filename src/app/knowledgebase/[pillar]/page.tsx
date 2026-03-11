@@ -60,6 +60,8 @@ export async function generateMetadata(
     const description = seo?.description ?? pillar.description
     const url = `https://finpeace.cloud/knowledgebase/${pillarSlug}`
 
+    const ogImageUrl = `https://finpeace.cloud/api/og?pillar=${pillarSlug}&title=${encodeURIComponent(pillar.title)}&description=${encodeURIComponent(seo?.description ?? pillar.description)}`
+
     return {
         title,
         description,
@@ -72,11 +74,13 @@ export async function generateMetadata(
             type: 'website',
             siteName: 'FinPeace',
             locale: 'vi_VN',
+            images: [{ url: ogImageUrl, width: 1200, height: 630, alt: pillar.title }],
         },
         twitter: {
-            card: 'summary',
+            card: 'summary_large_image',
             title,
             description,
+            images: [ogImageUrl],
         },
     }
 }

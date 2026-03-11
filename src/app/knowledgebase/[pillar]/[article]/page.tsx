@@ -16,6 +16,7 @@ export async function generateMetadata(
     const description = article.summary
     const url = `https://finpeace.cloud/knowledgebase/${pillarSlug}/${articleSlug}`
     const keywords = article.tags.join(', ')
+    const ogImageUrl = `https://finpeace.cloud/api/og?pillar=${pillarSlug}&title=${encodeURIComponent(article.title)}&description=${encodeURIComponent(article.summary)}`
 
     // JSON-LD: Article + BreadcrumbList
     const jsonLd = {
@@ -60,11 +61,13 @@ export async function generateMetadata(
             siteName: 'FinPeace',
             locale: 'vi_VN',
             tags: article.tags,
+            images: [{ url: ogImageUrl, width: 1200, height: 630, alt: article.title }],
         },
         twitter: {
             card: 'summary_large_image',
             title,
             description,
+            images: [ogImageUrl],
         },
         other: {
             'script:ld+json': JSON.stringify(jsonLd),
