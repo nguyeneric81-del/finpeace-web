@@ -49,7 +49,8 @@ export async function POST(req: NextRequest) {
             sub: user.id,
             email: user.email,
             role: user.role,
-            name: user.full_name
+            name: user.full_name,
+            investor_type: user.investor_type
         })
             .setProtectedHeader({ alg: 'HS256' })
             .setExpirationTime('7d')
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
 
         const response = NextResponse.json({
             success: true,
-            user: { id: user.id, email: user.email, role: user.role, name: user.full_name }
+            user: { id: user.id, email: user.email, role: user.role, name: user.full_name, investor_type: user.investor_type }
         })
 
         // Set HTTP-only cookie

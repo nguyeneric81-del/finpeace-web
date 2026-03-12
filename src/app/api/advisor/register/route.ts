@@ -35,7 +35,7 @@ async function hashPassword(password: string): Promise<string> {
 
 export async function POST(req: NextRequest) {
     try {
-        const { email, phone, full_name } = await req.json()
+        const { email, phone, full_name, investor_type } = await req.json()
 
         if (!email || !email.includes('@')) {
             return NextResponse.json({ error: 'Email không hợp lệ' }, { status: 400 })
@@ -64,7 +64,8 @@ export async function POST(req: NextRequest) {
                 phone: phone || null,
                 full_name: full_name || null,
                 password_hash: hashedPassword,
-                role: 'customer'
+                role: 'customer',
+                investor_type: investor_type || 'balanced'
             })
             .select('id, email')
             .single()
