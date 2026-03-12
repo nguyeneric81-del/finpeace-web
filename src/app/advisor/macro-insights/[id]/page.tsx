@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowLeft, MessageSquare, Target, Activity, Quote } from 'lucide-react';
 import { StatCard, MiniTrendChart } from '@/components/macro/InfographicWidgets';
+import AntVInfographic from '@/components/macro/AntVInfographic';
 
 type StoryPoint = { point: string; quote: string; source: string; };
 type StatCardData = { value: string; label: string; sub?: string; positive?: boolean; unit?: string; };
@@ -15,6 +16,7 @@ const mockDetails: Record<string, {
   chartData: ChartData[];
   chartLabel: string;
   chartColor: string;
+  infographicSyntax: string;
   behindStory: StoryPoint[];
   analystView: string;
   cycle: { lagging: string; leading: string; };
@@ -36,6 +38,24 @@ const mockDetails: Record<string, {
     ],
     chartLabel: "Chỉ số SCFI (Container Freight Index) - 8 tháng gần nhất",
     chartColor: "#34d399",
+    infographicSyntax: `infographic list-col-simple-horizontal-number
+data
+  title Cước Vận Tải Biển & Impact HAH
+  desc Biến động SCFI Q1/2026 → Tác động trực tiếp đến doanh thu HAH
+  lists
+    - label SCFI Index
+      value 2,800
+      desc Cao nhất 18 tháng (điểm)
+    - label Tàu qua Suez
+      value -42%
+      desc So cùng kỳ năm trước
+    - label Doanh thu HAH
+      value +18%
+      desc Từ 3 tàu mới tuyến Nội Á
+    - label LNST HAH Q2
+      value +45%
+      desc YoY (Dự phóng)
+`,
     behindStory: [
       {
         point: "Căng thẳng khu vực Biển Đỏ kéo dài làm thay đổi toàn bộ cấu trúc tuyến vận tải Á - Âu, ép các hãng tàu phải đi vòng qua Mũi Hảo Vọng.",
@@ -76,6 +96,24 @@ const mockDetails: Record<string, {
     ],
     chartLabel: "Chỉ số DXY (USD Index) - 7 tháng gần nhất",
     chartColor: "#f59e0b",
+    infographicSyntax: `infographic list-col-simple-horizontal-number
+data
+  title USD mạnh: Ai thắng, ai thua?
+  desc Phân tích tác động tỷ giá USD/VND lên doanh nghiệp niêm yết
+  lists
+    - label DXY Index
+      value 104.5
+      desc Neo vững (điểm)
+    - label USD/VND tự do
+      value 25,500
+      desc Tăng +3.8% YTD
+    - label Buff DThu VHC
+      value +4.5%
+      desc Từ chênh lệch tỷ giá
+    - label Biên gộp VHC
+      value 18%
+      desc Tăng từ 14% đầu 2025
+`,
     behindStory: [
       {
         point: "Lạm phát lõi (Core PCE) của Mỹ bất ngờ dâng cao trở lại, triệt tiêu kỳ vọng hạ lãi suất sớm của thị trường.",
@@ -116,6 +154,24 @@ const mockDetails: Record<string, {
     ],
     chartLabel: "FDI Lũy kế đăng ký mới vào Việt Nam (tỷ USD)",
     chartColor: "#a78bfa",
+    infographicSyntax: `infographic list-col-simple-horizontal-number
+data
+  title Làn Sóng FDI Bán Dẫn vào Việt Nam
+  desc Dòng vốn FDI thế hệ mới → Bùng nổ lợi nhuận KBC & IDC
+  lists
+    - label FDI 2T/2026
+      value $4.29B
+      desc +38.6% YoY
+    - label Lấp đầy KCN Bắc
+      value 90%
+      desc Nguồn cung khan hiếm
+    - label Giá thuê KCN
+      value $140
+      desc USD/m² (+8% vs 2024)
+    - label LNST KBC 2026
+      value +120%
+      desc YoY (Dự phóng)
+`,
     behindStory: [
       {
         point: "Các đạo luật hỗ trợ sản xuất chip của phương Tây kết hợp rủi ro Mỹ - Trung ép dòng vốn FDI công nghệ cao phải đa dạng hóa chuỗi lắp ráp (China + 1).",
@@ -165,11 +221,10 @@ export default async function MacroDetailPage({ params }: { params: Promise<{ id
           </p>
         </div>
 
-        {/* ── INFOGRAPHIC: Stat Cards + Mini Chart ── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-          {data.stats.map((s, i) => (
-            <StatCard key={i} {...s} />
-          ))}
+        {/* ── INFOGRAPHIC: AntV Declarative + Recharts Mini Chart ── */}
+        <div className="mb-6">
+          <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">📊 Tóm tắt Số Liệu Cốt Lõi</p>
+          <AntVInfographic syntax={data.infographicSyntax} width={800} height={220} />
         </div>
         <div className="mb-10">
           <MiniTrendChart data={data.chartData} label={data.chartLabel} color={data.chartColor} />

@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@antv/infographic": "^0.2.16",
     "@google/generative-ai": "^0.24.1",
     "@radix-ui/react-slot": "^1.2.4",
     "@remixicon/react": "^4.9.0",
