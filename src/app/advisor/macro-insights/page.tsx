@@ -52,53 +52,6 @@ const mockStories = [
       { ticker: "KBC", name: "Kinh Bắc", impact: "Bàn giao 100ha đất tại KCN Tràng Duệ 3, hạch toán lợi nhuận đột biến Q3/2026.", matchScore: 95, positive: true },
       { ticker: "DGC", name: "Hóa chất Đức Giang", impact: "Nhu cầu hóa chất bán dẫn (Phosphorus) bùng nổ toàn cầu hỗ trợ giá bán trung hạn.", matchScore: 89, positive: true }
     ]
-  },
-  {
-    id: 4,
-    title: "Luật Đất đai 2024 chuẩn bị có hiệu lực - Mở nút thắt nguồn cung",
-    date: "Tháng 4, 2026",
-    category: "Chính sách Pháp lý",
-    dataPoint: "Khung giá đất mới sẽ được áp dụng, đẩy nhanh tiến độ đền bù giải phóng mặt bằng cho các dự án trọng điểm.",
-    narrowIndustry: "Bất động sản Thương mại & Xây dựng Hạ tầng",
-    quantifiedImpact: {
-      positive: true,
-      value: "Kỳ vọng nguồn cung mở bán mới tăng +25% trong nửa cuối 2026. Biên lợi nhuận gộp các chủ đầu tư sở hữu quỹ đất sạch cải thiện +5%."
-    },
-    companies: [
-      { ticker: "NLG", name: "Nam Long", impact: "Quỹ đất sạch lớn, dự kiến mở bán 3 đại đô thị trong Q3/2026.", matchScore: 90, positive: true },
-      { ticker: "VHM", name: "Vinhomes", impact: "Hưởng lợi từ chu kỳ M&A bất động sản được nới lỏng.", matchScore: 85, positive: true }
-    ]
-  },
-  {
-    id: 5,
-    title: "Giá Vàng lập đỉnh lịch sử - Áp lực lạm phát tâm lý",
-    date: "Tháng 4, 2026",
-    category: "Hàng hóa Toàn cầu",
-    dataPoint: "Giá vàng SJC vượt đỉnh 85 triệu đồng/lượng. Chênh lệch vàng nội - ngoại duy trì ở mức cao 15-18 triệu đồng.",
-    narrowIndustry: "Bán lẻ Trang sức & Dịch vụ Tài chính",
-    quantifiedImpact: {
-      positive: true,
-      value: "Doanh thu mảng vàng miếng bán lẻ ước tính tăng trưởng +40% YoY, bù đắp sụt giảm nhu cầu trang sức xa xỉ."
-    },
-    companies: [
-      { ticker: "PNJ", name: "Vàng bạc đá quý Phú Nhuận", impact: "Gia tăng thị phần bán lẻ vàng 24K, linh hoạt chuyển đổi tệp khách hàng.", matchScore: 94, positive: true }
-    ]
-  },
-  {
-    id: 6,
-    title: "Mùa Báo Cáo Tài Chính Q1/2026: Lợi nhuận ngành Ngân hàng phân hóa",
-    date: "Tháng 4, 2026",
-    category: "Tăng trưởng Lợi nhuận",
-    dataPoint: "Tín dụng toàn ngành tăng trưởng +2.5% QTD. NIM trung bình thu hẹp nhẹ do chi phí vốn huy động nhích lên.",
-    narrowIndustry: "Ngân hàng Thương mại Cổ phần",
-    quantifiedImpact: {
-      positive: true,
-      value: "Nhóm NHTM có lợi thế CASA cao dự kiến ghi nhận LNST tăng trưởng +15% - 20% YoY, vượt xa trung bình ngành."
-    },
-    companies: [
-      { ticker: "TCB", name: "Techcombank", impact: "Tỷ lệ CASA phục hồi kỷ lục, chi phí vốn thấp nhất hệ thống.", matchScore: 92, positive: true },
-      { ticker: "MBB", name: "MBBank", impact: "Tín dụng phân khúc bán lẻ tăng tốc tích cực.", matchScore: 88, positive: true }
-    ]
   }
 ];
 
