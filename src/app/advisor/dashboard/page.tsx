@@ -305,7 +305,7 @@ export default function AdvisorDashboardPage() {
     const [user, setUser] = useState<any>(null)
     const [result, setResult] = useState<AnalysisResult | null>(null)
     const [displayedPlans, setDisplayedPlans] = useState<TradingPlan[]>([])
-    const [samplePortfolio, setSamplePortfolio] = useState<{result: TradingPlan[], rationale: string} | null>(null)
+    const [samplePortfolio, setSamplePortfolio] = useState<{result: TradingPlan[], rationale: string, investor_type: string} | null>(null)
     const [uploading, setUploading] = useState(false)
     const [uploadStep, setUploadStep] = useState(0)
     const [dragOver, setDragOver] = useState(false)
@@ -688,11 +688,9 @@ export default function AdvisorDashboardPage() {
                             </div>
                             
                             <div className="relative z-10 mb-8">
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100/80 text-emerald-700 text-[10px] font-bold uppercase tracking-widest mb-4">
-                                    <Sparkles className="w-3.5 h-3.5" /> Khu Vực 02
-                                </span>
-                                <h2 className="text-2xl font-bold text-slate-800">
-                                    Danh Mục Mẫu Định Vị
+                                <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2 mb-2">
+                                    <Sparkles className="w-6 h-6 text-emerald-600" />
+                                    Danh mục mẫu của FinPeace cho cá tính { { 'aggressive': 'Tích Cực', 'growth': 'Tăng Trưởng', 'balanced': 'Cân Bằng', 'conservative': 'Thận Trọng' }[samplePortfolio.investor_type] || 'Cân Bằng' } của bạn
                                 </h2>
                                 <p className="text-slate-600 mt-2 text-sm leading-relaxed max-w-2xl bg-white/60 p-4 rounded-xl border border-white">
                                     {samplePortfolio.rationale}
