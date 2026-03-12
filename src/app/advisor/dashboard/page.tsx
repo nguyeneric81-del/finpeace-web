@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import {
     Leaf, LogOut, ChevronDown, ChevronUp, Loader2, Upload,
@@ -50,9 +50,23 @@ function shuffleAndTake<T>(arr: T[], n: number): T[] {
     return a.slice(0, n)
 }
 
-function TradingPlanCard({ plan }: { plan: TradingPlan }) {
+function TradingPlanCard({ plan }: { plan: TradingPlan & { latest_signal?: { type: string, label: string, current_price: number } } }) {
     const [open, setOpen] = useState(false)
     const [imgExpanded, setImgExpanded] = useState(false)
+    
+    // Map signal colors
+    const signalColors: Record<string, string> = {
+        'reduce': 'bg-rose-100 text-rose-700 border-rose-200',
+        'consider_buy': 'bg-emerald-100 text-emerald-700 border-emerald-200',
+        'wait_pullback': 'bg-amber-100 text-amber-700 border-amber-200',
+        'sell': 'bg-orange-100 text-orange-700 border-orange-200',
+        'take_profit': 'bg-purple-100 text-purple-700 border-purple-200'
+    }
+    const signalConf = plan.latest_signal ? {
+        color: signalColors[plan.latest_signal.type] || 'bg-slate-100 text-slate-700 border-slate-200',
+        label: plan.latest_signal.label
+    } : null;
+
     return (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <button onClick={() => setOpen(o => !o)} className="w-full flex items-center justify-between p-5 hover:bg-slate-50/50 transition-colors text-left">
@@ -61,8 +75,22 @@ function TradingPlanCard({ plan }: { plan: TradingPlan }) {
                         <span className="text-emerald-700 font-bold text-sm">{plan.ticker}</span>
                     </div>
                     <div>
-                        <p className="font-semibold text-slate-800">{plan.ticker} {plan.company_name ? `— ${plan.company_name}` : ''}</p>
+                        <div className="flex items-center gap-2">
+                            <p className="font-semibold text-slate-800">{plan.ticker} {plan.company_name ? `— ${plan.company_name}` : ''}</p>
+                            {signalConf && (
+                                <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-md border ${signalConf.color} whitespace-nowrap hidden sm:block`}>
+                                    {signalConf.label}
+                                </span>
+                            )}
+                        </div>
                         <p className="text-sm text-emerald-600 font-medium mt-0.5">{plan.strategy_name}</p>
+                        {signalConf && (
+                            <div className="sm:hidden mt-1">
+                                <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded border ${signalConf.color}`}>
+                                    {signalConf.label}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -260,15 +288,23 @@ function PortfolioAssessment({ assessment }: { assessment: NonNullable<AnalysisR
     )
 }
 
+const UPLOAD_STEPS = [
+    { label: 'Đang tải ảnh lên...', icon: '⏳' },
+    { label: 'AI đang đọc danh mục...', icon: '🔍' },
+    { label: 'Đang khớp Trading Plans...', icon: '📊' },
+]
+
 export default function AdvisorDashboardPage() {
     const [user, setUser] = useState<any>(null)
     const [result, setResult] = useState<AnalysisResult | null>(null)
     const [displayedPlans, setDisplayedPlans] = useState<TradingPlan[]>([])
     const [uploading, setUploading] = useState(false)
+    const [uploadStep, setUploadStep] = useState(0)
     const [dragOver, setDragOver] = useState(false)
     const [imagePreview, setImagePreview] = useState('')
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const fileRef = useRef<HTMLInputElement>(null)
+    const abortRef = useRef<AbortController | null>(null)
     const router = useRouter()
     // ── Đổi mật khẩu ──
     const [showChangePw, setShowChangePw] = useState(false)
@@ -321,16 +357,47 @@ export default function AdvisorDashboardPage() {
 
     async function handleUpload(file: File) {
         setUploading(true)
-        const fd = new FormData()
-        fd.append('image', file)
-        fd.append('user_id', user?.id || '')
-        const res = await fetch('/api/advisor/analyze-portfolio', { method: 'POST', body: fd })
-        const data = await res.json()
-        setUploading(false)
-        if (data.success) {
-            setSelectedFile(null)
-            setImagePreview('')
-            applyResult(data)
+        setUploadStep(0)
+
+        // Step 0 → 1: ảnh đã chọn xong, chuyển sang AI
+        const stepTimer1 = setTimeout(() => setUploadStep(1), 800)
+        // Step 1 → 2: sau ~3s Gemini vẫn đang xử lý → chuyển sang step 3
+        const stepTimer2 = setTimeout(() => setUploadStep(2), 3500)
+
+        // Client-side abort sau 62s
+        const controller = new AbortController()
+        abortRef.current = controller
+        const abortTimer = setTimeout(() => controller.abort(), 62_000)
+
+        try {
+            const fd = new FormData()
+            fd.append('image', file)
+            fd.append('user_id', user?.id || '')
+            const res = await fetch('/api/advisor/analyze-portfolio', {
+                method: 'POST',
+                body: fd,
+                signal: controller.signal
+            })
+            const data = await res.json()
+            if (data.success) {
+                setSelectedFile(null)
+                setImagePreview('')
+                applyResult(data)
+            } else {
+                alert(data.error || 'Có lỗi xảy ra. Vui lòng thử lại.')
+            }
+        } catch (err: any) {
+            if (err.name === 'AbortError') {
+                alert('Phân tích mất quá lâu. Vui lòng thử lại với ảnh nhỏ hơn hoặc rõ hơn.')
+            } else {
+                alert('Có lỗi xảy ra. Vui lòng thử lại.')
+            }
+        } finally {
+            clearTimeout(stepTimer1)
+            clearTimeout(stepTimer2)
+            clearTimeout(abortTimer)
+            setUploading(false)
+            setUploadStep(0)
         }
     }
 
@@ -556,13 +623,41 @@ export default function AdvisorDashboardPage() {
                             </div>
                         )}
 
-                        <button
-                            onClick={() => selectedFile && handleUpload(selectedFile)}
-                            disabled={!selectedFile || uploading}
-                            className="w-full bg-emerald-600 text-white py-3 rounded-xl font-medium hover:bg-emerald-700 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
-                        >
-                            {uploading ? <><Loader2 className="w-4 h-4 animate-spin" />Đang phân tích với AI...</> : <><Upload className="w-4 h-4" />Phân Tích Danh Mục</>}
-                        </button>
+                        {uploading ? (
+                            <div className="w-full rounded-2xl border border-emerald-100 bg-emerald-50 p-5">
+                                <div className="flex flex-col gap-3">
+                                    {UPLOAD_STEPS.map((s, i) => {
+                                        const isDone = i < uploadStep
+                                        const isActive = i === uploadStep
+                                        return (
+                                            <div key={i} className={`flex items-center gap-3 transition-all ${
+                                                isActive ? 'opacity-100' : isDone ? 'opacity-60' : 'opacity-25'
+                                            }`}>
+                                                <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-sm ${
+                                                    isDone ? 'bg-emerald-500 text-white' :
+                                                    isActive ? 'bg-emerald-100 ring-2 ring-emerald-400' :
+                                                    'bg-slate-100'
+                                                }`}>
+                                                    {isDone ? '✓' : isActive ? <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-600" /> : s.icon}
+                                                </div>
+                                                <span className={`text-sm font-medium ${
+                                                    isActive ? 'text-emerald-700' : isDone ? 'text-emerald-500' : 'text-slate-400'
+                                                }`}>{s.label}</span>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                                <p className="text-xs text-slate-400 mt-4 text-center">Thường mất 15–30 giây, vui lòng đừng tắt trang</p>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => selectedFile && handleUpload(selectedFile)}
+                                disabled={!selectedFile}
+                                className="w-full bg-emerald-600 text-white py-3 rounded-xl font-medium hover:bg-emerald-700 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
+                            >
+                                <Upload className="w-4 h-4" />Phân Tích Danh Mục
+                            </button>
+                        )}
                     </div>
                 )}
             </div>

@@ -28,8 +28,6 @@ export async function GET(req: NextRequest) {
 
     const tickers: string[] = portfolio.extracted_tickers || []
 
-    // Nếu không extract được mã nào, vẫn trả về result (không phải null)
-    // để dashboard biết portfolio đã được upload
     if (!tickers.length) {
         return NextResponse.json({
             result: {
@@ -47,13 +45,39 @@ export async function GET(req: NextRequest) {
         .in('ticker', tickers)
         .eq('status', 'active')
 
+    // Fetch the latest signals for these matched plans today
     const matchedTickers = (plans || []).map((p: any) => p.ticker)
+    
+    let latestSignals = []
+    if (matchedTickers.length > 0) {
+        const { data: signals } = await supabase
+            .from('price_signals')
+            .select('*')
+            .in('ticker', matchedTickers)
+            .eq('date', new Date().toISOString().split('T')[0])
+            
+        latestSignals = signals || []
+    }
+
+    // Gắn signal vào plan
+    const enhancedPlans = (plans || []).map((p: any) => {
+        const signal = latestSignals.find(s => s.ticker === p.ticker)
+        return {
+            ...p,
+            latest_signal: signal ? {
+                type: signal.signal_type,
+                label: signal.signal_label,
+                current_price: signal.current_price
+            } : null
+        }
+    })
+
     const pendingTickers = tickers.filter(t => !matchedTickers.includes(t))
 
     return NextResponse.json({
         result: {
             extracted_tickers: tickers,
-            matched_plans: plans || [],
+            matched_plans: enhancedPlans,
             pending_tickers: pendingTickers,
             allocation_assessment: portfolio.allocation_assessment
         }
