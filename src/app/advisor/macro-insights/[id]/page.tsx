@@ -38,8 +38,9 @@ const mockDetails: Record<string, any> = {
   }
 };
 
-export default function MacroDetailPage({ params }: { params: { id: string } }) {
-  const data = mockDetails[params.id];
+export default async function MacroDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  const data = mockDetails[resolvedParams.id];
   
   if (!data) return <div className="p-10 text-white">Không tìm thấy báo cáo.</div>;
 
