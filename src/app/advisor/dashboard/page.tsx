@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import {
     Leaf, LogOut, ChevronDown, ChevronUp, Loader2, Upload,
-    Camera, Clock, CheckCircle2, X, RefreshCw, KeyRound, AlertTriangle, TrendingUp
+    Camera, Clock, CheckCircle2, X, RefreshCw, KeyRound, AlertTriangle, TrendingUp, Sparkles, Brain
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -50,7 +50,7 @@ function shuffleAndTake<T>(arr: T[], n: number): T[] {
     return a.slice(0, n)
 }
 
-function TradingPlanCard({ plan }: { plan: TradingPlan & { latest_signal?: { type: string, label: string, current_price: number } } }) {
+function TradingPlanCard({ plan }: { plan: TradingPlan & { latest_signal?: { type: string, label: string, current_price: number, detail?: string } } }) {
     const [open, setOpen] = useState(false)
     const [imgExpanded, setImgExpanded] = useState(false)
     
@@ -141,6 +141,13 @@ function TradingPlanCard({ plan }: { plan: TradingPlan & { latest_signal?: { typ
                             </div>
                         ) : null)}
                     </div>
+
+                    {plan.latest_signal?.detail && (
+                        <div className={`rounded-xl p-4 border ${signalConf?.color || 'bg-slate-50 border-slate-200'}`}>
+                            <p className="text-[10px] font-bold mb-1 uppercase tracking-wider opacity-80 flex items-center gap-1.5"><span className="text-sm">💡</span> Cập nhật Tín hiệu Hệ thống</p>
+                            <p className="text-sm leading-relaxed font-medium">{plan.latest_signal.detail}</p>
+                        </div>
+                    )}
 
                     {plan.entry_criteria && (
                         <div className="bg-blue-50 rounded-xl p-4">
@@ -298,6 +305,7 @@ export default function AdvisorDashboardPage() {
     const [user, setUser] = useState<any>(null)
     const [result, setResult] = useState<AnalysisResult | null>(null)
     const [displayedPlans, setDisplayedPlans] = useState<TradingPlan[]>([])
+    const [samplePortfolio, setSamplePortfolio] = useState<{result: TradingPlan[], rationale: string} | null>(null)
     const [uploading, setUploading] = useState(false)
     const [uploadStep, setUploadStep] = useState(0)
     const [dragOver, setDragOver] = useState(false)
@@ -320,7 +328,16 @@ export default function AdvisorDashboardPage() {
         if (u.role === 'admin') { router.push('/advisor/admin'); return }
         setUser(u)
         loadLatestPortfolio(u.id)
+        loadSamplePortfolio(u.investor_type || 'balanced')
     }, [])
+
+    async function loadSamplePortfolio(type: string) {
+        try {
+            const res = await fetch(`/api/advisor/sample-portfolio?investor_type=${type}`)
+            const data = await res.json()
+            if (data && data.result) setSamplePortfolio(data)
+        } catch {}
+    }
 
     // Tải kết quả phân tích: ưu tiên sessionStorage (từ luồng đăng ký) → fallback DB
     async function loadLatestPortfolio(userId: string) {
@@ -658,6 +675,36 @@ export default function AdvisorDashboardPage() {
                                 <Upload className="w-4 h-4" />Phân Tích Danh Mục
                             </button>
                         )}
+                    </div>
+                )}
+
+                {/* ──────────── KHU VỰC 2: DANH MỤC MẪU ──────────── */}
+                {samplePortfolio && samplePortfolio.result.length > 0 && (
+                    <div className="pt-6 border-t border-slate-100/50 pb-10">
+                        <div className="bg-gradient-to-br from-white to-emerald-50/40 rounded-3xl p-6 md:p-8 border border-emerald-100/50 shadow-sm relative overflow-hidden">
+                            {/* Decorative element */}
+                            <div className="absolute -right-6 top-10 opacity-[0.03]">
+                                <Brain className="w-64 h-64 text-emerald-900" />
+                            </div>
+                            
+                            <div className="relative z-10 mb-8">
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100/80 text-emerald-700 text-[10px] font-bold uppercase tracking-widest mb-4">
+                                    <Sparkles className="w-3.5 h-3.5" /> Khu Vực 02
+                                </span>
+                                <h2 className="text-2xl font-bold text-slate-800">
+                                    Danh Mục Mẫu Định Vị
+                                </h2>
+                                <p className="text-slate-600 mt-2 text-sm leading-relaxed max-w-2xl bg-white/60 p-4 rounded-xl border border-white">
+                                    {samplePortfolio.rationale}
+                                </p>
+                            </div>
+
+                            <div className="space-y-4 relative z-10">
+                                {samplePortfolio.result.map(plan => (
+                                    <TradingPlanCard key={`sample-${plan.id}`} plan={plan as any} />
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
