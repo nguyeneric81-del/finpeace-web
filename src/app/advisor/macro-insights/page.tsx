@@ -1,6 +1,8 @@
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { BarChart3, TrendingUp, AlertTriangle, ArrowRight, ShieldCheck, Search, Flame } from 'lucide-react';
+import { BarChart3, TrendingUp, AlertTriangle, ArrowRight, ShieldCheck, Search, Flame, CalendarDays } from 'lucide-react';
 
 const mockStories = [
   {
@@ -50,14 +52,71 @@ const mockStories = [
       { ticker: "KBC", name: "Kinh Bắc", impact: "Bàn giao 100ha đất tại KCN Tràng Duệ 3, hạch toán lợi nhuận đột biến Q3/2026.", matchScore: 95, positive: true },
       { ticker: "DGC", name: "Hóa chất Đức Giang", impact: "Nhu cầu hóa chất bán dẫn (Phosphorus) bùng nổ toàn cầu hỗ trợ giá bán trung hạn.", matchScore: 89, positive: true }
     ]
+  },
+  {
+    id: 4,
+    title: "Luật Đất đai 2024 chuẩn bị có hiệu lực - Mở nút thắt nguồn cung",
+    date: "Tháng 4, 2026",
+    category: "Chính sách Pháp lý",
+    dataPoint: "Khung giá đất mới sẽ được áp dụng, đẩy nhanh tiến độ đền bù giải phóng mặt bằng cho các dự án trọng điểm.",
+    narrowIndustry: "Bất động sản Thương mại & Xây dựng Hạ tầng",
+    quantifiedImpact: {
+      positive: true,
+      value: "Kỳ vọng nguồn cung mở bán mới tăng +25% trong nửa cuối 2026. Biên lợi nhuận gộp các chủ đầu tư sở hữu quỹ đất sạch cải thiện +5%."
+    },
+    companies: [
+      { ticker: "NLG", name: "Nam Long", impact: "Quỹ đất sạch lớn, dự kiến mở bán 3 đại đô thị trong Q3/2026.", matchScore: 90, positive: true },
+      { ticker: "VHM", name: "Vinhomes", impact: "Hưởng lợi từ chu kỳ M&A bất động sản được nới lỏng.", matchScore: 85, positive: true }
+    ]
+  },
+  {
+    id: 5,
+    title: "Giá Vàng lập đỉnh lịch sử - Áp lực lạm phát tâm lý",
+    date: "Tháng 4, 2026",
+    category: "Hàng hóa Toàn cầu",
+    dataPoint: "Giá vàng SJC vượt đỉnh 85 triệu đồng/lượng. Chênh lệch vàng nội - ngoại duy trì ở mức cao 15-18 triệu đồng.",
+    narrowIndustry: "Bán lẻ Trang sức & Dịch vụ Tài chính",
+    quantifiedImpact: {
+      positive: true,
+      value: "Doanh thu mảng vàng miếng bán lẻ ước tính tăng trưởng +40% YoY, bù đắp sụt giảm nhu cầu trang sức xa xỉ."
+    },
+    companies: [
+      { ticker: "PNJ", name: "Vàng bạc đá quý Phú Nhuận", impact: "Gia tăng thị phần bán lẻ vàng 24K, linh hoạt chuyển đổi tệp khách hàng.", matchScore: 94, positive: true }
+    ]
+  },
+  {
+    id: 6,
+    title: "Mùa Báo Cáo Tài Chính Q1/2026: Lợi nhuận ngành Ngân hàng phân hóa",
+    date: "Tháng 4, 2026",
+    category: "Tăng trưởng Lợi nhuận",
+    dataPoint: "Tín dụng toàn ngành tăng trưởng +2.5% QTD. NIM trung bình thu hẹp nhẹ do chi phí vốn huy động nhích lên.",
+    narrowIndustry: "Ngân hàng Thương mại Cổ phần",
+    quantifiedImpact: {
+      positive: true,
+      value: "Nhóm NHTM có lợi thế CASA cao dự kiến ghi nhận LNST tăng trưởng +15% - 20% YoY, vượt xa trung bình ngành."
+    },
+    companies: [
+      { ticker: "TCB", name: "Techcombank", impact: "Tỷ lệ CASA phục hồi kỷ lục, chi phí vốn thấp nhất hệ thống.", matchScore: 92, positive: true },
+      { ticker: "MBB", name: "MBBank", impact: "Tín dụng phân khúc bán lẻ tăng tốc tích cực.", matchScore: 88, positive: true }
+    ]
   }
 ];
 
 export default function MacroInsightsPage() {
+  const availableMonths = Array.from(new Set(mockStories.map(s => s.date))).sort((a, b) => {
+    // Simple sort mapping "Tháng X, YYYY" to properly order them.
+    // Since we'll just have mostly recent months, we can reverse sort so newest is first.
+    // In reality, this would use actual Date parsing.
+    return b.localeCompare(a);
+  });
+
+  const [activeMonth, setActiveMonth] = useState(availableMonths[0]);
+  const filteredStories = mockStories.filter(story => story.date === activeMonth);
+
   return (
     <div className="min-h-screen bg-[#0E1117] text-slate-200 overflow-x-hidden p-6 md:p-12 font-sans">
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-16">
+      <div className="max-w-7xl mx-auto mb-10">
         <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-sm font-medium mb-4">
           <Flame className="w-4 h-4" />
           <span>Câu chuyện Vĩ mô Mỗi tháng</span>
@@ -73,9 +132,38 @@ export default function MacroInsightsPage() {
         </p>
       </div>
 
-      {/* 3 Hot Stories Grid */}
-      <div className="max-w-7xl mx-auto space-y-12">
-        {mockStories.map((story) => (
+      {/* Month Navigation Tabs */}
+      <div className="max-w-7xl mx-auto mb-12">
+        <div className="flex items-center gap-1 border-b border-slate-800 pb-px overflow-x-auto no-scrollbar mask-gradient-right">
+          <div className="flex px-2 py-1 items-center gap-2 text-slate-500 font-semibold mr-4">
+             <CalendarDays className="w-5 h-5" />
+             <span className="uppercase tracking-wider text-xs">Thời Gian</span>
+          </div>
+          {availableMonths.map((month) => (
+            <button
+              key={month}
+              onClick={() => setActiveMonth(month)}
+              className={`
+                relative px-6 py-3 text-sm font-semibold whitespace-nowrap transition-all duration-300
+                ${activeMonth === month
+                  ? 'text-white' 
+                  : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/50 rounded-t-lg'
+                }
+              `}
+            >
+              {month}
+              {/* Active indicator line */}
+              {activeMonth === month && (
+                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-400 to-teal-400 shadow-[0_-2px_10px_rgba(56,189,248,0.5)]"></div>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Hot Stories Grid for Active Month */}
+      <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {filteredStories.map((story) => (
           <div key={story.id} className="relative p-1 rounded-3xl bg-gradient-to-br from-slate-800/80 to-slate-900/50 hover:from-blue-500/20 hover:to-teal-500/10 transition-colors duration-500">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/10 to-teal-500/10 rounded-3xl blur opacity-20"></div>
             <div className="relative bg-[#12161E] rounded-[22px] p-6 md:p-10 flex flex-col xl:flex-row gap-10">
@@ -83,7 +171,7 @@ export default function MacroInsightsPage() {
               {/* Left Column: Macro & Philosophy */}
               <div className="xl:w-5/12 space-y-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-slate-400 bg-slate-800/80 px-4 py-1.5 rounded-full">
+                  <span className="text-sm font-medium text-slate-400 bg-slate-800/80 px-4 py-1.5 rounded-full ring-1 ring-slate-700/50">
                     {story.date}
                   </span>
                   <span className="text-xs font-bold uppercase tracking-wider text-blue-400">
@@ -168,6 +256,12 @@ export default function MacroInsightsPage() {
             </div>
           </div>
         ))}
+
+        {filteredStories.length === 0 && (
+          <div className="py-20 text-center">
+             <p className="text-slate-500 text-lg">Chưa có báo cáo Vĩ mô cho tháng này.</p>
+          </div>
+        )}
       </div>
     </div>
   );
