@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- Tên định danh duy nhất cho job này -->
+  <key>Label</key>
+  <string>com.finpeace.macro-pipeline</string>
+
+  <!-- Lệnh chạy: node + đường dẫn tuyệt đối script -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/tuananhnguyen/.nvm/versions/node/v24.13.1/bin/node</string>
+    <string>/Users/tuananhnguyen/workspace-gravity/finpeace-web/scripts/cron_macro_pipeline.js</string>
+  </array>
+
+  <!-- Lịch chạy: Ngày mùng 1 hàng tháng, lúc 06:00 sáng -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Day</key>
+    <integer>1</integer>
+    <key>Hour</key>
+    <integer>6</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <!-- Load biến môi trường từ file -->
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>DOTENV_CONFIG_PATH</key>
+    <string>/Users/tuananhnguyen/workspace-gravity/finpeace-web/.env.local</string>
+  </dict>
+
+  <!-- Working directory -->
+  <key>WorkingDirectory</key>
+  <string>/Users/tuananhnguyen/workspace-gravity/finpeace-web</string>
+
+  <!-- Ghi stdout/stderr ra file log -->
+  <key>StandardOutPath</key>
+  <string>/Users/tuananhnguyen/workspace-gravity/finpeace-web/logs/launchd_out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/tuananhnguyen/workspace-gravity/finpeace-web/logs/launchd_err.log</string>
+
+  <!-- Không tự restart nếu bị crash -->
+  <key>KeepAlive</key>
+  <false/>
+
+  <!-- Chạy ngay nếu đã qua lịch lúc khởi động Mac -->
+  <key>RunAtLoad</key>
+  <false/>
+</dict>
+</plist>
