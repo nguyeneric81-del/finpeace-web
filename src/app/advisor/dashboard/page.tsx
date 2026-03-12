@@ -501,7 +501,10 @@ export default function AdvisorDashboardPage() {
                 <div className="max-w-3xl mx-auto px-4 py-3.5 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <Leaf className="w-5 h-5 text-emerald-600" />
-                        <span className="font-bold text-slate-800">FinPeace Advisor</span>
+                        <span className="font-bold text-slate-800 border-r border-slate-200 pr-4">FinPeace Advisor</span>
+                        <a href="/advisor/macro-insights" className="hidden md:flex items-center gap-1.5 text-sm font-medium text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-full hover:bg-emerald-100 transition-colors ml-2">
+                            <Sparkles className="w-4 h-4" /> Góc Nhìn Vĩ Mô
+                        </a>
                     </div>
                     <div className="flex items-center gap-3">
                         <span className="text-sm text-slate-500 hidden md:block">
