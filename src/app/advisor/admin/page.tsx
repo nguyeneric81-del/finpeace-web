@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import {
     Leaf, LogOut, Plus, Pencil, Trash2, Loader2,
-    X, Save, Upload, Image as ImageIcon, CheckCircle2, Clock
+    X, Save, Upload, Image as ImageIcon, CheckCircle2, Clock,
+    TrendingUp, TrendingDown, AlertTriangle, DollarSign, RefreshCw
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -18,6 +19,14 @@ type Plan = {
     price_series?: number[];
 }
 type Pending = { id: string; ticker: string; requested_count: number; status: string; created_at: string }
+type Signal = {
+    id: string; ticker: string; current_price: number;
+    signal_type: 'reduce' | 'consider_buy' | 'wait_pullback' | 'sell' | 'take_profit' | 'unknown';
+    signal_label: string; signal_detail: string;
+    plan_entry_low: number | null; plan_entry_high: number | null;
+    plan_sl: number | null; plan_tp: number | null;
+    date: string; generated_at: string;
+}
 
 const EMPTY_PLAN: Omit<Plan, 'id' | 'status'> = {
     ticker: '', company_name: '', strategy_name: '', timeframe: 'Trung hạn (4-8 tuần)',
@@ -193,9 +202,11 @@ function PlanForm({ initial, onSave, onCancel }: { initial: Partial<Plan>; onSav
 
 export default function AdvisorAdminPage() {
     const [user, setUser] = useState<any>(null)
-    const [tab, setTab] = useState<'plans' | 'pending'>('plans')
+    const [tab, setTab] = useState<'plans' | 'pending' | 'signals'>('plans')
     const [plans, setPlans] = useState<Plan[]>([])
     const [pending, setPending] = useState<Pending[]>([])
+    const [signals, setSignals] = useState<Signal[]>([])
+    const [signalsDate, setSignalsDate] = useState<string>('')
     const [loading, setLoading] = useState(true)
     const [editPlan, setEditPlan] = useState<Partial<Plan> | null>(null)
     const router = useRouter()
@@ -211,13 +222,20 @@ export default function AdvisorAdminPage() {
 
     const loadData = useCallback(async () => {
         setLoading(true)
-        const [plansRes, pendingRes] = await Promise.all([
+        const [plansRes, pendingRes, signalsRes] = await Promise.all([
             fetch('/api/advisor/admin?type=plans'),
-            fetch('/api/advisor/admin?type=pending')
+            fetch('/api/advisor/admin?type=pending'),
+            fetch('/api/advisor/update-prices'),
         ])
-        const [plansData, pendingData] = await Promise.all([plansRes.json(), pendingRes.json()])
+        const [plansData, pendingData, signalsData] = await Promise.all([
+            plansRes.json(), pendingRes.json(), signalsRes.json()
+        ])
         if (Array.isArray(plansData)) setPlans(plansData)
         if (Array.isArray(pendingData)) setPending(pendingData)
+        if (signalsData?.signals) {
+            setSignals(signalsData.signals)
+            setSignalsDate(signalsData.date || '')
+        }
         setLoading(false)
     }, [])
 
@@ -299,6 +317,14 @@ export default function AdvisorAdminPage() {
                             </span>
                         )}
                     </button>
+                    <button onClick={() => setTab('signals')} className={`px-5 py-2 rounded-lg text-sm font-medium transition-all relative ${tab === 'signals' ? 'bg-white shadow text-slate-800' : 'text-slate-500 hover:text-slate-700'}`}>
+                        📡 Tín Hiệu Giá
+                        {signals.length > 0 && (
+                            <span className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 text-white text-[10px] rounded-full flex items-center justify-center font-bold">
+                                {signals.length}
+                            </span>
+                        )}
+                    </button>
                 </div>
 
                 {loading ? (
@@ -346,7 +372,7 @@ export default function AdvisorAdminPage() {
                             ))}
                         </div>
                     </div>
-                ) : (
+                ) : tab === 'pending' ? (
                     <div>
                         <p className="text-slate-600 text-sm mb-4">
                             <span className="font-semibold text-rose-600">{pending.filter(p => p.status === 'pending').length}</span> mã đang chờ phân tích · tổng {pending.length} yêu cầu
@@ -387,6 +413,65 @@ export default function AdvisorAdminPage() {
                                 </div>
                             )}
                         </div>
+                    </div>
+                ) : (
+                    /* ── TAB: Tín Hiệu Giá ── */
+                    <div>
+                        <div className="flex items-center justify-between mb-4">
+                            <div>
+                                <p className="text-slate-600 text-sm">
+                                    {signals.length > 0
+                                        ? <><span className="font-semibold text-emerald-700">{signals.length} tín hiệu</span> · Cập nhật: {signalsDate || 'Hôm nay'}</>
+                                        : 'Chưa có tín hiệu hôm nay. Script 3h chiều chưa chạy?'}
+                                </p>
+                            </div>
+                            <button onClick={loadData} className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-emerald-600 border border-slate-200 px-3 py-1.5 rounded-lg hover:border-emerald-400 transition-all">
+                                <RefreshCw className="w-3.5 h-3.5" />Refresh
+                            </button>
+                        </div>
+
+                        {signals.length === 0 ? (
+                            <div className="text-center py-16 bg-white rounded-2xl border border-slate-100">
+                                <p className="text-4xl mb-3">📡</p>
+                                <p className="font-semibold text-slate-600 mb-1">Chưa có tín hiệu giá hôm nay</p>
+                                <p className="text-sm text-slate-400">Script Python sẽ chạy lúc 3h chiều (T2-T6) và cập nhật tự động</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                {signals.map(sig => {
+                                    const cfg: Record<string, { bg: string; border: string; icon: React.ReactNode }> = {
+                                        reduce:       { bg: 'bg-rose-50',   border: 'border-rose-200',   icon: <TrendingDown className="w-5 h-5 text-rose-500" /> },
+                                        consider_buy: { bg: 'bg-emerald-50', border: 'border-emerald-200', icon: <TrendingUp className="w-5 h-5 text-emerald-600" /> },
+                                        wait_pullback:{ bg: 'bg-slate-50',  border: 'border-slate-200',  icon: <Clock className="w-5 h-5 text-slate-400" /> },
+                                        sell:         { bg: 'bg-amber-50',  border: 'border-amber-200',  icon: <DollarSign className="w-5 h-5 text-amber-500" /> },
+                                        take_profit:  { bg: 'bg-orange-50', border: 'border-orange-200', icon: <DollarSign className="w-5 h-5 text-orange-500" /> },
+                                        unknown:      { bg: 'bg-slate-50',  border: 'border-slate-100',  icon: <AlertTriangle className="w-5 h-5 text-slate-300" /> },
+                                    }
+                                    const c = cfg[sig.signal_type] || cfg.unknown
+                                    const fmt = (n: number | null) => n ? n.toLocaleString('vi-VN') + ' ₫' : '—'
+                                    return (
+                                        <div key={sig.id} className={`rounded-2xl border p-4 ${c.bg} ${c.border}`}>
+                                            <div className="flex items-start gap-4">
+                                                <div className="p-2 bg-white rounded-xl shadow-sm shrink-0">{c.icon}</div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center gap-3 flex-wrap mb-1">
+                                                        <span className="font-bold text-slate-800 text-base">{sig.ticker}</span>
+                                                        <span className="text-sm font-semibold text-slate-700">{sig.signal_label}</span>
+                                                    </div>
+                                                    <p className="text-sm text-slate-600 leading-relaxed mb-3">{sig.signal_detail}</p>
+                                                    <div className="flex flex-wrap gap-4 text-xs text-slate-500">
+                                                        <span>💰 Hiện tại: <strong className="text-slate-800">{sig.current_price.toLocaleString('vi-VN')} ₫</strong></span>
+                                                        <span>📥 Entry: {sig.plan_entry_low ? `${fmt(sig.plan_entry_low)} – ${fmt(sig.plan_entry_high)}` : '—'}</span>
+                                                        <span>🛑 SL: {fmt(sig.plan_sl)}</span>
+                                                        <span>🎯 TP: {fmt(sig.plan_tp)}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

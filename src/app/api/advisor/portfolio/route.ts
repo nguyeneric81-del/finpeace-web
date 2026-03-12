@@ -6,6 +6,8 @@ const supabase = createClient(
     process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
+export const dynamic = 'force-dynamic'
+
 // GET: lấy portfolio + trading plans gần nhất của user
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
@@ -14,16 +16,16 @@ export async function GET(req: NextRequest) {
     if (!userId) return NextResponse.json({ error: 'Thiếu user_id' }, { status: 400 })
 
     // Lấy portfolio gần nhất
-    const { data: portfolio } = await supabase
+    const { data: portfolio, error } = await supabase
         .from('customer_portfolios')
         .select('*')
         .eq('user_id', userId)
-        .order('created_at', { ascending: false })
+        .order('uploaded_at', { ascending: false })
         .limit(1)
         .single()
 
-    if (!portfolio) {
-        return NextResponse.json({ result: null })
+    if (error || !portfolio) {
+        return NextResponse.json({ result: null, error: error?.message || 'Not found' })
     }
 
     const tickers: string[] = portfolio.extracted_tickers || []
@@ -67,7 +69,8 @@ export async function GET(req: NextRequest) {
             latest_signal: signal ? {
                 type: signal.signal_type,
                 label: signal.signal_label,
-                current_price: signal.current_price
+                current_price: signal.current_price,
+                detail: signal.signal_detail
             } : null
         }
     })

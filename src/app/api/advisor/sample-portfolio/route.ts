@@ -8,19 +8,6 @@ const supabase = createClient(
 
 export const dynamic = 'force-dynamic'
 
-const SECTOR_MAP: Record<string, string> = {
-    'TCB': 'Ngân hàng', 'VCB': 'Ngân hàng', 'VIB': 'Ngân hàng', 'MBB': 'Ngân hàng',
-    'SSI': 'Chứng khoán', 'VND': 'Chứng khoán', 'VDS': 'Chứng khoán', 'VIX': 'Chứng khoán',
-    'HPG': 'Thép - Vật liệu', 'NKG': 'Thép - Vật liệu', 'HSG': 'Thép - Vật liệu',
-    'VHM': 'Bất động sản', 'NVL': 'Bất động sản', 'KDH': 'Bất động sản',
-    'MSN': 'Bán lẻ - Tiêu dùng', 'MWG': 'Bán lẻ - Tiêu dùng',
-    'CTD': 'Xây dựng', 'HBC': 'Xây dựng',
-    'CTR': 'Công nghệ - Viễn thông', 'FPT': 'Công nghệ - Viễn thông',
-    'HAH': 'Cảng biển - Logistics', 'VSC': 'Cảng biển - Logistics',
-    'VJC': 'Hàng không', 'HVN': 'Hàng không',
-    'POW': 'Năng lượng', 'GAS': 'Năng lượng',
-    'PAC': 'Hoá chất - Pin', 'DCL': 'Dược phẩm'
-}
 
 const RATIONALE_MAP: Record<string, string> = {
     'aggressive': 'Danh mục đề xuất tập trung vào các cổ phiếu có hệ số Beta cao, thuộc nhóm Chứng Khoán, Bất Động Sản hoặc nhóm có câu chuyện dòng tiền mạnh. Phù hợp với tính cách quyết đoán, luôn tối ưu hoá hiệu suất vốn để nắm bắt các cơ hội nóng nhất của thị trường.',
@@ -47,7 +34,7 @@ export async function GET(req: NextRequest) {
         const signal = latestSignals.find(s => s.ticker === p.ticker)
         return {
             ...p,
-            sector: SECTOR_MAP[p.ticker] || 'Khác',
+            sector: p.sector || 'Khác',
             latest_signal: signal ? {
                 type: signal.signal_type,
                 label: signal.signal_label,
