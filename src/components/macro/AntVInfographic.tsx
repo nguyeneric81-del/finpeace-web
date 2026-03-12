@@ -57,7 +57,6 @@ export default function AntVInfographic({
     <div
       ref={containerRef}
       className={`w-full rounded-2xl overflow-hidden ${className}`}
-      style={{ minHeight: height }}
     />
   );
 }
