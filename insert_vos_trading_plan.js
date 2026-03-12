@@ -23,7 +23,8 @@ async function go() {
     catalyst_note: 'Giá cước vận tải phục hồi',
     expected_holding_days: 90,
     capital_allocation_pct: 10,
-    status: 'active'
+    status: 'active',
+    chart_image_url: '/charts/vos.png'
   };
 
   const { data, error } = await supabase.from('trading_plans').upsert(plan, { onConflict: 'ticker' });

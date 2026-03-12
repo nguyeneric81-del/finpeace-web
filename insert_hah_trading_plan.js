@@ -23,7 +23,8 @@ async function go() {
     catalyst_note: 'Tái ký hợp đồng cước giá cao',
     expected_holding_days: 60,
     capital_allocation_pct: 15,
-    status: 'active'
+    status: 'active',
+    chart_image_url: '/charts/hah.png'
   };
 
   const { data, error } = await supabase.from('trading_plans').upsert(plan, { onConflict: 'ticker' });
