@@ -85,6 +85,18 @@ export default async function TradingPlanPage({ params }: { params: Promise<{ ti
                             </div>
                         </div>
 
+                        {/* Chart Image */}
+                        {plan.chart_image_url && (
+                            <div className="mb-8">
+                                <p className="text-sm font-bold text-slate-700 uppercase tracking-widest mb-3">
+                                    📊 Biểu đồ Phân tích Kỹ thuật
+                                </p>
+                                <div className="rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 shadow-sm">
+                                    <img src={plan.chart_image_url} alt={`Biểu đồ ${plan.ticker}`} className="w-full object-contain max-h-[600px]" />
+                                </div>
+                            </div>
+                        )}
+
                         {/* Notes Sections */}
                         <div className="space-y-6">
                             {plan.entry_criteria && (
