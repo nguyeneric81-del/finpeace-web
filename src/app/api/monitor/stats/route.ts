@@ -7,10 +7,10 @@ const supabase = createClient(
 )
 
 const SALES_MAP: Record<string, string> = {
-    QUANGXX: 'Minh Quang',
-    DUCXX: 'Anh Đức',
-    HUYENXX: 'Huyền',
-    THUYXX: 'Thuỷ',
+    Quang01: 'Minh Quang',
+    duc02: 'Anh Đức',
+    thuy03: 'Thuỷ',
+    huyen04: 'Huyền',
 }
 
 export async function GET() {

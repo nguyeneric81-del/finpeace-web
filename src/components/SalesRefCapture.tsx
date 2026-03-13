@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 // 4 sales codes hợp lệ
-const VALID_SALES_CODES = ['QUANGXX', 'DUCXX', 'HUYENXX', 'THUYXX']
+const VALID_SALES_CODES = ['Quang01', 'duc02', 'thuy03', 'huyen04']
 
 export function SalesRefCapture() {
   const searchParams = useSearchParams()

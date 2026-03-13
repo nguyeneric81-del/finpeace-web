@@ -295,20 +295,20 @@
   </div>
   <div style="padding:16px 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
     <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px">
-      <div style="font-size:11px;color:var(--slate);margin-bottom:6px;font-weight:700">QUANGXX — Minh Quang</div>
-      <code style="font-size:11px;color:var(--emerald);font-family:'JetBrains Mono',monospace;word-break:break-all">https://finpeace.cloud/knowledgebase?ref=QUANGXX</code>
+      <div style="font-size:11px;color:var(--slate);margin-bottom:6px;font-weight:700">Quang01 — Minh Quang</div>
+      <code style="font-size:11px;color:var(--emerald);font-family:'JetBrains Mono',monospace;word-break:break-all">https://finpeace.cloud/knowledgebase?ref=Quang01</code>
     </div>
     <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px">
-      <div style="font-size:11px;color:var(--slate);margin-bottom:6px;font-weight:700">DUCXX — Anh Đức</div>
-      <code style="font-size:11px;color:var(--sky);font-family:'JetBrains Mono',monospace;word-break:break-all">https://finpeace.cloud/knowledgebase?ref=DUCXX</code>
+      <div style="font-size:11px;color:var(--slate);margin-bottom:6px;font-weight:700">duc02 — Anh Đức</div>
+      <code style="font-size:11px;color:var(--sky);font-family:'JetBrains Mono',monospace;word-break:break-all">https://finpeace.cloud/knowledgebase?ref=duc02</code>
     </div>
     <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px">
-      <div style="font-size:11px;color:var(--slate);margin-bottom:6px;font-weight:700">HUYENXX — Huyền</div>
-      <code style="font-size:11px;color:var(--amber);font-family:'JetBrains Mono',monospace;word-break:break-all">https://finpeace.cloud/knowledgebase?ref=HUYENXX</code>
+      <div style="font-size:11px;color:var(--slate);margin-bottom:6px;font-weight:700">thuy03 — Thuỷ</div>
+      <code style="font-size:11px;color:var(--rose);font-family:'JetBrains Mono',monospace;word-break:break-all">https://finpeace.cloud/knowledgebase?ref=thuy03</code>
     </div>
     <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px">
-      <div style="font-size:11px;color:var(--slate);margin-bottom:6px;font-weight:700">THUYXX — Thuỷ</div>
-      <code style="font-size:11px;color:var(--rose);font-family:'JetBrains Mono',monospace;word-break:break-all">https://finpeace.cloud/knowledgebase?ref=THUYXX</code>
+      <div style="font-size:11px;color:var(--slate);margin-bottom:6px;font-weight:700">huyen04 — Huyền</div>
+      <code style="font-size:11px;color:var(--amber);font-family:'JetBrains Mono',monospace;word-break:break-all">https://finpeace.cloud/knowledgebase?ref=huyen04</code>
     </div>
   </div>
 </div>
@@ -425,7 +425,7 @@ async function loadDB() {
 function renderSalesGrid(breakdown) {
   const grid = document.getElementById('sales-grid');
   if (!grid) return;
-  const colors = { QUANGXX:'#10b981', DUCXX:'#38bdf8', HUYENXX:'#f59e0b', THUYXX:'#f43f5e' };
+  const colors = { Quang01:'#10b981', duc02:'#38bdf8', thuy03:'#f43f5e', huyen04:'#f59e0b' };
   grid.innerHTML = Object.entries(breakdown).map(([code, data]) => {
     const color = colors[code] || '#94a3b8';
     return `
@@ -464,7 +464,7 @@ function renderLeads(leads) {
     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--slate)">Chưa có leads</td></tr>`;
     return;
   }
-  const SALES_NAMES = { QUANGXX:'Minh Quang', DUCXX:'Anh Đức', HUYENXX:'Huyền', THUYXX:'Thuỷ' };
+  const SALES_NAMES = { Quang01:'Minh Quang', duc02:'Anh Đức', thuy03:'Thuỷ', huyen04:'Huyền' };
   tbody.innerHTML = leads.map(l => {
     const track = l.track || 'investor';
     const pillCls = track === 'trader' ? 'pill-trader' : track === 'mastery' ? 'pill-mastery' : 'pill-investor';
