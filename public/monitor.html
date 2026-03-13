@@ -282,6 +282,37 @@
   <!-- Rendered by JS -->
 </div>
 
+<!-- Sales Performance -->
+<div class="section-title">Hiệu suất Sales (Attribution)</div>
+<div id="sales-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px;">
+  <!-- Rendered by JS -->
+</div>
+
+<!-- Sales Links -->
+<div class="leads-section" style="margin-bottom:24px">
+  <div class="leads-header">
+    <span class="leads-title">🔗 Link Sales Attribution (copy & gửi cho khách)</span>
+  </div>
+  <div style="padding:16px 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px">
+      <div style="font-size:11px;color:var(--slate);margin-bottom:6px;font-weight:700">QUANGXX — Minh Quang</div>
+      <code style="font-size:11px;color:var(--emerald);font-family:'JetBrains Mono',monospace;word-break:break-all">https://finpeace.cloud/knowledgebase?ref=QUANGXX</code>
+    </div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px">
+      <div style="font-size:11px;color:var(--slate);margin-bottom:6px;font-weight:700">DUCXX — Anh Đức</div>
+      <code style="font-size:11px;color:var(--sky);font-family:'JetBrains Mono',monospace;word-break:break-all">https://finpeace.cloud/knowledgebase?ref=DUCXX</code>
+    </div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px">
+      <div style="font-size:11px;color:var(--slate);margin-bottom:6px;font-weight:700">HUYENXX — Huyền</div>
+      <code style="font-size:11px;color:var(--amber);font-family:'JetBrains Mono',monospace;word-break:break-all">https://finpeace.cloud/knowledgebase?ref=HUYENXX</code>
+    </div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px">
+      <div style="font-size:11px;color:var(--slate);margin-bottom:6px;font-weight:700">THUYXX — Thuỷ</div>
+      <code style="font-size:11px;color:var(--rose);font-family:'JetBrains Mono',monospace;word-break:break-all">https://finpeace.cloud/knowledgebase?ref=THUYXX</code>
+    </div>
+  </div>
+</div>
+
 <!-- Leads table -->
 <div class="section-title">Leads gần nhất (Knowledgebase)</div>
 <div class="leads-section">
@@ -297,11 +328,13 @@
           <th>Email</th>
           <th>Bài đọc</th>
           <th>Track</th>
+          <th>Sales</th>
+          <th>Nguồn</th>
           <th>Thời gian</th>
         </tr>
       </thead>
       <tbody id="leads-tbody">
-        <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--slate)">Đang tải dữ liệu...</td></tr>
+        <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--slate)">Đang tải dữ liệu...</td></tr>
       </tbody>
     </table>
   </div>
@@ -371,7 +404,7 @@ async function pingSite(site) {
 async function loadDB() {
   try {
     const stats = await fetchMonitorStats();
-    const { leads = [], advisor_count = 0, leads_today = 0 } = stats;
+    const { leads = [], advisor_count = 0, leads_today = 0, sales_breakdown = {} } = stats;
 
     state.leads = leads;
     state.advisorCount = advisor_count;
@@ -382,9 +415,28 @@ async function loadDB() {
     document.getElementById('leads-count').textContent   = `${leads.length} gần nhất`;
 
     renderLeads(leads);
+    renderSalesGrid(sales_breakdown);
   } catch (e) {
     console.warn('DB error:', e);
   }
+}
+
+// ── Render Sales Grid ──
+function renderSalesGrid(breakdown) {
+  const grid = document.getElementById('sales-grid');
+  if (!grid) return;
+  const colors = { QUANGXX:'#10b981', DUCXX:'#38bdf8', HUYENXX:'#f59e0b', THUYXX:'#f43f5e' };
+  grid.innerHTML = Object.entries(breakdown).map(([code, data]) => {
+    const color = colors[code] || '#94a3b8';
+    return `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 20px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;background:${color};filter:blur(20px);opacity:0.15"></div>
+        <div style="font-size:11px;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">${data.name}</div>
+        <div style="font-size:28px;font-weight:800;color:#f8fafc;line-height:1">${data.count}</div>
+        <div style="font-size:11px;color:${color};margin-top:4px">+${data.today} hôm nay</div>
+        <div style="font-size:10px;color:var(--slate);margin-top:2px;font-family:'JetBrains Mono',monospace">${code}</div>
+      </div>`;
+  }).join('');
 }
 
 // ── Render leads table ──
@@ -409,19 +461,25 @@ const PILLAR_NAME = {
 function renderLeads(leads) {
   const tbody = document.getElementById('leads-tbody');
   if (!leads.length) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--slate)">Chưa có leads</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--slate)">Chưa có leads</td></tr>`;
     return;
   }
+  const SALES_NAMES = { QUANGXX:'Minh Quang', DUCXX:'Anh Đức', HUYENXX:'Huyền', THUYXX:'Thuỷ' };
   tbody.innerHTML = leads.map(l => {
     const track = l.track || 'investor';
     const pillCls = track === 'trader' ? 'pill-trader' : track === 'mastery' ? 'pill-mastery' : 'pill-investor';
     const pillarName = PILLAR_NAME[l.pillar] || l.pillar || '—';
+    const salesName = l.sales_code ? (SALES_NAMES[l.sales_code] || l.sales_code) : '—';
+    const salesColor = l.sales_code ? 'color:var(--emerald);font-weight:700' : 'color:var(--slate)';
+    const source = l.source || 'knowledgebase';
     return `
       <tr>
         <td style="font-weight:600;color:#f8fafc">${l.name || '—'}</td>
         <td style="color:var(--slate);font-size:12px">${l.email || '—'}</td>
         <td><span style="font-size:12px">${pillarName}</span></td>
         <td><span class="pill ${pillCls}">${track}</span></td>
+        <td style="${salesColor}">${salesName}</td>
+        <td style="font-size:11px;color:var(--slate)">${source}</td>
         <td class="time-ago">${timeAgo(l.created_at)}</td>
       </tr>`;
   }).join('');

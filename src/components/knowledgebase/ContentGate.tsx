@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { BookOpen, Lock, Mail, Phone, User, CheckCircle, ArrowRight } from 'lucide-react'
+import { getSalesCode } from '@/components/SalesRefCapture'
 
 interface ContentGateProps {
     pillarTitle: string
@@ -55,7 +56,7 @@ export default function ContentGate({ pillarTitle, pillarSlug, articleSlug, trac
             const res = await fetch('/api/knowledgebase/leads', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, phone, pillar: pillarSlug, article_slug: articleSlug, track }),
+                body: JSON.stringify({ name, email, phone, pillar: pillarSlug, article_slug: articleSlug, track, sales_code: getSalesCode(), source: 'knowledgebase' }),
             })
             if (!res.ok) {
                 const data = await res.json()

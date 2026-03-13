@@ -8,7 +8,7 @@ const supabase = createClient(
 
 export async function POST(req: NextRequest) {
     try {
-        const { name, email, phone, pillar, article_slug, track } = await req.json()
+        const { name, email, phone, pillar, article_slug, track, sales_code, source } = await req.json()
 
         if (!email || !email.includes('@')) {
             return NextResponse.json({ error: 'Email không hợp lệ' }, { status: 400 })
@@ -24,6 +24,8 @@ export async function POST(req: NextRequest) {
                 pillar: pillar || null,
                 article_slug: article_slug || null,
                 track: track || null,
+                sales_code: sales_code || null,
+                source: source || 'knowledgebase',
                 created_at: new Date().toISOString(),
             }, { onConflict: 'email' })
 
