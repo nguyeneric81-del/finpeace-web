@@ -155,7 +155,7 @@ export default function MacroInsightsKrPage() {
                   </p>
 
                   <div className="mt-5">
-                    <Link href={`/advisor/macro-insights/${story.id}`}>
+                    <Link href={`/advisor/macro-insights-kr/${story.id}`}>
                       <button className="px-4 py-2 bg-slate-700/40 hover:bg-blue-600/30 text-blue-300 rounded-lg text-sm font-medium border border-blue-500/30 transition-colors flex items-center gap-2">
                         <Search className="w-4 h-4" /> 인사이트 상세 보기
                       </button>
