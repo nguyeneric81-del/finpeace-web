@@ -186,7 +186,7 @@ export default function MacroInsightsKrPage() {
                           </p>
                         </div>
 
-                        <Link href={`/advisor/trading-plan/${company.ticker.toLowerCase()}`}>
+                        <Link href={`/advisor/trading-plan-kr/${company.ticker.toLowerCase()}`}>
                           <button className="ml-4 flex items-center justify-center w-10 h-10 rounded-full bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white transition-all group-hover:scale-110">
                             <ArrowRight className="w-5 h-4" />
                           </button>
