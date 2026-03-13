@@ -15,6 +15,7 @@ const KR_TRANSLATIONS: Record<string, {
   exit_criteria?: string;
   analyst_note?: string;
   catalyst_note?: string;
+  indicators?: string[];
 }> = {
   HAH: {
     company_name: "하이안 해운 & 항만 물류 주식회사",
@@ -24,7 +25,8 @@ const KR_TRANSLATIONS: Record<string, {
     entry_criteria: "58.0원 부근 매수 포지션 진입. 갭 상승 돌파 시 추가 매수. 거래량은 20일 평균 대비 130% 이상 동반 필수.",
     exit_criteria: "53.87원 이하 일봉 종가 시 전량 손절. 익절은 분할 청산: 63원에서 50%, 70.68원에서 나머지 50%.",
     analyst_note: "HAH는 3척의 신규 선박 투입과 고운임 계약 재체결로 2026년 매출 +18% 성장이 확실시된다. 아시아 내 운임 상승이 핵심 촉매.",
-    catalyst_note: "2026년 Q2 SCFI 지수 2,800포인트 유지 시 순이익률 추가 +5~8% 개선 가능."
+    catalyst_note: "2026년 Q2 SCFI 지수 2,800포인트 유지 시 순이익률 추가 +5~8% 개선 가능.",
+    indicators: ["대형 쐐기형 돌파", "거래량 동반 확인", "이동평균선 정배열"]
   },
   VOS: {
     company_name: "베트남 해양 운송 주식회사 (VOSCO)",
@@ -34,7 +36,8 @@ const KR_TRANSLATIONS: Record<string, {
     entry_criteria: "13.80~14.40원 구간 분할 매수. 하단 지지 확인 후 진입. 거래량 동반 필수.",
     exit_criteria: "11.63원 이하 일봉 종가 시 전량 손절. 익절 목표 20.24원.",
     analyst_note: "VOSCO의 벌크 선단은 운임 상승 사이클의 단기 수혜가 기대된다. 다만 노후 선박 비율이 높아 장기 리스크 관리 필요.",
-    catalyst_note: "드라이 벌크 운임 BDI 지수 회복 시 단기 트레이딩 기회 유효."
+    catalyst_note: "드라이 벌크 운임 BDI 지수 회복 시 단기 트레이딩 기회 유효.",
+    indicators: ["대각형 돌파", "지지선 반등", "단기 거래량 급증"]
   },
   VHC: {
     company_name: "빙호안 주식회사",
@@ -44,7 +47,8 @@ const KR_TRANSLATIONS: Record<string, {
     entry_criteria: "수출 실적 발표 전 저점 분할 매수. 52주 지지선 확인 후 진입.",
     exit_criteria: "손절선 이탈 시 즉시 청산. 목표가 도달 시 분할 익절.",
     analyst_note: "VHC는 달러 강세 이중 수혜 구조: 수출 단가 상승 + 달러 수취. 환차익이 총매출의 +4.5% 추가 기여 예상.",
-    catalyst_note: "USD/VND 25,500동 유지 시 2026년 매출총이익률 18% 달성 가능."
+    catalyst_note: "USD/VND 25,500동 유지 시 2026년 매출총이익률 18% 달성 가능.",
+    indicators: ["환율 동조화", "지지구간 반등", "상대강도지수(RSI) 과매도 회복"]
   },
   MWG: {
     company_name: "모바일월드 투자 주식회사",
@@ -54,7 +58,8 @@ const KR_TRANSLATIONS: Record<string, {
     entry_criteria: "지지구간에서 거래량 증가 확인 후 매수. 반등 신호 포착 필수.",
     exit_criteria: "지지선 이탈 시 손절. 저항선 도달 시 분할 익절.",
     analyst_note: "MWG는 Apple 부품 환율 부담이 단기 리스크요인. 그러나 ICT 수요 회복 시 매출 반등 여력 충분.",
-    catalyst_note: "베트남 소비 심리 회복 및 iPhone 신모델 출시 시즌이 핵심 촉매."
+    catalyst_note: "베트남 소비 심리 회복 및 iPhone 신모델 출시 시즌이 핵심 촉매.",
+    indicators: ["지지선 반등", "거래량 증가", "이동평균선 수렴"]
   },
   KBC: {
     company_name: "킨박 도시개발 주식회사",
@@ -64,7 +69,8 @@ const KR_TRANSLATIONS: Record<string, {
     entry_criteria: "Trang Due 3 산단 인도 계약 공시 확인 후 매수. 조정 시 분할 매수.",
     exit_criteria: "산단 계획 변경 이슈 발생 시 즉시 손절. 목표가에서 분할 익절.",
     analyst_note: "KBC의 Trang Due 3 산단 100ha LG이노텍 인도는 2026년 순이익 +120% YoY 급등의 핵심 동력. 토지 가용성 희소로 가격 결정권 보유.",
-    catalyst_note: "2026년 Q3 인도 공식 완료 후 일회성 대규모 이익 인식 예정."
+    catalyst_note: "2026년 Q3 인도 공식 완료 후 일회성 대규모 이익 인식 예정.",
+    indicators: ["누적 구간 돌파", "대형 기반 형성", "기관 매집 신호"]
   },
   DGC: {
     company_name: "득장 화학 주식회사",
@@ -74,8 +80,25 @@ const KR_TRANSLATIONS: Record<string, {
     entry_criteria: "글로벌 인 가격 상승 확인 후 분할 매수. 기술적 지지선 이탈 없을 시 유지.",
     exit_criteria: "글로벌 화학 수요 둔화 신호 시 익절. 손절선 이탈 시 즉시 청산.",
     analyst_note: "DGC는 반도체 제조용 인(Phosphorus) 글로벌 수요 급증의 직접 수혜주. 베트남 내 유일한 대규모 생산 업체로 공급 독점력 보유.",
-    catalyst_note: "반도체 FDI 베트남 집중 투자 지속 시 중기 판가 지지 확실."
+    catalyst_note: "반도체 FDI 베트남 집중 투자 지속 시 중기 판가 지지 확실.",
+    indicators: ["글로벌 테마 모멘텀", "거래량 동반 상승", "52주 신고가 부근"]
   }
+};
+
+// Fallback: translate individual Vietnamese indicator terms to Korean
+const INDICATOR_MAP: Record<string, string> = {
+  "Breakout chéo": "대각형 돌파",
+  "Breakout nền": "기반 돌파",
+  "Nến tăng": "양봉",
+  "Khối lượng lớn": "대량 거래",
+  "RSI": "RSI",
+  "MACD": "MACD",
+  "EMA": "EMA",
+  "MA": "MA",
+  "Hỗ trợ": "지지선",
+  "Kháng cự": "저항선",
+  "Trendline": "추세선",
+  "Sideway": "횡보",
 };
 
 export default async function TradingPlanKrPage({ params }: { params: Promise<{ ticker: string }> }) {
@@ -107,6 +130,8 @@ export default async function TradingPlanKrPage({ params }: { params: Promise<{ 
     const exit_criteria = kr.exit_criteria || plan.exit_criteria;
     const analyst_note = kr.analyst_note || plan.analyst_note;
     const catalyst_note = kr.catalyst_note || plan.catalyst_note;
+    const indicators: string[] = kr.indicators
+        || (plan.indicators || []).map((ind: string) => INDICATOR_MAP[ind] || ind);
 
     return (
         <div className="min-h-screen bg-slate-50 py-10 px-4">
@@ -225,11 +250,11 @@ export default async function TradingPlanKrPage({ params }: { params: Promise<{ 
                         </div>
 
                         {/* Footer tags */}
-                        {plan.indicators && plan.indicators.length > 0 && (
+                        {indicators && indicators.length > 0 && (
                             <div className="mt-8 pt-6 border-t border-slate-100">
                                 <p className="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">사용된 기술적 신호</p>
                                 <div className="flex flex-wrap gap-2">
-                                    {plan.indicators.map((ind: string, idx: number) => (
+                                    {indicators.map((ind: string, idx: number) => (
                                         <span key={idx} className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-medium">{ind}</span>
                                     ))}
                                 </div>
