@@ -2,114 +2,181 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, BookOpen, Clock, Tag } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BookOpen, Clock, ChevronRight } from 'lucide-react'
 import { PILLARS, type Pillar } from '../data'
 
 const fadeUp = (delay = 0) => ({
-    initial: { opacity: 0, y: 25 },
+    initial: { opacity: 0, y: 24 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true },
     transition: { duration: 0.5, delay },
 })
 
-const HR = ({ dark = false }: { dark?: boolean }) =>
-    <div className={`w-full h-px ${dark ? 'bg-white/10' : 'bg-slate-200/60'}`} />
+const DIFFICULTY_STYLE: Record<string, { bg: string; text: string; border: string }> = {
+    'Cơ bản':   { bg: 'rgba(34,197,94,0.12)',  text: '#4ade80', border: 'rgba(34,197,94,0.3)' },
+    'Trung cấp':{ bg: 'rgba(251,191,36,0.12)', text: '#fbbf24', border: 'rgba(251,191,36,0.3)' },
+    'Nâng cao': { bg: 'rgba(248,113,113,0.12)', text: '#f87171', border: 'rgba(248,113,113,0.3)' },
+}
 
-const DIFFICULTY_COLOR: Record<string, string> = {
-    'Cơ bản': 'bg-emerald-100 text-emerald-700',
-    'Trung cấp': 'bg-amber-100 text-amber-700',
-    'Nâng cao': 'bg-rose-100 text-rose-700',
+const PILLAR_COLORS: Record<string, { from: string; to: string; glow: string }> = {
+    'tam-ly-thi-truong':       { from: '#7C3AED', to: '#9F67FA', glow: 'rgba(124,58,237,0.25)' },
+    'co-che-thi-truong':       { from: '#475569', to: '#64748B', glow: 'rgba(71,85,105,0.25)' },
+    'phan-tich-co-ban':        { from: '#059669', to: '#10B981', glow: 'rgba(5,150,105,0.25)' },
+    'dau-tu-gia-tri':          { from: '#0D9488', to: '#14B8A6', glow: 'rgba(13,148,136,0.25)' },
+    'dau-tu-tang-truong':      { from: '#16A34A', to: '#22C55E', glow: 'rgba(22,163,74,0.25)' },
+    'phan-tich-ky-thuat':      { from: '#2563EB', to: '#3B82F6', glow: 'rgba(37,99,235,0.25)' },
+    'giao-dich-theo-xu-huong': { from: '#D97706', to: '#F59E0B', glow: 'rgba(217,119,6,0.25)' },
+    'quan-ly-danh-muc':        { from: '#4F46E5', to: '#6366F1', glow: 'rgba(79,70,229,0.25)' },
+    'quan-tri-rui-ro':         { from: '#E11D48', to: '#F43F5E', glow: 'rgba(225,29,72,0.25)' },
+    'ke-hoach-thuc-chien':     { from: '#EA580C', to: '#F97316', glow: 'rgba(234,88,12,0.25)' },
 }
 
 function RelatedPillars({ currentSlug }: { currentSlug: string }) {
     const related = PILLARS.filter(p => p.slug !== currentSlug).slice(0, 3)
     return (
         <div className="grid md:grid-cols-3 gap-4">
-            {related.map((p, i) => (
-                <motion.div key={p.id} {...fadeUp(i * 0.08)}>
-                    <Link href={`/knowledgebase/${p.slug}`}
-                        className={`block h-full bg-white border ${p.borderColor} rounded-2xl p-5 hover:shadow-md transition-shadow group`}>
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className="text-xl">{p.icon}</span>
-                            <span className={`text-xs font-bold ${p.accentColor}`}>{p.title}</span>
-                        </div>
-                        <p className="text-slate-500 text-xs leading-relaxed line-clamp-2">{p.description}</p>
-                        <p className={`text-xs font-semibold ${p.accentColor} mt-3 flex items-center gap-1`}>
-                            {p.articleCount} bài <ArrowRight className="w-3 h-3" />
-                        </p>
-                    </Link>
-                </motion.div>
-            ))}
+            {related.map((p, i) => {
+                const clr = PILLAR_COLORS[p.slug] ?? { from: '#4F46E5', to: '#6366F1', glow: 'rgba(79,70,229,0.2)' }
+                return (
+                    <motion.div key={p.id} {...fadeUp(i * 0.08)} whileHover={{ y: -3 }}>
+                        <Link href={`/knowledgebase/${p.slug}`} className="block h-full cursor-pointer">
+                            <div
+                                className="h-full rounded-2xl p-5 transition-all duration-200"
+                                style={{
+                                    background: 'linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
+                                    border: `1.5px solid ${clr.from}35`,
+                                    boxShadow: `0 4px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)`,
+                                }}
+                            >
+                                <div className="flex items-center gap-2 mb-2">
+                                    <span className="text-xl">{p.icon}</span>
+                                    <span className="text-sm font-bold text-white/80">{p.title}</span>
+                                </div>
+                                <p className="text-white/40 text-xs leading-relaxed line-clamp-2 mb-3">{p.description}</p>
+                                <p className="text-xs font-semibold flex items-center gap-1" style={{ color: clr.to }}>
+                                    {p.articleCount} bài <ArrowRight className="w-3 h-3" />
+                                </p>
+                            </div>
+                        </Link>
+                    </motion.div>
+                )
+            })}
         </div>
     )
 }
 
 export default function PillarPageClient({ pillar }: { pillar: Pillar }) {
+    const clr = PILLAR_COLORS[pillar.slug] ?? { from: '#4F46E5', to: '#6366F1', glow: 'rgba(79,70,229,0.25)' }
+
     return (
-        <div className="min-h-screen bg-neutral-50 font-sans">
+        <div className="min-h-screen" style={{ background: '#0D0D18' }}>
 
             {/* ── HERO ── */}
-            <section className={`relative overflow-hidden ${pillar.color}`}>
-                <HR />
-                <div className="max-w-5xl mx-auto px-6 py-16">
+            <section className="relative overflow-hidden">
+                {/* Aurora blob */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    <div
+                        className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full opacity-20"
+                        style={{ background: `radial-gradient(circle, ${clr.from} 0%, transparent 70%)` }}
+                    />
+                    <div
+                        className="absolute top-0 right-0 w-[300px] h-[300px] rounded-full opacity-10"
+                        style={{ background: `radial-gradient(circle, ${clr.to} 0%, transparent 70%)` }}
+                    />
+                    {/* Grid */}
+                    <div
+                        className="absolute inset-0 opacity-[0.04]"
+                        style={{
+                            backgroundImage: 'linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)',
+                            backgroundSize: '60px 60px',
+                        }}
+                    />
+                </div>
+
+                <div className="relative max-w-5xl mx-auto px-6 pt-10 pb-16">
                     {/* Breadcrumb */}
-                    <motion.div {...fadeUp(0)} className="flex items-center gap-2 text-xs text-slate-400 mb-6">
-                        <Link href="/knowledgebase" className="hover:text-slate-600 transition-colors flex items-center gap-1">
+                    <motion.div {...fadeUp(0)} className="flex items-center gap-2 text-xs text-white/30 mb-8">
+                        <Link href="/knowledgebase" className="hover:text-white/70 transition-colors flex items-center gap-1">
                             <ArrowLeft className="w-3 h-3" /> Thư Viện
                         </Link>
                         <span>/</span>
-                        <span className={pillar.accentColor}>{pillar.title}</span>
+                        <span style={{ color: clr.to }}>{pillar.title}</span>
                     </motion.div>
 
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         <div>
-                            <motion.div {...fadeUp(0.05)} className="flex items-center gap-3 mb-4">
-                                <div className={`w-12 h-12 bg-white/80 rounded-2xl flex items-center justify-center text-2xl shadow-sm`}>
+                            <motion.div {...fadeUp(0.05)} className="flex items-center gap-3 mb-5">
+                                <div
+                                    className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl"
+                                    style={{
+                                        background: `linear-gradient(135deg, ${clr.from}30, ${clr.to}20)`,
+                                        border: `1.5px solid ${clr.from}40`,
+                                        boxShadow: `0 4px 16px ${clr.glow}`,
+                                    }}
+                                >
                                     {pillar.icon}
                                 </div>
                                 <div>
-                                    <p className={`text-xs font-bold uppercase tracking-widest ${pillar.accentColor} opacity-70`}>
+                                    <p className="text-xs font-bold uppercase tracking-widest" style={{ color: clr.to }}>
                                         Level {pillar.level}
                                     </p>
-                                    <p className="text-slate-400 text-xs">{pillar.subtitle}</p>
+                                    <p className="text-white/35 text-xs">{pillar.subtitle}</p>
                                 </div>
                             </motion.div>
 
-                            <motion.h1 {...fadeUp(0.1)} className="text-4xl lg:text-5xl font-black text-slate-800 leading-tight mb-4">
+                            <motion.h1
+                                {...fadeUp(0.1)}
+                                className="text-4xl lg:text-5xl font-black leading-tight mb-4 text-white"
+                                style={{ fontFamily: "'Baloo 2', cursive" }}
+                            >
                                 {pillar.title}
                             </motion.h1>
 
-                            <motion.p {...fadeUp(0.15)} className="text-slate-600 leading-relaxed mb-6">
+                            <motion.p {...fadeUp(0.15)} className="text-white/50 leading-relaxed mb-6">
                                 {pillar.description}
                             </motion.p>
 
                             <motion.div {...fadeUp(0.2)} className="flex items-center gap-4">
-                                <div className={`flex items-center gap-1.5 ${pillar.accentColor}`}>
+                                <div className="flex items-center gap-1.5" style={{ color: clr.to }}>
                                     <BookOpen className="w-4 h-4" />
                                     <span className="text-sm font-semibold">{pillar.articleCount} bài học</span>
                                 </div>
-                                <div className="w-px h-4 bg-slate-300" />
-                                <span className="text-slate-400 text-sm">Đọc từ đầu đến cuối</span>
+                                <div className="w-px h-4 bg-white/10" />
+                                <span className="text-white/30 text-sm">Đọc từ đầu đến cuối</span>
                             </motion.div>
                         </div>
 
-                        {/* Stats panel */}
+                        {/* Preview panel */}
                         <motion.div {...fadeUp(0.2)}>
-                            <div className="bg-white/80 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
-                                <p className={`text-xs font-bold uppercase tracking-widest ${pillar.accentColor} mb-4`}>
+                            <div
+                                className="rounded-3xl p-6"
+                                style={{
+                                    background: `linear-gradient(145deg, ${clr.from}15, ${clr.to}08)`,
+                                    border: `1.5px solid ${clr.from}30`,
+                                    boxShadow: `0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)`,
+                                }}
+                            >
+                                <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: clr.to }}>
                                     Bạn sẽ học được
                                 </p>
                                 <div className="space-y-3">
                                     {pillar.articles.slice(0, 3).map((article, i) => (
                                         <div key={i} className="flex items-start gap-3">
-                                            <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black shrink-0 mt-0.5 ${pillar.color} ${pillar.accentColor}`}>
+                                            <div
+                                                className="w-6 h-6 rounded-xl flex items-center justify-center font-black text-xs shrink-0 mt-0.5"
+                                                style={{
+                                                    background: `${clr.from}25`,
+                                                    color: clr.to,
+                                                    border: `1px solid ${clr.from}40`,
+                                                }}
+                                            >
                                                 {i + 1}
                                             </div>
-                                            <p className="text-slate-700 text-sm leading-snug">{article.title}</p>
+                                            <p className="text-white/65 text-sm leading-snug">{article.title}</p>
                                         </div>
                                     ))}
                                     {pillar.articles.length > 3 && (
-                                        <p className={`text-xs ${pillar.accentColor} ml-8`}>
+                                        <p className="text-xs ml-9" style={{ color: `${clr.to}80` }}>
                                             +{pillar.articles.length - 3} bài học nữa...
                                         </p>
                                     )}
@@ -118,71 +185,103 @@ export default function PillarPageClient({ pillar }: { pillar: Pillar }) {
                         </motion.div>
                     </div>
                 </div>
-                <HR />
             </section>
 
             {/* ── ARTICLE LIST ── */}
-            <section className="bg-white">
-                <HR />
-                <div className="max-w-5xl mx-auto px-6 py-16">
-                    <motion.h2 {...fadeUp()} className="text-2xl font-black text-slate-800 mb-8">
-                        Danh Sách Bài Học
-                    </motion.h2>
+            <section className="max-w-5xl mx-auto px-6 py-16">
+                <motion.h2
+                    {...fadeUp()}
+                    className="text-2xl font-black text-white mb-8"
+                    style={{ fontFamily: "'Baloo 2', cursive" }}
+                >
+                    Danh Sách Bài Học
+                </motion.h2>
 
-                    <div className="space-y-4">
-                        {pillar.articles.map((article, i) => (
-                            <motion.div key={article.slug} {...fadeUp(i * 0.05)} whileHover={{ x: 4 }}>
-                                <Link href={`/knowledgebase/${pillar.slug}/${article.slug}`}>
-                                    <div className={`bg-white border ${pillar.borderColor} rounded-2xl p-5 hover:shadow-md transition-all group`}>
+                <div className="space-y-3">
+                    {pillar.articles.map((article, i) => {
+                        const diff = DIFFICULTY_STYLE[article.difficulty] ?? DIFFICULTY_STYLE['Cơ bản']
+                        return (
+                            <motion.div
+                                key={article.slug}
+                                {...fadeUp(i * 0.04)}
+                                whileHover={{ x: 4 }}
+                            >
+                                <Link href={`/knowledgebase/${pillar.slug}/${article.slug}`} className="block cursor-pointer">
+                                    <div
+                                        className="rounded-2xl p-5 transition-all duration-200 group"
+                                        style={{
+                                            background: 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
+                                            border: '1px solid rgba(255,255,255,0.07)',
+                                            boxShadow: '0 4px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04)',
+                                        }}
+                                    >
                                         <div className="flex items-start gap-4">
-                                            <div className={`w-8 h-8 rounded-xl ${pillar.color} ${pillar.accentColor} flex items-center justify-center font-black text-sm shrink-0`}>
+                                            <div
+                                                className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm shrink-0"
+                                                style={{
+                                                    background: `${clr.from}20`,
+                                                    color: clr.to,
+                                                    border: `1.5px solid ${clr.from}35`,
+                                                }}
+                                            >
                                                 {String(i + 1).padStart(2, '0')}
                                             </div>
 
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="font-bold text-slate-800 text-sm leading-snug mb-2 group-hover:text-emerald-700 transition-colors">
+                                                <h3 className="font-bold text-white/85 text-sm leading-snug mb-2 group-hover:text-white transition-colors">
                                                     {article.title}
                                                 </h3>
-                                                <p className="text-slate-500 text-xs leading-relaxed mb-3">
+                                                <p className="text-white/40 text-xs leading-relaxed mb-3">
                                                     {article.summary}
                                                 </p>
 
                                                 <div className="flex flex-wrap items-center gap-2">
-                                                    <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${DIFFICULTY_COLOR[article.difficulty]}`}>
+                                                    <span
+                                                        className="text-xs font-semibold px-2.5 py-0.5 rounded-full border"
+                                                        style={{ background: diff.bg, color: diff.text, borderColor: diff.border }}
+                                                    >
                                                         {article.difficulty}
                                                     </span>
-                                                    <span className="flex items-center gap-1 text-xs text-slate-400">
+                                                    <span className="flex items-center gap-1 text-xs text-white/30">
                                                         <Clock className="w-3 h-3" /> {article.readTime} phút
                                                     </span>
                                                     {article.tags.slice(0, 2).map(tag => (
-                                                        <span key={tag} className="flex items-center gap-0.5 text-xs text-slate-400">
-                                                            <Tag className="w-2.5 h-2.5" /> {tag}
+                                                        <span key={tag} className="text-xs text-white/20 px-2 py-0.5 rounded-full"
+                                                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                                                            {tag}
                                                         </span>
                                                     ))}
                                                 </div>
                                             </div>
 
-                                            <ArrowRight className={`w-4 h-4 ${pillar.accentColor} opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mt-1`} />
+                                            <ChevronRight
+                                                className="w-4 h-4 shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                style={{ color: clr.to }}
+                                            />
                                         </div>
                                     </div>
                                 </Link>
                             </motion.div>
-                        ))}
-                    </div>
+                        )
+                    })}
                 </div>
-                <HR />
             </section>
 
             {/* ── RELATED ── */}
-            <section className="bg-neutral-50">
-                <HR />
-                <div className="max-w-5xl mx-auto px-6 py-16">
-                    <motion.h2 {...fadeUp()} className="text-xl font-black text-slate-700 mb-6">
+            <section
+                className="py-16"
+                style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+            >
+                <div className="max-w-5xl mx-auto px-6">
+                    <motion.h2
+                        {...fadeUp()}
+                        className="text-xl font-black text-white mb-6"
+                        style={{ fontFamily: "'Baloo 2', cursive" }}
+                    >
                         Chủ Đề Liên Quan
                     </motion.h2>
                     <RelatedPillars currentSlug={pillar.slug} />
                 </div>
-                <HR />
             </section>
         </div>
     )
