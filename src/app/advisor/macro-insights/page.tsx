@@ -2,219 +2,318 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { BarChart3, TrendingUp, AlertTriangle, ArrowRight, ShieldCheck, Search, Flame, CalendarDays } from 'lucide-react';
+import {
+  TrendingUp, TrendingDown, Flame, CalendarDays,
+  ArrowRight, Globe, DollarSign, Factory,
+  ChevronRight, BarChart2, Building2, Minus
+} from 'lucide-react';
 
-const mockStories = [
+// ── Types ────────────────────────────────────────────────────
+type Company = {
+  ticker: string;
+  name: string;
+  impact: string;
+  matchScore: number;
+  positive?: boolean;
+};
+
+type Story = {
+  id: number;
+  title: string;
+  date: string;
+  category: string;
+  categoryIcon: React.ReactNode;
+  dataPoint: string;
+  narrowIndustry: string;
+  quantifiedImpact: { positive: boolean; value: string };
+  companies: Company[];
+  accent: string;
+  accentBg: string;
+};
+
+// ── Icon map per category ────────────────────────────────────
+const CategoryIcon = ({ category }: { category: string }) => {
+  const map: Record<string, React.ReactNode> = {
+    'Chuỗi Cung Ứng': <Globe className="w-3.5 h-3.5" />,
+    'Chính sách Tiền tệ': <DollarSign className="w-3.5 h-3.5" />,
+    'Đầu tư Nước ngoài': <Factory className="w-3.5 h-3.5" />,
+  };
+  return <>{map[category] ?? <BarChart2 className="w-3.5 h-3.5" />}</>;
+};
+
+// ── Match Score Ring ─────────────────────────────────────────
+const MatchRing = ({ score, accent }: { score: number; accent: string }) => {
+  const r = 18;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (score / 100) * circ;
+  return (
+    <div className="relative flex items-center justify-center w-14 h-14">
+      <svg className="absolute w-14 h-14 -rotate-90" viewBox="0 0 48 48">
+        <circle cx="24" cy="24" r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
+        <circle
+          cx="24" cy="24" r={r} fill="none" stroke={accent} strokeWidth="3"
+          strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
+          style={{ filter: `drop-shadow(0 0 4px ${accent}80)` }}
+        />
+      </svg>
+      <span className="text-xs font-bold text-white">{score}%</span>
+    </div>
+  );
+};
+
+// ── Mock Data ────────────────────────────────────────────────
+const mockStories: Story[] = [
   {
     id: 1,
     title: "Chi phí logistics toàn cầu leo thang giữa căng thẳng địa chính trị",
     date: "Tháng 3, 2026",
     category: "Chuỗi Cung Ứng",
-    dataPoint: "Chỉ số cước vận tải biển container (SCFI) tăng +35% YTD, chạm mức 2,800 điểm.",
+    categoryIcon: null,
+    accent: '#10B981',
+    accentBg: 'rgba(16,185,129,0.1)',
+    dataPoint: "SCFI tăng +35% YTD, chạm 2,800 điểm — cao nhất 18 tháng.",
     narrowIndustry: "Vận tải biển Quốc tế & Cho thuê tàu bãi",
     quantifiedImpact: {
       positive: true,
-      value: "Dự phóng biên lợi nhuận ròng ngành tăng +8% - 12% trong Q2/2026 nhờ chu kỳ tái ký hợp đồng cước giá cao."
+      value: "Biên lợi nhuận ròng ngành tăng +8% – 12% trong Q2/2026 nhờ chu kỳ tái ký cước giá cao.",
     },
     companies: [
-      { ticker: "HAH", name: "Hải An", impact: "Hưởng lợi trực tiếp nhờ 3 tàu mới đưa vào khai thác tuyến Nội Á.", matchScore: 92 },
-      { ticker: "VOS", name: "VOSCO", impact: "Đội tàu hàng rời hưởng lợi ngắn hạn từ giá cước.", matchScore: 78 }
-    ]
+      { ticker: "HAH", name: "Hải An", impact: "Hưởng lợi trực tiếp nhờ 3 tàu mới tuyến Nội Á.", matchScore: 92, positive: true },
+      { ticker: "VOS", name: "VOSCO", impact: "Đội tàu hàng rời hưởng lợi ngắn hạn từ giá cước.", matchScore: 78, positive: true },
+    ],
   },
   {
     id: 2,
-    title: "FED chần chừ hạ lãi suất - Đồng USD tiếp tục duy trì sức mạnh",
+    title: "FED chần chừ hạ lãi suất — Đồng USD tiếp tục duy trì sức mạnh",
     date: "Tháng 3, 2026",
     category: "Chính sách Tiền tệ",
-    dataPoint: "DXY neo vững vùng 104.5, Tỷ giá USD/VND chợ đen vượt mốc 25,500. Lợi suất TPCP Mỹ 10 năm phục hồi về 4.3%.",
+    categoryIcon: null,
+    accent: '#F59E0B',
+    accentBg: 'rgba(245,158,11,0.1)',
+    dataPoint: "DXY neo vững vùng 104.5. Tỷ giá USD/VND chợ đen vượt 25,500. TPCP Mỹ 10Y = 4.3%.",
     narrowIndustry: "Sản xuất xuất khẩu (Sợi, Thủy sản) & Bán lẻ Công nghệ",
     quantifiedImpact: {
       positive: false,
-      value: "Các DN vay nợ USD cao chịu lỗ tỷ giá ước tính -3% LNST. Ngược lại, xuất khẩu thu USD ghi nhận biên ròng +1.5% đến 2.5%."
+      value: "DN vay nợ USD cao chịu lỗ tỷ giá -3% LNST. Xuất khẩu thu USD: biên ròng +1.5% đến 2.5%.",
     },
     companies: [
       { ticker: "VHC", name: "Vĩnh Hoàn", impact: "Hưởng lợi tỷ giá kép (giá xuất khẩu tăng, thu USD).", matchScore: 88, positive: true },
-      { ticker: "MWG", name: "Thế Giới Di Động", impact: "Áp lực tỷ giá lên linh kiện đầu vào Apple, ảnh hưởng nhẹ biên ròng mảng ICT.", matchScore: 65, positive: false }
-    ]
+      { ticker: "MWG", name: "Thế Giới Di Động", impact: "Áp lực tỷ giá lên linh kiện Apple, ảnh hưởng nhẹ biên ròng ICT.", matchScore: 65, positive: false },
+    ],
   },
   {
     id: 3,
     title: "Làn sóng FDI Thế hệ mới & Vốn dịch chuyển vào Công nghiệp Bán dẫn",
     date: "Tháng 3, 2026",
     category: "Đầu tư Nước ngoài",
-    dataPoint: "Vốn FDI đăng ký mới lũy kế 2 tháng 2026 đạt 4.29 tỷ USD (+38% YoY). 60% rót vào chế biến chế tạo hạ tầng cao.",
-    narrowIndustry: "BĐS Khu Công Nghiệp ven đô (Bắc Ninh, Vũng Tàu) & Hóa chất vật liệu",
+    categoryIcon: null,
+    accent: '#818CF8',
+    accentBg: 'rgba(129,140,248,0.1)',
+    dataPoint: "FDI đăng ký mới lũy kế 2T/2026 đạt 4.29B USD (+38% YoY). 60% vào chế biến cao.",
+    narrowIndustry: "BĐS Khu Công Nghiệp (Bắc Ninh, Vũng Tàu) & Hóa chất vật liệu",
     quantifiedImpact: {
       positive: true,
-      value: "Giá thuê đất công nghiệp dự kiến tăng +6-8% / năm. Tỷ lệ lấp đầy KCN phía Bắc chạm sát 90%."
+      value: "Giá thuê đất CN tăng +6-8%/năm. Tỷ lệ lấp đầy KCN phía Bắc chạm 90%.",
     },
     companies: [
-      { ticker: "KBC", name: "Kinh Bắc", impact: "Bàn giao 100ha đất tại KCN Tràng Duệ 3, hạch toán lợi nhuận đột biến Q3/2026.", matchScore: 95, positive: true },
-      { ticker: "DGC", name: "Hóa chất Đức Giang", impact: "Nhu cầu hóa chất bán dẫn (Phosphorus) bùng nổ toàn cầu hỗ trợ giá bán trung hạn.", matchScore: 89, positive: true }
-    ]
-  }
+      { ticker: "KBC", name: "Kinh Bắc", impact: "Bàn giao 100ha Tràng Duệ 3, hạch toán LNST đột biến Q3/2026.", matchScore: 95, positive: true },
+      { ticker: "DGC", name: "Hóa chất Đức Giang", impact: "Nhu cầu hóa chất bán dẫn (Phosphorus) bùng nổ toàn cầu.", matchScore: 89, positive: true },
+    ],
+  },
 ];
 
 export default function MacroInsightsPage() {
-  const availableMonths = Array.from(new Set(mockStories.map(s => s.date))).sort((a, b) => {
-    // Simple sort mapping "Tháng X, YYYY" to properly order them.
-    // Since we'll just have mostly recent months, we can reverse sort so newest is first.
-    // In reality, this would use actual Date parsing.
-    return b.localeCompare(a);
-  });
-
+  const availableMonths = Array.from(new Set(mockStories.map(s => s.date))).sort((a, b) => b.localeCompare(a));
   const [activeMonth, setActiveMonth] = useState(availableMonths[0]);
   const filteredStories = mockStories.filter(story => story.date === activeMonth);
 
   return (
-    <div className="min-h-screen bg-[#0E1117] text-slate-200 overflow-x-hidden p-6 md:p-12 font-sans">
-      {/* Header */}
-      <div className="max-w-7xl mx-auto mb-10">
-        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-sm font-medium mb-4">
-          <Flame className="w-4 h-4" />
-          <span>Câu chuyện Vĩ mô Mỗi tháng</span>
+    <div className="min-h-screen text-slate-200 overflow-x-hidden" style={{ background: '#020617', fontFamily: "'Be Vietnam Pro', system-ui, sans-serif" }}>
+
+      {/* ── TOP BAR ── */}
+      <div style={{ background: 'rgba(15,23,42,0.8)', borderBottom: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(12px)' }} className="sticky top-0 z-20 px-6 md:px-12 py-3">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs font-bold uppercase tracking-widest text-slate-400">FinPeace Research Desk</span>
+          </div>
+          <div className="hidden md:flex items-center gap-6 text-xs text-slate-500">
+            <span><span className="text-slate-300 font-semibold">3</span> Báo cáo</span>
+            <span><span className="text-slate-300 font-semibold">6</span> Doanh nghiệp</span>
+            <span className="text-emerald-400 font-semibold">Cập nhật: Tháng 3/2026</span>
+          </div>
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-          Góc Nhìn Thực Chiến <br/>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400">
-            Research Insights
-          </span>
-        </h1>
-        <p className="text-slate-400 text-lg max-w-2xl leading-relaxed">
-          Chúng tôi định lượng tác động Vĩ mô xuống tận từng ngóc ngách Nhóm ngành hẹp và soi chiếu trực tiếp vào Kế hoạch giao dịch của doanh nghiệp.
-        </p>
       </div>
 
-      {/* Month Navigation Tabs */}
-      <div className="max-w-7xl mx-auto mb-12">
-        <div className="flex items-center gap-1 border-b border-slate-800 pb-px overflow-x-auto no-scrollbar mask-gradient-right">
-          <div className="flex px-2 py-1 items-center gap-2 text-slate-500 font-semibold mr-4">
-             <CalendarDays className="w-5 h-5" />
-             <span className="uppercase tracking-wider text-xs">Thời Gian</span>
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
+
+        {/* ── HEADER ── */}
+        <div className="mb-14">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6" style={{ background: 'rgba(16,185,129,0.12)', color: '#10B981', border: '1px solid rgba(16,185,129,0.25)' }}>
+            <Flame className="w-3.5 h-3.5" />
+            Câu chuyện Vĩ mô Mỗi tháng
           </div>
-          {availableMonths.map((month) => (
+          <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-tight tracking-tight">
+            Góc Nhìn <span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(135deg, #38bdf8, #34d399)' }}>Thực Chiến</span>
+          </h1>
+          <p className="text-slate-400 text-lg max-w-2xl leading-relaxed">
+            Định lượng tác động Vĩ mô xuống tận Nhóm ngành hẹp — soi chiếu trực tiếp vào Kế hoạch giao dịch.
+          </p>
+        </div>
+
+        {/* ── MONTH TABS ── */}
+        <div className="flex items-center gap-3 mb-12 overflow-x-auto pb-1">
+          <div className="flex items-center gap-1.5 text-slate-500 mr-2 shrink-0">
+            <CalendarDays className="w-4 h-4" />
+            <span className="text-xs font-bold uppercase tracking-widest">Kỳ</span>
+          </div>
+          {availableMonths.map(month => (
             <button
               key={month}
               onClick={() => setActiveMonth(month)}
-              className={`
-                relative px-6 py-3 text-sm font-semibold whitespace-nowrap transition-all duration-300
-                ${activeMonth === month
-                  ? 'text-white' 
-                  : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/50 rounded-t-lg'
-                }
-              `}
+              className="shrink-0 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 cursor-pointer"
+              style={activeMonth === month
+                ? { background: 'rgba(56,189,248,0.15)', color: '#38bdf8', border: '1px solid rgba(56,189,248,0.4)', boxShadow: '0 0 16px rgba(56,189,248,0.15)' }
+                : { background: 'rgba(255,255,255,0.04)', color: '#94a3b8', border: '1px solid rgba(255,255,255,0.07)' }
+              }
             >
               {month}
-              {/* Active indicator line */}
-              {activeMonth === month && (
-                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-400 to-teal-400 shadow-[0_-2px_10px_rgba(56,189,248,0.5)]"></div>
-              )}
             </button>
           ))}
         </div>
-      </div>
 
-      {/* Hot Stories Grid for Active Month */}
-      <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        {filteredStories.map((story) => (
-          <div key={story.id} className="relative p-1 rounded-3xl bg-gradient-to-br from-slate-800/80 to-slate-900/50 hover:from-blue-500/20 hover:to-teal-500/10 transition-colors duration-500">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/10 to-teal-500/10 rounded-3xl blur opacity-20"></div>
-            <div className="relative bg-[#12161E] rounded-[22px] p-6 md:p-10 flex flex-col xl:flex-row gap-10">
-              
-              {/* Left Column: Macro & Philosophy */}
-              <div className="xl:w-5/12 space-y-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-slate-400 bg-slate-800/80 px-4 py-1.5 rounded-full ring-1 ring-slate-700/50">
-                    {story.date}
-                  </span>
-                  <span className="text-xs font-bold uppercase tracking-wider text-blue-400">
-                    {story.category}
-                  </span>
+        {/* ── STORY CARDS ── */}
+        <div className="space-y-8">
+          {filteredStories.map(story => (
+            <article
+              key={story.id}
+              className="rounded-3xl overflow-hidden transition-all duration-300 hover:scale-[1.003]"
+              style={{ background: '#0F172A', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 0 0 1px rgba(255,255,255,0.03)' }}
+            >
+              {/* Top accent bar */}
+              <div className="h-0.5 w-full" style={{ background: `linear-gradient(90deg, ${story.accent}, transparent)` }} />
+
+              <div className="p-6 md:p-8 grid xl:grid-cols-[2fr_1fr_2fr] gap-8 items-start">
+
+                {/* ── COL 1: Macro Signal ── */}
+                <div className="space-y-5">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span
+                      className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full"
+                      style={{ background: story.accentBg, color: story.accent, border: `1px solid ${story.accent}30` }}
+                    >
+                      <CategoryIcon category={story.category} />
+                      {story.category}
+                    </span>
+                    <span className="text-xs text-slate-500">{story.date}</span>
+                  </div>
+
+                  <h2 className="text-xl md:text-2xl font-bold text-white leading-snug">{story.title}</h2>
+
+                  {/* Data point */}
+                  <div className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2 flex items-center gap-1.5">
+                      <BarChart2 className="w-3 h-3" /> Dữ liệu thực tế
+                    </p>
+                    <p className="text-sm font-semibold" style={{ color: story.accent }}>{story.dataPoint}</p>
+                  </div>
+
+                  {/* Sector */}
+                  <div>
+                    <p className="text-xs text-slate-500 mb-1">Nhóm ngành hẹp</p>
+                    <div className="flex items-center gap-1.5">
+                      <Building2 className="w-3.5 h-3.5 text-slate-400" />
+                      <p className="text-sm font-semibold text-slate-200">{story.narrowIndustry}</p>
+                    </div>
+                  </div>
+
+                  {/* Impact */}
+                  <div className="flex items-start gap-2 rounded-xl px-4 py-3"
+                    style={{
+                      background: story.quantifiedImpact.positive ? 'rgba(16,185,129,0.08)' : 'rgba(244,63,94,0.08)',
+                      border: `1px solid ${story.quantifiedImpact.positive ? 'rgba(16,185,129,0.2)' : 'rgba(244,63,94,0.2)'}`,
+                    }}
+                  >
+                    {story.quantifiedImpact.positive
+                      ? <TrendingUp className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      : <TrendingDown className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                    }
+                    <p className="text-xs leading-relaxed" style={{ color: story.quantifiedImpact.positive ? '#34d399' : '#fb7185' }}>
+                      {story.quantifiedImpact.value}
+                    </p>
+                  </div>
                 </div>
-                
-                <h2 className="text-2xl md:text-3xl font-bold text-white leading-tight">
-                  {story.title}
-                </h2>
 
-                <div>
-                   <p className="text-sm text-slate-400 mb-2 flex items-center gap-2">
-                     <BarChart3 className="w-4 h-4" /> Áp dụng Dữ liệu thực tế
-                   </p>
-                   <p className="text-emerald-400 font-medium bg-emerald-500/10 border border-emerald-500/20 inline-block px-4 py-2 rounded-xl">
-                     {story.dataPoint}
-                   </p>
+                {/* ── COL 2: Match Score Visual ── */}
+                <div className="flex flex-col items-center justify-start gap-5 pt-2">
+                  <div className="text-center">
+                    <MatchRing score={story.companies[0]?.matchScore ?? 0} accent={story.accent} />
+                    <p className="text-xs text-slate-500 mt-2">Fit Score</p>
+                    <p className="text-xs font-semibold text-slate-300">{story.companies[0]?.ticker}</p>
+                  </div>
+
+                  <Link href={`/advisor/macro-insights/${story.id}`}>
+                    <div
+                      className="flex flex-col items-center gap-1.5 px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-widest cursor-pointer transition-all duration-200 hover:brightness-125"
+                      style={{ background: story.accentBg, color: story.accent, border: `1px solid ${story.accent}30` }}
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                      Chi tiết
+                    </div>
+                  </Link>
                 </div>
-              </div>
 
-              {/* Right Column: 2-Layer Translation */}
-              <div className="xl:w-7/12 flex flex-col space-y-6"
-                   style={{ backgroundImage: 'radial-gradient(ellipse at top right, rgba(30,58,138,0.1), transparent 50%)' }}>
-                
-                {/* Layer 1: Narrow Industry */}
-                <div className="bg-slate-800/40 p-6 rounded-2xl border border-slate-700/50">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-white">1</span>
-                    Nhóm Ngành Hẹp (Sector Layer)
-                  </h3>
-                  <p className="text-xl font-semibold text-white mb-3">{story.narrowIndustry}</p>
-                  <p className={`text-sm ${story.quantifiedImpact.positive ? 'text-emerald-400' : 'text-rose-400'}`}>
-                    <span className="font-bold uppercase">Impact: </span> {story.quantifiedImpact.value}
+                {/* ── COL 3: Company Cards ── */}
+                <div className="space-y-3">
+                  <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-1.5">
+                    <span className="w-4 h-4 rounded-full flex items-center justify-center text-white text-[10px] font-black" style={{ background: 'rgba(255,255,255,0.1)' }}>2</span>
+                    Doanh Nghiệp Trọng Điểm
                   </p>
-                  
-                  {/* Nút Xem chi tiết */}
-                  <div className="mt-5">
-                    <Link href={`/advisor/macro-insights/${story.id}`}>
-                      <button className="px-4 py-2 bg-slate-700/40 hover:bg-blue-600/30 text-blue-300 rounded-lg text-sm font-medium border border-blue-500/30 transition-colors flex items-center gap-2">
-                        <Search className="w-4 h-4" /> Xem Chi Tiết Insight
-                      </button>
-                    </Link>
-                  </div>
-                </div>
-
-                {/* Layer 2: Specific Companies */}
-                <div className="bg-slate-800/40 p-6 rounded-2xl border border-slate-700/50 flex-grow">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-white">2</span>
-                    Doanh Nghiệp Trọng Điểm (Company Layer)
-                  </h3>
-                  
-                  <div className="space-y-4">
-                    {story.companies.map(company => (
-                      <div key={company.ticker} className="group flex items-start justify-between bg-slate-900/50 hover:bg-slate-800 transition-colors p-4 rounded-xl border border-slate-700/30">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-1">
-                            <span className="text-lg font-bold text-white">{company.ticker}</span>
-                            <span className="text-sm text-slate-400">{company.name}</span>
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 ml-2">
-                              Fit: {company.matchScore}%
-                            </span>
-                          </div>
-                          <p className="text-slate-300 text-sm">
-                            {company.impact}
-                          </p>
+                  {story.companies.map(company => (
+                    <div
+                      key={company.ticker}
+                      className="group flex items-start justify-between rounded-2xl p-4 transition-all duration-200 hover:border-opacity-40"
+                      style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                          <span
+                            className="text-sm font-black px-2.5 py-0.5 rounded-lg"
+                            style={{ background: story.accentBg, color: story.accent, fontFamily: 'monospace' }}
+                          >
+                            {company.ticker}
+                          </span>
+                          <span className="text-xs text-slate-400">{company.name}</span>
+                          {company.positive !== undefined && (
+                            company.positive
+                              ? <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+                              : <TrendingDown className="w-3.5 h-3.5 text-rose-400" />
+                          )}
                         </div>
-                        
-                        {/* CTA Linked directly to trading plan */}
-                        <Link href={`/advisor/trading-plan/${company.ticker.toLowerCase()}`}>
-                          <button className="ml-4 flex items-center justify-center w-10 h-10 rounded-full bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white transition-all group-hover:scale-110">
-                            <ArrowRight className="w-5 h-4" />
-                          </button>
-                        </Link>
+                        <p className="text-xs text-slate-400 leading-relaxed">{company.impact}</p>
                       </div>
-                    ))}
-                  </div>
+                      <Link href={`/advisor/trading-plan/${company.ticker.toLowerCase()}`}>
+                        <button
+                          className="ml-3 shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 group-hover:scale-110 cursor-pointer"
+                          style={{ background: story.accentBg, color: story.accent }}
+                        >
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                      </Link>
+                    </div>
+                  ))}
                 </div>
-                
               </div>
-            </div>
-          </div>
-        ))}
+            </article>
+          ))}
 
-        {filteredStories.length === 0 && (
-          <div className="py-20 text-center">
-             <p className="text-slate-500 text-lg">Chưa có báo cáo Vĩ mô cho tháng này.</p>
-          </div>
-        )}
+          {filteredStories.length === 0 && (
+            <div className="py-20 text-center">
+              <Minus className="w-8 h-8 text-slate-700 mx-auto mb-3" />
+              <p className="text-slate-500">Chưa có báo cáo Vĩ mô cho tháng này.</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
