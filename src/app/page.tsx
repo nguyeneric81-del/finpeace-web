@@ -2,156 +2,382 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
 
-// ── Brand Colors (từ finpeace.vn) ──────────────────────────────
-// Primary green: #38C68B
-// Dark navy:     #131946
-// Mint bg:       #38C68B1A  (20% opacity)
-// Body text:     #1a1a1a
-// Secondary txt: #4F4F4F
-// Accent orange: #ff7d50
-
 export const metadata: Metadata = {
     title: 'FinPeace — Bình An Tài Chính Cá Nhân',
     description: 'Hiểu rõ bức tranh tài chính của mình. Lập kế hoạch cho tương lai. Sống bình an với tiền bạc — không lo âu, không mơ hồ.',
 }
 
+// ── SVG Icons ──────────────────────────────────────────────────
+type IconProps = { className?: string; style?: React.CSSProperties }
+
+const IconTrendingUp = ({ className = 'w-5 h-5', style }: IconProps) => (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+        <polyline points="17 6 23 6 23 12" />
+    </svg>
+)
+const IconShield = ({ className = 'w-5 h-5', style }: IconProps) => (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+)
+const IconMap = ({ className = 'w-5 h-5', style }: IconProps) => (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
+        <line x1="9" y1="3" x2="9" y2="18" />
+        <line x1="15" y1="6" x2="15" y2="21" />
+    </svg>
+)
+const IconActivity = ({ className = 'w-5 h-5', style }: IconProps) => (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+    </svg>
+)
+const IconAlertCircle = ({ className = 'w-5 h-5', style }: IconProps) => (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+)
+const IconEye = ({ className = 'w-5 h-5', style }: IconProps) => (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+        <circle cx="12" cy="12" r="3" />
+    </svg>
+)
+const IconTarget = ({ className = 'w-5 h-5', style }: IconProps) => (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <circle cx="12" cy="12" r="6" />
+        <circle cx="12" cy="12" r="2" />
+    </svg>
+)
+const IconChevronRight = ({ className = 'w-4 h-4', style }: IconProps) => (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="9 18 15 12 9 6" />
+    </svg>
+)
+const IconCheck = ({ className = 'w-4 h-4', style }: IconProps) => (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="20 6 9 17 4 12" />
+    </svg>
+)
+const IconStar = ({ className = 'w-4 h-4', style }: IconProps) => (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="currentColor" stroke="none">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+)
+const IconLightbulb = ({ className = 'w-5 h-5', style }: IconProps) => (
+    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="9" y1="18" x2="15" y2="18" />
+        <line x1="10" y1="22" x2="14" y2="22" />
+        <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14" />
+    </svg>
+)
+
+// ── Data ──────────────────────────────────────────────────────
+const GREEN = '#38C68B'
+const NAVY = '#131946'
+const DARK = '#0D1117'
+const ORANGE = '#ff7d50'
+const MINT = '#38C68B1A'
+
 const PAIN_POINTS = [
     {
-        icon: '😰',
+        Icon: IconAlertCircle,
         title: 'Tháng nào cũng lo tiền',
         desc: 'Thu nhập không ít, nhưng cuối tháng tài khoản vẫn về 0. Không hiểu tiền đi đâu hết.',
+        color: ORANGE,
+        bg: '#fff6f3',
     },
     {
-        icon: '🌫️',
+        Icon: IconEye,
         title: 'Không có bức tranh tổng thể',
-        desc: 'Tài sản nằm rải rác — sổ tiết kiệm, cổ phiếu, bất động sản — nhưng không biết mình đang ở đâu thực sự.',
+        desc: 'Tài sản nằm rải rác — sổ tiết kiệm, cổ phiếu, bất động sản — nhưng không biết mình đang ở đâu.',
+        color: '#3B82F6',
+        bg: '#EFF6FF',
     },
     {
-        icon: '📅',
+        Icon: IconTarget,
         title: 'Tương lai mơ hồ',
         desc: 'Muốn nghỉ hưu sớm, mua nhà, cho con học tốt — nhưng không biết bắt đầu từ đâu và cần bao nhiêu.',
+        color: '#8B5CF6',
+        bg: '#F5F3FF',
     },
 ]
 
 const FEATURES = [
     {
-        icon: '💚',
+        Icon: IconActivity,
         title: '4 Chỉ Số Sinh Tồn',
-        desc: 'Net Worth, Tỷ lệ nợ, Quỹ khẩn cấp, Tỷ lệ tiết kiệm — bộ tứ chỉ số quyết định sức khỏe tài chính thực sự của bạn.',
+        desc: 'Net Worth, Tỷ lệ nợ, Quỹ khẩn cấp, Tỷ lệ tiết kiệm — bộ tứ chỉ số quyết định sức khỏe tài chính thực sự.',
         tag: 'Vital Signs',
     },
     {
-        icon: '🌱',
+        Icon: IconTrendingUp,
         title: 'Khu Vườn Đầu Tư',
-        desc: 'Cho bạn thấy 1 tháng tiết kiệm 3 triệu sẽ trở thành bao nhiêu sau 20 năm — lãi kép được trực quan hóa theo thời gian thực.',
+        desc: '1 tháng tiết kiệm 3 triệu sẽ trở thành bao nhiêu sau 20 năm — lãi kép được trực quan hóa theo thời gian thực.',
         tag: 'Investment Garden',
     },
     {
-        icon: '🛡️',
+        Icon: IconShield,
         title: 'Stress Test Tài Chính',
         desc: 'Nếu bạn mất việc 6 tháng, thị trường giảm 40%, lãi suất tăng gấp đôi — tài chính của bạn có trụ được không?',
         tag: 'Stress Test',
     },
     {
-        icon: '🗺️',
+        Icon: IconMap,
         title: 'Kế Hoạch Tài Chính',
         desc: 'Từ mục tiêu (nghỉ hưu, mua nhà, học bổng con) đến kế hoạch hành động cụ thể với con số thực tế.',
         tag: 'Wealth Planning',
     },
 ]
 
-export default function HomePage() {
-    const green = '#38C68B'
-    const navy = '#131946'
-    const mint = '#38C68B1A'
+const STEPS = [
+    {
+        step: 'Bước 1',
+        zone: 'Vùng Đất Hoang',
+        title: 'Dọn dẹp rào cản tâm lý',
+        desc: 'Quản lý tiền bạc là 80% Tâm lý và chỉ 20% Toán học. Trước khi lập bảng Excel, hãy dọn sạch "bãi rác tâm lý" đang kìm hãm bạn.',
+        count: '4 bài học',
+        accent: ORANGE,
+        bg: '#fff6f3',
+        hoverBg: 'rgba(255,125,80,0.05)',
+        lessons: [
+            { num: '01', title: 'Lời nói dối của chiếc máy tính', hook: 'Tại sao bạn cộng trừ rất giỏi, nhưng tài khoản thì luôn bằng 0?', core: 'Quản lý tiền bạc là 80% Tâm lý và chỉ có 20% là Toán học.', quote: 'Tôi từng tin rằng nếu học thêm một khóa Excel, dùng thêm một app quản lý chi tiêu, mọi thứ sẽ thay đổi. Mãi đến khi tôi nhận ra mình đang né tránh một câu hỏi thực sự khó hơn nhiều: Tôi đang sợ điều gì?', content: 'Công thức ai cũng biết: Thu nhập - Chi tiêu = Tiết kiệm (phép tính lớp 3). Giống như giảm cân là Ăn ít - Tập nhiều. Tại sao biết mà không làm được? Vì khi đứng trước áo Sale 50% hay lúc buồn chán, não bộ không dùng toán học — mà dùng cảm xúc.', cta: 'Nhớ lại lần gần nhất bạn mua đồ đắt rồi hối hận — bạn tính sai giá, hay cảm xúc mách "chốt đơn đi"?' },
+            { num: '02', title: '"Thuốc giảm đau" mang tên Mua sắm', hook: 'Bạn đang mua món đồ đó, hay đang mua "thuốc giảm đau" cho cảm xúc?', core: 'Dùng tiền để xoa dịu cảm xúc sẽ tạo ra vòng lặp nghèo khó.', quote: 'Lần đó tôi vừa bị sếp chỉ trích trước cả phòng. Trên đường về, tôi đặt một đơn hàng 800 nghìn đồng. Khi hàng về, tôi chẳng còn nhớ mình đã đặt gì.', content: 'Vòng lặp ác tính: Ngày làm việc mệt, sếp mắng → Lướt Shopee chốt đơn để "chữa lành" → Tài khoản cạn → Cảm giác tội lỗi, stress → Lại tiêu để xoa dịu.', cta: 'Thử thách "Đóng băng 48h": Khi định mua thứ không thiết yếu, bỏ vào giỏ hàng và đợi 48 tiếng. Nếu cơn bốc đồng qua đi — đó chính xác là chi tiêu cảm xúc cần cắt.' },
+            { num: '03', title: 'Bạn đang trả tiền cho "vở kịch" của ai?', hook: 'Bạn đang trả góp cho cuộc đời bạn, hay trả góp cho "ước mơ của người khác"?', core: 'Ngừng dùng tiền xương máu của mình để mua ánh nhìn của người khác.', quote: 'Tôi có một người bạn luôn đăng ảnh du lịch đẹp. Vậy mà mỗi khi thấy story của anh ấy, tôi lại thấy tài khoản của mình bị co rút lại.', content: 'Nhiều người vay trả góp đổi iPhone mới nhất, mua xe xịn, du lịch sang chảnh — chỉ để "bằng bạn bằng bè", dù ví đang "khóc thét".', cta: 'Hãy nhìn món đồ đắt nhất bạn định mua. Nếu ngày mai ra đảo hoang — không ai nhìn thấy để khen hay chê — bạn có còn muốn mua không?' },
+            { num: '04', title: '"Ngọn hải đăng" bảo vệ tài khoản', hook: 'Bí quyết để việc "Tiết kiệm" trở nên kiêu hãnh thay vì khổ sở.', core: 'Kỷ luật thép rồi cũng sẽ nản — chỉ có "Ước mơ chân thật" mới neo giữ được tiền của bạn.', quote: 'Ước mơ chân thật thường nhỏ hơn, yên tĩnh hơn — và chính xác vì vậy, nó mới đủ mạnh để thay đổi hành vi của bạn.', content: 'Não bộ ghét việc "thắt lưng buộc bụng" vì coi đó là sự tước đoạt niềm vui. Giải pháp: gắn tiền với GIÁ TRỊ CỐT LÕI của BẠN.', cta: 'Nhắm mắt và viết ra 1 điều khiến bạn hạnh phúc nhất mà không cần chứng minh với ai. Đó chính là "Ước mơ chân thật".' },
+        ],
+    },
+    {
+        step: 'Bước 2',
+        zone: 'Vùng Đất Kiểm Soát',
+        title: 'Xây dựng Cỗ máy tài chính',
+        desc: 'Thu nhập là nhiên liệu, nhưng 5 trụ cột này mới là cỗ máy — FinPeace giúp bạn theo dõi và tối ưu từng trụ cột một.',
+        count: '5 bài học',
+        accent: GREEN,
+        bg: MINT,
+        hoverBg: 'rgba(56,198,139,0.05)',
+        lessons: [
+            { num: '01', title: 'CÁNH ĐỒNG — Thu nhập', hook: 'Kỹ năng mới là cỗ máy in tiền thực sự — không phải tờ lương bạn nhận mỗi tháng.', core: 'Thu nhập đến từ Vốn con người (kỹ năng, thời gian) và Vốn tài chính (tài sản sinh lời).', quote: 'Thu nhập là nhiên liệu khởi đầu để cỗ máy chạy, nhưng kỹ năng mới là cỗ máy in tiền thực sự.', content: 'Khi còn trẻ, bạn dùng Vốn con người — đi làm đổi thời gian lấy tiền. Nhưng sức người và thời gian là hữu hạn.', cta: 'Giai đoạn 1: Đầu tư vào kỹ năng để tăng giá trị sức lao động. Giai đoạn 2: Dùng một phần thu nhập mua tài sản sinh lời.' },
+            { num: '02', title: 'DÒNG SÔNG — Chi tiêu & Tiết kiệm', hook: 'Người ta không giàu lên nhờ số tiền kiếm được — mà nhờ số tiền giữ lại được.', core: 'Tiết kiệm không phải "sự hy sinh" hay "kìm nén", mà là hành động yêu thương bản thân trong tương lai.', quote: 'Người ta không giàu lên nhờ số tiền kiếm được, mà giàu lên nhờ số tiền giữ lại được.', content: 'Tiền bạc giống một dòng sông: thu nhập là nước chảy vào, chi tiêu là nước tràn ra, tiết kiệm là hồ chứa bạn xây.', cta: 'Ngay khi nhận lương, áp dụng PYF (Pay Yourself First): tự động trích tối thiểu 20% vào tài khoản tiết kiệm trước.' },
+            { num: '03', title: 'ĐẦM LẦY — Nợ nần', hook: 'Nợ là xiềng xích nếu dùng sai — nhưng là đòn bẩy nếu dùng đúng.', core: 'Nợ xấu mua tiêu sản kéo bạn xuống vũng lầy. Nợ tốt mua tài sản sinh lời là con đường tắt đến giàu có.', quote: 'Nợ là xiềng xích nếu dùng sai, nhưng là đòn bẩy nếu dùng đúng.', content: 'Warren Buffett từng nói: "Nợ tốt là nợ giúp bạn giàu lên, nợ xấu là nợ làm bạn nghèo đi."', cta: 'Tuyệt đối tránh xa nợ xấu. Nguyên tắc sống còn: khoản trả nợ hàng tháng KHÔNG BAO GIỜ vượt quá 30–40% thu nhập.' },
+            { num: '04', title: 'KHU VƯỜN — Đầu tư', hook: 'Đầu tư không phải sòng bạc để lướt sóng — mà là khu vườn cần sự kiên nhẫn.', core: 'Thách thức lớn nhất không phải đánh bại thị trường — mà là ngăn bản thân trở thành kẻ thù của chính mình.', quote: 'Đầu tư không phải là sòng bạc để lướt sóng, mà là một khu vườn cần sự kiên nhẫn.', content: 'Tiền để trong két sắt hay ngân hàng sẽ bị lạm phát gặm nhấm — đầu tư là việc gieo hạt giống tiền bạc để nó nảy mầm.', cta: 'Trở thành người làm vườn kiên nhẫn bằng DCA: trích một số tiền cố định mỗi tháng mua tài sản tự động, bất chấp thị trường lên hay xuống.' },
+            { num: '05', title: 'HẦM TRÚ ẨN — Rủi ro', hook: 'Bạn không thể ngăn cơn bão ập đến — nhưng bạn có thể xây một hầm trú ẩn vững chắc.', core: 'Đầu tư mà không có hầm trú ẩn thì giống như xây lâu đài trên cát.', quote: 'Bạn không thể ngăn cơn bão ập đến, nhưng bạn có thể xây một hầm trú ẩn vững chắc.', content: 'Rủi ro (mất việc, ốm đau, thị trường sụp đổ) là điều tất yếu của cuộc sống.', cta: 'Xây hầm trú ẩn 2 lớp: (1) Quỹ khẩn cấp: 6–12 tháng chi phí sinh hoạt. (2) Bảo hiểm y tế/sức khỏe và nhân thọ nếu là trụ cột.' },
+        ],
+    },
+    {
+        step: 'Bước 3',
+        zone: 'Vùng Đất Bình An',
+        title: 'Sống tự do và hạnh phúc',
+        desc: 'Khi tiền không còn là nguồn lo âu — bạn có không gian để yêu thương tốt hơn, dạy con khôn ngoan hơn và báo hiếu từ trái tim.',
+        count: '3 bài học',
+        accent: '#3B82F6',
+        bg: '#EFF6FF',
+        hoverBg: 'rgba(59,130,246,0.05)',
+        lessons: [
+            { num: '01', title: 'Vợ chồng minh bạch', hook: 'Tiền bạc là cầu nối, không phải bức tường — nhưng chỉ khi hai người dám nói thật với nhau.', core: 'Sắp xếp tài chính minh bạch, chân thành không làm mất đi sự lãng mạn.', quote: 'Hôn nhân là một sự hợp tác, và sự hợp tác này khó có thể đi đến thành công nếu không lên kế hoạch như một đội.', content: 'Ở Việt Nam, ly hôn do yếu tố kinh tế chiếm đến 13%. Nhiều cặp vợ chồng coi tiền bạc là chủ đề "cấm kỵ".', cta: 'Tạo không gian an toàn để nói chuyện về tiền — không phán xét, mở lòng thấu hiểu thói quen chi tiêu của nhau.' },
+            { num: '02', title: 'Dạy con về tiền', hook: 'Hãy dạy con về tiền bạc trước khi cuộc sống làm điều đó một cách khắc nghiệt.', core: 'Dạy con về tiền không phải là gieo áp lực, mà là tiêm một "liều vắc-xin" để con tự lập và vững vàng.', quote: 'Hãy dạy con bạn về tiền bạc trước khi cuộc sống làm điều đó một cách khắc nghiệt.', content: 'Nghiên cứu chỉ ra trẻ bắt đầu hình thành thói quen tài chính từ năm 7 tuổi — đây chính là cửa sổ vàng.', cta: 'Quy tắc 3 lọ từ tiền tiêu vặt: Tiết kiệm (mục tiêu lớn) + Chi tiêu (nhu cầu cá nhân) + Cho đi (từ thiện).' },
+            { num: '03', title: 'Báo hiếu đúng cách', hook: 'Cách báo hiếu ý nghĩa nhất là sống sao cho cha mẹ tự hào — không phải oằn mình gửi tiền về.', core: 'Một người con độc lập, hạnh phúc, không nợ nần mang lại sự an tâm cho cha mẹ lớn hơn rất nhiều.', quote: 'Cách báo hiếu ý nghĩa nhất là sống sao cho cha mẹ tự hào. Sự phát triển và hiện diện của bạn còn quý hơn những món quà đắt tiền.', content: 'Rất nhiều người trẻ mang áp lực nặng nề phải cắt 20% thu nhập gửi về cho bố mẹ dù bản thân đang chật vật.', cta: 'Đưa "quỹ báo hiếu" vào ngân sách (5–10% thu nhập): trích ra một tỷ lệ vừa sức để sẵn sàng khi cha mẹ cần.' },
+        ],
+    },
+]
 
+export default function HomePage() {
     return (
-        <div className="min-h-screen bg-white font-sans">
+        <div className="min-h-screen bg-white" style={{ fontFamily: "'Be Vietnam Pro', system-ui, sans-serif" }}>
 
             {/* ── NAV ── */}
-            <nav className="border-b border-gray-100 bg-white/90 backdrop-blur-md sticky top-0 z-50">
-                <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <Link href="/"><Image src="/logo.png" alt="FinPeace" width={144} height={24} priority /></Link>
-                    <Link
-                        href="/login"
-                        className="text-sm font-semibold transition-colors"
-                        style={{ color: green }}
-                    >
-                        Đăng nhập →
+            <nav style={{ background: 'rgba(13,17,23,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.07)' }} className="sticky top-0 z-50">
+                <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+                    <Link href="/" className="flex items-center">
+                        <Image src="/logo.png" alt="FinPeace" width={130} height={22} priority className="brightness-0 invert" />
                     </Link>
+                    <div className="flex items-center gap-4">
+                        <Link
+                            href="/login"
+                            className="text-sm font-semibold transition-all duration-200 hover:text-white"
+                            style={{ color: 'rgba(255,255,255,0.65)' }}
+                        >
+                            Đăng nhập
+                        </Link>
+                        <Link
+                            href="/login"
+                            className="text-sm font-bold px-4 py-2 rounded-full transition-all duration-200 hover:opacity-90 active:scale-95"
+                            style={{ background: GREEN, color: '#fff' }}
+                        >
+                            Bắt đầu miễn phí
+                        </Link>
+                    </div>
                 </div>
             </nav>
 
             {/* ── HERO ── */}
-            <section className="py-24 bg-white">
-                <div className="max-w-5xl mx-auto px-6">
-                    <div className="grid md:grid-cols-2 gap-12 items-center">
+            <section
+                style={{
+                    background: `linear-gradient(135deg, ${DARK} 0%, ${NAVY} 60%, #1a2e5c 100%)`,
+                    position: 'relative',
+                    overflow: 'hidden',
+                }}
+                className="py-28"
+            >
+                {/* Background glow blobs */}
+                <div style={{ position: 'absolute', top: '-10%', left: '50%', transform: 'translateX(-50%)', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(56,198,139,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', bottom: '-10%', right: '10%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+                <div className="max-w-6xl mx-auto px-6 relative">
+                    <div className="grid md:grid-cols-2 gap-16 items-center">
+                        {/* Left */}
                         <div>
-                            <span
-                                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6"
-                                style={{ background: mint, color: green }}
+                            <div
+                                className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-8"
+                                style={{ background: 'rgba(56,198,139,0.15)', color: GREEN, border: '1px solid rgba(56,198,139,0.3)' }}
                             >
-                                <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: green }}></span>
+                                <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: GREEN }} />
                                 Tài chính cá nhân · Kế hoạch hóa · Bình an
-                            </span>
-                            <h1 className="text-5xl font-black leading-tight mb-4" style={{ color: navy }}>
+                            </div>
+
+                            <h1 className="text-5xl lg:text-6xl font-black leading-tight mb-6 text-white">
                                 Bạn kiếm đủ tiền.<br />
-                                <span style={{ color: green }}>Tại sao vẫn lo?</span>
+                                <span style={{ color: GREEN }}>Tại sao vẫn lo?</span>
                             </h1>
-                            <p className="text-lg mb-8 leading-relaxed" style={{ color: '#4F4F4F' }}>
+
+                            <p className="text-lg mb-10 leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
                                 FinPeace giúp bạn nhìn rõ bức tranh tài chính của mình — không phán xét, không phức tạp. Chỉ là sự rõ ràng bạn cần để sống bình an với tiền bạc.
                             </p>
+
                             <div className="flex items-center gap-4 flex-wrap">
                                 <Link
                                     href="/login"
-                                    className="inline-flex items-center gap-2 text-white font-bold px-8 py-3.5 rounded-lg transition-all hover:opacity-90 active:scale-95"
-                                    style={{ background: green }}
+                                    className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-95 shadow-lg text-white"
+                                    style={{ background: GREEN, boxShadow: `0 0 30px rgba(56,198,139,0.35)` }}
                                 >
-                                    Bắt đầu miễn phí →
+                                    Bắt đầu miễn phí
+                                    <IconChevronRight className="w-4 h-4" />
                                 </Link>
-                                <span className="text-sm" style={{ color: '#4F4F4F' }}>Không cần thẻ tín dụng</span>
+                                <span className="text-sm flex items-center gap-1.5" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                                    <IconCheck className="w-3.5 h-3.5" style={{ color: GREEN }} />
+                                    Không cần thẻ tín dụng
+                                </span>
+                            </div>
+
+                            {/* Trust signals */}
+                            <div className="flex items-center gap-1 mt-8">
+                                {[...Array(5)].map((_, i) => (
+                                    <IconStar key={i} className="w-3.5 h-3.5" style={{ color: '#FBBF24' }} />
+                                ))}
+                                <span className="text-xs ml-2" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                                    Trusted bởi hàng nghìn người dùng
+                                </span>
                             </div>
                         </div>
-                        {/* Floating stats */}
+
+                        {/* Right — Glass stat cards */}
                         <div className="flex flex-col gap-4">
                             {[
-                                { label: 'Net Worth', value: '+₫2.4 tỷ', color: green },
-                                { label: 'Quỹ khẩn cấp', value: '8.2 tháng', color: '#3B82F6' },
-                                { label: 'Tỷ lệ tiết kiệm', value: '34%', color: '#8B5CF6' },
-                            ].map((s, i) => (
-                                <div key={i} className="bg-white border border-gray-100 rounded-2xl px-6 py-4 shadow-sm flex items-center justify-between">
-                                    <p className="text-sm font-medium" style={{ color: '#4F4F4F' }}>{s.label}</p>
-                                    <p className="font-black text-2xl" style={{ color: s.color }}>{s.value}</p>
+                                { label: 'Net Worth', value: '+₫2.4 tỷ', color: GREEN, sub: 'Tài sản ròng', icon: IconTrendingUp },
+                                { label: 'Quỹ khẩn cấp', value: '8.2 tháng', color: '#3B82F6', sub: 'Chi phí sinh hoạt', icon: IconShield },
+                                { label: 'Tỷ lệ tiết kiệm', value: '34%', color: '#8B5CF6', sub: 'Thu nhập hàng tháng', icon: IconActivity },
+                            ].map((s, i) => {
+                                const SIcon = s.icon
+                                return (
+                                    <div
+                                        key={i}
+                                        className="rounded-2xl px-6 py-5 flex items-center justify-between transition-all duration-300 hover:scale-[1.02]"
+                                        style={{
+                                            background: 'rgba(255,255,255,0.05)',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            backdropFilter: 'blur(12px)',
+                                        }}
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${s.color}20` }}>
+                                                <SIcon className="w-5 h-5" style={{ color: s.color }} />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.45)' }}>{s.label}</p>
+                                                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>{s.sub}</p>
+                                            </div>
+                                        </div>
+                                        <p className="font-black text-2xl" style={{ color: s.color }}>
+                                            {s.value}
+                                        </p>
+                                    </div>
+                                )
+                            })}
+
+                            {/* Mini chart preview */}
+                            <div
+                                className="rounded-2xl p-5 mt-1"
+                                style={{
+                                    background: 'rgba(255,255,255,0.03)',
+                                    border: '1px solid rgba(255,255,255,0.07)',
+                                }}
+                            >
+                                <div className="flex items-center justify-between mb-3">
+                                    <p className="text-xs font-semibold text-white">Lộ trình tài sản</p>
+                                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(56,198,139,0.15)', color: GREEN }}>+18% YoY</span>
                                 </div>
-                            ))}
+                                <svg viewBox="0 0 200 50" className="w-full" style={{ height: '40px' }}>
+                                    <defs>
+                                        <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stopColor={GREEN} stopOpacity="0.3" />
+                                            <stop offset="100%" stopColor={GREEN} stopOpacity="0" />
+                                        </linearGradient>
+                                    </defs>
+                                    <path d="M0 45 C20 40 40 35 60 30 S100 20 120 18 S160 12 200 5" fill="none" stroke={GREEN} strokeWidth="2" />
+                                    <path d="M0 45 C20 40 40 35 60 30 S100 20 120 18 S160 12 200 5 L200 50 L0 50 Z" fill="url(#chartGrad)" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* ── PAIN POINTS ── */}
-            <section className="py-20" style={{ background: mint }}>
-                <div className="max-w-5xl mx-auto px-6">
-                    <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: green }}>Bạn có nhận ra mình không?</p>
-                    <h2 className="text-3xl font-black mb-2" style={{ color: navy }}>
-                        Thu nhập tốt nhưng tài chính vẫn <span style={{ color: '#ff7d50' }}>không ổn</span>
-                    </h2>
-                    <p className="mb-10" style={{ color: '#4F4F4F' }}>Đây không phải lỗi của bạn — mà là thiếu công cụ đúng.</p>
-                    <div className="grid md:grid-cols-3 gap-5">
-                        {PAIN_POINTS.map((p, i) => (
-                            <div key={i} className="bg-white rounded-2xl p-6 shadow-sm">
-                                <span className="text-3xl mb-4 block">{p.icon}</span>
-                                <h3 className="font-bold text-base mb-2" style={{ color: navy }}>{p.title}</h3>
-                                <p className="text-sm leading-relaxed" style={{ color: '#4F4F4F' }}>{p.desc}</p>
-                            </div>
-                        ))}
+            <section className="py-24 bg-white">
+                <div className="max-w-6xl mx-auto px-6">
+                    <div className="text-center mb-14">
+                        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: GREEN }}>Bạn có nhận ra mình không?</p>
+                        <h2 className="text-4xl font-black mb-3" style={{ color: NAVY }}>
+                            Thu nhập tốt nhưng tài chính vẫn <span style={{ color: ORANGE }}>không ổn</span>
+                        </h2>
+                        <p className="text-base max-w-xl mx-auto" style={{ color: '#6B7280' }}>Đây không phải lỗi của bạn — mà là thiếu công cụ đúng.</p>
                     </div>
-                    <div className="mt-8 bg-white rounded-2xl p-6 flex items-start gap-4 shadow-sm">
-                        <span className="text-2xl">💡</span>
+
+                    <div className="grid md:grid-cols-3 gap-6 mb-8">
+                        {PAIN_POINTS.map((p, i) => {
+                            const PIcon = p.Icon
+                            return (
+                                <div
+                                    key={i}
+                                    className="rounded-2xl p-7 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-default"
+                                    style={{ background: p.bg, border: `1px solid ${p.color}20` }}
+                                >
+                                    <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-5" style={{ background: `${p.color}15` }}>
+                                        <PIcon className="w-5 h-5" style={{ color: p.color } as React.CSSProperties} />
+                                    </div>
+                                    <h3 className="font-bold text-base mb-2" style={{ color: NAVY }}>{p.title}</h3>
+                                    <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>{p.desc}</p>
+                                </div>
+                            )
+                        })}
+                    </div>
+
+                    {/* Insight box */}
+                    <div
+                        className="rounded-2xl p-6 flex items-start gap-4"
+                        style={{ background: MINT, border: `1px solid rgba(56,198,139,0.2)` }}
+                    >
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'rgba(56,198,139,0.2)' }}>
+                            <IconLightbulb className="w-5 h-5" style={{ color: GREEN } as React.CSSProperties} />
+                        </div>
                         <div>
-                            <p className="font-bold mb-1" style={{ color: navy }}>Vấn đề không phải là thu nhập của bạn.</p>
+                            <p className="font-bold mb-1" style={{ color: NAVY }}>Vấn đề không phải là thu nhập của bạn.</p>
                             <p className="text-sm leading-relaxed" style={{ color: '#4F4F4F' }}>
-                                Hầu hết người có tài chính lộn xộn không phải vì kiếm ít — mà vì <em style={{ color: navy }}>không có bức tranh rõ ràng</em>. Khi bạn nhìn thấy số liệu thực tế, mọi thứ sẽ thay đổi.
+                                Hầu hết người có tài chính lộn xộn không phải vì kiếm ít — mà vì <em style={{ color: NAVY, fontStyle: 'normal', fontWeight: 700 }}>không có bức tranh rõ ràng</em>. Khi bạn nhìn thấy số liệu thực tế, mọi thứ sẽ thay đổi.
                             </p>
                         </div>
                     </div>
@@ -159,382 +385,200 @@ export default function HomePage() {
             </section>
 
             {/* ── FEATURES ── */}
-            <section className="py-20 bg-white">
-                <div className="max-w-5xl mx-auto px-6">
-                    <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: green }}>FinPeace cung cấp</p>
-                    <h2 className="text-3xl font-black mb-2" style={{ color: navy }}>Bức tranh tài chính đầy đủ</h2>
-                    <p className="mb-10 max-w-xl" style={{ color: '#4F4F4F' }}>Không chỉ là số dư ngân hàng. Đây là toàn cảnh sức khỏe tài chính của bạn.</p>
+            <section className="py-24" style={{ background: '#F8FAFB' }}>
+                <div className="max-w-6xl mx-auto px-6">
+                    <div className="text-center mb-14">
+                        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: GREEN }}>FinPeace cung cấp</p>
+                        <h2 className="text-4xl font-black mb-3" style={{ color: NAVY }}>Bức tranh tài chính đầy đủ</h2>
+                        <p className="text-base max-w-xl mx-auto" style={{ color: '#6B7280' }}>Không chỉ là số dư ngân hàng. Đây là toàn cảnh sức khỏe tài chính của bạn.</p>
+                    </div>
+
                     <div className="grid md:grid-cols-2 gap-5">
-                        {FEATURES.map((f, i) => (
-                            <div
-                                key={i}
-                                className="border-2 rounded-2xl p-6 transition-all hover:shadow-md hover:border-emerald-400"
-                                style={{ borderColor: 'rgba(56,198,139,0.2)' }}
-                            >
-                                <div className="flex items-start justify-between mb-4">
-                                    <span className="text-3xl">{f.icon}</span>
-                                    <span
-                                        className="text-xs font-bold px-2.5 py-1 rounded-full"
-                                        style={{ background: mint, color: green }}
-                                    >
-                                        {f.tag}
-                                    </span>
+                        {FEATURES.map((f, i) => {
+                            const FIcon = f.Icon
+                            return (
+                                <div
+                                    key={i}
+                                    className="bg-white rounded-2xl p-7 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-default"
+                                    style={{ border: '1px solid rgba(19,25,70,0.07)' }}
+                                >
+                                    <div className="flex items-start justify-between mb-5">
+                                        <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: MINT }}>
+                                            <FIcon className="w-6 h-6" style={{ color: GREEN }} />
+                                        </div>
+                                        <span
+                                            className="text-xs font-bold px-3 py-1 rounded-full"
+                                            style={{ background: MINT, color: GREEN }}
+                                        >
+                                            {f.tag}
+                                        </span>
+                                    </div>
+                                    <h3 className="font-bold text-lg mb-2" style={{ color: NAVY }}>{f.title}</h3>
+                                    <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>{f.desc}</p>
                                 </div>
-                                <h3 className="font-bold text-base mb-2" style={{ color: navy }}>{f.title}</h3>
-                                <p className="text-sm leading-relaxed" style={{ color: '#4F4F4F' }}>{f.desc}</p>
+                            )
+                        })}
+                    </div>
+                </div>
+            </section>
+
+            {/* ── BẢN ĐỒ 3 BƯỚC ── */}
+            <section className="py-24 bg-white">
+                <div className="max-w-6xl mx-auto px-6">
+                    <div className="text-center mb-14">
+                        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: GREEN }}>Từ sách &ldquo;Bình An Tài Chính&rdquo;</p>
+                        <h2 className="text-4xl font-black mb-3" style={{ color: NAVY }}>Bản Đồ 3 Bước Đến Bình An</h2>
+                        <p className="text-base max-w-xl mx-auto" style={{ color: '#6B7280' }}>Không phải về việc kiếm được bao nhiêu — đây là hành trình từ lo âu đến tự do.</p>
+                    </div>
+
+                    <div className="space-y-5">
+                        {STEPS.map((step, si) => (
+                            <div
+                                key={si}
+                                className="rounded-3xl overflow-hidden"
+                                style={{ border: `1px solid ${step.accent}25`, boxShadow: `0 0 0 1px ${step.accent}10` }}
+                            >
+                                {/* Step header */}
+                                <div className="p-8" style={{ background: step.bg, borderBottom: `1px solid ${step.accent}15` }}>
+                                    <div className="flex items-start gap-5">
+                                        <div
+                                            className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center font-black text-lg"
+                                            style={{ background: `${step.accent}20`, color: step.accent, border: `2px solid ${step.accent}40` }}
+                                        >
+                                            {si + 1}
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-3 mb-2 flex-wrap">
+                                                <span className="text-xs font-black uppercase tracking-widest" style={{ color: step.accent }}>{step.step}</span>
+                                                <span className="text-xs" style={{ color: '#9CA3AF' }}>· {step.zone}</span>
+                                                <span className="ml-auto text-xs px-2.5 py-0.5 rounded-full font-bold" style={{ background: `${step.accent}15`, color: step.accent }}>
+                                                    {step.count}
+                                                </span>
+                                            </div>
+                                            <h3 className="font-black text-xl mb-2" style={{ color: NAVY }}>{step.title}</h3>
+                                            <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>{step.desc}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Lessons accordion */}
+                                <div className="bg-white divide-y" style={{ borderColor: `${step.accent}10` }}>
+                                    {step.lessons.map((lesson, li) => (
+                                        <details key={li} className="group">
+                                            <summary
+                                                className="flex items-center gap-4 px-8 py-5 cursor-pointer list-none transition-all duration-200 hover:bg-gray-50"
+                                                style={{ outline: 'none' }}
+                                            >
+                                                <div
+                                                    className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black"
+                                                    style={{ background: `${step.accent}15`, color: step.accent }}
+                                                >
+                                                    {lesson.num}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-semibold text-sm leading-snug" style={{ color: NAVY }}>{lesson.hook}</p>
+                                                </div>
+                                                <span
+                                                    className="shrink-0 transition-transform duration-200 group-open:rotate-90"
+                                                    style={{ color: step.accent }}
+                                                >
+                                                    <IconChevronRight className="w-4 h-4" />
+                                                </span>
+                                            </summary>
+                                            <div className="px-8 pb-7 pt-3 bg-white">
+                                                <div className="ml-12 space-y-4">
+                                                    <div className="rounded-xl px-4 py-3 inline-block" style={{ background: `${step.accent}10` }}>
+                                                        <p className="text-xs font-bold mb-0.5" style={{ color: step.accent }}>Thông điệp cốt lõi</p>
+                                                        <p className="text-sm font-semibold" style={{ color: NAVY }}>{lesson.core}</p>
+                                                    </div>
+                                                    <div className="rounded-xl p-4" style={{ background: 'rgba(19,25,70,0.03)', borderLeft: `3px solid ${NAVY}30` }}>
+                                                        <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#9CA3AF' }}>Trích sách &ldquo;Bình An Tài Chính&rdquo;</p>
+                                                        <p className="text-sm italic leading-relaxed" style={{ color: '#4B5563' }}>&ldquo;{lesson.quote}&rdquo;</p>
+                                                    </div>
+                                                    <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>{lesson.content}</p>
+                                                    <div className="rounded-xl p-4" style={{ background: `${step.accent}08`, border: `1px solid ${step.accent}20` }}>
+                                                        <p className="text-sm leading-relaxed font-medium" style={{ color: NAVY }}>{lesson.cta}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </details>
+                                    ))}
+                                </div>
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* ── BẢN ĐỒ 3 BƯỚC ── */}
-            <section className="py-20" style={{ background: mint }}>
-                <div className="max-w-5xl mx-auto px-6">
-                    <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: green }}>Từ sách &ldquo;Bình An Tài Chính&rdquo;</p>
-                    <h2 className="text-3xl font-black mb-2" style={{ color: navy }}>Bản Đồ 3 Bước Đến Bình An</h2>
-                    <p className="mb-12 max-w-xl" style={{ color: '#4F4F4F' }}>Không phải về việc kiếm được bao nhiêu — đây là hành trình từ lo âu đến tự do.</p>
-                    <div className="space-y-5">
+            {/* ── QUOTE ── */}
+            <section className="py-24" style={{ background: `linear-gradient(135deg, ${DARK} 0%, ${NAVY} 100%)`, position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at center, rgba(56,198,139,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+                <div className="max-w-3xl mx-auto px-6 text-center relative">
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-8" style={{ background: 'rgba(56,198,139,0.15)', border: '1px solid rgba(56,198,139,0.3)' }}>
+                        <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth="2">
+                            <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" />
+                            <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
+                        </svg>
+                    </div>
+                    <blockquote className="text-2xl lg:text-3xl font-black leading-tight mb-6 text-white">
+                        &ldquo;Bình an tài chính không có nghĩa là bạn giàu có. Nó có nghĩa là bạn biết mình đang ở đâu, đang đi về đâu, và tự tin vào con đường đó.&rdquo;
+                    </blockquote>
+                    <p className="text-sm font-semibold" style={{ color: 'rgba(255,255,255,0.45)' }}>— Triết lý của FinPeace</p>
+                </div>
+            </section>
 
-                        {/* BƯỚC 1 */}
-                        <div className="bg-white rounded-3xl shadow-sm border-l-4 overflow-hidden" style={{ borderLeftColor: '#ff7d50' }}>
-                            {/* Step header */}
-                            <div className="p-8 border-b" style={{ borderColor: 'rgba(255,125,80,0.15)' }}>
-                                <div className="flex items-start gap-5">
-                                    <div className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{ background: '#fff6f3', border: '2px solid #ff7d50' }}>🛑</div>
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-3 mb-2 flex-wrap">
-                                            <span className="text-xs font-black uppercase tracking-widest" style={{ color: '#ff7d50' }}>Bước 1</span>
-                                            <span className="text-xs" style={{ color: '#4F4F4F' }}>· Vùng Đất Hoang</span>
-                                            <span className="ml-auto text-xs px-2 py-0.5 rounded-full font-bold" style={{ background: '#fff6f3', color: '#ff7d50' }}>4 bài học</span>
-                                        </div>
-                                        <h3 className="font-black text-xl mb-2" style={{ color: navy }}>Dọn dẹp rào cản tâm lý</h3>
-                                        <p className="text-sm leading-relaxed" style={{ color: '#4F4F4F' }}>
-                                            Quản lý tiền bạc là <strong>80% Tâm lý</strong> và chỉ 20% Toán học. Trước khi lập bảng Excel, hãy dọn sạch &ldquo;bãi rác tâm lý&rdquo; đang kìm hãm bạn.
-                                        </p>
-                                    </div>
-                                </div>
+            {/* ── CTA ── */}
+            <section className="py-24 bg-white">
+                <div className="max-w-3xl mx-auto px-6 text-center">
+                    <div
+                        className="rounded-3xl p-12"
+                        style={{
+                            background: `linear-gradient(135deg, ${DARK} 0%, ${NAVY} 100%)`,
+                            position: 'relative',
+                            overflow: 'hidden',
+                        }}
+                    >
+                        <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at top, rgba(56,198,139,0.15) 0%, transparent 60%)`, pointerEvents: 'none' }} />
+                        <div className="relative">
+                            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-6" style={{ background: 'rgba(56,198,139,0.15)', color: GREEN, border: '1px solid rgba(56,198,139,0.3)' }}>
+                                <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: GREEN }} />
+                                Miễn phí · Không cần thẻ tín dụng
                             </div>
-
-                            {/* 4 bài học accordion */}
-                            <div className="divide-y divide-orange-100">
-                                {[
-                                    {
-                                        num: '01',
-                                        emoji: '🧮',
-                                        title: 'Lời nói dối của chiếc máy tính',
-                                        hook: 'Tại sao bạn cộng trừ rất giỏi, nhưng tài khoản thì luôn bằng 0?',
-                                        core: 'Quản lý tiền bạc là 80% Tâm lý và chỉ có 20% là Toán học.',
-                                        quote: 'Tôi từng tin rằng nếu học thêm một khóa Excel, dùng thêm một app quản lý chi tiêu, mọi thứ sẽ thay đổi. Mãi đến khi tôi nhận ra mình đang né tránh một câu hỏi thực sự khó hơn nhiều: Tôi đang sợ điều gì?',
-                                        content: 'Công thức ai cũng biết: Thu nhập - Chi tiêu = Tiết kiệm (phép tính lớp 3). Giống như giảm cân là Ăn ít - Tập nhiều. Tại sao biết mà không làm được? Vì khi đứng trước áo Sale 50% hay lúc buồn chán, não bộ không dùng toán học — mà dùng cảm xúc. Đừng cố lập Excel phức tạp khi "bãi rác tâm lý" chưa được dọn dẹp.',
-                                        cta: '💭 Nhớ lại lần gần nhất bạn mua đồ đắt rồi hối hận — bạn tính sai giá, hay cảm xúc mách "chốt đơn đi"?',
-                                    },
-                                    {
-                                        num: '02',
-                                        emoji: '💊',
-                                        title: '"Thuốc giảm đau" mang tên Mua sắm',
-                                        hook: 'Bạn đang mua món đồ đó, hay đang mua "thuốc giảm đau" cho cảm xúc?',
-                                        core: 'Dùng tiền để xoa dịu cảm xúc sẽ tạo ra vòng lặp nghèo khó.',
-                                        quote: 'Lần đó tôi vừa bị sếp chỉ trích trước cả phòng. Trên đường về, tôi đặt một đơn hàng 800 nghìn đồng. Khi hàng về, tôi chẳng còn nhớ mình đã đặt gì. Đó là lúc tôi hiểu ra — tôi không mua quần áo. Tôi đang mua sự bình yên tạm thời.',
-                                        content: 'Vòng lặp ác tính: Ngày làm việc mệt, sếp mắng → Lướt Shopee chốt đơn để "chữa lành" → Tài khoản cạn → Cảm giác tội lỗi, stress → Lại tiêu để xoa dịu. Dopamine lúc chốt đơn chỉ kéo dài 5 phút — nhưng hóa đơn thẻ tín dụng ám ảnh cả tháng.',
-                                        cta: '🧊 Thử thách "Đóng băng 48h": Khi định mua thứ không thiết yếu, bỏ vào giỏ hàng và đợi 48 tiếng. Nếu cơn bốc đồng qua đi — đó chính xác là chi tiêu cảm xúc cần cắt.',
-                                    },
-                                    {
-                                        num: '03',
-                                        emoji: '🎭',
-                                        title: 'Bạn đang trả tiền cho "vở kịch" của ai?',
-                                        hook: 'Bạn đang trả góp cho cuộc đời bạn, hay trả góp cho "ước mơ của người khác"?',
-                                        core: 'Ngừng dùng tiền xương máu của mình để mua ánh nhìn của người khác.',
-                                        quote: 'Tôi có một người bạn luôn đăng ảnh du lịch đẹp. Chúng tôi không nói chuyện nhiều. Vậy mà mỗi khi thấy story của anh ấy, tôi lại thấy tài khoản của mình bị co rút lại. Tôi đang chi tiêu cho cuộc đời của tôi, hay đang diễn một vở kịch mà tôi không nhớ là mình đã đăng ký vai?',
-                                        content: 'Nhiều người vay trả góp đổi iPhone mới nhất, mua xe xịn, du lịch sang chảnh — chỉ để "bằng bạn bằng bè", dù ví đang "khóc thét". Đây là khoản đầu tư lỗ nặng nhất cuộc đời: dùng tiền mồ hôi để mua "sự công nhận" giả tạo từ những người thực sự không quan tâm đến bạn.',
-                                        cta: '🏝️ Trò chơi "Hòn đảo hoang": Hãy nhìn món đồ đắt nhất bạn định mua. Nếu ngày mai ra đảo hoang — không ai nhìn thấy để khen hay chê — bạn có còn muốn mua không? Nếu không, bạn đang mua vì người khác.',
-                                    },
-                                    {
-                                        num: '04',
-                                        emoji: '🏮',
-                                        title: '"Ngọn hải đăng" bảo vệ tài khoản',
-                                        hook: 'Bí quyết để việc "Tiết kiệm" trở nên kiêu hãnh thay vì khổ sở.',
-                                        core: 'Kỷ luật thép rồi cũng sẽ nản — chỉ có "Ước mơ chân thật" mới neo giữ được tiền của bạn.',
-                                        quote: 'Khi được hỏi “Bạn muốn gì?”, hầu hết mọi người trả lời bằng những thứ người khác muốn cho họ: nhà đẹp, xe xịn, địa vị. Ước mơ chân thật thường nhỏ hơn, yên tĩnh hơn — và chính xác vì vậy, nó mới đủ mạnh để thay đổi hành vi của bạn.',
-                                        content: 'Não bộ ghét việc "thắt lưng buộc bụng" vì coi đó là sự tước đoạt niềm vui. Kỷ luật bằng ý chí suông chắc chắn thất bại. Giải pháp: gắn tiền với GIÁ TRỊ CỐT LÕI của BẠN — sự an tâm khi cha mẹ ốm đau, quỹ "Tự do" để tự tin nghỉ việc nếu môi trường độc hại, nghỉ hưu sớm về quê trồng rau... Khi từ chối một cuộc nhậu hay món đồ hiệu — đó không còn là tủi thân. Đó là sự kiêu hãnh vì bạn đang bảo vệ ước mơ của chính mình.',
-                                        cta: '✍️ Nhắm mắt và viết ra 1 điều khiến bạn hạnh phúc nhất mà không cần chứng minh với ai. Đó chính là "Ước mơ chân thật" — cơ sở để thiết kế Bước 2.',
-                                    },
-                                ].map((lesson, i) => (
-                                    <details key={i} className="group">
-                                        <summary className="flex items-center gap-4 px-8 py-5 cursor-pointer list-none hover:bg-orange-50/50 transition-colors">
-                                            <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-lg font-black" style={{ background: '#fff6f3', color: '#ff7d50' }}>
-                                                {lesson.emoji}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-2 mb-0.5">
-                                                    <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: '#ff7d50' }}>Bài học {lesson.num}</span>
-                                                </div>
-                                                <p className="font-bold text-sm leading-tight" style={{ color: navy }}>{lesson.hook}</p>
-                                            </div>
-                                            <span className="shrink-0 text-lg transition-transform group-open:rotate-90" style={{ color: '#ff7d50' }}>›</span>
-                                        </summary>
-                                        <div className="px-8 pb-6 pt-2">
-                                            <div className="ml-13 pl-4 border-l-2" style={{ borderColor: '#ff7d5040' }}>
-                                                <div className="mb-4 px-3 py-2 rounded-lg inline-block" style={{ background: '#fff6f3' }}>
-                                                    <p className="text-xs font-bold" style={{ color: '#ff7d50' }}>💡 Thông điệp cốt lõi</p>
-                                                    <p className="text-sm font-semibold mt-0.5" style={{ color: navy }}>{lesson.core}</p>
-                                                </div>
-                                                <div className="mb-4 rounded-xl p-4" style={{ background: 'rgba(19,25,70,0.04)', borderLeft: `3px solid ${navy}` }}>
-                                                    <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: navy }}>📖 Trích sách “Bình An Tài Chính”</p>
-                                                    <p className="text-sm italic leading-relaxed" style={{ color: '#131946CC' }}>“{lesson.quote}”</p>
-                                                </div>
-                                                <p className="text-sm leading-relaxed mb-4" style={{ color: '#4F4F4F' }}>{lesson.content}</p>
-                                                <div className="rounded-xl p-4" style={{ background: mint }}>
-                                                    <p className="text-sm leading-relaxed" style={{ color: navy }}>{lesson.cta}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </details>
-                                ))}
+                            <h2 className="text-3xl font-black text-white mb-4">
+                                Bắt đầu với bức tranh tài chính của bạn
+                            </h2>
+                            <p className="mb-8 text-lg" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                                Mất 10 phút để có toàn cảnh. Miễn phí mãi mãi.
+                            </p>
+                            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                                <Link
+                                    href="/login"
+                                    className="inline-flex items-center justify-center gap-2 font-black px-10 py-4 rounded-xl transition-all duration-200 hover:opacity-90 active:scale-95 text-white"
+                                    style={{ background: GREEN, boxShadow: `0 0 30px rgba(56,198,139,0.4)` }}
+                                >
+                                    Tạo tài khoản miễn phí →
+                                </Link>
                             </div>
-                        </div>
-
-                        {/* BƯỚC 2 */}
-                        <div className="bg-white rounded-3xl shadow-sm border-l-4 overflow-hidden" style={{ borderLeftColor: green }}>
-                            {/* Step header */}
-                            <div className="p-8 border-b" style={{ borderColor: 'rgba(56,198,139,0.15)' }}>
-                                <div className="flex items-start gap-5">
-                                    <div className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{ background: mint, border: `2px solid ${green}` }}>🏗️</div>
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-3 mb-2 flex-wrap">
-                                            <span className="text-xs font-black uppercase tracking-widest" style={{ color: green }}>Bước 2</span>
-                                            <span className="text-xs" style={{ color: '#4F4F4F' }}>· Vùng Đất Kiểm Soát</span>
-                                            <span className="ml-auto text-xs px-2 py-0.5 rounded-full font-bold" style={{ background: mint, color: green }}>5 bài học</span>
-                                        </div>
-                                        <h3 className="font-black text-xl mb-2" style={{ color: navy }}>Xây dựng Cỗ máy tài chính</h3>
-                                        <p className="text-sm leading-relaxed" style={{ color: '#4F4F4F' }}>
-                                            Thu nhập là nhiên liệu, nhưng <strong>5 trụ cột này</strong> mới là cỗ máy — FinPeace giúp bạn theo dõi và tối ưu từng trụ cột một.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* 5 bài học accordion */}
-                            <div className="divide-y" style={{ borderColor: 'rgba(56,198,139,0.15)' }}>
-                                {[
-                                    {
-                                        num: '01',
-                                        emoji: '🌾',
-                                        title: 'CÁNH ĐỒNG — Thu nhập',
-                                        hook: 'Kỹ năng mới là cỗ máy in tiền thực sự — không phải tờ lương bạn nhận mỗi tháng.',
-                                        core: 'Thu nhập đến từ Vốn con người (kỹ năng, thời gian) và Vốn tài chính (tài sản sinh lời). Khi bạn già đi, chỉ Vốn tài chính mới không cạn kiệt.',
-                                        quote: 'Thu nhập là nhiên liệu khởi đầu để cỗ máy chạy, nhưng kỹ năng mới là cỗ máy in tiền thực sự.',
-                                        content: 'Khi còn trẻ, bạn dùng Vốn con người — đi làm đổi thời gian lấy tiền. Nhưng sức người và thời gian là hữu hạn ("ráo mồ hôi là hết tiền"). Nếu chỉ dựa vào nguồn này, cánh đồng của bạn sẽ cạn kiệt khi bạn già đi hoặc ốm đau. Thu nhập luôn tương xứng với giá trị bạn tạo ra — phát triển bản thân và nâng cao kỹ năng là mấu chốt để tăng thu nhập chủ động.',
-                                        cta: '🌱 Giai đoạn 1: Đầu tư vào kỹ năng để tăng giá trị sức lao động. Giai đoạn 2: Dùng một phần thu nhập mua tài sản sinh lời để "tiền làm việc cùng bạn" — đây chính là cách bạn scale up cánh đồng mà không tốn thêm sức lực.',
-                                    },
-                                    {
-                                        num: '02',
-                                        emoji: '🌊',
-                                        title: 'DÒNG SÔNG — Chi tiêu & Tiết kiệm',
-                                        hook: 'Người ta không giàu lên nhờ số tiền kiếm được — mà nhờ số tiền giữ lại được.',
-                                        core: 'Tiết kiệm không phải "sự hy sinh" hay "kìm nén", mà là hành động yêu thương bản thân trong tương lai.',
-                                        quote: 'Người ta không giàu lên nhờ số tiền kiếm được, mà giàu lên nhờ số tiền giữ lại được.',
-                                        content: 'Tiền bạc giống một dòng sông: thu nhập là nước chảy vào, chi tiêu là nước tràn ra, tiết kiệm là hồ chứa bạn xây để giữ nước phòng hạn hán. Giáo sư Burton Malkiel (tác giả "Bước đi ngẫu nhiên trên Phố Wall") nhấn mạnh: yếu tố quan trọng nhất của tăng trưởng tài sản chính là bạn tiết kiệm được bao nhiêu. Dù đầu tư giỏi kiếm 10–15%/năm nhưng không có tiền tiết kiệm định kỳ thì cũng vô nghĩa.',
-                                        cta: '💡 Ngay khi nhận lương, hãy áp dụng PYF (Pay Yourself First — Trả cho mình trước): tự động trích tối thiểu 20% vào tài khoản tiết kiệm/đầu tư trước, sau đó mới phân bổ chi tiêu cho phần còn lại.',
-                                    },
-                                    {
-                                        num: '03',
-                                        emoji: '🌿',
-                                        title: 'ĐẦM LẦY — Nợ nần',
-                                        hook: 'Nợ là xiềng xích nếu dùng sai — nhưng là đòn bẩy nếu dùng đúng.',
-                                        core: 'Nợ xấu mua tiêu sản (điện thoại, xe khoe mẽ) kéo bạn xuống vũng lầy. Nợ tốt mua tài sản sinh lời (nhà cho thuê, học vấn) là con đường tắt đến giàu có.',
-                                        quote: 'Nợ là xiềng xích nếu dùng sai, nhưng là đòn bẩy nếu dùng đúng.',
-                                        content: 'Warren Buffett từng nói: "Nợ tốt là nợ giúp bạn giàu lên, nợ xấu là nợ làm bạn nghèo đi." Nợ xấu (Đầm lầy): vay mua tiêu sản với lãi suất cao — giá trị tài sản giảm dần trong khi nợ lãi chồng chất. Nợ tốt (Đòn bẩy): vay để đầu tư vào tài sản sinh lời — lợi nhuận sinh ra vượt xa chi phí lãi vay.',
-                                        cta: '⚠️ Tuyệt đối tránh xa nợ xấu. Khi cân nhắc nợ tốt, nguyên tắc sống còn: khoản trả nợ hàng tháng KHÔNG BAO GIỜ vượt quá 30–40% thu nhập để tránh căng thẳng dòng tiền.',
-                                    },
-                                    {
-                                        num: '04',
-                                        emoji: '🪴',
-                                        title: 'KHU VƯỜN — Đầu tư',
-                                        hook: 'Đầu tư không phải sòng bạc để lướt sóng — mà là khu vườn cần sự kiên nhẫn.',
-                                        core: 'Thách thức lớn nhất không phải đánh bại thị trường — mà là ngăn bản thân trở thành kẻ thù của chính mình (không mua cao vì hưng phấn, không bán tháo vì hoảng loạn).',
-                                        quote: 'Đầu tư không phải là sòng bạc để lướt sóng, mà là một khu vườn cần sự kiên nhẫn.',
-                                        content: 'Tiền để trong két sắt hay ngân hàng sẽ bị lạm phát gặm nhấm — đầu tư là việc gieo hạt giống tiền bạc để nó nảy mầm, sinh sôi qua thời gian. Benjamin Graham dạy rằng cố gắng dự đoán đỉnh/đáy hay lướt sóng ngắn hạn là con đường nhanh nhất dẫn đến thua lỗ.',
-                                        cta: '📅 Trở thành người làm vườn kiên nhẫn bằng DCA (Bình quân chi phí đô-la): trích một số tiền cố định mỗi tháng mua tài sản tự động, bất chấp thị trường lên hay xuống. Kỷ luật đều đặn 10–20 năm kết hợp lãi kép sẽ biến hạt giống nhỏ thành rừng tài sản khổng lồ.',
-                                    },
-                                    {
-                                        num: '05',
-                                        emoji: '🏰',
-                                        title: 'HẦM TRÚ ẨN — Rủi ro',
-                                        hook: 'Bạn không thể ngăn cơn bão ập đến — nhưng bạn có thể xây một hầm trú ẩn vững chắc.',
-                                        core: 'Đầu tư mà không có hầm trú ẩn thì giống như xây lâu đài trên cát — một cú sốc tài chính sẽ buộc bạn bán tháo tài sản ở đáy.',
-                                        quote: 'Bạn không thể ngăn cơn bão ập đến, nhưng bạn có thể xây một hầm trú ẩn vững chắc.',
-                                        content: 'Rủi ro (mất việc, ốm đau, thị trường sụp đổ) là điều tất yếu của cuộc sống. Giáo sư Burton Malkiel cảnh báo: những nhu cầu tài chính ngoài dự kiến luôn xảy ra, và điều tồi tệ nhất ập đến khi bạn phải chịu chi phí y tế cao hoặc thất nghiệp. Không có lớp bảo vệ, bạn sẽ bán tháo tài sản ở đáy hoặc rơi vào đầm lầy nợ nần.',
-                                        cta: '🛡️ Xây hầm trú ẩn 2 lớp: (1) Quỹ khẩn cấp: tiết kiệm 6–12 tháng chi phí sinh hoạt ở nơi an toàn, thanh khoản cao. (2) Bảo hiểm: bảo hiểm y tế/sức khỏe và bảo hiểm nhân thọ (nếu là trụ cột gia đình) — đảm bảo chi phí không vượt quá 5–10% thu nhập.',
-                                    },
-                                ].map((lesson, i) => (
-                                    <details key={i} className="group">
-                                        <summary className="flex items-center gap-4 px-8 py-5 cursor-pointer list-none transition-colors hover:bg-emerald-50">
-                                            <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-lg font-black" style={{ background: mint, color: green }}>
-                                                {lesson.emoji}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-2 mb-0.5">
-                                                    <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: green }}>Bài học {lesson.num}</span>
-                                                </div>
-                                                <p className="font-bold text-sm leading-tight" style={{ color: navy }}>{lesson.hook}</p>
-                                            </div>
-                                            <span className="shrink-0 text-lg transition-transform group-open:rotate-90" style={{ color: green }}>›</span>
-                                        </summary>
-                                        <div className="px-8 pb-6 pt-2">
-                                            <div className="ml-13 pl-4 border-l-2" style={{ borderColor: 'rgba(56,198,139,0.25)' }}>
-                                                <div className="mb-4 px-3 py-2 rounded-lg inline-block" style={{ background: mint }}>
-                                                    <p className="text-xs font-bold" style={{ color: green }}>💡 Thông điệp cốt lõi</p>
-                                                    <p className="text-sm font-semibold mt-0.5" style={{ color: navy }}>{lesson.core}</p>
-                                                </div>
-                                                <div className="mb-4 rounded-xl p-4" style={{ background: 'rgba(19,25,70,0.04)', borderLeft: `3px solid ${navy}` }}>
-                                                    <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: navy }}>📖 Trích sách "Bình An Tài Chính"</p>
-                                                    <p className="text-sm italic leading-relaxed" style={{ color: '#131946CC' }}>"{lesson.quote}"</p>
-                                                </div>
-                                                <p className="text-sm leading-relaxed mb-4" style={{ color: '#4F4F4F' }}>{lesson.content}</p>
-                                                <div className="rounded-xl p-4" style={{ background: mint }}>
-                                                    <p className="text-sm leading-relaxed" style={{ color: navy }}>{lesson.cta}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </details>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* BƯỚC 3 */}
-                        <div className="bg-white rounded-3xl shadow-sm border-l-4 overflow-hidden" style={{ borderLeftColor: '#3B82F6' }}>
-                            {/* Step header */}
-                            <div className="p-8 border-b" style={{ borderColor: 'rgba(59,130,246,0.15)' }}>
-                                <div className="flex items-start gap-5">
-                                    <div className="shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{ background: '#EFF6FF', border: '2px solid #3B82F6' }}>🕊️</div>
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-3 mb-2 flex-wrap">
-                                            <span className="text-xs font-black uppercase tracking-widest text-blue-500">Bước 3</span>
-                                            <span className="text-xs" style={{ color: '#4F4F4F' }}>· Vùng Đất Bình An</span>
-                                            <span className="ml-auto text-xs px-2 py-0.5 rounded-full font-bold" style={{ background: '#EFF6FF', color: '#3B82F6' }}>3 bài học</span>
-                                        </div>
-                                        <h3 className="font-black text-xl mb-2" style={{ color: navy }}>Sống tự do và hạnh phúc</h3>
-                                        <p className="text-sm leading-relaxed" style={{ color: '#4F4F4F' }}>
-                                            Khi tiền không còn là nguồn lo âu — bạn có không gian để <strong>yêu thương tốt hơn</strong>, dạy con khôn ngoan hơn và báo hiếu từ trái tim.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* 3 bài học accordion */}
-                            <div className="divide-y" style={{ borderColor: 'rgba(59,130,246,0.12)' }}>
-                                {[
-                                    {
-                                        num: '01',
-                                        emoji: '💑',
-                                        title: 'Vợ chồng minh bạch',
-                                        hook: 'Tiền bạc là cầu nối, không phải bức tường — nhưng chỉ khi hai người dám nói thật với nhau.',
-                                        core: 'Sắp xếp tài chính minh bạch, chân thành không làm mất đi sự lãng mạn — đó chính là cách biến tình yêu thành hành động thực tế.',
-                                        quote: 'Hôn nhân là một sự hợp tác, và sự hợp tác này khó có thể đi đến thành công nếu không lên kế hoạch như một đội.',
-                                        content: 'Ở Việt Nam, ly hôn do yếu tố kinh tế chiếm đến 13%, chỉ xếp sau mâu thuẫn lối sống và ngoại tình. Nhiều cặp vợ chồng coi tiền bạc là chủ đề "cấm kỵ", ngại nói ra vì sợ bị phán xét là thực dụng. Việc giấu giếm chi tiêu cá nhân hay một khoản nợ dần tạo ra "bức tường vô hình" ngăn cách hai người dưới cùng một mái nhà.',
-                                        cta: '💬 Giao tiếp "Tâm-Trí-Thành": Tạo không gian an toàn để nói chuyện về tiền — không phán xét, mở lòng thấu hiểu thói quen chi tiêu của nhau. Cùng thiết lập mục tiêu chung (mua nhà, quỹ học vấn) và đóng góp theo năng lực thu nhập để không ai cảm thấy bị thiệt thòi.',
-                                    },
-                                    {
-                                        num: '02',
-                                        emoji: '👨‍👧',
-                                        title: 'Dạy con về tiền',
-                                        hook: 'Hãy dạy con về tiền bạc trước khi cuộc sống làm điều đó một cách khắc nghiệt.',
-                                        core: 'Dạy con về tiền không phải là gieo áp lực, mà là tiêm một "liều vắc-xin" để con tự lập và vững vàng trong tương lai.',
-                                        quote: 'Hãy dạy con bạn về tiền bạc trước khi cuộc sống làm điều đó một cách khắc nghiệt.',
-                                        content: 'Nhiều cha mẹ Việt Nam có tư duy "bao bọc" — giấu con những lúc gia đình eo hẹp hoặc đáp ứng mọi mong muốn vô điều kiện. Hậu quả: trẻ lớn lên với tư duy tiền luôn sẵn có, không biết trân trọng sức lao động. Nghiên cứu chỉ ra trẻ bắt đầu hình thành thói quen tài chính từ năm 7 tuổi — đây chính là cửa sổ vàng.',
-                                        cta: '🏺 Quy tắc 3 lọ từ tiền tiêu vặt: Dạy con chia tiền thành Tiết kiệm (mục tiêu lớn) + Chi tiêu (nhu cầu cá nhân) + Cho đi (từ thiện). Khi con muốn mua đồ đắt tiền, khuyến khích con làm việc nhà để tự "kiếm" tiền. Nếu con tiêu hết quá sớm, đừng trách — hãy hỏi: "Con thấy sao? Lần sau con sẽ làm gì khác đi?"',
-                                    },
-                                    {
-                                        num: '03',
-                                        emoji: '🙏',
-                                        title: 'Báo hiếu đúng cách',
-                                        hook: 'Cách báo hiếu ý nghĩa nhất là sống sao cho cha mẹ tự hào — không phải oằn mình gửi tiền về.',
-                                        core: 'Một người con độc lập, hạnh phúc, không nợ nần mang lại sự an tâm cho cha mẹ lớn hơn rất nhiều so với việc con phải kiệt quệ tài chính.',
-                                        quote: 'Cách báo hiếu ý nghĩa nhất là sống sao cho cha mẹ tự hào. Sự phát triển và hiện diện của bạn còn quý hơn những món quà đắt tiền.',
-                                        content: 'Trong văn hóa Việt Nam, báo hiếu thường gắn liền với vật chất. Rất nhiều người trẻ mang áp lực nặng nề phải cắt 20% thu nhập gửi về cho bố mẹ dù bản thân đang chật vật — dẫn đến cảm giác mất tự do và kiệt quệ tài chính. Báo hiếu là hành trình của tình yêu và sự thấu hiểu, không phải gánh nặng ép buộc.',
-                                        cta: '💰 Đưa "quỹ báo hiếu" vào ngân sách (5–10% thu nhập): trích ra một tỷ lệ vừa sức để sẵn sàng khi cha mẹ cần, mà không làm ảnh hưởng cỗ máy tài chính gia đình nhỏ. Và hãy hỏi cha mẹ họ thực sự mong muốn gì — đôi khi chỉ là thời gian bạn ở bên cạnh.',
-                                    },
-                                ].map((lesson, i) => (
-                                    <details key={i} className="group">
-                                        <summary className="flex items-center gap-4 px-8 py-5 cursor-pointer list-none transition-colors hover:bg-blue-50">
-                                            <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-lg font-black" style={{ background: '#EFF6FF', color: '#3B82F6' }}>
-                                                {lesson.emoji}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center gap-2 mb-0.5">
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-blue-500">Bài học {lesson.num}</span>
-                                                </div>
-                                                <p className="font-bold text-sm leading-tight" style={{ color: navy }}>{lesson.hook}</p>
-                                            </div>
-                                            <span className="shrink-0 text-lg transition-transform group-open:rotate-90 text-blue-400">›</span>
-                                        </summary>
-                                        <div className="px-8 pb-6 pt-2">
-                                            <div className="ml-13 pl-4 border-l-2 border-blue-100">
-                                                <div className="mb-4 px-3 py-2 rounded-lg inline-block" style={{ background: '#EFF6FF' }}>
-                                                    <p className="text-xs font-bold text-blue-500">💡 Thông điệp cốt lõi</p>
-                                                    <p className="text-sm font-semibold mt-0.5" style={{ color: navy }}>{lesson.core}</p>
-                                                </div>
-                                                <div className="mb-4 rounded-xl p-4" style={{ background: 'rgba(19,25,70,0.04)', borderLeft: `3px solid ${navy}` }}>
-                                                    <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: navy }}>📖 Trích sách "Bình An Tài Chính"</p>
-                                                    <p className="text-sm italic leading-relaxed" style={{ color: '#131946CC' }}>"{lesson.quote}"</p>
-                                                </div>
-                                                <p className="text-sm leading-relaxed mb-4" style={{ color: '#4F4F4F' }}>{lesson.content}</p>
-                                                <div className="rounded-xl p-4" style={{ background: '#EFF6FF' }}>
-                                                    <p className="text-sm leading-relaxed" style={{ color: navy }}>{lesson.cta}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </details>
-                                ))}
-                            </div>
+                            <p className="mt-5 text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                                Đã có tài khoản?{' '}
+                                <Link href="/login" className="underline transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.5)' }}>Đăng nhập tại đây</Link>
+                            </p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* ── QUOTE / PHILOSOPHY ── */}
-            <section className="py-20 bg-white">
-                <div className="max-w-3xl mx-auto px-6 text-center">
-                    <span className="text-5xl mb-6 block">🌿</span>
-                    <blockquote className="text-2xl lg:text-3xl font-black leading-tight mb-6" style={{ color: navy }}>
-                        &ldquo;Bình an tài chính không có nghĩa là bạn giàu có.
-                        Nó có nghĩa là bạn biết mình đang ở đâu,
-                        đang đi về đâu, và tự tin vào con đường đó.&rdquo;
-                    </blockquote>
-                    <p className="text-sm" style={{ color: '#4F4F4F' }}>— Triết lý của FinPeace</p>
-                </div>
-            </section>
-
-            {/* ── CTA ── */}
-            <section className="py-20" style={{ background: green }}>
-                <div className="max-w-3xl mx-auto px-6 text-center">
-                    <h2 className="text-3xl font-black text-white mb-4">
-                        Bắt đầu với bức tranh tài chính của bạn
-                    </h2>
-                    <p className="text-white/90 mb-8 text-lg">
-                        Miễn phí. Không cần thẻ tín dụng. Mất 10 phút để có toàn cảnh.
-                    </p>
-                    <Link
-                        href="/login"
-                        className="inline-flex items-center gap-2 font-black px-10 py-4 rounded-lg transition-all hover:opacity-90 text-lg shadow-xl"
-                        style={{ background: '#131946', color: 'white' }}
-                    >
-                        Tạo tài khoản miễn phí →
-                    </Link>
-                    <p className="text-white/70 text-xs mt-4">
-                        Đã có tài khoản?{' '}
-                        <Link href="/login" className="underline hover:text-white transition-colors">Đăng nhập tại đây</Link>
-                    </p>
-                </div>
-            </section>
-
             {/* ── FOOTER ── */}
-            <footer className="py-8" style={{ background: navy }}>
-                <div className="max-w-5xl mx-auto px-6 flex items-center justify-between text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                    <Image src="/logo.png" alt="FinPeace" width={100} height={18} />
-                    <span>© 2025 FinPeace · Bình An Tài Chính</span>
-                    <Link href="/knowledgebase" className="hover:text-white transition-colors">Thư Viện Kiến Thức →</Link>
+            <footer style={{ background: DARK, borderTop: '1px solid rgba(255,255,255,0.06)' }} className="py-10">
+                <div className="max-w-6xl mx-auto px-6">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <Image src="/logo.png" alt="FinPeace" width={110} height={19} className="brightness-0 invert opacity-70" />
+                        <div className="flex items-center gap-6 text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                            <Link href="/knowledgebase" className="hover:text-white transition-colors duration-200 cursor-pointer" style={{ color: 'rgba(255,255,255,0.35)' }}>Thư Viện Kiến Thức</Link>
+                            <Link href="/login" className="hover:text-white transition-colors duration-200 cursor-pointer" style={{ color: 'rgba(255,255,255,0.35)' }}>Đăng nhập</Link>
+                            <span>© 2025 FinPeace · Bình An Tài Chính</span>
+                        </div>
+                    </div>
                 </div>
             </footer>
         </div>
