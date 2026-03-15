@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { ArrowLeft, Target } from 'lucide-react'
+import { ArrowLeft, Target, TrendingUp, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import TradingPlanGate from '@/components/TradingPlanGate'
@@ -23,37 +23,46 @@ export default async function TradingPlanPage({ params }: { params: Promise<{ ti
 
     if (!plan) notFound();
 
+    const isActive = plan.status === 'active';
+
     return (
-        <div className="min-h-screen bg-slate-50 py-10 px-4">
+        <div className="min-h-screen py-10 px-4" style={{ background: '#020617', fontFamily: "'Be Vietnam Pro', system-ui, sans-serif" }}>
             <div className="max-w-3xl mx-auto space-y-6">
 
-                {/* Header */}
-                <div className="flex items-center gap-4">
-                    <Link href="/advisor/macro-insights" className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-200 text-slate-500 hover:text-emerald-600 hover:border-emerald-200 transition-colors">
+                {/* Back + header */}
+                <div className="flex items-start gap-4">
+                    <Link href="/advisor/macro-insights"
+                        className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 hover:border-emerald-500/40"
+                        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' }}
+                    >
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-3xl font-bold text-slate-800">{plan.ticker}</h1>
-                            <span className="bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full">
-                                {plan.status === 'active' ? 'Đang kích hoạt' : 'Lưu trữ'}
+                        <div className="flex items-center gap-3 flex-wrap mb-1">
+                            <h1 className="text-3xl font-black text-white" style={{ fontFamily: 'monospace' }}>{plan.ticker}</h1>
+                            <span className="text-xs font-bold px-3 py-1 rounded-full" style={{
+                                background: isActive ? 'rgba(16,185,129,0.12)' : 'rgba(255,255,255,0.06)',
+                                color: isActive ? '#10B981' : 'rgba(255,255,255,0.4)',
+                                border: isActive ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(255,255,255,0.08)'
+                            }}>
+                                {isActive ? '● Đang kích hoạt' : 'Lưu trữ'}
                             </span>
                         </div>
-                        <p className="text-slate-500 font-medium">{plan.company_name} · {plan.sector}</p>
+                        <p className="font-medium" style={{ color: 'rgba(255,255,255,0.45)' }}>{plan.company_name} · {plan.sector}</p>
                     </div>
                 </div>
 
                 {/* Main Content Card */}
-                <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
-                        <Target className="w-48 h-48" />
+                <div className="rounded-3xl p-6 md:p-8 relative overflow-hidden" style={{ background: '#0F172A', border: '1px solid rgba(255,255,255,0.07)' }}>
+                    <div className="absolute top-0 right-0 p-8 opacity-[0.025] pointer-events-none">
+                        <Target className="w-48 h-48 text-emerald-400" />
                     </div>
                     <div className="relative z-10">
                         <TradingPlanGate plan={plan} lang="vi" />
                     </div>
                 </div>
 
-                <p className="text-center text-xs text-slate-400">
+                <p className="text-center text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>
                     Kế hoạch được lập bởi đội ngũ FinPeace Advisor. Vui lòng tuân thủ kỷ luật quản lý rủi ro khi vào lệnh.
                 </p>
             </div>
