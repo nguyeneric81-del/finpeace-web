@@ -183,9 +183,9 @@ export function WealthPlanningClient({ user, profile }: { user: any; profile: an
                                 <CalendarCheck className="w-3.5 h-3.5" />
                                 Check-in
                             </button>
-                            <a href="/dashboard/wealth-planning?edit=1" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                            <Link href="/dashboard/wealth-planning/profile" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Cập nhật hồ sơ CFP">
                                 <Settings className="w-4 h-4 text-slate-400" />
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>

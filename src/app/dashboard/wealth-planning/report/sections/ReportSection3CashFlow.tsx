@@ -1,6 +1,7 @@
 'use client'
 
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
+import { MissingDataBanner } from '../WealthReportClient'
 
 const fmtVND = (v: number) => {
     if (!v) return '0'
@@ -20,6 +21,7 @@ const Row = ({ label, value, highlight = false, sub }: any) => (
 )
 
 export function ReportSection3CashFlow({ cashflow, snapshots }: any) {
+    const missingBreakdown = cashflow && !cashflow.fixed_expense && !cashflow.variable_expense
     if (!cashflow) return (
         <div className="rounded-2xl bg-white/5 border border-white/10 p-8 text-center text-white/40">Chưa có dữ liệu dòng tiền.</div>
     )
@@ -40,6 +42,9 @@ export function ReportSection3CashFlow({ cashflow, snapshots }: any) {
 
     return (
         <div className="space-y-6">
+            {missingBreakdown && (
+                <MissingDataBanner fields={['Phân tách chi tiêu (Cố định/Biến đổi/Tùy ý)', 'Thu nhập thụ động', 'Trả nợ tháng']} tab="cashflow" />
+            )}
             <div className="flex items-center gap-3 mb-2">
                 <div className="w-1 h-8 bg-gradient-to-b from-emerald-400 to-teal-400 rounded-full" />
                 <div>

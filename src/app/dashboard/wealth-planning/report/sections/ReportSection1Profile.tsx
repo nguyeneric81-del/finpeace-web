@@ -1,6 +1,7 @@
 'use client'
 
 import { User, Briefcase, Calendar, Users } from 'lucide-react'
+import { MissingDataBanner } from '../WealthReportClient'
 
 const EMPLOYMENT_LABELS: Record<string, string> = {
     salaried: 'Nhân viên / Công chức',
@@ -34,11 +35,19 @@ function InfoCard({ label, value, icon: Icon, accent = 'emerald' }: any) {
 export function ReportSection1Profile({ profile, scenario }: any) {
     const dob = profile?.date_of_birth
     const age = dob ? new Date().getFullYear() - new Date(dob).getFullYear() : null
+
+    const missingFields: string[] = []
+    if (!dob) missingFields.push('Ngày sinh')
+    if (!profile?.occupation) missingFields.push('Nghề nghiệp')
+    if (!profile?.risk_profile) missingFields.push('Khẩu vị rủi ro')
     const retirementAge = 65
     const yearsLeft = age ? retirementAge - age : null
 
     return (
         <div className="space-y-6">
+            {missingFields.length > 0 && (
+                <MissingDataBanner fields={missingFields} tab="profile" />
+            )}
             <div className="flex items-center gap-3 mb-2">
                 <div className="w-1 h-8 bg-gradient-to-b from-sky-400 to-violet-400 rounded-full" />
                 <div>

@@ -3,10 +3,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Printer, FileText, Shield, TrendingUp, Target, BarChart3, Compass, ClipboardList, User } from 'lucide-react'
+import { ArrowLeft, Printer, FileText, Shield, TrendingUp, Target, BarChart3, Compass, ClipboardList, User, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 
-// ── Section components (all defined below)
+// ── Section components
 import { ReportSection1Profile } from './sections/ReportSection1Profile'
 import { ReportSection2NetWorth } from './sections/ReportSection2NetWorth'
 import { ReportSection3CashFlow } from './sections/ReportSection3CashFlow'
@@ -16,6 +16,25 @@ import { ReportSection6Risk } from './sections/ReportSection6Risk'
 import { ReportSection7IPS } from './sections/ReportSection7IPS'
 import { ReportSection8ActionPlan } from './sections/ReportSection8ActionPlan'
 import { ReportCoverPage } from './sections/ReportCoverPage'
+
+/** Inline banner shown in a report section when required data is missing */
+export function MissingDataBanner({ fields, tab }: { fields: string[], tab: 'profile' | 'cashflow' | 'insurance' }) {
+    const tabLabels: Record<string, string> = { profile: 'Cá Nhân', cashflow: 'Dòng Tiền', insurance: 'Bảo Hiểm & Rủi Ro' }
+    return (
+        <div className="flex items-center justify-between gap-4 bg-amber-500/10 border border-amber-500/25 rounded-2xl px-5 py-4 mb-4">
+            <div className="flex items-center gap-3">
+                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                <p className="text-sm text-amber-200">
+                    Thiếu: <span className="font-semibold">{fields.join(', ')}</span>
+                </p>
+            </div>
+            <Link href={`/dashboard/wealth-planning/profile?tab=${tab}`}
+                className="shrink-0 text-xs font-bold text-amber-300 hover:text-amber-200 border border-amber-500/30 px-3 py-1.5 rounded-xl transition-colors whitespace-nowrap">
+                Cập nhật → Tab "{tabLabels[tab]}"
+            </Link>
+        </div>
+    )
+}
 
 const SECTIONS = [
     { id: 'cover', label: 'Bìa', icon: FileText },

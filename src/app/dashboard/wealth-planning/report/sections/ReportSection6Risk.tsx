@@ -1,6 +1,7 @@
 'use client'
 
 import { ShieldCheck, ShieldAlert, AlertCircle } from 'lucide-react'
+import { MissingDataBanner } from '../WealthReportClient'
 
 const fmtVND = (v: number) => {
     if (!v) return '0'
@@ -73,6 +74,12 @@ export function ReportSection6Risk({ insurance, profile, cashflow }: any) {
 
     return (
         <div className="space-y-6">
+            {(!insurance || insurance.length === 0) && (
+                <MissingDataBanner fields={['Danh sách bảo hiểm (để đánh giá khoảng trống rủi ro)']} tab="insurance" />
+            )}
+            {!profile?.risk_profile && (
+                <MissingDataBanner fields={['Khẩu vị rủi ro (chưa làm Risk Quiz 5 câu)']} tab="insurance" />
+            )}
             <div className="flex items-center gap-3 mb-2">
                 <div className="w-1 h-8 bg-gradient-to-b from-rose-400 to-orange-400 rounded-full" />
                 <div>
