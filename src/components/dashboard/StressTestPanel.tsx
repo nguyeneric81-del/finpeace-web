@@ -1,31 +1,16 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Shield, TrendingDown, Briefcase, HeartPulse } from "lucide-react"
 
 interface StressTestPanelProps {
-    // Tài sản thanh khoản (Quỹ Khẩn Cấp + Tích lũy thấp rủi ro)
     liquidAssets: number
-    // Tài sản đầu tư (Cổ phiếu, Quỹ...)
     investmentAssets: number
-    // Chi phí tháng
     monthlyExpense: number
-    // Dư nợ tổng
     totalDebt: number
-    // Lãi suất trung bình trên nợ (VD: 0.08 = 8%)
     avgDebtRate: number
 }
 
 type TestStatus = 'pass' | 'warning' | 'fail'
-
-interface StressResult {
-    icon: React.ReactNode
-    title: string
-    scenario: string
-    result: string
-    detail: string
-    status: TestStatus
-}
 
 export function StressTestPanel({
     liquidAssets = 0,
@@ -40,137 +25,121 @@ export function StressTestPanel({
         return new Intl.NumberFormat('vi-VN').format(val)
     }
 
-    // ── Kịch bản 1: Mất việc làm ──
     const jobLossMonths = monthlyExpense > 0 ? liquidAssets / monthlyExpense : 0
     const jobLossStatus: TestStatus = jobLossMonths >= 6 ? 'pass' : jobLossMonths >= 3 ? 'warning' : 'fail'
 
-    // ── Kịch bản 2: Lãi suất tăng thêm 3% ──
-    const extraAnnualInterest = totalDebt * 0.03
-    const extraMonthlyInterest = extraAnnualInterest / 12
+    const extraMonthlyInterest = (totalDebt * 0.03) / 12
     const interestStatus: TestStatus = extraMonthlyInterest === 0 ? 'pass' : extraMonthlyInterest < monthlyExpense * 0.1 ? 'pass' : extraMonthlyInterest < monthlyExpense * 0.2 ? 'warning' : 'fail'
 
-    // ── Kịch bản 3: Thị trường giảm 30% ──
     const marketLoss = investmentAssets * 0.30
     const marketLossStatus: TestStatus = liquidAssets >= marketLoss * 0.5 ? 'pass' : marketLoss < investmentAssets * 0.15 ? 'warning' : 'fail'
 
-    // ── Kịch bản 4: Chi phí y tế đột xuất 200 triệu ──
     const medicalCost = 200_000_000
     const medicalStatus: TestStatus = liquidAssets >= medicalCost ? 'pass' : liquidAssets >= medicalCost * 0.5 ? 'warning' : 'fail'
 
-    const results: StressResult[] = [
+    const results = [
         {
-            icon: <Briefcase className="w-5 h-5" />,
+            icon: Briefcase,
             title: "Mất Nguồn Thu Nhập",
-            scenario: "Đột ngột mất việc làm, không có thu nhập",
+            scenario: "Đột ngột mất việc, không có thu nhập",
             result: `Cầm cự được ${jobLossMonths.toFixed(1)} tháng`,
             detail: jobLossStatus === 'pass'
-                ? `Quỹ thanh khoản ${fmtVND(liquidAssets)}₫ đủ vượt qua 6 tháng không lương`
-                : `Cần tích thêm vào Quỹ Khẩn Cấp, mục tiêu ${fmtVND(monthlyExpense * 6)}₫`,
-            status: jobLossStatus
+                ? `Quỹ thanh khoản ${fmtVND(liquidAssets)} đủ vượt 6 tháng không lương`
+                : `Cần tích thêm, mục tiêu ${fmtVND(monthlyExpense * 6)}`,
+            status: jobLossStatus,
         },
         {
-            icon: <TrendingDown className="w-5 h-5" />,
+            icon: TrendingDown,
             title: "Lãi Suất Tăng Vọt +3%",
-            scenario: "Ngân hàng tăng lãi suất thêm 3%/năm",
-            result: totalDebt === 0
-                ? "Không bị ảnh hưởng (không có nợ)"
-                : `Tăng thêm ${fmtVND(extraMonthlyInterest)}₫/tháng`,
-            detail: totalDebt === 0
-                ? "Bạn không có nợ, kịch bản này hoàn toàn an toàn"
-                : interestStatus === 'pass'
-                    ? `Mức tăng chỉ chiếm ${((extraMonthlyInterest / monthlyExpense) * 100).toFixed(1)}% chi phí tháng, chấp nhận được`
-                    : `Mức tăng này ảnh hưởng đáng kể đến dòng tiền tháng. Cân nhắc trả bớt nợ`,
-            status: interestStatus
+            scenario: "Ngân hàng tăng lãi thêm 3%/năm",
+            result: totalDebt === 0 ? "Không bị ảnh hưởng" : `Tăng thêm ${fmtVND(extraMonthlyInterest)}/tháng`,
+            detail: totalDebt === 0 ? "Bạn không có nợ — an toàn tuyệt đối" : interestStatus === 'pass' ? `Mức tăng ${((extraMonthlyInterest / monthlyExpense) * 100).toFixed(1)}% chi phí tháng, ổn` : "Ảnh hưởng đáng kể dòng tiền. Cân nhắc trả bớt nợ.",
+            status: interestStatus,
         },
         {
-            icon: <Shield className="w-5 h-5" />,
+            icon: Shield,
             title: "Thị Trường Sụp Đổ −30%",
-            scenario: "Tài sản đầu tư (cổ phiếu, quỹ) giảm 30%",
-            result: investmentAssets === 0
-                ? "Không bị ảnh hưởng (chưa đầu tư)"
-                : `Danh mục mất ${fmtVND(marketLoss)}₫ tạm thời`,
-            detail: investmentAssets === 0
-                ? "Bạn chưa có danh mục đầu tư nào cần lo"
-                : marketLossStatus === 'pass'
-                    ? "Quỹ thanh khoản đủ để không cần bán cổ phiếu lúc lỗ"
-                    : "Nếu cần tiền, sẽ phải bán tài sản đang lỗ. Cần tăng Quỹ Thanh Khoản trước",
-            status: marketLossStatus
+            scenario: "Danh mục đầu tư giảm 30%",
+            result: investmentAssets === 0 ? "Không bị ảnh hưởng" : `Danh mục mất ${fmtVND(marketLoss)} tạm thời`,
+            detail: investmentAssets === 0 ? "Chưa có danh mục đầu tư cần lo" : marketLossStatus === 'pass' ? "Quỹ thanh khoản đủ để không bán lỗ" : "Cần tăng Quỹ Thanh Khoản để tránh bán tháo",
+            status: marketLossStatus,
         },
         {
-            icon: <HeartPulse className="w-5 h-5" />,
+            icon: HeartPulse,
             title: "Chi Phí Y Tế Đột Xuất",
-            scenario: "Phát sinh viện phí khẩn cấp 200 triệu đồng",
-            result: liquidAssets >= medicalCost
-                ? `Đủ trang trải (còn dư ${fmtVND(liquidAssets - medicalCost)}₫)`
-                : `Thiếu ${fmtVND(medicalCost - liquidAssets)}₫`,
-            detail: medicalStatus === 'pass'
-                ? "Quỹ thanh khoản đủ bao phủ phần lớn tình huống y tế khẩn cấp"
-                : "Hãy ưu tiên mua Bảo hiểm Sức khỏe và Bảo hiểm Nhân thọ ngay!",
-            status: medicalStatus
-        }
+            scenario: "Viện phí khẩn cấp 200 triệu đồng",
+            result: liquidAssets >= medicalCost ? `Đủ trang trải (còn dư ${fmtVND(liquidAssets - medicalCost)})` : `Thiếu ${fmtVND(medicalCost - liquidAssets)}`,
+            detail: medicalStatus === 'pass' ? "Quỹ thanh khoản bao phủ tình huống y tế khẩn cấp" : "Ưu tiên mua Bảo hiểm Sức khoẻ và Nhân thọ ngay!",
+            status: medicalStatus,
+        },
     ]
 
-    const statusConfig = {
+    const statusCfg = {
         pass: {
             border: 'border-l-emerald-500',
-            bg: 'bg-emerald-50',
-            badge: 'bg-emerald-100 text-emerald-700',
-            iconBg: 'bg-emerald-100 text-emerald-600',
-            label: 'AN TOÀN'
+            bg: 'bg-emerald-500/8',
+            badge: 'bg-emerald-500/20 border-emerald-500/30 text-emerald-300',
+            icon: 'bg-emerald-500/20 text-emerald-400',
+            label: 'AN TOÀN',
+            text: 'text-emerald-300',
         },
         warning: {
             border: 'border-l-amber-500',
-            bg: 'bg-amber-50/50',
-            badge: 'bg-amber-100 text-amber-700',
-            iconBg: 'bg-amber-100 text-amber-600',
-            label: 'CHÚ Ý'
+            bg: 'bg-amber-500/8',
+            badge: 'bg-amber-500/20 border-amber-500/30 text-amber-300',
+            icon: 'bg-amber-500/20 text-amber-400',
+            label: 'CHÚ Ý',
+            text: 'text-amber-300',
         },
         fail: {
             border: 'border-l-rose-500',
-            bg: 'bg-rose-50/50',
-            badge: 'bg-rose-100 text-rose-700',
-            iconBg: 'bg-rose-100 text-rose-600',
-            label: 'RỦI RO'
-        }
+            bg: 'bg-rose-500/8',
+            badge: 'bg-rose-500/20 border-rose-500/30 text-rose-300',
+            icon: 'bg-rose-500/20 text-rose-400',
+            label: 'RỦI RO',
+            text: 'text-rose-300',
+        },
     }
 
     const passCount = results.filter(r => r.status === 'pass').length
 
     return (
-        <Card className="shadow-sm h-full">
-            <CardHeader className="bg-slate-50/80 border-b pb-4">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <CardTitle className="text-slate-800">Kiểm Tra Sức Chịu Đựng</CardTitle>
-                        <CardDescription className="mt-1">Tài chính của bạn có thể chống đỡ các cú sốc?</CardDescription>
-                    </div>
-                    <div className="text-right">
-                        <p className="text-2xl font-bold text-slate-800">{passCount}<span className="text-base text-slate-500">/4</span></p>
-                        <p className="text-xs text-slate-500">kịch bản vượt qua</p>
-                    </div>
+        <div className="rounded-2xl bg-white/5 border border-white/10 backdrop-blur h-full flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-5 border-b border-white/10">
+                <div>
+                    <p className="text-sm font-black text-white">Kiểm Tra Sức Chịu Đựng</p>
+                    <p className="text-xs text-white/40 mt-0.5">Tài chính của bạn có thể chống chịu cú sốc?</p>
                 </div>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-3">
-                {results.map((r, idx) => {
-                    const cfg = statusConfig[r.status]
+                <div className="text-right">
+                    <p className="text-2xl font-black text-white">{passCount}<span className="text-sm font-normal text-white/30">/4</span></p>
+                    <p className="text-[10px] text-white/30 font-bold uppercase tracking-wider">kịch bản vượt qua</p>
+                </div>
+            </div>
+
+            {/* Results */}
+            <div className="flex-1 p-4 space-y-2.5">
+                {results.map((r, i) => {
+                    const cfg = statusCfg[r.status]
+                    const Icon = r.icon
                     return (
-                        <div key={idx} className={`flex gap-3 p-3.5 rounded-xl border-l-4 ${cfg.border} ${cfg.bg}`}>
-                            <div className={`shrink-0 w-9 h-9 rounded-lg flex items-center justify-center ${cfg.iconBg}`}>
-                                {r.icon}
+                        <div key={i} className={`flex gap-3 p-3.5 rounded-xl border-l-4 ${cfg.border} ${cfg.bg}`}>
+                            <div className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${cfg.icon}`}>
+                                <Icon className="w-4 h-4" />
                             </div>
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between gap-2 mb-0.5">
-                                    <p className="text-sm font-semibold text-slate-800">{r.title}</p>
-                                    <span className={`shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${cfg.badge}`}>{cfg.label}</span>
+                                    <p className={`text-sm font-bold ${cfg.text}`}>{r.title}</p>
+                                    <span className={`shrink-0 text-[10px] font-black px-2 py-0.5 rounded-full border ${cfg.badge}`}>{cfg.label}</span>
                                 </div>
-                                <p className="text-xs text-slate-500 mb-1">{r.scenario}</p>
-                                <p className="text-xs font-semibold text-slate-700">{r.result}</p>
-                                <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">{r.detail}</p>
+                                <p className="text-[11px] text-white/30 mb-1">{r.scenario}</p>
+                                <p className="text-xs font-semibold text-white/70">{r.result}</p>
+                                <p className="text-[11px] text-white/40 mt-0.5 leading-relaxed">{r.detail}</p>
                             </div>
                         </div>
                     )
                 })}
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     )
 }
