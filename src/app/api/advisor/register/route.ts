@@ -65,7 +65,6 @@ export async function POST(req: NextRequest) {
                 full_name: full_name || null,
                 password_hash: hashedPassword,
                 role: 'customer',
-                investor_type: investor_type || 'balanced'
             })
             .select('id, email')
             .single()
