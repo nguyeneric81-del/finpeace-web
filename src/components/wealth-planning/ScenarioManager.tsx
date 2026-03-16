@@ -35,7 +35,9 @@ const calculateFV = (P: number, PMT: number, r: number, n: number) => {
     return compoundPrincipal + compoundCashflow
 }
 
-export function ScenarioManager({ userId, onNavigateToActionPlan }: { userId: string, onNavigateToActionPlan?: () => void }) {
+import type { FinancialPlan } from '@/app/dashboard/wealth-planning/WealthPlanningClient'
+
+export function ScenarioManager({ userId, onNavigateToActionPlan, onPlanCommit }: { userId: string, onNavigateToActionPlan?: () => void, onPlanCommit?: (plan: FinancialPlan) => void }) {
     const supabase = createClient()
     const [loading, setLoading] = useState(true)
 
@@ -129,10 +131,19 @@ export function ScenarioManager({ userId, onNavigateToActionPlan }: { userId: st
         const selected = scenarios[type]
         const planFullName = `${dreamName} - ${selected.name}`
 
+        // Tính required monthly saving (PMT cần thiết để đạt target từ vốn ban đầu)
+        const rate = selected.rate / 100
+        const n = targetYears
+        const fvFromCapital = selected.capital * Math.pow(1 + rate, n)
+        const remaining = Math.max(0, targetAmount - fvFromCapital)
+        const requiredMonthly = rate > 0 && n > 0
+            ? remaining / (12 * ((Math.pow(1 + rate, n) - 1) / rate))
+            : remaining / (12 * n)
+
         // Bỏ chọn tất cả
         await supabase.from('wealth_scenarios').update({ is_selected: false }).eq('user_id', userId)
 
-        // Lưu mới
+        // Lưu mới vào wealth_scenarios (legacy table)
         const { data, error } = await supabase.from('wealth_scenarios').insert({
             user_id: userId,
             plan_name: planFullName,
@@ -146,12 +157,20 @@ export function ScenarioManager({ userId, onNavigateToActionPlan }: { userId: st
 
         if (!error && data) {
             setSavedScenarioId(data.id)
-            alert("Đã lưu định hướng Ước Mơ thành công!")
-            // Chuyển sang tab Kế Hoạch Hành Động (Action Plan)
-            if (onNavigateToActionPlan) {
+
+            // Gọi onPlanCommit với full state để truyền sang ActionPlan
+            if (onPlanCommit) {
+                onPlanCommit({
+                    goalName: dreamName,
+                    targetAmount,
+                    timelineYears: targetYears,
+                    initialCapital: selected.capital,
+                    expectedReturn: selected.rate,
+                    requiredMonthlySaving: Math.round(requiredMonthly),
+                    scenarioType: type
+                })
+            } else if (onNavigateToActionPlan) {
                 onNavigateToActionPlan()
-            } else {
-                document.getElementById('tab-actions')?.click()
             }
         }
     }

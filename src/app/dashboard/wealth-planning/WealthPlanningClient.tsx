@@ -1,93 +1,238 @@
 'use client'
 
-import { useState } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AssetManager } from '@/components/wealth-planning/AssetManager'
-import { CashflowManager } from '@/components/wealth-planning/CashflowManager'
+import { useState, useEffect } from 'react'
+import { createClient } from '@/utils/supabase/client'
+import { KYCGate } from '@/components/wealth-planning/KYCGate'
+import { PortfolioReview } from '@/components/wealth-planning/PortfolioReview'
 import { ScenarioManager } from '@/components/wealth-planning/ScenarioManager'
 import { ActionPlanManager } from '@/components/wealth-planning/ActionPlanManager'
-import { PortfolioReview } from '@/components/wealth-planning/PortfolioReview'
+import { CheckInModal } from '@/components/wealth-planning/CheckInModal'
+import { motion } from 'framer-motion'
+import { LayoutDashboard, Sparkles, Map, Rocket, CalendarCheck, ArrowLeft, Settings } from 'lucide-react'
 
-export function WealthPlanningClient({ user, profile }: { user: any, profile: any }) {
-    const [activeTab, setActiveTab] = useState('kyc')
+type Screen = 'loading' | 'kyc' | 'dashboard' | 'future' | 'action'
+
+const SCREENS = [
+    { id: 'dashboard', label: 'Nhận Diện Tài Chính', icon: LayoutDashboard, step: 1 },
+    { id: 'future', label: 'Thiết Kế Tương Lai', icon: Map, step: 2 },
+    { id: 'action', label: 'Kế Hoạch Hành Động', icon: Rocket, step: 3 },
+]
+
+// Type for financial plan state passed between screens
+export type FinancialPlan = {
+    goalName: string
+    targetAmount: number
+    timelineYears: number
+    initialCapital: number
+    expectedReturn: number
+    requiredMonthlySaving: number
+    scenarioType: 'safe' | 'balanced' | 'growth'
+}
+
+export function WealthPlanningClient({ user, profile }: { user: any; profile: any }) {
+    const supabase = createClient()
+    const [screen, setScreen] = useState<Screen>('loading')
+    const [showCheckIn, setShowCheckIn] = useState(false)
+    const [financialPlan, setFinancialPlan] = useState<FinancialPlan | null>(null)
+
+    useEffect(() => {
+        checkKYCStatus()
+    }, [])
+
+    async function checkKYCStatus() {
+        const { data } = await supabase
+            .from('advisor_users')
+            .select('kyc_completed')
+            .eq('id', user.id)
+            .single()
+
+        if (data?.kyc_completed) {
+            setScreen('dashboard')
+        } else {
+            // Fallback: check if they have cashflow data (for existing users before KYC flag)
+            const { data: cashflow } = await supabase
+                .from('client_cashflow')
+                .select('annual_income')
+                .eq('user_id', user.id)
+                .maybeSingle()
+
+            if (cashflow?.annual_income > 0) {
+                // Mark existing users as KYC completed
+                await supabase.from('advisor_users').update({ kyc_completed: true }).eq('id', user.id)
+                setScreen('dashboard')
+            } else {
+                setScreen('kyc')
+            }
+        }
+    }
+
+    async function loadFinancialPlan() {
+        const res = await fetch(`/api/wealth/plan?user_id=${user.id}`)
+        const { plan } = await res.json()
+        if (plan) {
+            setFinancialPlan({
+                goalName: plan.goal_name,
+                targetAmount: plan.target_amount,
+                timelineYears: plan.timeline_years,
+                initialCapital: plan.initial_capital,
+                expectedReturn: plan.expected_return,
+                requiredMonthlySaving: plan.required_monthly_saving,
+                scenarioType: plan.scenario_type || 'balanced'
+            })
+        }
+    }
+
+    const handleKYCComplete = () => {
+        setScreen('dashboard')
+    }
+
+    const handlePlanCommit = async (plan: FinancialPlan) => {
+        setFinancialPlan(plan)
+        // Save to Supabase
+        await fetch('/api/wealth/plan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: user.id,
+                goal_name: plan.goalName,
+                target_amount: plan.targetAmount,
+                timeline_years: plan.timelineYears,
+                initial_capital: plan.initialCapital,
+                expected_return: plan.expectedReturn,
+                required_monthly_saving: plan.requiredMonthlySaving,
+                scenario_type: plan.scenarioType
+            })
+        })
+        setScreen('action')
+    }
+
+    // KYC screen — full page takeover
+    if (screen === 'kyc') {
+        return <KYCGate userId={user.id} onComplete={handleKYCComplete} />
+    }
+
+    // Loading
+    if (screen === 'loading') {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                    <p className="text-slate-500 text-sm">Đang tải kế hoạch...</p>
+                </div>
+            </div>
+        )
+    }
+
+    const currentStep = SCREENS.find(s => s.id === screen)?.step || 1
 
     return (
-        <div className="flex-1 space-y-8 p-8 pt-6 bg-slate-50/50 dark:bg-slate-900/50 min-h-screen">
-            {/* Header */}
-            <div className="flex items-center justify-between space-y-2 mb-6">
-                <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-emerald-800 dark:text-emerald-400">
-                        Hệ Sinh Thái Kế Hoạch Tài Chính 💎
-                    </h2>
-                    <p className="text-muted-foreground mt-1">
-                        Chào {profile?.full_name || user.email?.split('@')[0]}, đây là công cụ Kiến trúc Tài sản thay thế cho Google Sheets.
-                    </p>
-                </div>
-                <div className="flex items-center space-x-2">
-                    <a href="/dashboard">
-                        <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
-                            Quay lại Dashboard
-                        </button>
-                    </a>
+        <div className="flex-1 min-h-screen bg-slate-50 dark:bg-slate-950">
+            {/* Top Nav */}
+            <div className="sticky top-0 z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b border-slate-200 dark:border-slate-800">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-14">
+                        {/* Left: Back + Title */}
+                        <div className="flex items-center gap-3">
+                            <a href="/dashboard" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                                <ArrowLeft className="w-4 h-4 text-slate-500" />
+                            </a>
+                            <div>
+                                <h1 className="text-sm font-semibold text-slate-800 dark:text-white">Kế Hoạch Tài Chính</h1>
+                                <p className="text-xs text-slate-400">{profile?.full_name || user.email?.split('@')[0]}</p>
+                            </div>
+                        </div>
+
+                        {/* Center: Progress Steps */}
+                        <div className="hidden md:flex items-center gap-1">
+                            {SCREENS.map((s, idx) => {
+                                const Icon = s.icon
+                                const isActive = screen === s.id
+                                const isDone = currentStep > s.step
+                                return (
+                                    <div key={s.id} className="flex items-center gap-1">
+                                        <button
+                                            onClick={() => {
+                                                if (isDone || isActive) setScreen(s.id as Screen)
+                                                if (s.id === 'action') loadFinancialPlan()
+                                            }}
+                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${isActive ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : isDone ? 'text-slate-600 hover:bg-slate-100 dark:text-slate-400' : 'text-slate-400 cursor-default'}`}
+                                        >
+                                            <Icon className="w-3.5 h-3.5" />
+                                            {s.label}
+                                        </button>
+                                        {idx < SCREENS.length - 1 && (
+                                            <div className={`w-4 h-px ${isDone ? 'bg-emerald-400' : 'bg-slate-200'}`} />
+                                        )}
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+                        {/* Right: Check-in button */}
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setShowCheckIn(true)}
+                                className="flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 px-3 py-1.5 rounded-lg transition-all"
+                            >
+                                <CalendarCheck className="w-3.5 h-3.5" />
+                                Check-in
+                            </button>
+                            <a href="/dashboard/wealth-planning?edit=1" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                                <Settings className="w-4 h-4 text-slate-400" />
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* Tabs Content */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-4 bg-white shadow-sm border border-slate-100 rounded-xl p-1">
-                    <TabsTrigger value="kyc" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">1. Tài sản &amp; Dòng tiền</TabsTrigger>
-                    <TabsTrigger value="portfolio" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">2. Nhận Diện Tài Chính</TabsTrigger>
-                    <TabsTrigger value="scenarios" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">3. Thiết Kế Tương Lai</TabsTrigger>
-                    <TabsTrigger value="actions" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700 rounded-lg">4. Kế Hoạch Hành Động</TabsTrigger>
-                </TabsList>
+            {/* Main Content */}
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <motion.div
+                    key={screen}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    {screen === 'dashboard' && (
+                        <PortfolioReview
+                            userId={user.id}
+                            onNavigateToScenarios={() => setScreen('future')}
+                        />
+                    )}
 
-                <div className="mt-6 border-none bg-transparent min-h-[500px]">
-                    <TabsContent value="kyc" className="m-0 focus-visible:outline-none focus-visible:ring-0 bg-white border rounded-xl p-6 shadow-sm space-y-8">
-                        <div>
-                            <div className="flex items-center gap-2 mb-4">
-                                <span className="text-lg">📊</span>
-                                <div>
-                                    <h3 className="text-base font-bold text-blue-800 dark:text-blue-400">Dòng Tiền Hàng Năm</h3>
-                                    <p className="text-xs text-muted-foreground">Khai báo thu nhập, chi phí và mục tiêu tiết kiệm của bạn</p>
-                                </div>
-                            </div>
-                            <CashflowManager userId={user.id} />
+                    {screen === 'future' && (
+                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                            <ScenarioManager
+                                userId={user.id}
+                                onNavigateToActionPlan={() => setScreen('action')}
+                                onPlanCommit={handlePlanCommit}
+                            />
                         </div>
+                    )}
 
-                        <div className="relative">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-slate-200 dark:border-slate-700" />
-                            </div>
-                            <div className="relative flex justify-center">
-                                <span className="bg-white dark:bg-zinc-900 px-3 text-xs text-slate-400">✦</span>
-                            </div>
+                    {screen === 'action' && (
+                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+                            <ActionPlanManager
+                                userId={user.id}
+                                financialPlan={financialPlan}
+                            />
                         </div>
+                    )}
+                </motion.div>
+            </div>
 
-                        <div>
-                            <div className="flex items-center gap-2 mb-4">
-                                <span className="text-lg">🏦</span>
-                                <div>
-                                    <h3 className="text-base font-bold text-emerald-800 dark:text-emerald-400">Tài Sản &amp; Danh Mục</h3>
-                                    <p className="text-xs text-muted-foreground">Khai báo toàn bộ tài sản, khoản đầu tư và khoản nợ hiện tại</p>
-                                </div>
-                            </div>
-                            <AssetManager userId={user.id} />
-                        </div>
-                    </TabsContent>
-
-                    <TabsContent value="portfolio" className="m-0 focus-visible:outline-none focus-visible:ring-0">
-                        <PortfolioReview userId={user.id} onNavigateToScenarios={() => setActiveTab('scenarios')} />
-                    </TabsContent>
-
-                    <TabsContent value="scenarios" className="m-0 focus-visible:outline-none focus-visible:ring-0 bg-white border rounded-xl p-6 shadow-sm">
-                        <ScenarioManager userId={user.id} onNavigateToActionPlan={() => setActiveTab('actions')} />
-                    </TabsContent>
-
-                    <TabsContent value="actions" className="m-0 focus-visible:outline-none focus-visible:ring-0 bg-white border rounded-xl p-6 shadow-sm">
-                        <ActionPlanManager userId={user.id} />
-                    </TabsContent>
-                </div>
-            </Tabs>
+            {/* Check-in Modal */}
+            {showCheckIn && (
+                <CheckInModal
+                    userId={user.id}
+                    onClose={() => setShowCheckIn(false)}
+                    onSaved={() => {
+                        setShowCheckIn(false)
+                        // Refresh dashboard if on dashboard
+                        if (screen === 'dashboard') window.location.reload()
+                    }}
+                />
+            )}
         </div>
     )
 }

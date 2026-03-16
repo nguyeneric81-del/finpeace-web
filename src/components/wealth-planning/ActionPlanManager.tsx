@@ -6,7 +6,8 @@ import { createClient } from '@/utils/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Target, TrendingUp, AlertCircle, CheckCircle2, Compass, ShieldAlert, ArrowRight, Wallet, Percent, PiggyBank, Maximize2 } from 'lucide-react'
+import { Target, TrendingUp, AlertCircle, CheckCircle2, Compass, ShieldAlert, ArrowRight, Wallet, Percent, PiggyBank, Maximize2, CircleDot } from 'lucide-react'
+import type { FinancialPlan } from '@/app/dashboard/wealth-planning/WealthPlanningClient'
 
 // Các Type định dạng dữ liệu
 type ActionPlan = {
@@ -25,7 +26,7 @@ type Cashflow = {
     annual_income: number; annual_expense: number; annual_saving: number; surplus_ratio: number;
 }
 
-export function ActionPlanManager({ userId }: { userId: string }) {
+export function ActionPlanManager({ userId, financialPlan }: { userId: string; financialPlan?: FinancialPlan | null }) {
     const supabase = createClient()
     const [loading, setLoading] = useState(true)
 
@@ -98,7 +99,13 @@ export function ActionPlanManager({ userId }: { userId: string }) {
 
     if (loading) return <div className="animate-pulse space-y-4"><div className="h-32 bg-slate-100 rounded-xl" /><div className="h-64 bg-slate-100 rounded-xl" /></div>
 
-    if (!scenario) {
+    // --- Feasibility check vs committed financialPlan ---
+    const planMonthly = financialPlan?.requiredMonthlySaving ?? (scenario?.monthly_cashflow ?? 0)
+    const currentMonthlySaving = cashflow ? cashflow.annual_saving / 12 : 0
+    const feasibilityPct = planMonthly > 0 ? (currentMonthlySaving / planMonthly) * 100 : 100
+    const feasibilityStatus = feasibilityPct >= 95 ? 'green' : feasibilityPct >= 70 ? 'yellow' : 'red'
+
+    if (!scenario && !financialPlan) {
         return (
             <Card className="border-dashed border-2 border-slate-200 bg-slate-50">
                 <CardContent className="flex flex-col items-center justify-center p-12 text-center">
@@ -110,24 +117,26 @@ export function ActionPlanManager({ userId }: { userId: string }) {
         )
     }
 
-    // --- Tính toán Logic Phân tích ---
+    // --- Tính toán Logic Phân tích (scenario-safe) ---
+    const scenarioInitialCapital = scenario?.initial_capital ?? financialPlan?.initialCapital ?? 0
+    const scenarioMonthlyCashflow = scenario?.monthly_cashflow ?? financialPlan?.requiredMonthlySaving ?? 0
+    const scenarioExpectedReturn = scenario?.expected_return ?? financialPlan?.expectedReturn ?? 10
 
     // 1. Phân tích Vốn
     const liquidAssets = assets.filter(a => a.asset_group === 'Thanh khoản' || a.asset_group === 'Tích lũy & Đầu tư').reduce((sum, a) => sum + Number(a.amount || 0), 0)
-    const capitalShortfall = scenario.initial_capital > liquidAssets ? scenario.initial_capital - liquidAssets : 0
+    const capitalShortfall = scenarioInitialCapital > liquidAssets ? scenarioInitialCapital - liquidAssets : 0
 
-    // 2. Phân tích Dòng tiền
-    const currentMonthlySaving = cashflow ? cashflow.annual_saving / 12 : 0
-    const monthlyShortfall = scenario.monthly_cashflow > currentMonthlySaving ? scenario.monthly_cashflow - currentMonthlySaving : 0
+    // 2. Phân tích Dòng tiền (reuse currentMonthlySaving from feasibility calc above)
+    const monthlyShortfall = scenarioMonthlyCashflow > currentMonthlySaving ? scenarioMonthlyCashflow - currentMonthlySaving : 0
 
     // 3. La bàn Đầu tư (Khuyến nghị Danh mục)
     let riskProfile = ''
     let recommendedAssets: string[] = []
 
-    if (scenario.expected_return < 8) {
+    if (scenarioExpectedReturn < 8) {
         riskProfile = 'Thận Trọng (An Toàn Lên Ngôi)'
         recommendedAssets = ['Tiền gửi Tiết kiệm kỳ hạn dài', 'Trái phiếu Doanh nghiệp top đầu', 'Chứng chỉ quỹ Trái phiếu']
-    } else if (scenario.expected_return <= 12) {
+    } else if (scenarioExpectedReturn <= 12) {
         riskProfile = 'Cân Bằng (Tăng Trưởng Bền Vững)'
         recommendedAssets = ['50% Tiền gửi & Trái phiếu', '50% Chứng chỉ quỹ Cổ phiếu hoặc Cổ phiếu Bluechip (VN30)', 'Có thể tích sản Vàng']
     } else {
@@ -139,7 +148,60 @@ export function ActionPlanManager({ userId }: { userId: string }) {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            {/* PHẦN 1: NGỌN HẢI ĐĂNG (MỤC TIÊU) */}
+
+            {/* PHẦN 0: FEASIBILITY — ĐIỀU CHỈNH THU CHI */}
+            {(financialPlan || scenario) && (
+                <Card className="border-slate-200 shadow-sm overflow-hidden">
+                    <div className={`h-1 ${feasibilityStatus === 'green' ? 'bg-emerald-500' : feasibilityStatus === 'yellow' ? 'bg-amber-400' : 'bg-rose-500'}`} />
+                    <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <CircleDot className={`w-5 h-5 ${feasibilityStatus === 'green' ? 'text-emerald-500' : feasibilityStatus === 'yellow' ? 'text-amber-500' : 'text-rose-500'}`} />
+                                <CardTitle className="text-base">Đánh Giá Tính Khả Thi</CardTitle>
+                            </div>
+                            <span className={`text-xs font-bold px-3 py-1 rounded-full ${
+                                feasibilityStatus === 'green' ? 'bg-emerald-100 text-emerald-700' :
+                                feasibilityStatus === 'yellow' ? 'bg-amber-100 text-amber-700' :
+                                'bg-rose-100 text-rose-700'
+                            }`}>
+                                {feasibilityStatus === 'green' ? '🟢 On Track' : feasibilityStatus === 'yellow' ? '🟡 Cần điều chỉnh' : '🔴 Cần hành động'}
+                            </span>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                        <div className="grid grid-cols-3 gap-4 text-sm">
+                            <div className="bg-slate-50 rounded-xl p-4 text-center">
+                                <p className="text-xs text-slate-500 mb-1">Kế hoạch yêu cầu</p>
+                                <p className="text-lg font-bold text-slate-800">{fmtVND(planMonthly)}</p>
+                                <p className="text-xs text-slate-400">/tháng</p>
+                            </div>
+                            <div className="bg-slate-50 rounded-xl p-4 text-center">
+                                <p className="text-xs text-slate-500 mb-1">Khả năng hiện tại</p>
+                                <p className={`text-lg font-bold ${feasibilityStatus === 'green' ? 'text-emerald-600' : feasibilityStatus === 'yellow' ? 'text-amber-600' : 'text-rose-600'}`}>{fmtVND(currentMonthlySaving)}</p>
+                                <p className="text-xs text-slate-400">/tháng</p>
+                            </div>
+                            <div className="bg-slate-50 rounded-xl p-4 text-center">
+                                <p className="text-xs text-slate-500 mb-1">Tỷ lệ đáp ứng</p>
+                                <p className={`text-xl font-black ${feasibilityStatus === 'green' ? 'text-emerald-600' : feasibilityStatus === 'yellow' ? 'text-amber-600' : 'text-rose-600'}`}>{feasibilityPct.toFixed(0)}%</p>
+                            </div>
+                        </div>
+                        {feasibilityStatus !== 'green' && (
+                            <div className={`mt-4 p-3 rounded-xl text-sm flex gap-2 ${
+                                feasibilityStatus === 'yellow' ? 'bg-amber-50 text-amber-800 border border-amber-100' : 'bg-rose-50 text-rose-800 border border-rose-100'
+                            }`}>
+                                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                                <div>
+                                    {feasibilityStatus === 'yellow' ? (
+                                        <><strong>Cần tối ưu thêm {fmtVND(planMonthly - currentMonthlySaving)}/tháng.</strong> Xem xét cắt giảm chi phí không thiết yếu hoặc tìm thêm nguồn thu nhập phụ.</>                                    ) : (
+                                        <><strong>Thiếu hụt {fmtVND(planMonthly - currentMonthlySaving)}/tháng.</strong> Kế hoạch hiện tại khó khả thi. Cân nhắc: (1) Kéo dài timeline, (2) Giảm target, hoặc (3) Tăng vốn ban đầu commit.</>                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            )}
+
+            {/* Hiển thị mục tiêu từ financialPlan hoặc legacy scenario */}
             <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-white shadow-sm overflow-hidden relative">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100 rounded-full blur-3xl -mr-16 -mt-16 opacity-50"></div>
                 <CardHeader>
@@ -147,9 +209,9 @@ export function ActionPlanManager({ userId }: { userId: string }) {
                         <Target className="w-5 h-5" />
                         <span className="font-bold text-sm uppercase tracking-wider">Ngọn Hải Đăng Của Bạn</span>
                     </div>
-                    <CardTitle className="text-2xl text-emerald-900">{scenario.plan_name || 'Mục tiêu Tài chính Chưa Đặt Tên'}</CardTitle>
+                    <CardTitle className="text-2xl text-emerald-900">{scenario?.plan_name || financialPlan?.goalName || 'Mục tiêu Tài chính Chưa Đặt Tên'}</CardTitle>
                     <CardDescription className="text-emerald-700/80 text-base">
-                        Hành trình vạn dặm bắt đầu từ mục tiêu đạt <strong>{fmtVND(scenario.target_amount)}</strong> trong vòng <strong>{scenario.target_years} năm</strong> tới.
+                        Hành trình vạn dặm bắt đầu từ mục tiêu đạt <strong>{fmtVND(scenario?.target_amount ?? financialPlan?.targetAmount ?? 0)}</strong> trong vòng <strong>{scenario?.target_years ?? financialPlan?.timelineYears ?? 0} năm</strong> tới.
                     </CardDescription>
                 </CardHeader>
             </Card>
@@ -295,7 +357,7 @@ export function ActionPlanManager({ userId }: { userId: string }) {
                         <div className="flex justify-between items-end border-b pb-3 border-dashed">
                             <div>
                                 <p className="text-sm text-slate-500">Kịch bản yêu cầu</p>
-                                <p className="text-xl font-bold text-blue-900">{fmtVND(scenario.initial_capital)}</p>
+                                <p className="text-xl font-bold text-blue-900">{fmtVND(scenarioInitialCapital)}</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-sm text-slate-500">Tài sản hiện có</p>
@@ -334,7 +396,7 @@ export function ActionPlanManager({ userId }: { userId: string }) {
                         <div className="flex justify-between items-end border-b pb-3 border-dashed">
                             <div>
                                 <p className="text-sm text-slate-500">Kịch bản yêu cầu</p>
-                                <p className="text-xl font-bold text-indigo-900">{fmtVND(scenario.monthly_cashflow)}</p>
+                                <p className="text-xl font-bold text-indigo-900">{fmtVND(scenarioMonthlyCashflow)}</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-sm text-slate-500">Thặng dư hiện tại</p>
@@ -372,7 +434,7 @@ export function ActionPlanManager({ userId }: { userId: string }) {
                     </div>
                     <CardTitle>Khuyến nghị thiết lập Danh mục Tư Duy</CardTitle>
                     <CardDescription>
-                        Để đạt được mức lãi suất <strong>{scenario.expected_return}%/năm</strong>, bạn phải chấp nhận khẩu vị rủi ro: <strong className="text-blue-700">{riskProfile}</strong>.
+                        Để đạt được mức lãi suất <strong>{scenarioExpectedReturn}%/năm</strong>, bạn phải chấp nhận khẩu vị rủi ro: <strong className="text-blue-700">{riskProfile}</strong>.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-6">
@@ -390,7 +452,7 @@ export function ActionPlanManager({ userId }: { userId: string }) {
                             ))}
                         </ul>
 
-                        {scenario.expected_return > 12 && (
+                        {scenarioExpectedReturn > 12 && (
                             <div className="mt-6 bg-amber-50 border border-amber-200 p-4 rounded-lg flex gap-3 text-sm text-amber-900 items-start">
                                 <ShieldAlert className="w-5 h-5 shrink-0 text-amber-600" />
                                 <p><strong>Lưu ý Bình An Tài Chính:</strong> Kịch bản này có biên độ dao động rất mạnh! Hãy kiểm tra lại ở Tab 2 xem bạn đã có đủ <strong>Quỹ Khẩn Cấp (ít nhất 6 tháng)</strong> và <strong>Bảo hiểm Y tế</strong> chưa trước khi dồn tiền vào đây.</p>
