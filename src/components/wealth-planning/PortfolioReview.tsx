@@ -34,17 +34,17 @@ interface Cashflow {
 // ============================================================
 const GROUP = {
     DEBT: "Nợ",
-    LIQUIDITY: "Thanh khoản",
-    PROTECTION: "Bảo vệ",
-    INVESTMENT: "Đầu tư",
-    CONSUMPTION: "Tiêu dùng",
+    LIQUIDITY: "Thanh Khoản",
+    PROTECTION: "Bảo Vệ",
+    INVESTMENT: "Đầu Tư",
+    CONSUMPTION: "Tiêu Dùng",
 }
 
 const GROUP_STYLE: Record<string, { color: string; bg: string; glow: string; icon: React.ReactNode }> = {
-    "Bảo vệ": { color: "text-slate-200", bg: "bg-slate-700/50", glow: "shadow-slate-500/20", icon: <ShieldCheck className="w-4 h-4" /> },
-    "Thanh khoản": { color: "text-sky-300", bg: "bg-sky-500/15", glow: "shadow-sky-500/20", icon: <Droplets className="w-4 h-4" /> },
-    "Đầu tư": { color: "text-emerald-300", bg: "bg-emerald-500/15", glow: "shadow-emerald-500/20", icon: <Sprout className="w-4 h-4" /> },
-    "Tiêu dùng": { color: "text-amber-300", bg: "bg-amber-500/15", glow: "shadow-amber-500/20", icon: <Layers className="w-4 h-4" /> },
+    "Bảo Vệ": { color: "text-slate-200", bg: "bg-slate-700/50", glow: "shadow-slate-500/20", icon: <ShieldCheck className="w-4 h-4" /> },
+    "Thanh Khoản": { color: "text-sky-300", bg: "bg-sky-500/15", glow: "shadow-sky-500/20", icon: <Droplets className="w-4 h-4" /> },
+    "Đầu Tư": { color: "text-emerald-300", bg: "bg-emerald-500/15", glow: "shadow-emerald-500/20", icon: <Sprout className="w-4 h-4" /> },
+    "Tiêu Dùng": { color: "text-amber-300", bg: "bg-amber-500/15", glow: "shadow-amber-500/20", icon: <Layers className="w-4 h-4" /> },
     "Nợ": { color: "text-rose-300", bg: "bg-rose-500/15", glow: "shadow-rose-500/20", icon: <Flame className="w-4 h-4" /> },
 }
 
