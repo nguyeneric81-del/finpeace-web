@@ -126,9 +126,9 @@ export function WealthPlanningClient({ user, profile }: { user: any; profile: an
     const currentStep = SCREENS.find(s => s.id === screen)?.step || 1
 
     return (
-        <div className="flex-1 min-h-screen bg-slate-50 dark:bg-slate-950">
+        <div className="flex-1 min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
             {/* Top Nav */}
-            <div className="sticky top-0 z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b border-slate-200 dark:border-slate-800">
+            <div className="sticky top-0 z-20 bg-slate-900/80 backdrop-blur border-b border-white/10">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-14">
                         {/* Left: Back + Title */}
