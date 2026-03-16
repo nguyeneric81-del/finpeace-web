@@ -29,7 +29,7 @@ export default async function LoginPage({
                     </CardHeader>
 
                     {message && (
-                        <div className="px-6 pb-2 text-center text-sm font-medium text-destructive">
+                        <div className={`px-6 pb-2 text-center text-sm font-medium ${message.startsWith('✅') ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'}`}>
                             {message}
                         </div>
                     )}
