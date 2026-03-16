@@ -8,7 +8,8 @@ import { ScenarioManager } from '@/components/wealth-planning/ScenarioManager'
 import { ActionPlanManager } from '@/components/wealth-planning/ActionPlanManager'
 import { CheckInModal } from '@/components/wealth-planning/CheckInModal'
 import { motion } from 'framer-motion'
-import { LayoutDashboard, Sparkles, Map, Rocket, CalendarCheck, ArrowLeft, Settings } from 'lucide-react'
+import { LayoutDashboard, Sparkles, Map, Rocket, CalendarCheck, ArrowLeft, Settings, FileText } from 'lucide-react'
+import Link from 'next/link'
 
 type Screen = 'loading' | 'kyc' | 'dashboard' | 'future' | 'action'
 
@@ -168,8 +169,13 @@ export function WealthPlanningClient({ user, profile }: { user: any; profile: an
                             })}
                         </div>
 
-                        {/* Right: Check-in button */}
+                        {/* Right: buttons */}
                         <div className="flex items-center gap-2">
+                            <Link href="/dashboard/wealth-planning/report"
+                                className="flex items-center gap-1.5 text-xs font-medium text-violet-400 hover:text-violet-300 border border-violet-500/30 hover:border-violet-400 bg-violet-500/10 px-3 py-1.5 rounded-lg transition-all">
+                                <FileText className="w-3.5 h-3.5" />
+                                Báo Cáo CFP
+                            </Link>
                             <button
                                 onClick={() => setShowCheckIn(true)}
                                 className="flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 px-3 py-1.5 rounded-lg transition-all"

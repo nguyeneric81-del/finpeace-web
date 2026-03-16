@@ -45,10 +45,18 @@ CREATE TABLE IF NOT EXISTS client_insurance (
 -- RLS cho client_insurance
 ALTER TABLE client_insurance ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Users manage own insurance"
-  ON client_insurance FOR ALL
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE tablename = 'client_insurance' AND policyname = 'Users manage own insurance'
+  ) THEN
+    CREATE POLICY "Users manage own insurance"
+      ON client_insurance FOR ALL
+      USING (auth.uid() = user_id)
+      WITH CHECK (auth.uid() = user_id);
+  END IF;
+END $$;
 
 -- 5. INDEX cho performance
 CREATE INDEX IF NOT EXISTS idx_client_insurance_user_id ON client_insurance(user_id);
