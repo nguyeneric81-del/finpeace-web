@@ -8,7 +8,7 @@ import { ScenarioManager } from '@/components/wealth-planning/ScenarioManager'
 import { ActionPlanManager } from '@/components/wealth-planning/ActionPlanManager'
 import { CheckInModal } from '@/components/wealth-planning/CheckInModal'
 import { motion } from 'framer-motion'
-import { LayoutDashboard, Sparkles, Map, Rocket, CalendarCheck, ArrowLeft, Settings, FileText } from 'lucide-react'
+import { LayoutDashboard, Sparkles, Map, Rocket, CalendarCheck, ArrowLeft, Settings, FileText, Zap } from 'lucide-react'
 import Link from 'next/link'
 
 type Screen = 'loading' | 'kyc' | 'dashboard' | 'future' | 'action'
@@ -171,6 +171,11 @@ export function WealthPlanningClient({ user, profile }: { user: any; profile: an
 
                         {/* Right: buttons */}
                         <div className="flex items-center gap-2">
+                            <Link href="/dashboard/wealth-planning/simulator"
+                                className="flex items-center gap-1.5 text-xs font-medium text-amber-400 hover:text-amber-300 border border-amber-500/30 hover:border-amber-400 bg-amber-500/10 px-3 py-1.5 rounded-lg transition-all">
+                                <Zap className="w-3.5 h-3.5" />
+                                Simulator
+                            </Link>
                             <Link href="/dashboard/wealth-planning/report"
                                 className="flex items-center gap-1.5 text-xs font-medium text-violet-400 hover:text-violet-300 border border-violet-500/30 hover:border-violet-400 bg-violet-500/10 px-3 py-1.5 rounded-lg transition-all">
                                 <FileText className="w-3.5 h-3.5" />
