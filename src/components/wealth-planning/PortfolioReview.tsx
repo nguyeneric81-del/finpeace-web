@@ -26,6 +26,7 @@ interface Cashflow {
     annual_income: number
     annual_expense: number
     annual_saving: number
+    monthly_debt_payment?: number
 }
 
 // ============================================================
@@ -327,9 +328,9 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
         },
         {
             label: "Tỷ Lệ Nợ", value: `${computed.debtRatio.toFixed(0)}%`, unit: undefined,
-            target: "< 40%",
-            status: computed.debtRatio < 40 ? "good" : computed.debtRatio < 60 ? "warn" : "danger" as any,
-            note: computed.debtRatio < 40 ? "Gánh nặng nhẹ nhàng." : "Cần dọn bớt sỏi nợ.",
+            target: "< 35% (CFP)",
+            status: computed.debtRatio < 35 ? "good" : computed.debtRatio < 50 ? "warn" : "danger" as any,
+            note: computed.debtRatio < 35 ? "Gánh nặng nhẹ nhàng." : "Cần dọn bớt sỏi nợ.",
             gradient: "from-sky-900/60 via-sky-800/20 to-slate-900/40",
         },
         {
@@ -353,6 +354,27 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
             status: computed.pyfRate >= 20 ? "good" : computed.pyfRate >= 10 ? "warn" : "danger" as any,
             note: computed.pyfRate >= 20 ? "Gieo hạt đều đặn — lãi kép đang làm việc." : "Đã có hạt mầm, cần tăng thêm.",
             gradient: "from-rose-900/60 via-rose-800/20 to-slate-900/40",
+        },
+        {
+            label: "Debt Service Ratio",
+            value: (() => {
+                const dsr = cashflow?.monthly_debt_payment && cashflow.annual_income > 0
+                    ? (cashflow.monthly_debt_payment * 12 / cashflow.annual_income * 100)
+                    : null
+                return dsr !== null ? `${dsr.toFixed(0)}%` : '—'
+            })(),
+            unit: undefined,
+            target: "≤ 35% (CFP)",
+            status: (() => {
+                const dsr = cashflow?.monthly_debt_payment && cashflow.annual_income > 0
+                    ? (cashflow.monthly_debt_payment * 12 / cashflow.annual_income * 100) : null
+                if (dsr === null) return 'warn' as any
+                return dsr <= 35 ? 'good' : dsr <= 50 ? 'warn' : 'danger' as any
+            })(),
+            note: cashflow?.monthly_debt_payment
+                ? `Trả nợ ${fmtVNDShort(cashflow.monthly_debt_payment)}/tháng — DSR=${cashflow.annual_income > 0 ? (cashflow.monthly_debt_payment * 12 / cashflow.annual_income * 100).toFixed(0) : '?'}%`
+                : 'Cập nhật dòng tiền để tính DSR.',
+            gradient: "from-indigo-900/60 via-indigo-800/20 to-slate-900/40",
         },
     ]
 
@@ -415,10 +437,10 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
                     </div>
                     <div>
                         <h2 className="text-base font-bold text-white">Xét Nghiệm Sức Khỏe Tài Chính</h2>
-                        <p className="text-xs text-white/40">5 chỉ số sinh tồn</p>
+                        <p className="text-xs text-white/40">6 chỉ số sinh tồn — chuẩn CFP</p>
                     </div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {healthCards.map((card, i) => (
                         <HealthCard key={card.label} {...card} delay={i * 0.08} />
                     ))}
