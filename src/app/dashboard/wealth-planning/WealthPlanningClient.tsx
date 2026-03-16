@@ -201,22 +201,18 @@ export function WealthPlanningClient({ user, profile }: { user: any; profile: an
                     )}
 
                     {screen === 'future' && (
-                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-                            <ScenarioManager
-                                userId={user.id}
-                                onNavigateToActionPlan={() => setScreen('action')}
-                                onPlanCommit={handlePlanCommit}
-                            />
-                        </div>
+                        <ScenarioManager
+                            userId={user.id}
+                            onNavigateToActionPlan={() => setScreen('action')}
+                            onPlanCommit={handlePlanCommit}
+                        />
                     )}
 
                     {screen === 'action' && (
-                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-                            <ActionPlanManager
-                                userId={user.id}
-                                financialPlan={financialPlan}
-                            />
-                        </div>
+                        <ActionPlanManager
+                            userId={user.id}
+                            financialPlan={financialPlan}
+                        />
                     )}
                 </motion.div>
             </div>
