@@ -51,38 +51,51 @@ export function CheckInModal({ userId, onClose, onSaved }: CheckInModalProps) {
 
         const adjustedNetWorth = currentNetWorth + (Number(netWorthChange) || 0)
 
-        const res = await fetch('/api/wealth/snapshot', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                user_id: userId,
-                period_label: defaultLabel,
-                cashflow: {
-                    income: incomeNum,
-                    expense: expenseNum,
-                    saving: savingNum
-                },
-                assets: currentAssets || [],
-                net_worth: adjustedNetWorth,
-                notes: notes || null
+        let snapshotOk = false
+        try {
+            const res = await fetch('/api/wealth/snapshot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: userId,
+                    period_label: defaultLabel,
+                    cashflow: { income: incomeNum, expense: expenseNum, saving: savingNum },
+                    assets: currentAssets || [],
+                    net_worth: adjustedNetWorth,
+                    notes: notes || null
+                })
             })
-        })
 
-        if (res.ok) {
-            // Cập nhật cashflow hiện tại
-            await supabase.from('client_cashflow').upsert({
-                user_id: userId,
-                annual_income: incomeNum * 12,
-                annual_expense: expenseNum * 12,
-                annual_saving: savingNum * 12,
-                updated_at: new Date().toISOString()
-            }, { onConflict: 'user_id' })
-
-            setSaved(true)
-            setTimeout(() => onSaved(), 1200)
-        } else {
-            alert('Lỗi lưu check-in. Thử lại sau.')
+            if (res.ok) {
+                snapshotOk = true
+            } else {
+                const errBody = await res.json().catch(() => ({}))
+                console.error('[CheckIn] snapshot error:', errBody)
+                // Don't block cashflow update — continue
+            }
+        } catch (err) {
+            console.error('[CheckIn] fetch error:', err)
         }
+
+        // Luôn cập nhật cashflow dù snapshot có lỗi hay không
+        const { error: cashflowError } = await supabase.from('client_cashflow').upsert({
+            user_id: userId,
+            annual_income: incomeNum * 12,
+            annual_expense: expenseNum * 12,
+            annual_saving: savingNum * 12,
+            updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id' })
+
+        if (cashflowError) {
+            console.error('[CheckIn] cashflow upsert error:', cashflowError)
+            alert(`Lỗi cập nhật cashflow: ${cashflowError.message}`)
+            setSaving(false)
+            return
+        }
+
+        // Nếu snapshot fail nhưng cashflow ok — vẫn coi là thành công
+        setSaved(true)
+        setTimeout(() => onSaved(), 1200)
         setSaving(false)
     }
 
