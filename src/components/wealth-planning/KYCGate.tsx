@@ -187,10 +187,13 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
         const savingCalculated = Math.max(0, totalInc - totalExpenseCalculated)
 
         // Mark KYC completed + save initial snapshot
-        await supabase.from('advisor_users').update({
+        await supabase.from('advisor_users').upsert({
+            auth_user_id: userId,
+            email: '',  // will be ignored on conflict
+            password_hash: 'MANAGED_BY_SUPABASE_AUTH',
             kyc_completed: true,
             kyc_completed_at: new Date().toISOString()
-        }).eq('id', userId)
+        }, { onConflict: 'auth_user_id', ignoreDuplicates: false })
 
         await fetch('/api/wealth/snapshot', {
             method: 'POST',

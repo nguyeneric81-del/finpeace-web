@@ -248,6 +248,10 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
             supabase.from("client_assets").select("*").eq("user_id", userId).order("created_at"),
             supabase.from("client_cashflow").select("*").eq("user_id", userId).single(),
         ])
+        // DEBUG: xóa log này sau khi fix xong
+        console.log('[PortfolioReview] userId:', userId)
+        console.log('[PortfolioReview] assets raw:', assetsRes.data, 'error:', assetsRes.error)
+        console.log('[PortfolioReview] cashflow raw:', cashRes.data, 'error:', cashRes.error)
         if (assetsRes.data) setAssets(assetsRes.data)
         if (cashRes.data) setCashflow(cashRes.data)
         setIsLoading(false)

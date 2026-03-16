@@ -44,8 +44,8 @@ export function WealthPlanningClient({ user, profile }: { user: any; profile: an
         const { data } = await supabase
             .from('advisor_users')
             .select('kyc_completed')
-            .eq('id', user.id)
-            .single()
+            .eq('auth_user_id', user.id)
+            .maybeSingle()
 
         if (data?.kyc_completed) {
             setScreen('dashboard')
@@ -59,7 +59,7 @@ export function WealthPlanningClient({ user, profile }: { user: any; profile: an
 
             if (cashflow?.annual_income > 0) {
                 // Mark existing users as KYC completed
-                await supabase.from('advisor_users').update({ kyc_completed: true }).eq('id', user.id)
+                await supabase.from('advisor_users').update({ kyc_completed: true }).eq('auth_user_id', user.id)
                 setScreen('dashboard')
             } else {
                 setScreen('kyc')
