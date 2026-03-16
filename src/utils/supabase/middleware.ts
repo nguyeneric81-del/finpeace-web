@@ -65,6 +65,7 @@ export async function updateSession(request: NextRequest) {
         effectivePath.startsWith('/advisor') || // Cho phép route advisor tự do
         effectivePath.startsWith('/knowledgebase') || // KB là public content
         effectivePath.startsWith('/lp') || // Sales landing pages - public
+        effectivePath.startsWith('/monitor') || // Monitor & agent performance pages - public
         effectivePath === '/monitor.html' ||
         effectivePath === '/';
 

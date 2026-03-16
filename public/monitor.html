@@ -451,16 +451,20 @@ function renderSalesGrid(breakdown) {
   const grid = document.getElementById('sales-grid');
   if (!grid) return;
   const colors = { Quang01:'#10b981', duc02:'#38bdf8', thuy03:'#f43f5e', huyen04:'#f59e0b' };
+  // Also add mq01 from new system
+  const extra = { mq01:'#38BDF8', 'mq01':'#38BDF8' };
   grid.innerHTML = Object.entries(breakdown).map(([code, data]) => {
-    const color = colors[code] || '#94a3b8';
+    const color = colors[code] || extra[code] || '#94a3b8';
     return `
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 20px;position:relative;overflow:hidden">
+      <a href="/monitor/agents/${code}" style="text-decoration:none;display:block">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 20px;position:relative;overflow:hidden;transition:border-color .2s;cursor:pointer" onmouseover="this.style.borderColor='${color}40'" onmouseout="this.style.borderColor='var(--border)'">
         <div style="position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;background:${color};filter:blur(20px);opacity:0.15"></div>
         <div style="font-size:11px;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">${data.name}</div>
         <div style="font-size:28px;font-weight:800;color:#f8fafc;line-height:1">${data.count}</div>
         <div style="font-size:11px;color:${color};margin-top:4px">+${data.today} hôm nay</div>
         <div style="font-size:10px;color:var(--slate);margin-top:2px;font-family:'JetBrains Mono',monospace">${code}</div>
-      </div>`;
+        <div style="font-size:9px;color:${color};margin-top:6px;opacity:.7">→ Xem chi tiết</div>
+      </div></a>`;
   }).join('');
 }
 
