@@ -72,7 +72,7 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
     const [monthlyDebtPmt, setMonthlyDebtPmt] = useState('')
 
     const incomeNum = Number(income) || 0
-    const passiveNum = Number(passiveIncome) * 12 || 0
+    const passiveNum = Number(passiveIncome) || 0  // user enters annual amount
     const totalIncome = incomeNum + passiveNum
     const fixedNum = Number(fixedExp) || 0
     const variableNum = Number(variableExp) || 0
@@ -122,7 +122,7 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
         e.preventDefault()
         if (incomeNum <= 0) return alert('Vui lòng nhập Thu nhập.')
         setSaving(true)
-        await supabase.from('client_cashflow').upsert({
+        const { error: cfError } = await supabase.from('client_cashflow').upsert({
             user_id: userId,
             annual_income: incomeNum,
             annual_expense: totalExpense,
@@ -135,6 +135,12 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
             surplus_ratio: totalIncome > 0 ? savingNum / totalIncome : 0,
             updated_at: new Date().toISOString()
         }, { onConflict: 'user_id' })
+        if (cfError) {
+            console.error('[KYCGate Step2] Cashflow upsert error:', cfError)
+            alert(`Lỗi lưu thu chi: ${cfError.message}\nCode: ${cfError.code}`)
+            setSaving(false)
+            return
+        }
         setSaving(false)
         setStep(3)
     }
@@ -144,9 +150,19 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
         const validAssets = assets.filter(a => a.name && a.amount > 0)
         if (validAssets.length === 0) return alert('Vui lòng thêm ít nhất 1 tài sản.')
         setSaving(true)
-        await supabase.from('client_assets').delete().eq('user_id', userId)
+
+        // Delete old assets
+        const { error: deleteErr } = await supabase.from('client_assets').delete().eq('user_id', userId)
+        if (deleteErr) {
+            console.error('[KYCGate Step3] Delete error:', deleteErr)
+            alert(`Lỗi xóa tài sản cũ: ${deleteErr.message}`)
+            setSaving(false)
+            return
+        }
+
+        // Insert new assets
         for (const a of validAssets) {
-            await supabase.from('client_assets').insert({
+            const { error: insertErr } = await supabase.from('client_assets').insert({
                 user_id: userId,
                 asset_name: a.name,
                 asset_group: a.group,
@@ -155,7 +171,14 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                 risk_level: a.group === 'Nợ' ? 5 : a.group === 'Đầu Tư' ? 3 : 1,
                 is_liquid: a.group === 'Thanh Khoản',
             })
+            if (insertErr) {
+                console.error('[KYCGate Step3] Insert error:', insertErr, 'Asset:', a)
+                alert(`Lỗi lưu tài sản "${a.name}": ${insertErr.message}\n\nCode: ${insertErr.code}`)
+                setSaving(false)
+                return
+            }
         }
+
         setSaving(false)
         setStep(4)
     }
@@ -321,9 +344,9 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                                                 className="w-full bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400 placeholder:text-white/20" />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-xs text-slate-300 flex items-center gap-1"><Sparkles className="w-3 h-3 text-amber-400" /> Thu nhập thụ động / năm</label>
+                                            <label className="text-xs text-slate-300 flex items-center gap-1"><Sparkles className="w-3 h-3 text-amber-400" /> Thu nhập thụ động / năm (cổ tức, cho thuê, lãi)</label>
                                             <input type="number" min={0} step={1000000} value={passiveIncome} onChange={e => setPassiveIncome(e.target.value)}
-                                                placeholder="Cổ tức, cho thuê, lãi..."
+                                                placeholder="VD: 60,000,000 (cả năm)"
                                                 className="w-full bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-amber-400 placeholder:text-white/20" />
                                         </div>
                                     </div>

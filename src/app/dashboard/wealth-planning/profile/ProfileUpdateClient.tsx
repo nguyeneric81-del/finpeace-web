@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, User, TrendingUp, Shield, CheckCircle2, ChevronRight, Plus, Trash2, Save } from 'lucide-react'
+import { ArrowLeft, User, TrendingUp, Shield, CheckCircle2, ChevronRight, Plus, Trash2, Save, Building } from 'lucide-react'
 import Link from 'next/link'
 
 const fmtVND = (v: number) => {
@@ -52,10 +52,18 @@ const RISK_QUESTIONS = [
     },
 ]
 
+const ASSET_GROUPS = [
+    { value: 'Thanh Khoản', label: 'Thanh Khoản', icon: '💵' },
+    { value: 'Bảo Vệ', label: 'Bảo Vệ', icon: '🛡️' },
+    { value: 'Đầu Tư', label: 'Đầu Tư', icon: '📈' },
+    { value: 'Nợ', label: 'Nợ', icon: '🏦' },
+]
+
 const TABS = [
     { id: 'profile', label: 'Cá Nhân', icon: User, color: 'sky' },
     { id: 'cashflow', label: 'Dòng Tiền', icon: TrendingUp, color: 'emerald' },
-    { id: 'insurance', label: 'Bảo Hiểm & Rủi Ro', icon: Shield, color: 'violet' },
+    { id: 'assets', label: 'Tài Sản & Nợ', icon: Building, color: 'amber' },
+    { id: 'insurance', label: 'Bảo Hiểm', icon: Shield, color: 'violet' },
 ]
 
 export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any) {
@@ -84,7 +92,19 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
     const pyf = totalIncome > 0 ? (saving_ / totalIncome * 100).toFixed(0) : '0'
     const dsr = annualIncome && monthlyDebt ? (Number(monthlyDebt) * 12 / Number(annualIncome) * 100).toFixed(0) : null
 
-    // Tab 3: Insurance
+    // Tab 3: Assets
+    const [assetList, setAssetList] = useState<any[]>([])
+    const [assetsLoaded, setAssetsLoaded] = useState(false)
+
+    async function loadAssets() {
+        if (assetsLoaded) return
+        const supabaseInst = createClient()
+        const { data } = await supabaseInst.from('client_assets').select('*').eq('user_id', user.id).order('created_at')
+        setAssetList(data?.map(a => ({ id: a.id, name: a.asset_name, group: a.asset_group, amount: String(a.amount || '') })) || [])
+        setAssetsLoaded(true)
+    }
+
+    // Tab 4: Insurance
     const [insurances, setInsurances] = useState<any[]>(
         insurance.length > 0 ? insurance.map((i: any) => ({
             id: i.id, type: i.insurance_type, insurer: i.insurer || '',
@@ -148,6 +168,25 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
         setSavedTab('cashflow')
     }
 
+    async function saveAssets() {
+        setSaving(true)
+        const valid = assetList.filter(a => a.name && Number(a.amount) > 0)
+        const supabaseInst = createClient()
+        await supabaseInst.from('client_assets').delete().eq('user_id', user.id)
+        for (const a of valid) {
+            await supabaseInst.from('client_assets').insert({
+                user_id: user.id,
+                asset_name: a.name,
+                asset_group: a.group,
+                amount: Number(a.amount),
+                risk_level: a.group === 'Nợ' ? 5 : a.group === 'Đầu Tư' ? 3 : 1,
+                is_liquid: a.group === 'Thanh Khoản',
+            })
+        }
+        setSaving(false)
+        setSavedTab('assets')
+    }
+
     async function saveInsurance() {
         setSaving(true)
         if (riskResult) {
@@ -176,6 +215,7 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
     const TAB_COLORS: Record<string, string> = {
         sky: 'bg-sky-500/20 border-sky-500/40 text-sky-300',
         emerald: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300',
+        amber: 'bg-amber-500/20 border-amber-500/40 text-amber-300',
         violet: 'bg-violet-500/20 border-violet-500/40 text-violet-300',
     }
 
@@ -213,10 +253,11 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                         const isDone = savedTab === tab.id || (
                             tab.id === 'profile' && profile?.date_of_birth ||
                             tab.id === 'cashflow' && cashflow?.fixed_expense ||
+                            tab.id === 'assets' && assetsLoaded ||
                             tab.id === 'insurance' && insurance.length > 0
                         )
                         return (
-                            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                            <button key={tab.id} onClick={() => { setActiveTab(tab.id); if (tab.id === 'assets') loadAssets() }}
                                 className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold border transition-all ${isActive ? TAB_COLORS[tab.color] : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/8 hover:text-white/70'}`}>
                                 {isDone && !isActive ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Icon className="w-4 h-4" />}
                                 {tab.label}
@@ -380,8 +421,62 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                             )}
                         </motion.div>
                     )}
+                    {/* ── TAB 3: ASSETS & DEBT ── */}
+                    {activeTab === 'assets' && (
+                        <motion.div key="assets" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}
+                            className="bg-white/5 border border-white/10 rounded-3xl p-6 space-y-5">
+                            <div>
+                                <h3 className="text-lg font-black text-white">Tài Sản & Nợ</h3>
+                                <p className="text-white/40 text-sm mt-1">Cập nhật danh mục tài sản và nợ. Thay đổi sẽ cập nhật ngay vào dashboard.</p>
+                            </div>
 
-                    {/* ── TAB 3: INSURANCE + RISK QUIZ ── */}
+                            <div className="space-y-3">
+                                {assetList.map((a, i) => (
+                                    <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+                                        <div className="flex flex-wrap gap-2">
+                                            {ASSET_GROUPS.map(g => (
+                                                <button key={g.value} type="button"
+                                                    onClick={() => setAssetList(prev => prev.map((x, idx) => idx === i ? { ...x, group: g.value } : x))}
+                                                    className={`text-xs px-3 py-1.5 rounded-full border transition-all ${a.group === g.value ? 'bg-amber-500/20 border-amber-500/40 text-amber-300' : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'}`}>
+                                                    {g.icon} {g.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <input placeholder="Tên tài sản / khoản nợ" value={a.name}
+                                                onChange={e => setAssetList(prev => prev.map((x, idx) => idx === i ? { ...x, name: e.target.value } : x))}
+                                                className={inputCls} />
+                                            <input type="number" placeholder="Số tiền (VNĐ)" value={a.amount}
+                                                onChange={e => setAssetList(prev => prev.map((x, idx) => idx === i ? { ...x, amount: e.target.value } : x))}
+                                                className={inputCls} />
+                                        </div>
+                                        {assetList.length > 1 && (
+                                            <button onClick={() => setAssetList(prev => prev.filter((_, idx) => idx !== i))}
+                                                className="flex items-center gap-1 text-xs text-rose-400 hover:text-rose-300">
+                                                <Trash2 className="w-3 h-3" /> Xóa
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
+                                <button onClick={() => setAssetList(prev => [...prev, { name: '', group: 'Thanh Khoản', amount: '' }])}
+                                    className="w-full border border-dashed border-white/20 text-white/40 hover:text-white/70 hover:border-white/30 rounded-2xl py-2.5 text-sm flex items-center justify-center gap-2 transition-colors">
+                                    <Plus className="w-4 h-4" /> Thêm tài sản / khoản nợ
+                                </button>
+                            </div>
+
+                            <button onClick={saveAssets} disabled={saving}
+                                className="w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-2xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50">
+                                {saving ? 'Đang lưu...' : <><Save className="w-4 h-4" /> Lưu Tài Sản & Nợ</>}
+                            </button>
+                            {savedTab === 'assets' && (
+                                <div className="flex items-center gap-2 justify-center text-emerald-400 text-sm">
+                                    <CheckCircle2 className="w-4 h-4" /> Đã lưu! Dashboard sẽ cập nhật ngay.
+                                </div>
+                            )}
+                        </motion.div>
+                    )}
+
+                    {/* ── TAB 4: INSURANCE + RISK QUIZ ── */}
                     {activeTab === 'insurance' && (
                         <motion.div key="insurance" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}
                             className="space-y-5">
