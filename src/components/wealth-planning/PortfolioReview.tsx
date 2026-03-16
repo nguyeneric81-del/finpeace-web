@@ -27,6 +27,7 @@ interface Cashflow {
     annual_expense: number
     annual_saving: number
     monthly_debt_payment?: number
+    passive_income?: number
 }
 
 // ============================================================
@@ -282,7 +283,11 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
         const emergencyMonths = monthlyExpense > 0 ? liquidity / monthlyExpense : 0
         const annualIncome = cashflow?.annual_income || 0
         const annualSaving = cashflow?.annual_saving || 0
-        const pyfRate = annualIncome > 0 ? (annualSaving / annualIncome) * 100 : 0
+        // PYF: prefer stored saving, but fallback to income - expense if saving = 0
+        const computedSaving = annualIncome > 0 && annualSaving === 0
+            ? Math.max(0, annualIncome + (cashflow?.passive_income || 0) - (cashflow?.annual_expense || 0))
+            : annualSaving
+        const pyfRate = annualIncome > 0 ? (computedSaving / annualIncome) * 100 : 0
         const hasInvestment = investment > 0
         const zone = getFinancialZone(netWorth, debtRatio, hasInvestment, emergencyMonths)
         const recommendations = getRecommendations(debtRatio, emergencyMonths, protectionRatio, investRatio, pyfRate)
@@ -362,18 +367,23 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
         {
             label: "Debt Service Ratio",
             value: (() => {
-                const dsr = cashflow?.monthly_debt_payment && cashflow.annual_income > 0
-                    ? (cashflow.monthly_debt_payment * 12 / cashflow.annual_income * 100)
-                    : null
-                return dsr !== null ? `${dsr.toFixed(0)}%` : '—'
+                const mdp = cashflow?.monthly_debt_payment
+                const inc = cashflow?.annual_income
+                if (mdp != null && inc != null && inc > 0) {
+                    return `${(mdp * 12 / inc * 100).toFixed(0)}%`
+                }
+                return '—'
             })(),
             unit: undefined,
             target: "≤ 35% (CFP)",
             status: (() => {
-                const dsr = cashflow?.monthly_debt_payment && cashflow.annual_income > 0
-                    ? (cashflow.monthly_debt_payment * 12 / cashflow.annual_income * 100) : null
-                if (dsr === null) return 'warn' as any
-                return dsr <= 35 ? 'good' : dsr <= 50 ? 'warn' : 'danger' as any
+                const mdp = cashflow?.monthly_debt_payment
+                const inc = cashflow?.annual_income
+                if (mdp != null && inc != null && inc > 0) {
+                    const dsr = mdp * 12 / inc * 100
+                    return dsr <= 35 ? 'good' : dsr <= 50 ? 'warn' : 'danger' as any
+                }
+                return 'good' as any  // no debt = good
             })(),
             note: cashflow?.monthly_debt_payment
                 ? `Trả nợ ${fmtVNDShort(cashflow.monthly_debt_payment)}/tháng — DSR=${cashflow.annual_income > 0 ? (cashflow.monthly_debt_payment * 12 / cashflow.annual_income * 100).toFixed(0) : '?'}%`

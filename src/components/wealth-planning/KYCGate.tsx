@@ -202,21 +202,26 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
             }
         }
 
-        const totalInc = Number(income) || 0
-        const fixedExpNum = Number(fixedExp) || 0
-        const varExpNum = Number(variableExp) || 0
-        const discExpNum = Number(discretionaryExp) || 0
-        const totalExpenseCalculated = fixedExpNum + varExpNum + discExpNum
-        const savingCalculated = Math.max(0, totalInc - totalExpenseCalculated)
+        const totalInc = incomeNum  // already computed from step 2 state
+        const savingCalculated = savingNum  // pre-computed: max(0, income - expense)
 
-        // Mark KYC completed + save initial snapshot
-        await supabase.from('advisor_users').upsert({
-            auth_user_id: userId,
-            email: '',  // will be ignored on conflict
-            password_hash: 'MANAGED_BY_SUPABASE_AUTH',
-            kyc_completed: true,
-            kyc_completed_at: new Date().toISOString()
-        }, { onConflict: 'auth_user_id', ignoreDuplicates: false })
+        // Mark KYC completed — UPDATE (trigger created row on signup)
+        const { error: kycErr } = await supabase.from('advisor_users')
+            .update({
+                kyc_completed: true,
+                kyc_completed_at: new Date().toISOString()
+            })
+            .eq('auth_user_id', userId)
+        if (kycErr) {
+            // Fallback: upsert if UPDATE failed (edge case: trigger didn't run)
+            await supabase.from('advisor_users').upsert({
+                auth_user_id: userId,
+                email: '',
+                password_hash: 'MANAGED_BY_SUPABASE_AUTH',
+                kyc_completed: true,
+                kyc_completed_at: new Date().toISOString()
+            }, { onConflict: 'auth_user_id' })
+        }
 
         await fetch('/api/wealth/snapshot', {
             method: 'POST',
@@ -224,7 +229,7 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
             body: JSON.stringify({
                 user_id: userId,
                 period_label: `KYC Ban Đầu - T${new Date().getMonth() + 1}/${new Date().getFullYear()}`,
-                cashflow: { income: totalInc / 12, expense: totalExpenseCalculated / 12, saving: savingCalculated / 12 },
+                cashflow: { income: totalInc / 12, expense: totalExpense / 12, saving: savingCalculated / 12 },
                 assets: assets.filter(a => a.name && a.amount > 0),
                 net_worth: netWorth,
                 notes: 'Snapshot KYC lần đầu'

@@ -29,11 +29,15 @@ export async function signup(formData: FormData) {
     const password = formData.get('password') as string
     const full_name = formData.get('full_name') as string
 
+    // Get the site URL for redirect (works on both local and production)
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://finpeace.cloud'
+
     const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-            data: { full_name }
+            data: { full_name },
+            emailRedirectTo: `${siteUrl}/auth/callback`,
         }
     })
 
@@ -41,15 +45,15 @@ export async function signup(formData: FormData) {
         redirect('/login?tab=signup&message=' + encodeURIComponent(`Lỗi tạo tài khoản: ${error.message}`))
     }
 
-    // Nếu Supabase bật email confirmation: data.session = null, data.user.confirmed_at = null
-    // → redirect sang trang thông báo check email
-    // Nếu tắt confirmation (auto login): data.session tồn tại → vào dashboard
+    // Email confirmation enabled: data.session = null → chờ xác nhận email
+    // Email confirmation disabled: data.session exists → auto login
     if (data.session) {
         revalidatePath('/', 'layout')
         redirect('/dashboard')
     } else {
-        // Email confirmation required
-        redirect('/login?message=' + encodeURIComponent('✅ Tài khoản đã tạo! Kiểm tra email và xác nhận trước khi đăng nhập.'))
+        redirect('/login?message=' + encodeURIComponent(
+            `✅ Tài khoản đã tạo! Kiểm tra email ${email} và click link xác nhận để đăng nhập.`
+        ))
     }
 }
 
