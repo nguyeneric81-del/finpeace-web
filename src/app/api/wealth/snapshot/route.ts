@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
         .order('snapshot_date', { ascending: true })
         .limit(limit)
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    if (error) return NextResponse.json({ error: error.message, code: error.code }, { status: 500 })
     return NextResponse.json({ snapshots: data || [] })
 }
 
@@ -30,29 +30,41 @@ export async function POST(req: NextRequest) {
         const body = await req.json()
         const { user_id, period_label, cashflow, assets, net_worth, notes } = body
 
-        if (!user_id || !cashflow || !assets) {
-            return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+        if (!user_id || !cashflow) {
+            return NextResponse.json({ error: 'Missing required fields: user_id or cashflow' }, { status: 400 })
         }
 
         const today = new Date().toISOString().split('T')[0]
+        const currentMonth = `T${new Date().getMonth() + 1}/${new Date().getFullYear()}`
 
         const { data, error } = await supabase
             .from('financial_snapshots')
             .insert({
                 user_id,
                 snapshot_date: today,
-                period_label: period_label || `T${new Date().getMonth() + 1}/${new Date().getFullYear()}`,
-                cashflow,
-                assets,
+                period_label: period_label || currentMonth,
+                cashflow: cashflow || {},
+                assets: assets || [],
                 net_worth: net_worth || 0,
                 notes: notes || null
             })
             .select()
             .single()
 
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+        if (error) {
+            console.error('[snapshot API] Supabase error:', error)
+            return NextResponse.json({
+                error: error.message,
+                code: error.code,
+                hint: error.hint,
+                details: error.details
+            }, { status: 500 })
+        }
+
         return NextResponse.json({ success: true, snapshot: data })
-    } catch (err) {
-        return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    } catch (err: any) {
+        console.error('[snapshot API] Server error:', err)
+        return NextResponse.json({ error: String(err?.message || err) }, { status: 500 })
     }
 }
+
