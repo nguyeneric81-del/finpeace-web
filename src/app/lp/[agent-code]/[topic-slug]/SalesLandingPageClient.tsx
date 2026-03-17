@@ -139,6 +139,7 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
   const [form, setForm] = useState({ full_name: '', email: '', phone: '' })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [contentUrl, setContentUrl] = useState<string | null>(null)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -155,9 +156,13 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
     setSubmitting(true); setError('')
     const res = await fetch('/api/lp/submit-lead', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, agentCode, topicSlug, lpId, agentId: agent.id }),
+      body: JSON.stringify({ ...form, agentCode, topicSlug, lpId, agentId: agent.id, contentType: lpConfig?.content_type }),
     })
-    if (res.ok) setSubmitted(true)
+    if (res.ok) {
+      const data = await res.json()
+      setContentUrl(data.contentUrl ?? null)
+      setSubmitted(true)
+    }
     else setError(s.errServer)
     setSubmitting(false)
   }
@@ -366,10 +371,21 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
         {/* ── LEAD CAPTURE FORM ── */}
         <section className="rounded-3xl p-8 md:p-10" style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${accent}40` }}>
           {submitted ? (
-            <div className="text-center py-8">
+          <div className="text-center py-8">
               <CheckCircle2 className="w-14 h-14 mx-auto mb-4" style={{ color: accent }} />
               <h3 className="text-2xl font-black text-white mb-2">{s.successTitle}</h3>
-              <p style={{ color: 'rgba(255,255,255,0.5)' }}>{s.successMsg(agent.full_name)}</p>
+              <p className="mb-6" style={{ color: 'rgba(255,255,255,0.5)' }}>{s.successMsg(agent.full_name)}</p>
+              {contentUrl && (
+                <a
+                  href={contentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all hover:scale-105"
+                  style={{ background: accent, color: '#0d1119' }}
+                >
+                  🔓 Xem nội dung ngay →
+                </a>
+              )}
             </div>
           ) : (
             <>
