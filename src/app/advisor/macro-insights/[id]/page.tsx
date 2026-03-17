@@ -274,7 +274,7 @@ export default async function MacroDetailPage({ params }: { params: Promise<{ id
             <BarChart2 className="w-3.5 h-3.5" /> Số liệu cốt lõi
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {data.stats.map((stat, i) => (
+            {data.stats.map((stat: any, i: number) => (
               <InsightStatCard key={i} {...stat} accent={data.accent} />
             ))}
           </div>
@@ -309,7 +309,7 @@ export default async function MacroDetailPage({ params }: { params: Promise<{ id
             <div className="absolute left-5 top-0 bottom-0 w-px" style={{ background: 'rgba(255,255,255,0.05)' }} />
 
             <div className="space-y-8">
-              {data.behindStory.map((item, i) => (
+              {data.behindStory.map((item: any, i: number) => (
                 <div key={i} className="relative pl-14">
                   {/* Timeline node */}
                   <div
@@ -350,7 +350,7 @@ export default async function MacroDetailPage({ params }: { params: Promise<{ id
             <p className="text-amber-100/85 leading-relaxed text-base font-medium mb-5">&ldquo;{data.analystView}&rdquo;</p>
             <div className="flex items-center gap-3 pt-4" style={{ borderTop: '1px solid rgba(245,158,11,0.12)' }}>
               <span className="text-xs font-bold uppercase tracking-widest text-amber-500">Nguồn:</span>
-              {data.analystSources.map(s => (
+              {data.analystSources.map((s: string) => (
                 <span key={s} className="text-xs px-2.5 py-1 rounded-full font-semibold text-amber-300" style={{ background: 'rgba(245,158,11,0.12)' }}>{s}</span>
               ))}
             </div>
@@ -402,7 +402,7 @@ export default async function MacroDetailPage({ params }: { params: Promise<{ id
             Xem Kế hoạch Giao dịch
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            {data.companies.map(c => (
+            {data.companies.map((c: any) => (
               <Link key={c.ticker} href={c.plan}>
                 <div
                   className="flex items-center justify-between p-5 rounded-2xl cursor-pointer transition-all duration-200 hover:brightness-125"
