@@ -54,6 +54,7 @@ const STRINGS = {
     successMsg: (name: string) => `${name} sẽ liên hệ trong vòng 24 giờ.`,
     errName: 'Vui lòng nhập họ tên.',
     errContact: 'Vui lòng nhập Email hoặc SĐT.',
+    errPhone: 'Số điện thoại không đúng định dạng VN (VD: 0901234567).',
     errServer: 'Có lỗi xảy ra. Vui lòng thử lại.',
     footer: (brand: string) => `© ${brand} · Powered by FinPeace Research Platform`,
   },
@@ -77,6 +78,7 @@ const STRINGS = {
     successMsg: (name: string) => `${name}이(가) 24시간 내에 연락드리겠습니다.`,
     errName: '성함을 입력해 주세요.',
     errContact: '이메일 또는 전화번호를 입력해 주세요.',
+    errPhone: '올바른 베트남 전화번호를 입력해 주세요 (예: 0901234567).',
     errServer: '오류가 발생했습니다. 다시 시도해 주세요.',
     footer: (brand: string) => `© ${brand} · FinPeace Research Platform 제공`,
   },
@@ -153,6 +155,13 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
     e.preventDefault()
     if (!form.full_name) { setError(s.errName); return }
     if (!form.email && !form.phone) { setError(s.errContact); return }
+    // Validate Vietnamese phone number format when phone is provided
+    if (form.phone) {
+      const vnPhoneRegex = /^(0[35789][0-9]{8}|(\+84|84)[35789][0-9]{8})$/
+      if (!vnPhoneRegex.test(form.phone.replace(/\s|-/g, ''))) {
+        setError(s.errPhone); return
+      }
+    }
     setSubmitting(true); setError('')
     const res = await fetch('/api/lp/submit-lead', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
