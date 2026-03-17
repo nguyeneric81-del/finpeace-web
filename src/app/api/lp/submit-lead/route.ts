@@ -37,25 +37,40 @@ export async function POST(request: Request) {
     let contentTitle: string | null = null
     let resolvedContentType = bodyContentType ?? 'macro_insight'
 
+    const BASE = 'https://finpeace.cloud'
+    const ADVISOR_BASE = 'https://advisor.finpeace.cloud'
+
     if (lpId) {
         const { data: lpData } = await supabase
             .from('agent_landing_pages')
-            .select('content_type, slug, topic')
+            .select('content_type, slug, topic, macro_insight_id')
             .eq('id', lpId)
             .single()
         if (lpData) {
             resolvedContentType = lpData.content_type ?? 'macro_insight'
             contentTitle = lpData.topic ?? topicSlug
+
+            if (resolvedContentType === 'macro_insight') {
+                // Look up the specific insight ID for a precise detail page URL
+                const { data: insight } = await supabase
+                    .from('macro_insights')
+                    .select('id')
+                    .eq('topic_slug', lpData.slug)
+                    .single()
+                contentUrl = insight?.id
+                    ? `${ADVISOR_BASE}/advisor/macro-insights/${insight.id}`
+                    : `${ADVISOR_BASE}/advisor/macro-insights`
+
+            } else if (resolvedContentType === 'knowledgebase') {
+                // macro_insight_id field repurposed to store KB pillar slug
+                const pillar = lpData.macro_insight_id
+                contentUrl = pillar
+                    ? `${BASE}/knowledgebase/${pillar}`
+                    : `${BASE}/knowledgebase`
+            }
         }
     }
 
-    const BASE = 'https://finpeace.cloud'
-    const ADVISOR_BASE = 'https://advisor.finpeace.cloud'
-    if (resolvedContentType === 'macro_insight') {
-        contentUrl = `${ADVISOR_BASE}/advisor/macro-insights`
-    } else if (resolvedContentType === 'knowledgebase') {
-        contentUrl = `${BASE}/knowledgebase`
-    }
 
     // ── 2. Send sales notification email ─────────────────────
 
