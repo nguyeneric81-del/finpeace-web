@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 
 type Params = { params: Promise<{ id: string }> }
 
 // POST /api/admin/lp-campaigns/[id]/request-edit
 export async function POST(req: Request, { params }: Params) {
   const { id } = await params
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   const { notes } = await req.json()
 
   const { data, error } = await supabase

@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 
 // GET /api/admin/lp-campaigns — list all campaigns with stats
 export async function GET() {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   const { data, error } = await supabase
     .from('lp_campaign_stats')
@@ -28,7 +28,7 @@ export async function GET() {
 
 // POST /api/admin/lp-campaigns — create draft (without AI)
 export async function POST(req: Request) {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   const body = await req.json()
   const { agent_code, content_type, content_slug, campaign_name, budget_allocated, utm_source, utm_campaign } = body
 
