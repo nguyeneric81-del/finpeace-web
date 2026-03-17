@@ -8,6 +8,7 @@ import {
 import { StatCard, MiniTrendChart } from '@/components/macro/InfographicWidgets';
 import AntVInfographic from '@/components/macro/AntVInfographic';
 import { createClient } from '@/utils/supabase/server';
+import LangToggle from '@/components/macro/LangToggle';
 
 // ── Types ────────────────────────────────────────────────────
 type StoryPoint = { point: string; quote: string; source: string };
@@ -174,8 +175,16 @@ function InsightStatCard({ value, label, sub, positive, accent }: StatCardData &
 }
 
 // ── Main Page ────────────────────────────────────────────────
-export default async function MacroDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function MacroDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ lang?: string }>
+}) {
   const resolvedParams = await params;
+  const resolvedSearch = await searchParams;
+  const lang = resolvedSearch?.lang === 'ko' ? 'ko' : 'vi'
 
   // ── Fetch from Supabase ──────────────────────────────────
   const supabase = await createClient()
@@ -199,26 +208,35 @@ export default async function MacroDetailPage({ params }: { params: Promise<{ id
   // ── Map Supabase snake_case → component props ──────────────
   const isFromDB = !!row
   const accent = raw.accent_color ?? raw.accent ?? '#10B981'
+
+  // i18n helper: Korean fallback to Vietnamese
+  const ko = isFromDB ? (raw.translations?.ko ?? {}) : {}
+  const t = (field: string, fallback: string) =>
+    lang === 'ko' && ko[field] ? ko[field] : fallback
+
   const data = isFromDB ? {
-    title:           raw.title,
-    category:        raw.category,
-    date:            raw.date_label,
+    title:           t('title', raw.title),
+    category:        t('category', raw.category),
+    date:            t('date_label', raw.date_label),
     accent,
     accentBg:        accent + '1A',
-    industry:        raw.narrow_industry ?? '',
-    impact:          raw.impact_value ?? '',
+    industry:        t('narrow_industry', raw.narrow_industry ?? ''),
+    impact:          t('impact_value', raw.impact_value ?? ''),
     impactPositive:  raw.impact_positive ?? true,
-    stats:           (raw.key_stats ?? []).map((s: any) => ({ value: s.value, label: s.label, positive: s.positive })),
+    stats:           (lang === 'ko' && ko.key_stats ? ko.key_stats : (raw.key_stats ?? [])).map((s: any) => ({ value: s.value, label: s.label, positive: s.positive })),
     chartData:       raw.chart_data ?? [],
     chartLabel:      raw.chart_label ?? '',
     chartColor:      raw.chart_color ?? accent,
     infographicSyntax: raw.infographic_syntax ?? '',
-    behindStory:     raw.behind_story ?? [],
-    analystView:     raw.analyst_view ?? '',
-    analystSources:  raw.analyst_sources ?? [],
-    analystQuotes:   raw.analyst_quotes ?? [],
-    cycle: { lagging: raw.cycle_lagging ?? '', leading: raw.cycle_leading ?? '' },
-    companies:       (raw.companies ?? []).map((c: any) => ({
+    behindStory:     (lang === 'ko' && ko.behind_story) ? ko.behind_story : (raw.behind_story ?? []),
+    analystView:     t('analyst_view', raw.analyst_view ?? ''),
+    analystSources:  (lang === 'ko' && ko.analyst_sources) ? ko.analyst_sources : (raw.analyst_sources ?? []),
+    analystQuotes:   (lang === 'ko' && ko.analyst_quotes) ? ko.analyst_quotes : (raw.analyst_quotes ?? []),
+    cycle: {
+      lagging: t('cycle_lagging', raw.cycle_lagging ?? ''),
+      leading: t('cycle_leading', raw.cycle_leading ?? ''),
+    },
+    companies: (raw.companies ?? []).map((c: any) => ({
       ticker: c.ticker, name: c.name,
       plan: c.plan ?? `/advisor/trading-plan/${c.ticker?.toLowerCase()}`
     })),
@@ -235,6 +253,7 @@ export default async function MacroDetailPage({ params }: { params: Promise<{ id
             Macro Insights
           </Link>
           <div className="flex items-center gap-2">
+            <LangToggle currentLang={lang} />
             <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full" style={{ background: data.accentBg, color: data.accent, border: `1px solid ${data.accent}30` }}>
               {data.category}
             </span>
