@@ -368,34 +368,28 @@ export default async function MacroDetailPage({ params }: { params: Promise<{ id
               </p>
               <div className="grid sm:grid-cols-2 gap-4">
                 {data.analystQuotes.map((q: any, i: number) => {
-                  const ratingColor: Record<string, string> = {
-                    'Mua mạnh': '#34d399', 'Mua': '#86efac', 'Khả quan': '#a3e635',
-                    'Nắm giữ': '#fbbf24', 'Trung lập': '#94a3b8',
-                    'Giảm tỷ trọng': '#f87171', 'Bán': '#ef4444',
-                  }
-                  const badgeColor = ratingColor[q.rating] ?? '#94a3b8'
                   return (
                     <div key={i} className="rounded-2xl p-5 space-y-3"
                       style={{ background: '#0F172A', border: '1px solid rgba(255,255,255,0.07)', borderLeft: `3px solid ${q.color ?? '#38bdf8'}` }}>
-                      <div className="flex items-center justify-between flex-wrap gap-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-black px-2.5 py-0.5 rounded-lg text-white"
-                            style={{ background: q.color ?? '#38bdf8', fontFamily: 'monospace' }}>
-                            {q.ticker}
-                          </span>
-                          <span className="text-xs font-bold text-slate-400">{q.firm}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-black px-2 py-0.5 rounded-full uppercase"
-                            style={{ background: `${badgeColor}18`, color: badgeColor, border: `1px solid ${badgeColor}40` }}>
-                            {q.rating}
-                          </span>
-                          {q.target_price && (
-                            <span className="text-xs font-bold text-slate-300">TP: {q.target_price}₫</span>
-                          )}
-                        </div>
+                      {/* Header: CTCK name + metric */}
+                      <div className="flex items-start justify-between gap-2 flex-wrap">
+                        <span className="text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider"
+                          style={{ background: `${q.color ?? '#38bdf8'}18`, color: q.color ?? '#38bdf8', border: `1px solid ${q.color ?? '#38bdf8'}30` }}>
+                          {q.firm}
+                        </span>
+                        <span className="text-xs font-semibold text-slate-300 text-right">{q.metric}</span>
                       </div>
-                      <p className="text-sm text-slate-400 leading-relaxed">{q.view}</p>
+                      {/* Key stat highlight */}
+                      {q.stat && (
+                        <p className="text-lg font-black" style={{ color: q.color ?? '#38bdf8', fontFamily: 'monospace' }}>
+                          {q.stat}
+                        </p>
+                      )}
+                      {/* Quote from research report */}
+                      <p className="text-xs text-slate-400 leading-relaxed italic border-l-2 pl-3"
+                        style={{ borderColor: `${q.color ?? '#38bdf8'}40` }}>
+                        {q.quote ?? q.view}
+                      </p>
                     </div>
                   )
                 })}
