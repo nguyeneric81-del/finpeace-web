@@ -29,6 +29,57 @@ interface MacroStory {
 interface Props {
   agent: Agent; story: MacroStory; lpConfig: any
   agentCode: string; topicSlug: string; lpId: string | null; contentType: string
+  lang: string
+}
+
+// ── i18n strings ─────────────────────────────────────────────
+const STRINGS = {
+  vi: {
+    statsLabel: 'Số liệu cốt lõi',
+    chartLabel: 'Xu hướng dữ liệu',
+    dataLabel: 'Dữ liệu thực tế',
+    storyTitle: 'Câu chuyện đằng sau sự kiện',
+    analystTitle: 'Góc nhìn phân tích thị trường',
+    sourceLabel: 'Nguồn:',
+    cycleTitle: 'Chu kỳ Tác động (Lagging → Leading)',
+    lagLabel: 'Độ trễ Vĩ mô',
+    leadLabel: 'Dẫn dắt Doanh thu',
+    companiesTitle: 'Doanh nghiệp Trọng điểm',
+    defaultCta: 'Đăng ký tư vấn miễn phí',
+    namePlaceholder: 'Họ và tên *',
+    emailPlaceholder: 'Email',
+    phonePlaceholder: 'Số điện thoại',
+    submitting: 'Đang gửi...',
+    successTitle: 'Đã nhận thông tin!',
+    successMsg: (name: string) => `${name} sẽ liên hệ trong vòng 24 giờ.`,
+    errName: 'Vui lòng nhập họ tên.',
+    errContact: 'Vui lòng nhập Email hoặc SĐT.',
+    errServer: 'Có lỗi xảy ra. Vui lòng thử lại.',
+    footer: (brand: string) => `© ${brand} · Powered by FinPeace Research Platform`,
+  },
+  ko: {
+    statsLabel: '핵심 지표',
+    chartLabel: '데이터 트렌드',
+    dataLabel: '실제 데이터',
+    storyTitle: '이벤트 배경 스토리',
+    analystTitle: '시장 분석 관점',
+    sourceLabel: '출처:',
+    cycleTitle: '영향 사이클 (Lagging → Leading)',
+    lagLabel: '거시경제 지연',
+    leadLabel: '매출 성장 선행지표',
+    companiesTitle: '핵심 기업',
+    defaultCta: '무료 상담 신청하기',
+    namePlaceholder: '성함 *',
+    emailPlaceholder: '이메일',
+    phonePlaceholder: '전화번호',
+    submitting: '전송 중...',
+    successTitle: '정보가 접수되었습니다!',
+    successMsg: (name: string) => `${name}이(가) 24시간 내에 연락드리겠습니다.`,
+    errName: '성함을 입력해 주세요.',
+    errContact: '이메일 또는 전화번호를 입력해 주세요.',
+    errServer: '오류가 발생했습니다. 다시 시도해 주세요.',
+    footer: (brand: string) => `© ${brand} · FinPeace Research Platform 제공`,
+  },
 }
 
 // ── Mini Trend Chart (canvas-based, no dep) ──────────────────
@@ -77,12 +128,13 @@ function TrendChart({ data, color, label }: { data: { name: string; value: numbe
   )
 }
 
-export default function SalesLandingPageClient({ agent, story, lpConfig, agentCode, topicSlug, lpId }: Props) {
+export default function SalesLandingPageClient({ agent, story, lpConfig, agentCode, topicSlug, lpId, lang }: Props) {
   const primary = agent.brand_color_primary
   const accent = agent.brand_color_accent
   const ac = story.accent_color || accent
   const hook = lpConfig?.custom_hook || story.title
-  const cta = lpConfig?.custom_cta || 'Đăng ký tư vấn miễn phí'
+  const s = STRINGS[lang as keyof typeof STRINGS] ?? STRINGS.vi
+  const cta = lpConfig?.custom_cta || s.defaultCta
 
   const [form, setForm] = useState({ full_name: '', email: '', phone: '' })
   const [submitting, setSubmitting] = useState(false)
@@ -98,15 +150,15 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.full_name) { setError('Vui lòng nhập họ tên.'); return }
-    if (!form.email && !form.phone) { setError('Vui lòng nhập Email hoặc SĐT.'); return }
+    if (!form.full_name) { setError(s.errName); return }
+    if (!form.email && !form.phone) { setError(s.errContact); return }
     setSubmitting(true); setError('')
     const res = await fetch('/api/lp/submit-lead', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...form, agentCode, topicSlug, lpId, agentId: agent.id }),
     })
     if (res.ok) setSubmitted(true)
-    else setError('Có lỗi xảy ra. Vui lòng thử lại.')
+    else setError(s.errServer)
     setSubmitting(false)
   }
 
@@ -161,7 +213,7 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
         {story.key_stats?.length > 0 && (
           <section>
             <p className="text-xs font-bold uppercase tracking-widest mb-5 flex items-center gap-2" style={{ opacity: 0.4 }}>
-              <BarChart2 className="w-3.5 h-3.5" />Số liệu cốt lõi
+              <BarChart2 className="w-3.5 h-3.5" />{s.statsLabel}
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {story.key_stats.map((s, i) => (
@@ -179,7 +231,7 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
           <section>
             <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
               <div className="px-6 pt-5 pb-2">
-                <p className="text-xs font-bold uppercase tracking-widest" style={{ opacity: 0.4 }}>Xu hướng dữ liệu</p>
+                <p className="text-xs font-bold uppercase tracking-widest" style={{ opacity: 0.4 }}>{s.chartLabel}</p>
               </div>
               <div className="px-6 pb-5">
                 <TrendChart data={story.chart_data} color={story.chart_color || ac} label={story.chart_label} />
@@ -192,7 +244,7 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
         {story.data_point && (
           <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
             <p className="text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-1.5" style={{ opacity: 0.4 }}>
-              <BarChart2 className="w-3 h-3" />Dữ liệu thực tế
+              <BarChart2 className="w-3 h-3" />{s.dataLabel}
             </p>
             <p className="text-sm font-semibold" style={{ color: ac }}>{story.data_point}</p>
           </div>
@@ -205,7 +257,7 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
               <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(56,189,248,0.12)' }}>
                 <Clock className="w-4 h-4 text-sky-400" />
               </div>
-              Câu chuyện đằng sau sự kiện
+              {s.storyTitle}
             </h2>
             <div className="relative">
               <div className="absolute left-5 top-0 bottom-0 w-px" style={{ background: 'rgba(255,255,255,0.07)' }} />
@@ -236,13 +288,13 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
               <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(245,158,11,0.12)' }}>
                 <Target className="w-4 h-4 text-amber-400" />
               </div>
-              Góc nhìn phân tích thị trường
+              {s.analystTitle}
             </h2>
             <div className="rounded-2xl p-7" style={{ background: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.15)' }}>
               <p className="leading-relaxed font-medium mb-5" style={{ color: 'rgba(255,235,180,0.85)' }}>&ldquo;{story.analyst_view}&rdquo;</p>
               {story.analyst_sources && story.analyst_sources.length > 0 && (
                 <div className="flex items-center gap-3 pt-4" style={{ borderTop: '1px solid rgba(245,158,11,0.12)' }}>
-                  <span className="text-xs font-bold uppercase tracking-widest text-amber-500">Nguồn:</span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-amber-500">{s.sourceLabel}</span>
                   {story.analyst_sources.map(s => (
                     <span key={s} className="text-xs px-2.5 py-1 rounded-full font-semibold text-amber-300" style={{ background: 'rgba(245,158,11,0.12)' }}>{s}</span>
                   ))}
@@ -259,7 +311,7 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
               <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(52,211,153,0.12)' }}>
                 <Activity className="w-4 h-4 text-emerald-400" />
               </div>
-              Chu kỳ Tác động (Lagging → Leading)
+              {s.cycleTitle}
             </h2>
             <div className="grid md:grid-cols-2 gap-4">
               {story.cycle_lagging && (
@@ -267,7 +319,7 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-slate-500" />
                     <p className="text-xs font-black uppercase tracking-widest text-slate-500">Lagging</p>
-                    <span className="text-xs text-slate-600 ml-1">Độ trễ Vĩ mô</span>
+                    <span className="text-xs text-slate-600 ml-1">{s.lagLabel}</span>
                   </div>
                   <p className="text-sm leading-relaxed text-slate-300">{story.cycle_lagging}</p>
                 </div>
@@ -277,7 +329,7 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 6px #10B98170' }} />
                     <p className="text-xs font-black uppercase tracking-widest text-emerald-500">Leading</p>
-                    <span className="text-xs text-slate-600 ml-1">Dẫn dắt Doanh thu</span>
+                    <span className="text-xs text-slate-600 ml-1">{s.leadLabel}</span>
                   </div>
                   <p className="text-sm leading-relaxed" style={{ color: 'rgba(167,243,208,0.8)' }}>{story.cycle_leading}</p>
                 </div>
@@ -293,7 +345,7 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
               <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: ac + '15' }}>
                 <ChevronRight className="w-4 h-4" style={{ color: ac }} />
               </div>
-              Doanh nghiệp Trọng điểm
+              {s.companiesTitle}
             </h2>
             <div className="grid sm:grid-cols-2 gap-4">
               {story.companies.map(c => (
@@ -316,24 +368,24 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
           {submitted ? (
             <div className="text-center py-8">
               <CheckCircle2 className="w-14 h-14 mx-auto mb-4" style={{ color: accent }} />
-              <h3 className="text-2xl font-black text-white mb-2">Đã nhận thông tin!</h3>
-              <p style={{ color: 'rgba(255,255,255,0.5)' }}>{agent.full_name} sẽ liên hệ trong vòng 24 giờ.</p>
+              <h3 className="text-2xl font-black text-white mb-2">{s.successTitle}</h3>
+              <p style={{ color: 'rgba(255,255,255,0.5)' }}>{s.successMsg(agent.full_name)}</p>
             </div>
           ) : (
             <>
               <h3 className="text-2xl font-black text-white mb-2">{cta}</h3>
               {agent.brand_tagline && <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.35)' }}>{agent.brand_tagline}</p>}
               <form onSubmit={handleSubmit} className="space-y-4">
-                <input type="text" placeholder="Họ và tên *" required value={form.full_name}
+                <input type="text" placeholder={s.namePlaceholder} required value={form.full_name}
                   onChange={e => setForm(p => ({ ...p, full_name: e.target.value }))}
                   className="w-full rounded-xl px-4 py-3 text-sm bg-white/10 border border-white/15 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30"
                 />
                 <div className="grid md:grid-cols-2 gap-4">
-                  <input type="email" placeholder="Email" value={form.email}
+                  <input type="email" placeholder={s.emailPlaceholder} value={form.email}
                     onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
                     className="w-full rounded-xl px-4 py-3 text-sm bg-white/10 border border-white/15 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30"
                   />
-                  <input type="tel" placeholder="Số điện thoại" value={form.phone}
+                  <input type="tel" placeholder={s.phonePlaceholder} value={form.phone}
                     onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
                     className="w-full rounded-xl px-4 py-3 text-sm bg-white/10 border border-white/15 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30"
                   />
@@ -342,7 +394,7 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
                 <button type="submit" disabled={submitting}
                   className="w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all"
                   style={{ background: accent, color: '#fff', opacity: submitting ? 0.6 : 1 }}>
-                  {submitting ? 'Đang gửi...' : <><Send className="w-4 h-4" />{cta}</>}
+                  {submitting ? s.submitting : <><Send className="w-4 h-4" />{cta}</>}
                 </button>
               </form>
             </>
@@ -350,7 +402,7 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
         </section>
 
         <footer className="text-center text-xs pb-8" style={{ color: 'rgba(255,255,255,0.12)' }}>
-          © {agent.brand_name} · Powered by FinPeace Research Platform
+          {s.footer(agent.brand_name)}
         </footer>
       </div>
     </div>
