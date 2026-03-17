@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { Resend } from 'resend'
-import { SALES_CONFIG, MANAGER_EMAIL } from '@/lib/salesConfig'
+import { SALES_CONFIG, GLOBAL_CC_EMAILS } from '@/lib/salesConfig'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -60,14 +60,17 @@ export async function POST(request: Request) {
       </div>
     `
 
-    // Send to Manager + Sales (if email exists)
-    const toList = [MANAGER_EMAIL]
-    if (salesEmail && salesEmail !== MANAGER_EMAIL) toList.push(salesEmail)
+    // Send to Sales → To, Manager + Yến → CC
+    const toList = salesEmail ? [salesEmail] : GLOBAL_CC_EMAILS
+    const ccList = salesEmail
+      ? GLOBAL_CC_EMAILS.filter(e => e !== salesEmail)
+      : []
 
     try {
         await resend.emails.send({
             from: process.env.RESEND_FROM_EMAIL ?? 'FinPeace Advisor <advisor@finpeace.cloud>',
             to: toList,
+            cc: ccList.length > 0 ? ccList : undefined,
             subject: `🔔 Lead mới: ${full_name || phone} (${salesName}) — FinPeace`,
             html: emailHtml,
         })

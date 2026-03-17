@@ -27,8 +27,8 @@ export const SALES_CONFIG: Record<string, SalesAgent> = {
     agentCode: 'thuy03',
   },
   huyen04: {
-    name: 'Huyền',
-    email: 'huyen@finpeace.cloud',
+    name: 'Minaviko',
+    email: 'Huyenltt@kbsec.com.vn',
     agentCode: 'huyen04',
   },
   mduc05: {
@@ -38,8 +38,11 @@ export const SALES_CONFIG: Record<string, SalesAgent> = {
   },
 }
 
-// Email của Manager (luôn luôn nhận CC mọi lead)
-export const MANAGER_EMAIL = 'tuananh@finpeace.cloud'
+// Email của Manager (luôn nhận CC mọi lead)
+export const MANAGER_EMAIL = 'nguyeneric81@gmail.com'
+
+// CC list — luôn nhận CC bất kể sales nào
+export const GLOBAL_CC_EMAILS = ['nguyeneric81@gmail.com', 'yenle@finpeace.vn']
 
 // Toàn bộ agent codes dạng mảng
 export const AGENT_CODES = Object.keys(SALES_CONFIG)
