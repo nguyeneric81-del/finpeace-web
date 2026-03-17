@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { StatCard, MiniTrendChart } from '@/components/macro/InfographicWidgets';
 import AntVInfographic from '@/components/macro/AntVInfographic';
+import { createClient } from '@/utils/supabase/server';
 
 // ── Types ────────────────────────────────────────────────────
 type StoryPoint = { point: string; quote: string; source: string };
@@ -175,15 +176,52 @@ function InsightStatCard({ value, label, sub, positive, accent }: StatCardData &
 // ── Main Page ────────────────────────────────────────────────
 export default async function MacroDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
-  const data = mockDetails[resolvedParams.id];
 
-  if (!data) {
+  // ── Fetch from Supabase ──────────────────────────────────
+  const supabase = await createClient()
+  const { data: row } = await supabase
+    .from('macro_insights')
+    .select('*')
+    .eq('id', resolvedParams.id)
+    .single()
+
+  // Fallback to hardcoded for backward compat if Supabase returns nothing
+  const raw = row ?? (mockDetails as any)[resolvedParams.id]
+
+  if (!raw) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#020617' }}>
         <p className="text-slate-500">Không tìm thấy báo cáo.</p>
       </div>
     );
   }
+
+  // ── Map Supabase snake_case → component props ──────────────
+  const isFromDB = !!row
+  const accent = raw.accent_color ?? raw.accent ?? '#10B981'
+  const data = isFromDB ? {
+    title:           raw.title,
+    category:        raw.category,
+    date:            raw.date_label,
+    accent,
+    accentBg:        accent + '1A',
+    industry:        raw.narrow_industry ?? '',
+    impact:          raw.impact_value ?? '',
+    impactPositive:  raw.impact_positive ?? true,
+    stats:           (raw.key_stats ?? []).map((s: any) => ({ value: s.value, label: s.label, positive: s.positive })),
+    chartData:       raw.chart_data ?? [],
+    chartLabel:      raw.chart_label ?? '',
+    chartColor:      raw.chart_color ?? accent,
+    infographicSyntax: raw.infographic_syntax ?? '',
+    behindStory:     raw.behind_story ?? [],
+    analystView:     raw.analyst_view ?? '',
+    analystSources:  raw.analyst_sources ?? [],
+    cycle: { lagging: raw.cycle_lagging ?? '', leading: raw.cycle_leading ?? '' },
+    companies:       (raw.companies ?? []).map((c: any) => ({
+      ticker: c.ticker, name: c.name,
+      plan: c.plan ?? `/advisor/trading-plan/${c.ticker?.toLowerCase()}`
+    })),
+  } : raw
 
   return (
     <div className="min-h-screen text-slate-200" style={{ background: '#020617', fontFamily: "'Be Vietnam Pro', system-ui, sans-serif" }}>
