@@ -85,6 +85,25 @@ export default async function SalesLandingPage({ params, searchParams }: Props) 
     } else {
       story = data
     }
+  } else if (contentType === 'knowledgebase' && lpConfig) {
+    // Build story from AI-generated campaign content stored in agent_landing_pages
+    const bodyItems = (lpConfig.generated_body ?? []) as { section: string; text: string }[]
+    story = {
+      id: lpConfig.id,
+      title: lpConfig.topic ?? slug,
+      category: 'Kiến thức Đầu tư',
+      date_label: new Date().toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' }),
+      data_point: lpConfig.generated_hook ?? '',
+      narrow_industry: null,
+      impact_value: null,
+      impact_positive: true,
+      accent_color: agent.brand_color_accent ?? '#C4A67A',
+      behind_story: bodyItems.map(b => ({ point: b.section, quote: b.text, source: '' })),
+      analyst_view: null,
+      analyst_sources: [],
+      key_stats: [],
+      companies: [],
+    }
   }
 
   if (!story) notFound()
@@ -102,3 +121,4 @@ export default async function SalesLandingPage({ params, searchParams }: Props) 
     />
   )
 }
+
