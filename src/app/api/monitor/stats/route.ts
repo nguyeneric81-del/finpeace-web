@@ -1,17 +1,16 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { SALES_CONFIG } from '@/lib/salesConfig'
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-const SALES_MAP: Record<string, string> = {
-    Quang01: 'Minh Quang',
-    duc02: 'Anh Đức',
-    thuy03: 'Thuỷ',
-    huyen04: 'Huyền',
-}
+// Build SALES_MAP from central config
+const SALES_MAP: Record<string, string> = Object.fromEntries(
+    Object.entries(SALES_CONFIG).map(([code, agent]) => [code, agent.name])
+)
 
 export async function GET() {
     const today = new Date()
