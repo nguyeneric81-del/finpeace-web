@@ -69,16 +69,18 @@ export default async function SalesLandingPage({ params, searchParams }: Props) 
       const ko = (data.translations as any)?.ko ?? {}
       story = {
         ...data,
-        title: ko.title ?? data.title,
-        data_point: ko.data_point ?? data.data_point,
+        title:           ko.title ?? data.title,
+        category:        ko.category ?? data.category,
+        date_label:      ko.date_label ?? data.date_label,
+        data_point:      ko.data_point ?? data.data_point,
         narrow_industry: ko.narrow_industry ?? data.narrow_industry,
-        impact_value: ko.impact_value ?? data.impact_value,
-        analyst_view: ko.analyst_view ?? data.analyst_view,
+        impact_value:    ko.impact_value ?? data.impact_value,
+        analyst_view:    ko.analyst_view ?? data.analyst_view,
         analyst_sources: ko.analyst_sources ?? data.analyst_sources,
-        behind_story: ko.behind_story ?? data.behind_story,
-        key_stats: ko.key_stats ?? data.key_stats,
-        cycle_lagging: ko.cycle_lagging ?? data.cycle_lagging,
-        cycle_leading: ko.cycle_leading ?? data.cycle_leading,
+        behind_story:    ko.behind_story ?? data.behind_story,
+        key_stats:       ko.key_stats ?? data.key_stats,
+        cycle_lagging:   ko.cycle_lagging ?? data.cycle_lagging,
+        cycle_leading:   ko.cycle_leading ?? data.cycle_leading,
       }
     } else {
       story = data
