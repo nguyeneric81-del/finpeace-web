@@ -216,6 +216,7 @@ export default async function MacroDetailPage({ params }: { params: Promise<{ id
     behindStory:     raw.behind_story ?? [],
     analystView:     raw.analyst_view ?? '',
     analystSources:  raw.analyst_sources ?? [],
+    analystQuotes:   raw.analyst_quotes ?? [],
     cycle: { lagging: raw.cycle_lagging ?? '', leading: raw.cycle_leading ?? '' },
     companies:       (raw.companies ?? []).map((c: any) => ({
       ticker: c.ticker, name: c.name,
@@ -346,7 +347,9 @@ export default async function MacroDetailPage({ params }: { params: Promise<{ id
             </div>
             Góc nhìn phân tích thị trường
           </h2>
-          <div className="rounded-2xl p-7" style={{ background: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.15)' }}>
+
+          {/* Main analyst quote */}
+          <div className="rounded-2xl p-7 mb-6" style={{ background: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.15)' }}>
             <p className="text-amber-100/85 leading-relaxed text-base font-medium mb-5">&ldquo;{data.analystView}&rdquo;</p>
             <div className="flex items-center gap-3 pt-4" style={{ borderTop: '1px solid rgba(245,158,11,0.12)' }}>
               <span className="text-xs font-bold uppercase tracking-widest text-amber-500">Nguồn:</span>
@@ -355,6 +358,50 @@ export default async function MacroDetailPage({ params }: { params: Promise<{ id
               ))}
             </div>
           </div>
+
+          {/* CTCK structured quotes grid */}
+          {data.analystQuotes && data.analystQuotes.length > 0 && (
+            <div>
+              <p className="text-xs font-black uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
+                <MessageSquare className="w-3.5 h-3.5" />
+                CTCK nói gì về các chỉ số cốt lõi
+              </p>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {data.analystQuotes.map((q: any, i: number) => {
+                  const ratingColor: Record<string, string> = {
+                    'Mua mạnh': '#34d399', 'Mua': '#86efac', 'Khả quan': '#a3e635',
+                    'Nắm giữ': '#fbbf24', 'Trung lập': '#94a3b8',
+                    'Giảm tỷ trọng': '#f87171', 'Bán': '#ef4444',
+                  }
+                  const badgeColor = ratingColor[q.rating] ?? '#94a3b8'
+                  return (
+                    <div key={i} className="rounded-2xl p-5 space-y-3"
+                      style={{ background: '#0F172A', border: '1px solid rgba(255,255,255,0.07)', borderLeft: `3px solid ${q.color ?? '#38bdf8'}` }}>
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-black px-2.5 py-0.5 rounded-lg text-white"
+                            style={{ background: q.color ?? '#38bdf8', fontFamily: 'monospace' }}>
+                            {q.ticker}
+                          </span>
+                          <span className="text-xs font-bold text-slate-400">{q.firm}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-black px-2 py-0.5 rounded-full uppercase"
+                            style={{ background: `${badgeColor}18`, color: badgeColor, border: `1px solid ${badgeColor}40` }}>
+                            {q.rating}
+                          </span>
+                          {q.target_price && (
+                            <span className="text-xs font-bold text-slate-300">TP: {q.target_price}₫</span>
+                          )}
+                        </div>
+                      </div>
+                      <p className="text-sm text-slate-400 leading-relaxed">{q.view}</p>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </section>
 
         {/* ── CYCLE: LAGGING vs LEADING ── */}
