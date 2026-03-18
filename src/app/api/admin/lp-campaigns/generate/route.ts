@@ -1,10 +1,32 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
 import { SALES_CONFIG } from '@/lib/salesConfig'
 import crypto from 'crypto'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
+const GROQ_API_KEY = process.env.GROQ_API_KEY ?? ''
+const GROQ_MODEL = 'llama-3.3-70b-versatile'
+
+async function callGroq(prompt: string): Promise<string> {
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${GROQ_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
+      max_tokens: 1024,
+    }),
+  })
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`Groq error ${res.status}: ${err}`)
+  }
+  const data = await res.json()
+  return data.choices[0]?.message?.content ?? ''
+}
 
 export async function POST(req: Request) {
   const supabase = await createClient()
@@ -99,18 +121,17 @@ Trả về JSON với đúng format sau (không thêm markdown):
 }
 `
 
-  // 4. Call Gemini
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+  // 4. Call Groq (llama-3.3-70b-versatile)
   let generated: { hook: string; body: { section: string; text: string }[]; cta: string }
 
   try {
-    const result = await model.generateContent(prompt)
-    const text = result.response.text().trim()
+    const text = (await callGroq(prompt)).trim()
     const jsonStr = text.replace(/^```json\n?/, '').replace(/\n?```$/, '')
     generated = JSON.parse(jsonStr)
   } catch (e) {
     return NextResponse.json({ error: 'AI generation failed', details: String(e) }, { status: 500 })
   }
+
 
   // 5. Save draft campaign
   const previewToken = crypto.randomBytes(16).toString('hex')
