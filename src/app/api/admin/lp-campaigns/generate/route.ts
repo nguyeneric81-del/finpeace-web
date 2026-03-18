@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { SALES_CONFIG } from '@/lib/salesConfig'
 import crypto from 'crypto'
 
@@ -29,7 +29,7 @@ async function callGroq(prompt: string): Promise<string> {
 }
 
 export async function POST(req: Request) {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   const { agent_code, content_type, content_slug, target_audience_hint } = await req.json()
 
   if (!agent_code || !content_type || !content_slug) {
