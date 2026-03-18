@@ -68,36 +68,18 @@ Key stats: ${JSON.stringify(insight.key_stats)}
       `
     }
   } else if (content_type === 'knowledgebase') {
-    // Read from local TypeScript content registry (not Supabase kb_articles)
-    const { CONTENT_REGISTRY } = await import('@/app/knowledgebase/content/index')
-    // Find the entry whose key ends with the given slug
-    const registryKey = Object.keys(CONTENT_REGISTRY).find(k => k.endsWith(`/${content_slug}`) || k === content_slug)
-    if (registryKey) {
-      const blocks = CONTENT_REGISTRY[registryKey]
-      const pillar = registryKey.split('/')[0]
-      // Build text summary from content blocks
-      const summary = blocks
-        .map(b => {
-          if (typeof b.content === 'string') return b.content
-          if (Array.isArray(b.content)) return b.content.join('. ')
-          return ''
-        })
-        .join('\n')
-        .substring(0, 3000)
-      // Derive a human-readable title from the key
-      const titleMap: Record<string, string> = {
-        'tam-ly-thi-truong/fomo-va-bau-dan': 'FOMO & Bầy Đàn: Tại sao bạn luôn mua đỉnh, bán đáy?',
-        'tam-ly-thi-truong/lo-ngai-thua-lo': 'Lo Ngại Thua Lỗ: Nỗi đau mất tiền gấp 2.5x niềm vui lợi nhuận',
-        'tam-ly-thi-truong/ky-luat-giao-dich': 'Kỷ Luật Giao Dịch: Hệ thống loại bỏ cảm xúc',
-        'tam-ly-thi-truong/nguoi-ban-co-phieu': 'Ai Bán Cổ Phiếu Cho Bạn?',
-        'co-che-thi-truong/co-phieu-la-gi': 'Cổ Phiếu Là Gì?',
-        'co-che-thi-truong/cach-dat-lenh': 'Cách Đặt Lệnh Mua Bán',
-      }
-      contentTitle = titleMap[registryKey] ?? content_slug
+    // Query kb_articles table in Supabase (seeded via scripts/seed_kb_articles.mjs)
+    const { data: article } = await supabase
+      .from('kb_articles')
+      .select('title, summary, pillar')
+      .eq('slug', content_slug)
+      .maybeSingle()
+    if (article) {
+      contentTitle = article.title
       baseContent = `
-Tiêu đề: ${contentTitle}
-Pillar: ${pillar}
-Nội dung tóm tắt: ${summary}
+Tiêu đề: ${article.title}
+Pillar: ${article.pillar}
+Nội dung tóm tắt: ${article.summary}
       `
     }
   }
