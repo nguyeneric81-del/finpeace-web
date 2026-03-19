@@ -25,6 +25,40 @@ export async function updateSession(request: NextRequest) {
             advisorUrl.pathname = `/advisor${effectivePath === '/' ? '' : effectivePath}`
             return NextResponse.rewrite(advisorUrl)
         }
+
+        // Bảo vệ /advisor/admin — phải check role
+        const rawPath = effectivePath.startsWith('/advisor') ? effectivePath : `/advisor${effectivePath}`
+        if (rawPath.startsWith('/advisor/admin')) {
+            const supabase = createServerClient(
+                process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+                {
+                    cookieOptions: { name: 'finpeace-auth', domain: '.finpeace.cloud' },
+                    cookies: {
+                        getAll() { return request.cookies.getAll() },
+                        setAll(cookiesToSet) {
+                            cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+                            supabaseResponse = NextResponse.next({ request })
+                            cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options))
+                        },
+                    },
+                }
+            )
+            const { data: { user } } = await supabase.auth.getUser()
+            const isAdmin = user?.app_metadata?.role === 'admin'
+            if (!user) {
+                const loginUrl = request.nextUrl.clone()
+                loginUrl.pathname = '/advisor/login'
+                return NextResponse.redirect(loginUrl)
+            }
+            if (!isAdmin) {
+                const forbiddenUrl = request.nextUrl.clone()
+                forbiddenUrl.pathname = '/advisor'
+                forbiddenUrl.searchParams.set('error', 'unauthorized')
+                return NextResponse.redirect(forbiddenUrl)
+            }
+        }
+
         return supabaseResponse;
     }
 
@@ -62,12 +96,28 @@ export async function updateSession(request: NextRequest) {
         effectivePath.startsWith('/login') ||
         effectivePath.startsWith('/auth') ||
         effectivePath.startsWith('/api/agent') ||
-        effectivePath.startsWith('/advisor') || // Cho phép route advisor tự do
+        (effectivePath.startsWith('/advisor') && !effectivePath.startsWith('/advisor/admin')) || // admin cần auth
         effectivePath.startsWith('/knowledgebase') || // KB là public content
         effectivePath.startsWith('/lp') || // Sales landing pages - public
         effectivePath.startsWith('/monitor') || // Monitor & agent performance pages - public
         effectivePath === '/monitor.html' ||
-        effectivePath === '/';
+        effectivePath === '/'
+
+    // Bảo vệ /advisor/admin trên main domain
+    if (effectivePath.startsWith('/advisor/admin')) {
+        const isAdmin = user?.app_metadata?.role === 'admin'
+        if (!user) {
+            const loginUrl = request.nextUrl.clone()
+            loginUrl.pathname = '/login'
+            return NextResponse.redirect(loginUrl)
+        }
+        if (!isAdmin) {
+            const forbiddenUrl = request.nextUrl.clone()
+            forbiddenUrl.pathname = '/'
+            forbiddenUrl.searchParams.set('error', 'unauthorized')
+            return NextResponse.redirect(forbiddenUrl)
+        }
+    }
 
     if (!user && !isPublicRoute) {
         // Không có user, điều hướng về trang chủ hoặc trang đăng nhập
