@@ -19,6 +19,13 @@ type NewsArticle = {
   impact_score: 1 | 2 | 3
 }
 
+type ContentItem = {
+  slug: string
+  title: string
+  pillar: string
+  date_label?: string
+}
+
 type Campaign = {
   id: string
   slug: string
@@ -102,6 +109,8 @@ export default function AttractConvertPage() {
   })
   const [generating, setGenerating] = useState(false)
   const [createSuccess, setCreateSuccess] = useState(false)
+  const [contentList, setContentList] = useState<ContentItem[]>([])
+  const [loadingContent, setLoadingContent] = useState(false)
 
   // CRM states
   const [noteModal, setNoteModal] = useState<Lead | null>(null)
@@ -134,11 +143,21 @@ export default function AttractConvertPage() {
     setLoadingLeads(false)
   }, [])
 
+  const fetchContentList = useCallback(async (type: string) => {
+    setLoadingContent(true)
+    setCreateForm(f => ({ ...f, content_slug: '' }))
+    const res = await fetch(`/api/admin/content-list?type=${type}`)
+    const { items } = await res.json()
+    setContentList(items ?? [])
+    setLoadingContent(false)
+  }, [])
+
   useEffect(() => {
     fetchNews()
     fetchCampaigns()
     fetchLeads()
-  }, [fetchNews, fetchCampaigns, fetchLeads])
+    fetchContentList('macro_insight')
+  }, [fetchNews, fetchCampaigns, fetchLeads, fetchContentList])
 
   // ─── Handlers ─────────────────────────────────────────────────────────────
 
@@ -412,7 +431,11 @@ export default function AttractConvertPage() {
                   <label className="text-slate-400 text-xs block mb-1">Loại nội dung</label>
                   <select
                     value={createForm.content_type}
-                    onChange={e => setCreateForm(f => ({ ...f, content_type: e.target.value as 'macro_insight' | 'knowledgebase' }))}
+                    onChange={e => {
+                      const t = e.target.value as 'macro_insight' | 'knowledgebase'
+                      setCreateForm(f => ({ ...f, content_type: t, content_slug: '' }))
+                      fetchContentList(t)
+                    }}
                     className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm"
                   >
                     <option value="macro_insight">📊 Macro Insight</option>
@@ -420,13 +443,35 @@ export default function AttractConvertPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-slate-400 text-xs block mb-1">Content Slug</label>
-                  <input
+                  <label className="text-slate-400 text-xs block mb-1">
+                    {createForm.content_type === 'macro_insight' ? '📊 Chọn Macro Insight' : '📚 Chọn bài KB'}
+                    {loadingContent && <span className="ml-2 text-slate-600 text-xs">Đang tải...</span>}
+                  </label>
+                  <select
                     value={createForm.content_slug}
-                    onChange={e => setCreateForm(f => ({ ...f, content_slug: e.target.value }))}
-                    placeholder="vd: fed-giu-nguyen-lai-suat-20260319"
-                    className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm placeholder-slate-600"
-                  />
+                    onChange={e => {
+                      const slug = e.target.value
+                      const item = contentList.find(c => c.slug === slug)
+                      setCreateForm(f => ({
+                        ...f,
+                        content_slug: slug,
+                        campaign_name: f.campaign_name || (item?.title ?? ''),
+                        target_audience_hint: f.target_audience_hint || (item?.pillar ?? ''),
+                      }))
+                    }}
+                    className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm"
+                    disabled={loadingContent || contentList.length === 0}
+                  >
+                    <option value="">— Chọn nội dung —</option>
+                    {contentList.map(item => (
+                      <option key={item.slug} value={item.slug}>
+                        [{item.pillar}] {item.title}{item.date_label ? ` (${item.date_label})` : ''}
+                      </option>
+                    ))}
+                  </select>
+                  {createForm.content_slug && (
+                    <p className="text-slate-600 text-xs mt-1 truncate">slug: <span className="text-slate-400">{createForm.content_slug}</span></p>
+                  )}
                 </div>
                 <div>
                   <label className="text-slate-400 text-xs block mb-1">Tên Campaign</label>
