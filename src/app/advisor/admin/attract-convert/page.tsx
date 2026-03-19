@@ -108,7 +108,12 @@ export default function AttractConvertPage() {
     utm_source: '',
   })
   const [generating, setGenerating] = useState(false)
-  const [createSuccess, setCreateSuccess] = useState(false)
+  const [generatedResult, setGeneratedResult] = useState<{
+    preview_url: string
+    campaign_id: string
+    campaign_name: string
+  } | null>(null)
+  const [approving, setApproving] = useState(false)
   const [contentList, setContentList] = useState<ContentItem[]>([])
   const [loadingContent, setLoadingContent] = useState(false)
   const [selectedNewsForMix, setSelectedNewsForMix] = useState<NewsArticle | null>(null)
@@ -176,6 +181,7 @@ export default function AttractConvertPage() {
   const generateCampaign = async () => {
     if (!createForm.content_slug || !createForm.campaign_name) return
     setGenerating(true)
+    setGeneratedResult(null)
     const res = await fetch('/api/admin/lp-campaigns/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -185,16 +191,28 @@ export default function AttractConvertPage() {
           title: selectedNewsForMix.title,
           category: selectedNewsForMix.category,
           analyst_view: selectedNewsForMix.analyst_view,
-          data_point: null, // not in NewsArticle type, safe to null
+          data_point: null,
         } : undefined,
       }),
     })
     const data = await res.json()
     setGenerating(false)
-    if (data.preview_url) window.open(`https://finpeace.cloud${data.preview_url}`, '_blank')
-    setCreateSuccess(true)
+    if (data.preview_url) {
+      setGeneratedResult({
+        preview_url: `https://finpeace.cloud${data.preview_url}`,
+        campaign_id: data.campaign_id,
+        campaign_name: createForm.campaign_name,
+      })
+    }
     fetchCampaigns()
-    setTimeout(() => setCreateSuccess(false), 3000)
+  }
+
+  const approveCampaign = async (campaignId: string) => {
+    setApproving(true)
+    await fetch(`/api/admin/lp-campaigns/${campaignId}/approve`, { method: 'POST' })
+    setApproving(false)
+    setGeneratedResult(prev => prev ? { ...prev, campaign_id: '' } : null)
+    fetchCampaigns()
   }
 
   const updateCrmStage = async (lead: Lead, crm_stage: string) => {
@@ -547,11 +565,45 @@ export default function AttractConvertPage() {
                   </div>
                 </div>
 
-                {createSuccess && (
-                  <div className="bg-emerald-500/20 text-emerald-400 text-sm px-4 py-2 rounded-lg">
-                    ✅ Campaign đã được tạo và preview mở trong tab mới!
+                {generatedResult && (
+                  <div className="bg-[#0d1119] border border-[#c4a67a]/40 rounded-xl p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-emerald-400 text-lg">✅</span>
+                      <div>
+                        <p className="text-white text-sm font-semibold">{generatedResult.campaign_name}</p>
+                        <p className="text-slate-500 text-xs">Đã tạo — đang chờ duyệt (draft)</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <a
+                        href={generatedResult.preview_url}
+                        target="_blank"
+                        className="w-full py-2 bg-[#1e2535] text-slate-300 rounded-lg text-sm text-center hover:bg-[#2a3548] transition-colors"
+                      >
+                        👁️ Preview Landing Page
+                      </a>
+                      {generatedResult.campaign_id && (
+                        <button
+                          onClick={() => approveCampaign(generatedResult.campaign_id)}
+                          disabled={approving}
+                          className="w-full py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-500 transition-colors disabled:opacity-50"
+                        >
+                          {approving ? '⏳ Đang duyệt...' : '✅ Duyệt & Publish ngay'}
+                        </button>
+                      )}
+                      {!generatedResult.campaign_id && (
+                        <p className="text-emerald-400 text-xs text-center">🎉 Đã publish thành công!</p>
+                      )}
+                      <a
+                        href="/advisor/admin/lp-manager"
+                        className="w-full py-2 border border-[#1e2535] text-slate-500 rounded-lg text-xs text-center hover:text-slate-400 transition-colors"
+                      >
+                        → Quản lý tất cả campaigns tại LP Manager
+                      </a>
+                    </div>
                   </div>
                 )}
+
 
                 <button
                   onClick={generateCampaign}
