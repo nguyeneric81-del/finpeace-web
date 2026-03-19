@@ -19,6 +19,21 @@ type NewsArticle = {
   impact_score: 1 | 2 | 3
 }
 
+type RawNewsArticle = {
+  id: number
+  crawl_date: string
+  title: string
+  link: string | null
+  description: string | null
+  source: string | null
+  published_at: string | null
+  tags: string[]
+  category: string | null
+  tickers: string[]
+  relevance: 1 | 2 | 3
+  status: 'pending' | 'approved' | 'ignored'
+}
+
 type ContentItem = {
   slug: string
   title: string
@@ -88,11 +103,17 @@ function fmtDate(iso: string) {
 export default function AttractConvertPage() {
   const [activeTab, setActiveTab] = useState('news')
 
-  // Data states
+  // Raw News Intelligence states
+  const [rawNews, setRawNews] = useState<RawNewsArticle[]>([])
+  const [rawNewsDates, setRawNewsDates] = useState<string[]>([])
+  const [rawNewsDate, setRawNewsDate] = useState<string>('')
+  const [rawNewsFilter, setRawNewsFilter] = useState<'all' | 'pending' | 'approved' | 'ignored'>('all')
+  const [loadingRawNews, setLoadingRawNews] = useState(false)
+
+  // Legacy macro newsData (used in Campaign Workshop news picker)
   const [newsData, setNewsData] = useState<{ articles: NewsArticle[]; date: string | null; is_today: boolean } | null>(null)
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [leads, setLeads] = useState<Lead[]>([])
-  const [loadingNews, setLoadingNews] = useState(false)
   const [loadingCampaigns, setLoadingCampaigns] = useState(false)
   const [loadingLeads, setLoadingLeads] = useState(false)
 
@@ -125,12 +146,34 @@ export default function AttractConvertPage() {
 
   // ─── Fetchers ─────────────────────────────────────────────────────────────
 
+  const fetchRawNews = useCallback(async (date?: string, status?: string) => {
+    setLoadingRawNews(true)
+    const params = new URLSearchParams()
+    if (date) params.set('date', date)
+    if (status && status !== 'all') params.set('status', status)
+    const res = await fetch(`/api/admin/raw-news?${params}`)
+    const data = await res.json()
+    setRawNews(data.articles ?? [])
+    if (data.available_dates?.length) {
+      setRawNewsDates(data.available_dates)
+      if (!date && data.available_dates[0]) setRawNewsDate(data.available_dates[0])
+    }
+    setLoadingRawNews(false)
+  }, [])
+
+  const actionRawNews = async (id: number, action: 'approve' | 'ignore' | 'pending') => {
+    await fetch(`/api/admin/raw-news/${id}/action`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action }),
+    })
+    setRawNews(prev => prev.map(a => a.id === id ? { ...a, status: action === 'approve' ? 'approved' : action === 'ignore' ? 'ignored' : 'pending' } : a))
+  }
+
   const fetchNews = useCallback(async () => {
-    setLoadingNews(true)
     const res = await fetch('/api/admin/news-today')
     const data = await res.json()
     setNewsData(data)
-    setLoadingNews(false)
   }, [])
 
   const fetchCampaigns = useCallback(async () => {
@@ -159,11 +202,12 @@ export default function AttractConvertPage() {
   }, [])
 
   useEffect(() => {
+    fetchRawNews()
     fetchNews()
     fetchCampaigns()
     fetchLeads()
     fetchContentList('macro_insight')
-  }, [fetchNews, fetchCampaigns, fetchLeads, fetchContentList])
+  }, [fetchRawNews, fetchNews, fetchCampaigns, fetchLeads, fetchContentList])
 
   // ─── Handlers ─────────────────────────────────────────────────────────────
 
@@ -334,76 +378,166 @@ export default function AttractConvertPage() {
           ))}
         </div>
 
-        {/* ── Tab 1: News Intelligence ── */}
+        {/* ── Tab 1: News Intelligence (Raw News from crawl) ── */}
         {activeTab === 'news' && (
           <div>
-            <div className="flex items-center justify-between mb-4">
+            {/* Header + Filter */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
               <div>
-                <h2 className="text-lg font-semibold text-white">📡 Tin Tức Hôm Nay</h2>
-                {newsData?.date && (
-                  <p className="text-slate-500 text-xs mt-0.5">
-                    Dữ liệu ngày {newsData.date} {newsData.is_today ? '✅ Hôm nay' : '⚠️ Dữ liệu cũ nhất có thể'}
-                  </p>
-                )}
+                <h2 className="text-lg font-semibold text-white">📡 Tin Tức Crawl</h2>
+                <p className="text-slate-500 text-xs mt-0.5">
+                  {rawNews.length} tin — {rawNews.filter(a => a.status === 'pending').length} chưa duyệt
+                </p>
               </div>
-              <button onClick={fetchNews} className="px-3 py-1.5 bg-[#1e2535] text-slate-400 rounded-lg text-xs hover:bg-[#2a3548] transition-colors">
-                🔄 Làm mới
-              </button>
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* Date picker */}
+                <select
+                  value={rawNewsDate}
+                  onChange={e => { setRawNewsDate(e.target.value); fetchRawNews(e.target.value, rawNewsFilter) }}
+                  className="bg-[#1e2535] text-slate-300 text-xs rounded-lg px-2 py-1.5 border border-[#2a3548]"
+                >
+                  {rawNewsDates.map(d => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+                {/* Status filter */}
+                {(['all', 'pending', 'approved', 'ignored'] as const).map(s => (
+                  <button
+                    key={s}
+                    onClick={() => { setRawNewsFilter(s); fetchRawNews(rawNewsDate || undefined, s) }}
+                    className={`text-xs px-2.5 py-1 rounded-lg transition-colors ${
+                      rawNewsFilter === s
+                        ? 'bg-[#c4a67a] text-[#0d1119] font-semibold'
+                        : 'bg-[#1e2535] text-slate-400 hover:bg-[#2a3548]'
+                    }`}
+                  >
+                    {s === 'all' ? 'Tất cả' : s === 'pending' ? 'Chưa duyệt' : s === 'approved' ? 'Đã duyệt' : 'Bỏ qua'}
+                  </button>
+                ))}
+                <button onClick={() => fetchRawNews(rawNewsDate || undefined, rawNewsFilter)} className="px-2.5 py-1.5 bg-[#1e2535] text-slate-400 rounded-lg text-xs hover:bg-[#2a3548] transition-colors">
+                  🔄
+                </button>
+              </div>
             </div>
 
-            {loadingNews ? (
+            {loadingRawNews ? (
               <div className="flex items-center justify-center h-40 text-slate-500">Đang tải tin tức...</div>
-            ) : !newsData?.articles.length ? (
-              <div className="flex items-center justify-center h-40 text-slate-500">Không có dữ liệu tin tức hôm nay</div>
+            ) : rawNews.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-48 text-center">
+                <p className="text-slate-500 text-sm mb-2">Chưa có tin crawl nào trong ngày này</p>
+                <p className="text-slate-600 text-xs">Chạy: <code className="text-slate-400">python raw_news_feeder.py</code> trên Mac Mini</p>
+              </div>
             ) : (
-              <div className="space-y-3">
-                {newsData.articles.map(article => (
-                  <div key={article.id} className="bg-[#111827] border border-[#1e2535] rounded-xl p-5 hover:border-[#c4a67a]/30 transition-colors">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-2">
-                          {impactDot(article.impact_score)}
-                          <span className="text-xs text-slate-500 bg-[#1e2535] px-2 py-0.5 rounded-full">{article.category}</span>
-                          {article.kb_article && (
-                            <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full">
-                              📚 {article.kb_article}
-                            </span>
-                          )}
+              <div className="space-y-2">
+                {rawNews.map(article => {
+                  const relColors = ['', 'bg-slate-500', 'bg-amber-500', 'bg-red-500']
+                  const statusBadge = {
+                    pending:  'bg-slate-500/20 text-slate-400',
+                    approved: 'bg-emerald-500/20 text-emerald-400',
+                    ignored:  'bg-red-500/10 text-red-500/60',
+                  }[article.status]
+
+                  return (
+                    <div
+                      key={article.id}
+                      className={`bg-[#111827] border rounded-xl p-4 transition-colors ${
+                        article.status === 'ignored' ? 'border-[#1e2535] opacity-50' : 'border-[#1e2535] hover:border-[#c4a67a]/20'
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        {/* Relevance bar */}
+                        <div className="flex flex-col gap-0.5 mt-1 shrink-0">
+                          {[3, 2, 1].map(r => (
+                            <span key={r} className={`w-1.5 h-1.5 rounded-full ${
+                              article.relevance >= r ? relColors[r] : 'bg-[#1e2535]'
+                            }`} />
+                          ))}
                         </div>
-                        <h3 className="font-semibold text-white text-base mb-2">{article.title}</h3>
-                        {article.analyst_view && (
-                          <p className="text-slate-400 text-sm line-clamp-2">{article.analyst_view}</p>
-                        )}
-                        {article.companies.length > 0 && (
-                          <div className="flex gap-2 mt-3 flex-wrap">
-                            {article.companies.map(c => (
-                              <span key={c.ticker} className="text-xs bg-[#1e2535] text-slate-400 px-2 py-0.5 rounded">
-                                {c.ticker}
-                              </span>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <span className="text-xs bg-[#1e2535] text-slate-500 px-1.5 py-0.5 rounded">{article.source}</span>
+                            {article.category && (
+                              <span className="text-xs bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">{article.category}</span>
+                            )}
+                            <span className={`text-xs px-1.5 py-0.5 rounded ${statusBadge}`}>
+                              {article.status === 'pending' ? 'Chưa duyệt' : article.status === 'approved' ? '✓ Đã duyệt' : '✕ Bỏ qua'}
+                            </span>
+                            {article.published_at && (
+                              <span className="text-xs text-slate-600 ml-auto">{fmtDate(article.published_at)}</span>
+                            )}
+                          </div>
+
+                          <a href={article.link ?? '#'} target="_blank" rel="noreferrer"
+                            className="font-medium text-white text-sm hover:text-[#c4a67a] transition-colors line-clamp-2">
+                            {article.title}
+                          </a>
+
+                          {article.description && (
+                            <p className="text-slate-500 text-xs mt-1 line-clamp-2">{article.description}</p>
+                          )}
+
+                          {/* Tags + Tickers */}
+                          <div className="flex gap-1.5 mt-2 flex-wrap">
+                            {article.tags.map(t => (
+                              <span key={t} className="text-xs bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded">{t}</span>
+                            ))}
+                            {article.tickers.map(t => (
+                              <span key={t} className="text-xs bg-[#c4a67a]/10 text-[#c4a67a] px-1.5 py-0.5 rounded font-mono">{t}</span>
                             ))}
                           </div>
-                        )}
-                      </div>
-                      <div className="shrink-0 flex flex-col gap-2 items-end">
-                        <button
-                          onClick={() => handleSelectNews(article)}
-                          className="px-3 py-1.5 bg-[#c4a67a] text-[#0d1119] rounded-lg text-xs font-semibold hover:bg-[#d4b68a] transition-colors whitespace-nowrap"
-                        >
-                          🚀 Tạo Campaign
-                        </button>
-                        {article.kb_article_slug && (
-                          <a
-                            href={`https://finpeace.cloud/knowledgebase/${article.kb_article_slug}`}
-                            target="_blank"
-                            className="px-3 py-1.5 bg-purple-500/20 text-purple-400 rounded-lg text-xs hover:bg-purple-500/30 transition-colors whitespace-nowrap"
+                        </div>
+
+                        {/* Actions */}
+                        <div className="shrink-0 flex flex-col gap-1.5 items-end">
+                          {article.status !== 'approved' && (
+                            <button
+                              onClick={() => actionRawNews(article.id, 'approve')}
+                              className="px-2.5 py-1 bg-emerald-600/20 text-emerald-400 rounded-lg text-xs hover:bg-emerald-600/40 transition-colors whitespace-nowrap"
+                            >
+                              ✅ Duyệt
+                            </button>
+                          )}
+                          <button
+                            onClick={() => {
+                              setCreateForm(f => ({
+                                ...f,
+                                campaign_name: article.title,
+                                target_audience_hint: article.category ?? '',
+                              }))
+                              setSelectedNewsForMix({
+                                id: String(article.id),
+                                topic_slug: '',
+                                title: article.title,
+                                category: article.category ?? '',
+                                date_label: article.crawl_date,
+                                analyst_view: article.description,
+                                impact_value: null,
+                                companies: [],
+                                key_stats: [],
+                                kb_article: null,
+                                kb_article_slug: null,
+                                impact_score: (Math.min(article.relevance, 3) as 1 | 2 | 3),
+                              })
+                              setActiveTab('campaign')
+                            }}
+                            className="px-2.5 py-1 bg-[#c4a67a]/20 text-[#c4a67a] rounded-lg text-xs hover:bg-[#c4a67a]/40 transition-colors whitespace-nowrap"
                           >
-                            📚 Xem KB
-                          </a>
-                        )}
+                            🚀 Campaign
+                          </button>
+                          {article.status !== 'ignored' && (
+                            <button
+                              onClick={() => actionRawNews(article.id, 'ignore')}
+                              className="px-2.5 py-1 bg-red-500/10 text-red-400/70 rounded-lg text-xs hover:bg-red-500/20 transition-colors"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             )}
           </div>
