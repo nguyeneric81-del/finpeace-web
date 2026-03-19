@@ -13,8 +13,11 @@ import { content as docBaoCaoTaiChinh } from './phan-tich-co-ban/doc-bao-cao-tai
 import { content as bienLoiNhuan } from './phan-tich-co-ban/bien-loi-nhuan'
 import { content as dinhGiaCoPHieu } from './phan-tich-co-ban/dinh-gia-co-phieu'
 import { content as dongTienTuDo } from './phan-tich-co-ban/dong-tien-tu-do'
+import { content as roeVaDupont } from './phan-tich-co-ban/roe-va-dupont'
 import { content as bienDoAnToan } from './dau-tu-gia-tri/bien-do-an-toan'
 import { content as loiTheCanhTranh } from './dau-tu-gia-tri/loi-the-canh-tranh'
+import { content as mungerMentalModels } from './dau-tu-gia-tri/munger-mental-models'
+import { content as valueTrap } from './dau-tu-gia-tri/value-trap'
 import { content as tieuChiFisher } from './dau-tu-tang-truong/15-tieu-chi-fisher'
 import { content as muaNhungGiBanBiet } from './dau-tu-tang-truong/mua-nhung-gi-ban-biet'
 // Tháng 3 — Trader Track
@@ -22,6 +25,8 @@ import { content as nenNhat } from './phan-tich-ky-thuat/nen-nhat'
 import { content as hoTroKhangCu } from './phan-tich-ky-thuat/ho-tro-khang-cu'
 import { content as khoiLuongGiaoDich } from './phan-tich-ky-thuat/khoi-luong-giao-dich'
 import { content as macdRsi } from './phan-tich-ky-thuat/macd-rsi'
+import { content as moHinhGia } from './phan-tich-ky-thuat/mo-hinh-gia'
+import { content as fibonacciRetracement } from './phan-tich-ky-thuat/fibonacci-retracement'
 import { content as lyThuyetHopDarvas } from './giao-dich-theo-xu-huong/ly-thuyet-hop-darvas'
 import { content as turtleTraders } from './giao-dich-theo-xu-huong/turtle-traders'
 // Tháng 4 — Mastery Track
@@ -48,8 +53,11 @@ export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     'phan-tich-co-ban/bien-loi-nhuan': bienLoiNhuan,
     'phan-tich-co-ban/dinh-gia-co-phieu': dinhGiaCoPHieu,
     'phan-tich-co-ban/dong-tien-tu-do': dongTienTuDo,
+    'phan-tich-co-ban/roe-va-dupont': roeVaDupont,
     'dau-tu-gia-tri/bien-do-an-toan': bienDoAnToan,
     'dau-tu-gia-tri/loi-the-canh-tranh': loiTheCanhTranh,
+    'dau-tu-gia-tri/munger-mental-models': mungerMentalModels,
+    'dau-tu-gia-tri/value-trap': valueTrap,
     'dau-tu-tang-truong/15-tieu-chi-fisher': tieuChiFisher,
     'dau-tu-tang-truong/mua-nhung-gi-ban-biet': muaNhungGiBanBiet,
     // Tháng 3 — Trader Track
@@ -57,6 +65,8 @@ export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     'phan-tich-ky-thuat/ho-tro-khang-cu': hoTroKhangCu,
     'phan-tich-ky-thuat/khoi-luong-giao-dich': khoiLuongGiaoDich,
     'phan-tich-ky-thuat/macd-rsi': macdRsi,
+    'phan-tich-ky-thuat/mo-hinh-gia': moHinhGia,
+    'phan-tich-ky-thuat/fibonacci-retracement': fibonacciRetracement,
     'giao-dich-theo-xu-huong/ly-thuyet-hop-darvas': lyThuyetHopDarvas,
     'giao-dich-theo-xu-huong/turtle-traders': turtleTraders,
     // Tháng 4 — Mastery Track
