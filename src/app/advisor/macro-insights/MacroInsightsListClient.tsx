@@ -8,7 +8,7 @@ import {
   ChevronRight, BarChart2, Building2, Minus, Hammer
 } from 'lucide-react'
 
-type Company = { ticker: string; name: string; impact?: string; matchScore?: number; positive?: boolean }
+type Company = { ticker: string; name: string; impact?: string }
 type Story = {
   id: string; title: string; date: string; category: string
   dataPoint: string; narrowIndustry: string
@@ -26,22 +26,7 @@ const CategoryIcon = ({ category }: { category: string }) => {
   return <>{map[category] ?? <BarChart2 className="w-3.5 h-3.5" />}</>
 }
 
-const MatchRing = ({ score, accent }: { score: number; accent: string }) => {
-  const r = 18; const circ = 2 * Math.PI * r
-  const offset = circ - (score / 100) * circ
-  return (
-    <div className="relative flex items-center justify-center w-14 h-14">
-      <svg className="absolute w-14 h-14 -rotate-90" viewBox="0 0 48 48">
-        <circle cx="24" cy="24" r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
-        <circle cx="24" cy="24" r={r} fill="none" stroke={accent} strokeWidth="3"
-          strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
-          style={{ filter: `drop-shadow(0 0 4px ${accent}80)` }}
-        />
-      </svg>
-      <span className="text-xs font-bold text-white">{score}%</span>
-    </div>
-  )
-}
+
 
 export default function MacroInsightsListClient({ stories }: { stories: Story[] }) {
   const availableMonths = Array.from(new Set(stories.map(s => s.date))).sort((a, b) => b.localeCompare(a))
@@ -143,13 +128,8 @@ export default function MacroInsightsListClient({ stories }: { stories: Story[] 
                   </div>
                 </div>
 
-                {/* COL 2: Match Score + Detail Link */}
-                <div className="flex flex-col items-center justify-start gap-5 pt-2">
-                  <div className="text-center">
-                    <MatchRing score={story.companies[0]?.matchScore ?? 85} accent={story.accent} />
-                    <p className="text-xs text-slate-500 mt-2">Fit Score</p>
-                    <p className="text-xs font-semibold text-slate-300">{story.companies[0]?.ticker}</p>
-                  </div>
+                {/* COL 2: Detail Link */}
+                <div className="flex flex-col items-center justify-start pt-2">
                   <Link href={`/advisor/macro-insights/${story.id}`}>
                     <div className="flex flex-col items-center gap-1.5 px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-widest cursor-pointer transition-all duration-200 hover:brightness-125"
                       style={{ background: story.accentBg, color: story.accent, border: `1px solid ${story.accent}30` }}>
@@ -176,11 +156,6 @@ export default function MacroInsightsListClient({ stories }: { stories: Story[] 
                             {company.ticker}
                           </span>
                           <span className="text-xs text-slate-400">{company.name}</span>
-                          {company.positive !== undefined && (
-                            company.positive
-                              ? <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-                              : <TrendingDown className="w-3.5 h-3.5 text-rose-400" />
-                          )}
                         </div>
                         {company.impact && <p className="text-xs text-slate-400 leading-relaxed">{company.impact}</p>}
                       </div>

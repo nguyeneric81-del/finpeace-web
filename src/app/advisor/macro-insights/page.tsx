@@ -32,8 +32,6 @@ export default async function MacroInsightsPage() {
     companies: (r.companies || []).map((c: { ticker: string; name: string; plan?: string }) => ({
       ticker: c.ticker,
       name: c.name,
-      matchScore: 85,
-      positive: true,
     })),
   }))
 

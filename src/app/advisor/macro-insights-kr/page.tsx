@@ -177,9 +177,6 @@ export default function MacroInsightsKrPage() {
                           <div className="flex items-center gap-3 mb-1">
                             <span className="text-lg font-bold text-white">{company.ticker}</span>
                             <span className="text-sm text-slate-400">{company.name}</span>
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 ml-2">
-                              적합도: {company.matchScore}%
-                            </span>
                           </div>
                           <p className="text-slate-300 text-sm">
                             {company.impact}
