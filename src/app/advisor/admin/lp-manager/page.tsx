@@ -68,6 +68,7 @@ export default function LpManagerPage() {
   useEffect(() => { fetchCampaigns() }, [fetchCampaigns])
 
   const approve = async (id: string) => {
+    if (!confirm('Xác nhận approve và publish campaign này cho Sales Agent?')) return
     await fetch(`/api/admin/lp-campaigns/${id}/approve`, { method: 'POST' })
     fetchCampaigns()
   }
@@ -84,10 +85,12 @@ export default function LpManagerPage() {
   }
 
   const togglePause = async (c: Campaign) => {
+    const isPausing = c.status !== 'paused'
+    if (isPausing && !confirm(`Dừng campaign "${c.campaign_name || c.slug}"? Sales Agent sẽ không dùng được link này.`)) return
     await fetch(`/api/admin/lp-campaigns/${c.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: c.status === 'paused' ? 'active' : 'paused' }),
+      body: JSON.stringify({ status: isPausing ? 'paused' : 'active' }),
     })
     fetchCampaigns()
   }
@@ -139,12 +142,20 @@ export default function LpManagerPage() {
             <h1 className="text-2xl font-bold text-white">📊 LP Campaign Manager</h1>
             <p className="text-slate-400 text-sm mt-1">Quản trị đa tuyến nội dung cho các Sales Agent</p>
           </div>
-          <button
-            onClick={() => setShowCreate(true)}
-            className="px-4 py-2 bg-[#c4a67a] text-[#0d1119] rounded-lg font-semibold text-sm hover:bg-[#d4b68a] transition-colors"
-          >
-            + New Campaign
-          </button>
+          <div className="flex items-center gap-3">
+            <a
+              href="/advisor/admin/leads"
+              className="px-4 py-2 bg-[#1e2535] text-slate-300 rounded-lg font-medium text-sm hover:bg-[#2a3548] transition-colors"
+            >
+              📋 Xem Leads
+            </a>
+            <button
+              onClick={() => setShowCreate(true)}
+              className="px-4 py-2 bg-[#c4a67a] text-[#0d1119] rounded-lg font-semibold text-sm hover:bg-[#d4b68a] transition-colors"
+            >
+              + New Campaign
+            </button>
+          </div>
         </div>
 
         {loading ? (
@@ -237,6 +248,22 @@ export default function LpManagerPage() {
 
                               {/* Actions */}
                               <div className="flex items-center gap-2 shrink-0">
+                                {c.status === 'pending_review' && (
+                                  <>
+                                    <button
+                                      onClick={() => approve(c.id)}
+                                      className="px-2 py-1 text-xs bg-emerald-500/20 text-emerald-400 rounded hover:bg-emerald-500/30 transition-colors"
+                                    >
+                                      ✓ Approve
+                                    </button>
+                                    <button
+                                      onClick={() => setEditNotes({ id: c.id, notes: '' })}
+                                      className="px-2 py-1 text-xs bg-amber-500/20 text-amber-400 rounded hover:bg-amber-500/30 transition-colors"
+                                    >
+                                      ✎ Re-edit
+                                    </button>
+                                  </>
+                                )}
                                 {c.status === 'draft' && (
                                   <>
                                     <a
