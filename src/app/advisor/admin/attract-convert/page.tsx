@@ -546,31 +546,61 @@ export default function AttractConvertPage() {
         {/* ── Tab 2: Campaign Workshop ── */}
         {activeTab === 'campaign' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Left: News list */}
+            {/* Left: Raw News list từ News Intelligence */}
             <div>
-              <h2 className="text-base font-semibold text-white mb-3">📰 Chọn tin tức</h2>
+              <h2 className="text-base font-semibold text-white mb-1">📡 Chọn tin tức</h2>
+              <p className="text-slate-600 text-xs mb-3">Tin crawl từ News Intelligence — click để dùng làm context cho LP</p>
               <div className="space-y-2 max-h-[70vh] overflow-y-auto pr-1">
-                {!newsData?.articles.length ? (
-                  <div className="text-slate-500 text-sm py-8 text-center">Không có tin tức — vào tab News Intelligence trước</div>
-                ) : newsData.articles.map(article => (
+                {rawNews.length === 0 ? (
+                  <div className="text-slate-500 text-sm py-8 text-center">Chưa có tin crawl — upload qua News Intelligence trước</div>
+                ) : rawNews.filter(a => a.status !== 'ignored').map(article => (
                   <button
                     key={article.id}
-                    onClick={() => handleSelectNews(article)}
-                    className={`w-full text-left p-4 rounded-xl border transition-all ${
-                      selectedNews?.id === article.id
+                    onClick={() => {
+                      setCreateForm(f => ({
+                        ...f,
+                        campaign_name: article.title,
+                        target_audience_hint: article.category ?? '',
+                      }))
+                      setSelectedNewsForMix({
+                        id: String(article.id),
+                        topic_slug: '',
+                        title: article.title,
+                        category: article.category ?? '',
+                        date_label: article.crawl_date,
+                        analyst_view: article.description,
+                        impact_value: null,
+                        companies: [],
+                        key_stats: [],
+                        kb_article: null,
+                        kb_article_slug: null,
+                        impact_score: (Math.min(article.relevance, 3) as 1 | 2 | 3),
+                      })
+                    }}
+                    className={`w-full text-left p-3 rounded-xl border transition-all ${
+                      selectedNewsForMix?.id === String(article.id)
                         ? 'border-[#c4a67a] bg-[#c4a67a]/10'
                         : 'border-[#1e2535] bg-[#111827] hover:border-[#2a3548]'
                     }`}
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                      {impactDot(article.impact_score)}
-                      <span className="text-xs text-slate-500">{article.category}</span>
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <span className="text-xs text-slate-600 bg-[#1e2535] px-1.5 py-0.5 rounded">{article.source}</span>
+                      {article.category && <span className="text-xs text-blue-400">{article.category}</span>}
+                      {article.status === 'approved' && <span className="text-xs text-emerald-400">✓</span>}
                     </div>
                     <p className="text-sm font-medium text-white line-clamp-2">{article.title}</p>
+                    {article.tickers.length > 0 && (
+                      <div className="flex gap-1 mt-1.5 flex-wrap">
+                        {article.tickers.slice(0, 4).map(t => (
+                          <span key={t} className="text-xs text-[#c4a67a]/70 font-mono">{t}</span>
+                        ))}
+                      </div>
+                    )}
                   </button>
                 ))}
               </div>
             </div>
+
 
             {/* Right: Create form */}
             <div>
