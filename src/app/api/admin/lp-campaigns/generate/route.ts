@@ -30,7 +30,14 @@ async function callGroq(prompt: string): Promise<string> {
 
 export async function POST(req: Request) {
   const supabase = createAdminClient()
-  const { agent_code, content_type, content_slug, target_audience_hint } = await req.json()
+  const {
+    agent_code,
+    content_type,
+    content_slug,
+    target_audience_hint,
+    campaign_name,
+    news_context,  // optional: { title, category, analyst_view, data_point }
+  } = await req.json()
 
   if (!agent_code || !content_type || !content_slug) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -95,6 +102,19 @@ Nội dung tóm tắt: ${article.summary}
   const targetAudience = target_audience_hint ?? persona.target_audience ?? 'nhà đầu tư cá nhân'
   const avoid = (persona.avoid ?? []).join(', ')
 
+  // Build news context block if provided
+  const newsBlock = news_context?.title
+    ? `
+## Bối cảnh tin tức hôm nay (Admin đã chọn để mix vào LP)
+- Tin tức: ${news_context.title}
+- Danh mục: ${news_context.category ?? ''}
+- Dữ liệu thực tế: ${news_context.data_point ?? ''}
+- Phân tích: ${news_context.analyst_view ?? ''}
+
+Nhiệm vụ: Hãy mix tin tức này vào ngữ cảnh Landing Page để tạo cầu nối giữa sự kiện thời sự và kiến thức đầu tư. Hook càng cụ thể và thời sự càng tốt.
+`.trim()
+    : ''
+
   const prompt = `
 Bạn là ${agent.full_name} (${agent.title}), một chuyên gia tư vấn tài chính.
 Brand: ${agent.brand_name ?? agent.full_name}
@@ -109,9 +129,11 @@ Dựa trên nội dung sau, hãy tạo nội dung landing page cá nhân hóa th
 ${baseContent}
 ---
 
+${newsBlock ? newsBlock + '\n\n---' : ''}
+
 Trả về JSON với đúng format sau (không thêm markdown):
 {
-  "hook": "1 câu hook hấp dẫn mở đầu, phản ánh đúng pain point của ${targetAudience}",
+  "hook": "1 câu hook hấp dẫn mở đầu, phản ánh đúng pain point của ${targetAudience}${news_context?.title ? ' và liên quan đến tin tức hôm nay' : ''}",
   "body": [
     {"section": "Tại sao bạn cần biết điều này", "text": "..."},
     {"section": "Điều này có nghĩa gì với danh mục của bạn", "text": "..."},
@@ -142,6 +164,7 @@ Trả về JSON với đúng format sau (không thêm markdown):
       agent_id: agent.id,
       slug: content_slug,
       topic: contentTitle,
+      campaign_name: campaign_name || contentTitle,
       content_type,
       status: 'draft',
       generated_hook: generated.hook,
@@ -150,6 +173,7 @@ Trả về JSON với đúng format sau (không thêm markdown):
       preview_token: previewToken,
       custom_hook: generated.hook,
       custom_cta: generated.cta,
+      admin_notes: news_context?.title ? `Mix tin tức: ${news_context.title}` : null,
     }, { onConflict: 'agent_id,slug' })
     .select()
     .single()

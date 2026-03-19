@@ -111,6 +111,7 @@ export default function AttractConvertPage() {
   const [createSuccess, setCreateSuccess] = useState(false)
   const [contentList, setContentList] = useState<ContentItem[]>([])
   const [loadingContent, setLoadingContent] = useState(false)
+  const [selectedNewsForMix, setSelectedNewsForMix] = useState<NewsArticle | null>(null)
 
   // CRM states
   const [noteModal, setNoteModal] = useState<Lead | null>(null)
@@ -178,7 +179,15 @@ export default function AttractConvertPage() {
     const res = await fetch('/api/admin/lp-campaigns/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(createForm),
+      body: JSON.stringify({
+        ...createForm,
+        news_context: selectedNewsForMix ? {
+          title: selectedNewsForMix.title,
+          category: selectedNewsForMix.category,
+          analyst_view: selectedNewsForMix.analyst_view,
+          data_point: null, // not in NewsArticle type, safe to null
+        } : undefined,
+      }),
     })
     const data = await res.json()
     setGenerating(false)
@@ -490,6 +499,31 @@ export default function AttractConvertPage() {
                     placeholder="vd: Korean expats lo lắng về lãi suất Fed"
                     className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm placeholder-slate-600"
                   />
+                </div>
+                <div>
+                  <label className="text-slate-400 text-xs block mb-1">
+                    📰 Mix tin tức hôm nay (tùy chọn)
+                  </label>
+                  <select
+                    value={selectedNewsForMix?.id ?? ''}
+                    onChange={e => {
+                      const found = newsData?.articles.find(a => a.id === e.target.value) ?? null
+                      setSelectedNewsForMix(found)
+                    }}
+                    className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm"
+                  >
+                    <option value="">— Không mix tin tức —</option>
+                    {(newsData?.articles ?? []).map(a => (
+                      <option key={a.id} value={a.id}>
+                        [{a.category}] {a.title}
+                      </option>
+                    ))}
+                  </select>
+                  {selectedNewsForMix && (
+                    <p className="text-amber-400/70 text-xs mt-1">
+                      ⚡ AI sẽ liên kết Kiến Thức + Tin Tức này trong hook & nội dung LP
+                    </p>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
