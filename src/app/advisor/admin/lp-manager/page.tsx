@@ -110,11 +110,13 @@ const CRM_STAGES = [
   { id:'qualified', label:'Qualified', badge:'bg-purple-500/20 text-purple-400' },
   { id:'opened', label:'Mở TK KBSV', badge:'bg-emerald-500/20 text-emerald-400' },
 ]
+type SalesAgent = { id: string; code: string; full_name: string; brand_name: string; brand_color_accent: string }
 
 export default function LpManagerPage() {
   const [activeTab, setActiveTab] = useState<'campaigns' | 'clarity'>('campaigns')
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [loading, setLoading] = useState(true)
+  const [agents, setAgents] = useState<SalesAgent[]>([])
   const [clarityMetrics, setClarityMetrics] = useState<ClarityMetrics | null>(null)
   const [clarityLoading, setClarityLoading] = useState(false)
   const [showCreate, setShowCreate] = useState(false)
@@ -156,6 +158,16 @@ export default function LpManagerPage() {
     const { campaigns: data } = await res.json()
     setCampaigns(data ?? [])
     setLoading(false)
+  }, [])
+
+  const fetchAgents = useCallback(async () => {
+    const res = await fetch('/api/admin/agents')
+    const { agents: data } = await res.json()
+    if (data?.length) {
+      setAgents(data)
+      // set default agent_code for wsForm to first agent
+      setWsForm(f => f.agent_code ? f : { ...f, agent_code: data[0].code })
+    }
   }, [])
 
   const fetchClarityMetrics = useCallback(async () => {
@@ -232,7 +244,7 @@ export default function LpManagerPage() {
     setSavingNote(false); setLeads(prev => prev.map(l => l.id === noteModal.id ? { ...l, notes:noteText } : l)); setNoteModal(null)
   }
 
-  useEffect(() => { fetchCampaigns() }, [fetchCampaigns])
+  useEffect(() => { fetchCampaigns(); fetchAgents() }, [fetchCampaigns, fetchAgents])
   useEffect(() => {
     if (campaignSubTab === 'news') fetchRawNews()
     if (campaignSubTab === 'workshop') { fetchRawNews(); fetchContentList(wsForm.content_type) }
@@ -303,10 +315,13 @@ export default function LpManagerPage() {
     grouped[c.agent_code].push(c)
   }
 
-  const AGENTS = ['mq01', 'aduc02', 'thuy03', 'huyen04', 'mduc05', 'dmd01']
-  const AGENT_NAMES: Record<string, string> = {
-    mq01: 'Minh Quang', aduc02: 'Anh Đức', thuy03: 'Lê Thuỷ', huyen04: '🇰🇷 Minaviko', mduc05: 'Minh Đức', dmd01: '📈 Đặng Minh Đức'
-  }
+  // Dynamic from DB (fallback to hardcoded for initial render before fetch)
+  const AGENTS = agents.length > 0
+    ? agents.map(a => a.code)
+    : ['mq01', 'aduc02', 'thuy03', 'huyen04', 'mduc05']
+  const AGENT_NAMES: Record<string, string> = agents.length > 0
+    ? Object.fromEntries(agents.map(a => [a.code, a.full_name]))
+    : { mq01: 'Minh Quang', aduc02: 'Anh Đức', thuy03: 'Lê Thuỷ', huyen04: '🇰🇷 Minaviko', mduc05: 'Minh Đức' }
 
   return (
     <div className="min-h-screen bg-[#0d1119] text-slate-100 p-6">
