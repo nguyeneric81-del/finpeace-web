@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, BookOpen, Clock, ChevronRight } from 'lucide-react'
 import { PILLARS, type Pillar } from '../data'
+import { useState, useEffect, useCallback } from 'react'
 
 const fadeUp = (delay = 0) => ({
     initial: { opacity: 0, y: 24 },
@@ -65,8 +66,156 @@ function RelatedPillars({ currentSlug }: { currentSlug: string }) {
     )
 }
 
+// ── Content Engagement Bar (Like/Love + KB CTA) ──────────────────────────────
+function ContentEngagementBar({ slug, pillar }: { slug: string; pillar: string }) {
+    const [liked, setLiked] = useState(false)
+    const [loved, setLoved] = useState(false)
+    const [showModal, setShowModal] = useState(false)
+    const [form, setForm] = useState({ name: '', phone: '' })
+    const [submitting, setSubmitting] = useState(false)
+    const [submitted, setSubmitted] = useState(false)
+
+    const react = useCallback(async (reaction: 'like' | 'love') => {
+        if (reaction === 'like' && liked) return
+        if (reaction === 'love' && loved) return
+        if (reaction === 'like') setLiked(true)
+        if (reaction === 'love') setLoved(true)
+        await fetch('/api/content/react', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content_type: 'knowledgebase', slug, pillar, reaction }),
+        })
+    }, [liked, loved, slug, pillar])
+
+    const submitKbRequest = async () => {
+        if (!form.phone) return
+        setSubmitting(true)
+        await fetch('/api/kb-account/request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_name: form.name || null,
+                user_phone: form.phone,
+                user_email: `${form.phone}@temp.finpeace.vn`,
+                content_type: 'knowledgebase',
+                content_slug: slug,
+                content_title: pillar,
+            }),
+        })
+        setSubmitting(false)
+        setSubmitted(true)
+        setShowModal(false)
+    }
+
+    return (
+        <>
+            <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="flex flex-wrap items-center justify-between gap-4 py-6 px-6 rounded-2xl mt-8"
+                style={{
+                    background: 'linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                }}
+            >
+                <div>
+                    <p className="text-white/70 text-sm font-medium mb-2">Bài viết này có hữu ích không?</p>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => react('like')}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border ${
+                                liked
+                                    ? 'bg-blue-500/30 text-blue-300 border-blue-500/40'
+                                    : 'bg-white/5 text-white/50 border-white/10 hover:bg-white/10'
+                            }`}
+                        >
+                            👍 {liked ? 'Đã thích' : 'Hữu ích'}
+                        </button>
+                        <button
+                            onClick={() => react('love')}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border ${
+                                loved
+                                    ? 'bg-rose-500/30 text-rose-300 border-rose-500/40'
+                                    : 'bg-white/5 text-white/50 border-white/10 hover:bg-white/10'
+                            }`}
+                        >
+                            ❤️ {loved ? 'Yêu thích' : 'Yêu thích'}
+                        </button>
+                    </div>
+                </div>
+
+                {submitted ? (
+                    <div className="text-emerald-400 text-sm font-semibold">
+                        ✓ Đã gửi yêu cầu — Agent sẽ liên hệ sớm
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => setShowModal(true)}
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all hover:opacity-90"
+                        style={{ background: 'linear-gradient(135deg, #c4a67a, #d4b68a)', color: '#0d1119' }}
+                    >
+                        🔓 Mở tài khoản KB để xem toàn bộ
+                    </button>
+                )}
+            </motion.div>
+
+            {showModal && (
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-[#111827] border border-[#1e2535] rounded-2xl p-6 w-full max-w-sm">
+                        <h2 className="text-lg font-bold text-white mb-1">🔓 Mở tài khoản KB</h2>
+                        <p className="text-slate-400 text-sm mb-5">
+                            Agent sẽ liên hệ hỗ trợ bạn trong 24h. Sau khi mở tài khoản, bạn được xem toàn bộ
+                            Knowledgebase &amp; Macro Insights không giới hạn.
+                        </p>
+                        <div className="space-y-3">
+                            <input
+                                value={form.name}
+                                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                                placeholder="Họ tên (tuỳ chọn)"
+                                className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm placeholder-slate-600"
+                            />
+                            <input
+                                value={form.phone}
+                                onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
+                                placeholder="Số điện thoại *"
+                                className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm placeholder-slate-600"
+                            />
+                        </div>
+                        <div className="flex gap-3 mt-5">
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="flex-1 py-2 border border-[#1e2535] text-slate-400 rounded-lg text-sm"
+                            >
+                                Huỷ
+                            </button>
+                            <button
+                                onClick={submitKbRequest}
+                                disabled={submitting || !form.phone}
+                                className="flex-1 py-2 bg-[#c4a67a] text-[#0d1119] rounded-lg text-sm font-bold disabled:opacity-50"
+                            >
+                                {submitting ? '⏳...' : 'Gửi yêu cầu'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    )
+}
+
+// ── Main Page ─────────────────────────────────────────────────────────────────
 export default function PillarPageClient({ pillar }: { pillar: Pillar }) {
     const clr = PILLAR_COLORS[pillar.slug] ?? { from: '#4F46E5', to: '#6366F1', glow: 'rgba(79,70,229,0.25)' }
+
+    // Track view on mount
+    useEffect(() => {
+        fetch('/api/content/view', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content_type: 'knowledgebase', slug: pillar.slug, pillar: pillar.slug }),
+        }).catch(() => {})
+    }, [pillar.slug])
 
     return (
         <div className="min-h-screen" style={{ background: '#0D0D18' }}>
@@ -245,7 +394,7 @@ export default function PillarPageClient({ pillar }: { pillar: Pillar }) {
                                                     <span className="flex items-center gap-1 text-xs text-white/30">
                                                         <Clock className="w-3 h-3" /> {article.readTime} phút
                                                     </span>
-                                                    {article.tags.slice(0, 2).map(tag => (
+                                                    {article.tags.slice(0, 2).map((tag: string) => (
                                                         <span key={tag} className="text-xs text-white/20 px-2 py-0.5 rounded-full"
                                                             style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
                                                             {tag}
@@ -265,6 +414,9 @@ export default function PillarPageClient({ pillar }: { pillar: Pillar }) {
                         )
                     })}
                 </div>
+
+                {/* ── ENGAGEMENT BAR ── */}
+                <ContentEngagementBar slug={pillar.slug} pillar={pillar.title} />
             </section>
 
             {/* ── RELATED ── */}

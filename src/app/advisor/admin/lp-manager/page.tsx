@@ -39,6 +39,18 @@ type ClarityMetrics = {
     campaigns: number
     cr: number
   }>
+  content: {
+    top_by_views: Array<{ slug: string; content_type: string; pillar: string | null; views: number }>
+    top_by_reactions: Array<{ slug: string; content_type: string; pillar: string | null; likes: number; loves: number; total: number }>
+  }
+  kb_requests: {
+    counts: { pending: number; completed: number; expired: number }
+    pending: Array<{
+      id: string; user_email: string; user_name: string | null; user_phone: string | null
+      content_type: string; content_slug: string; content_title: string | null
+      status: string; requested_at: string; expires_at: string
+    }>
+  }
 }
 
 type Campaign = {
