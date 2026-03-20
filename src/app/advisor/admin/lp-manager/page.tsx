@@ -577,7 +577,7 @@ function ClarityMonitorTab({
     return (
       <div className="flex items-center justify-center h-64 text-slate-400">
         <div className="text-center">
-          <div className="text-2xl mb-2">⏳</div>
+          <div className="text-2xl mb-2 animate-spin">⏳</div>
           <p>Đang tải Clarity metrics...</p>
         </div>
       </div>
@@ -586,136 +586,118 @@ function ClarityMonitorTab({
 
   if (!metrics) {
     return (
-      <div className="flex items-center justify-center h-64 text-slate-400">
-        <button onClick={onRefresh} className="px-4 py-2 bg-[#c4a67a] text-[#0d1119] rounded-lg text-sm font-semibold">
+      <div className="flex items-center justify-center h-64">
+        <button onClick={onRefresh} className="px-5 py-2.5 bg-[#c4a67a] text-[#0d1119] rounded-xl text-sm font-bold hover:opacity-90">
           🔄 Tải dữ liệu
         </button>
       </div>
     )
   }
 
-  const { kpis, funnel, by_campaign, by_agent } = metrics
+  const { kpis, funnel, by_campaign, by_agent, content, kb_requests } = metrics
 
-  // KPI card helper
   const crColor = kpis.cr_pct >= 5 ? 'text-emerald-400' : kpis.cr_pct >= 3 ? 'text-amber-400' : 'text-red-400'
   const phoneColor = kpis.valid_phone_rate >= 80 ? 'text-emerald-400' : 'text-amber-400'
   const cacColor = !kpis.cac ? 'text-slate-400' : kpis.cac <= 1_000_000 ? 'text-emerald-400' : 'text-amber-400'
 
-  // Funnel steps
+  const totalLeads = funnel.new + funnel.contacted + funnel.qualified + funnel.opened
   const funnelSteps = [
-    { label: 'LP Views', value: funnel.views, target: '200+/tuần', color: 'bg-blue-500' },
-    { label: 'Leads', value: funnel.new + funnel.contacted + funnel.qualified + funnel.opened, target: 'CR > 5%', color: 'bg-[#c4a67a]' },
-    { label: 'Contacted', value: funnel.contacted + funnel.qualified + funnel.opened, target: '', color: 'bg-amber-500' },
-    { label: 'Qualified', value: funnel.qualified + funnel.opened, target: '', color: 'bg-orange-500' },
-    { label: 'Blueprint CTA', value: funnel.opened, target: '> 20%', color: 'bg-emerald-500' },
+    { label: 'LP Views', value: funnel.views, color: '#3b82f6', icon: '👁' },
+    { label: 'Leads', value: totalLeads, color: '#c4a67a', icon: '🎯' },
+    { label: 'Contacted', value: funnel.contacted + funnel.qualified + funnel.opened, color: '#f59e0b', icon: '📞' },
+    { label: 'Qualified', value: funnel.qualified + funnel.opened, color: '#f97316', icon: '✅' },
+    { label: 'Blueprint CTA', value: funnel.opened, color: '#34d399', icon: '🚀' },
   ]
 
-  const totalLeads = funnel.new + funnel.contacted + funnel.qualified + funnel.opened
+  const kbCounts = kb_requests?.counts ?? { pending: 0, completed: 0, expired: 0 }
+  const kbPending = kb_requests?.pending ?? []
+  const contentViews = content?.top_by_views ?? []
+  const contentReactions = content?.top_by_reactions ?? []
 
   return (
     <div className="space-y-6">
-      {/* Header row */}
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-bold text-white">📈 Clarity Performance</h2>
-          <p className="text-slate-400 text-xs mt-0.5">Full-funnel: LP → Leads → Clarity → Blueprint</p>
+          <p className="text-slate-500 text-xs mt-0.5">Full-funnel: LP → Leads → Clarity → Blueprint</p>
         </div>
-        <button
-          onClick={onRefresh}
-          className="px-3 py-1.5 text-xs bg-[#1e2535] text-slate-300 rounded-lg hover:bg-[#2a3548] transition-colors"
-        >
-          🔄 Refresh
-        </button>
-      </div>
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-5 gap-4">
-        <div className="bg-[#111827] rounded-xl border border-[#1e2535] p-4">
-          <p className="text-slate-400 text-xs mb-1">LP Views (7d)</p>
-          <p className="text-2xl font-bold text-white">{kpis.views_7d}</p>
-          <p className="text-slate-600 text-xs mt-1">target: 200+/tuần</p>
-          {kpis.views_7d >= 200
-            ? <span className="text-xs text-emerald-400">✓ On target</span>
-            : <span className="text-xs text-amber-400">↑ Cần tăng thêm</span>}
-        </div>
-        <div className="bg-[#111827] rounded-xl border border-[#1e2535] p-4">
-          <p className="text-slate-400 text-xs mb-1">Leads (7d)</p>
-          <p className="text-2xl font-bold text-[#c4a67a]">{kpis.leads_7d}</p>
-          <p className="text-slate-600 text-xs mt-1">total: {kpis.total_leads_all_time}</p>
-        </div>
-        <div className="bg-[#111827] rounded-xl border border-[#1e2535] p-4">
-          <p className="text-slate-400 text-xs mb-1">CR% (7d)</p>
-          <p className={`text-2xl font-bold ${crColor}`}>{kpis.cr_pct}%</p>
-          <p className="text-slate-600 text-xs mt-1">target: {'>'} 5%</p>
-          {kpis.cr_pct >= 5
-            ? <span className="text-xs text-emerald-400">✓ On target</span>
-            : <span className="text-xs text-red-400">✗ Dưới target</span>}
-        </div>
-        <div className="bg-[#111827] rounded-xl border border-[#1e2535] p-4">
-          <p className="text-slate-400 text-xs mb-1">SĐT Valid</p>
-          <p className={`text-2xl font-bold ${phoneColor}`}>{kpis.valid_phone_rate}%</p>
-          <p className="text-slate-600 text-xs mt-1">target: {'>'} 80%</p>
-          {kpis.valid_phone_rate >= 80
-            ? <span className="text-xs text-emerald-400">✓ On target</span>
-            : <span className="text-xs text-amber-400">↑ Cần cải thiện</span>}
-        </div>
-        <div className="bg-[#111827] rounded-xl border border-[#1e2535] p-4">
-          <p className="text-slate-400 text-xs mb-1">CAC</p>
-          <p className={`text-2xl font-bold ${cacColor}`}>
-            {kpis.cac ? (kpis.cac / 1_000_000).toFixed(1) + 'M' : '—'}
-          </p>
-          <p className="text-slate-600 text-xs mt-1">target: {'<'} 1M VND</p>
+        <div className="flex items-center gap-3">
+          {kbCounts.pending > 0 && (
+            <span className="px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-bold rounded-full animate-pulse">
+              🔔 {kbCounts.pending} KB request chờ xử lý
+            </span>
+          )}
+          <button onClick={onRefresh} className="px-3 py-1.5 text-xs bg-[#1e2535] text-slate-300 rounded-lg hover:bg-[#2a3548]">
+            🔄 Refresh
+          </button>
         </div>
       </div>
 
-      {/* Funnel Visualization */}
+      {/* KPI Cards — 6 cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        {[
+          { label: 'LP Views (7d)', value: kpis.views_7d, color: 'text-blue-400', target: '≥ 200/tuần', ok: kpis.views_7d >= 200, suffix: '' },
+          { label: 'Leads (7d)', value: kpis.leads_7d, color: 'text-[#c4a67a]', target: `Tổng: ${kpis.total_leads_all_time}`, ok: null, suffix: '' },
+          { label: 'CR% (7d)', value: kpis.cr_pct, color: crColor, target: '≥ 5%', ok: kpis.cr_pct >= 5, suffix: '%' },
+          { label: 'SĐT Valid', value: kpis.valid_phone_rate, color: phoneColor, target: '≥ 80%', ok: kpis.valid_phone_rate >= 80, suffix: '%' },
+          { label: 'CAC', value: kpis.cac ? +(kpis.cac / 1_000_000).toFixed(1) : null, color: cacColor, target: '< 1M VND', ok: kpis.cac ? kpis.cac <= 1_000_000 : null, suffix: kpis.cac ? 'M' : '' },
+          { label: 'KB Requests', value: kbCounts.pending, color: kbCounts.pending > 0 ? 'text-amber-400' : 'text-slate-500', target: `${kbCounts.completed} done`, ok: kbCounts.pending === 0, suffix: ' pending' },
+        ].map(card => (
+          <div key={card.label} className="bg-[#111827] rounded-xl border border-[#1e2535] p-4">
+            <p className="text-slate-500 text-xs mb-1 truncate">{card.label}</p>
+            <p className={`text-2xl font-bold ${card.color}`}>
+              {card.value === null ? '—' : card.value}{card.value !== null ? card.suffix : ''}
+            </p>
+            <p className="text-slate-600 text-xs mt-1">{card.target}</p>
+            {card.ok !== null && (
+              <span className={`text-xs ${card.ok ? 'text-emerald-400' : 'text-amber-400'}`}>
+                {card.ok ? '✓ OK' : '↑ Cần cải thiện'}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Funnel + Stage Breakdown */}
       <div className="bg-[#111827] rounded-xl border border-[#1e2535] p-6">
-        <h3 className="text-white font-semibold mb-4">🔽 Clarity Funnel</h3>
-        <div className="flex items-stretch gap-2">
+        <h3 className="text-white font-semibold mb-5">🔽 Clarity Funnel</h3>
+        <div className="flex items-end gap-3">
           {funnelSteps.map((step, i) => {
             const pct = funnelSteps[0].value > 0
-              ? Math.round((step.value / funnelSteps[0].value) * 100)
-              : 0
+              ? Math.round((step.value / funnelSteps[0].value) * 100) : 0
+            const barH = Math.max(pct, 4)
             return (
-              <div key={step.label} className="flex-1 text-center">
-                <div className="relative mb-2">
-                  <div className="bg-[#0d1119] rounded-lg p-3 border border-[#1e2535]">
-                    <p className="text-xl font-bold text-white">{step.value}</p>
-                    <p className="text-slate-400 text-xs">{step.label}</p>
-                    {i > 0 && (
-                      <p className="text-xs mt-1 font-medium" style={{ color: pct >= 20 ? '#34d399' : '#f59e0b' }}>
-                        {pct}%
-                      </p>
-                    )}
-                    {step.target && (
-                      <p className="text-slate-600 text-xs mt-0.5">{step.target}</p>
-                    )}
-                  </div>
-                  {/* Bar height indicator */}
-                  <div className="mt-2 mx-auto w-full bg-[#1e2535] rounded-full h-1.5">
-                    <div
-                      className={`h-1.5 rounded-full transition-all ${step.color}`}
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                </div>
-                {i < funnelSteps.length - 1 && (
-                  <div className="absolute top-1/2 right-0 text-slate-600 text-lg hidden" />
+              <div key={step.label} className="flex-1 flex flex-col items-center gap-1">
+                {i > 0 && (
+                  <span className={`text-xs font-bold mb-1 ${pct >= 20 ? 'text-emerald-400' : pct >= 5 ? 'text-amber-400' : 'text-red-400'}`}>
+                    {pct}%
+                  </span>
                 )}
+                <div className="w-full flex items-end justify-center" style={{ height: 80 }}>
+                  <div
+                    className="w-full rounded-t-lg transition-all"
+                    style={{ height: `${barH}%`, background: step.color, opacity: 0.85, minHeight: 4 }}
+                  />
+                </div>
+                <p className="text-white font-bold text-sm">{step.value}</p>
+                <p className="text-slate-500 text-xs text-center leading-tight">{step.icon} {step.label}</p>
               </div>
             )
           })}
         </div>
 
-        {/* Stage breakdown bar */}
         {totalLeads > 0 && (
-          <div className="mt-4">
-            <p className="text-slate-500 text-xs mb-2">Stage breakdown (all time)</p>
-            <div className="flex h-2 rounded-full overflow-hidden gap-0.5">
-              <div className="bg-blue-500/80" style={{ width: `${Math.round(funnel.new / totalLeads * 100)}%` }} title={`New: ${funnel.new}`} />
-              <div className="bg-amber-500/80" style={{ width: `${Math.round(funnel.contacted / totalLeads * 100)}%` }} title={`Contacted: ${funnel.contacted}`} />
-              <div className="bg-orange-500/80" style={{ width: `${Math.round(funnel.qualified / totalLeads * 100)}%` }} title={`Qualified: ${funnel.qualified}`} />
-              <div className="bg-emerald-500/80" style={{ width: `${Math.round(funnel.opened / totalLeads * 100)}%` }} title={`Blueprint: ${funnel.opened}`} />
+          <div className="mt-6">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-slate-500 text-xs">Stage breakdown (all time)</p>
+              <p className="text-slate-400 text-xs">{totalLeads} leads total</p>
+            </div>
+            <div className="flex h-2 rounded-full overflow-hidden gap-px">
+              <div className="bg-blue-500" style={{ width: `${Math.round(funnel.new / totalLeads * 100)}%` }} title={`New: ${funnel.new}`} />
+              <div className="bg-amber-500" style={{ width: `${Math.round(funnel.contacted / totalLeads * 100)}%` }} title={`Contacted: ${funnel.contacted}`} />
+              <div className="bg-orange-500" style={{ width: `${Math.round(funnel.qualified / totalLeads * 100)}%` }} title={`Qualified: ${funnel.qualified}`} />
+              <div className="bg-emerald-500" style={{ width: `${Math.round(funnel.opened / totalLeads * 100)}%` }} title={`Blueprint: ${funnel.opened}`} />
             </div>
             <div className="flex gap-4 mt-2 text-xs text-slate-500">
               <span><span className="text-blue-400">●</span> New {funnel.new}</span>
@@ -727,33 +709,88 @@ function ClarityMonitorTab({
         )}
       </div>
 
+      {/* Content Analytics — 2 columns */}
+      <div className="grid md:grid-cols-2 gap-4">
+        {/* Hot by Reactions */}
+        <div className="bg-[#111827] rounded-xl border border-[#1e2535] overflow-hidden">
+          <div className="px-5 py-4 border-b border-[#1e2535]">
+            <h3 className="text-white font-semibold text-sm">🔥 Hot Content — Reactions</h3>
+            <p className="text-slate-500 text-xs mt-0.5">Bài được Like + Love nhiều nhất</p>
+          </div>
+          {contentReactions.length === 0 ? (
+            <div className="px-5 py-6 text-slate-600 text-xs text-center">Chưa có reaction nào</div>
+          ) : (
+            <div className="divide-y divide-[#1e2535]">
+              {contentReactions.slice(0, 8).map((item, i) => (
+                <div key={item.slug} className="flex items-center gap-3 px-5 py-2.5 hover:bg-[#0f172a]">
+                  <span className="text-slate-600 text-xs w-4">{i + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-xs font-medium truncate">{item.slug}</p>
+                    <p className="text-slate-600 text-[10px]">{item.content_type}</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs shrink-0">
+                    <span className="text-blue-400">👍{item.likes}</span>
+                    <span className="text-rose-400">❤️{item.loves}</span>
+                    <span className="bg-[#1e2535] text-slate-300 px-1.5 py-0.5 rounded font-bold">{item.total}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Top by Views */}
+        <div className="bg-[#111827] rounded-xl border border-[#1e2535] overflow-hidden">
+          <div className="px-5 py-4 border-b border-[#1e2535]">
+            <h3 className="text-white font-semibold text-sm">👁 Traffic — Top Views (7d)</h3>
+            <p className="text-slate-500 text-xs mt-0.5">Bài được xem nhiều nhất trong 7 ngày</p>
+          </div>
+          {contentViews.length === 0 ? (
+            <div className="px-5 py-6 text-slate-600 text-xs text-center">Chưa có lượt xem nào</div>
+          ) : (
+            <div className="divide-y divide-[#1e2535]">
+              {contentViews.slice(0, 8).map((item, i) => (
+                <div key={item.slug} className="flex items-center gap-3 px-5 py-2.5 hover:bg-[#0f172a]">
+                  <span className="text-slate-600 text-xs w-4">{i + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-xs font-medium truncate">{item.slug}</p>
+                    <p className="text-slate-600 text-[10px]">{item.content_type}</p>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <div
+                      className="h-1.5 rounded-full bg-blue-500 opacity-70"
+                      style={{ width: Math.max(4, Math.min(80, item.views * 4)) }}
+                    />
+                    <span className="text-slate-300 text-xs font-bold ml-1">{item.views}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* By Agent */}
       {by_agent.length > 0 && (
-        <div className="bg-[#111827] rounded-xl border border-[#1e2535] p-6">
-          <h3 className="text-white font-semibold mb-4">👤 Breakdown by Agent</h3>
-          <div className="space-y-3">
+        <div className="bg-[#111827] rounded-xl border border-[#1e2535] p-5">
+          <h3 className="text-white font-semibold text-sm mb-4">👤 Breakdown by Agent</h3>
+          <div className="space-y-2">
             {by_agent.map(a => (
               <div key={a.agent_code} className="flex items-center gap-4 py-2 border-b border-[#1e2535] last:border-0">
-                <div className="w-32 shrink-0">
+                <div className="w-28 shrink-0">
                   <p className="text-white text-sm font-medium">{a.agent_name}</p>
-                  <p className="text-slate-500 text-xs">{a.agent_code}</p>
+                  <p className="text-slate-600 text-xs">{a.agent_code}</p>
                 </div>
-                <div className="flex gap-6 text-center text-sm">
-                  <div>
-                    <p className="text-white font-medium">{a.views}</p>
-                    <p className="text-slate-500 text-xs">views</p>
-                  </div>
-                  <div>
-                    <p className="text-[#c4a67a] font-medium">{a.leads}</p>
-                    <p className="text-slate-500 text-xs">leads</p>
-                  </div>
-                  <div>
-                    <p className={`font-medium ${a.cr >= 5 ? 'text-emerald-400' : 'text-amber-400'}`}>{a.cr}%</p>
-                    <p className="text-slate-500 text-xs">CR</p>
-                  </div>
-                  <div>
-                    <p className="text-slate-300 font-medium">{a.campaigns}</p>
-                    <p className="text-slate-500 text-xs">campaigns</p>
+                <div className="flex gap-5 text-center text-xs flex-1">
+                  <div><p className="text-white font-bold">{a.views}</p><p className="text-slate-600">views</p></div>
+                  <div><p className="text-[#c4a67a] font-bold">{a.leads}</p><p className="text-slate-600">leads</p></div>
+                  <div><p className={`font-bold ${a.cr >= 5 ? 'text-emerald-400' : 'text-amber-400'}`}>{a.cr}%</p><p className="text-slate-600">CR</p></div>
+                  <div><p className="text-slate-300 font-bold">{a.campaigns}</p><p className="text-slate-600">campaigns</p></div>
+                </div>
+                {/* Mini CR bar */}
+                <div className="w-20 hidden md:block">
+                  <div className="h-1 bg-[#1e2535] rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full ${a.cr >= 5 ? 'bg-emerald-500' : 'bg-amber-500'}`} style={{ width: `${Math.min(100, a.cr * 10)}%` }} />
                   </div>
                 </div>
               </div>
@@ -762,17 +799,17 @@ function ClarityMonitorTab({
         </div>
       )}
 
-      {/* By Campaign Table */}
+      {/* Campaign Table */}
       {by_campaign.length > 0 && (
         <div className="bg-[#111827] rounded-xl border border-[#1e2535] overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#1e2535]">
-            <h3 className="text-white font-semibold">📋 Performance by Campaign</h3>
+          <div className="px-5 py-4 border-b border-[#1e2535]">
+            <h3 className="text-white font-semibold text-sm">📋 Performance by Campaign</h3>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-xs">
               <thead>
-                <tr className="text-slate-500 text-xs border-b border-[#1e2535]">
-                  <th className="text-left px-6 py-3">Campaign</th>
+                <tr className="text-slate-500 border-b border-[#1e2535]">
+                  <th className="text-left px-5 py-3">Campaign</th>
                   <th className="text-left px-4 py-3">Agent</th>
                   <th className="text-right px-4 py-3">Views</th>
                   <th className="text-right px-4 py-3">Leads</th>
@@ -787,9 +824,7 @@ function ClarityMonitorTab({
                   const cr = views > 0 ? (leads / views * 100).toFixed(1) : '—'
                   return (
                     <tr key={c.id} className="hover:bg-[#0f172a] transition-colors">
-                      <td className="px-6 py-3 text-white font-medium truncate max-w-[200px]">
-                        {c.campaign_name || c.slug || '—'}
-                      </td>
+                      <td className="px-5 py-3 text-white font-medium truncate max-w-[180px]">{c.campaign_name || c.slug || '—'}</td>
                       <td className="px-4 py-3 text-slate-400">{c.agent_name || c.agent_code || '—'}</td>
                       <td className="px-4 py-3 text-right text-white">{views}</td>
                       <td className="px-4 py-3 text-right text-[#c4a67a] font-medium">{leads}</td>
@@ -801,9 +836,7 @@ function ClarityMonitorTab({
                           c.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' :
                           c.status === 'draft' ? 'bg-blue-500/20 text-blue-400' :
                           'bg-slate-500/20 text-slate-400'
-                        }`}>
-                          {c.status}
-                        </span>
+                        }`}>{c.status}</span>
                       </td>
                     </tr>
                   )
@@ -813,6 +846,88 @@ function ClarityMonitorTab({
           </div>
         </div>
       )}
+
+      {/* KB Account Requests */}
+      <KbRequestsSection kbCounts={kbCounts} kbPending={kbPending} onRefresh={onRefresh} />
     </div>
   )
 }
+
+// ── KB Requests Section ───────────────────────────────────────────────────────
+function KbRequestsSection({
+  kbCounts,
+  kbPending,
+  onRefresh,
+}: {
+  kbCounts: { pending: number; completed: number; expired: number }
+  kbPending: ClarityMetrics['kb_requests']['pending']
+  onRefresh: () => void
+}) {
+  const [completing, setCompleting] = useState<string | null>(null)
+
+  const complete = async (id: string) => {
+    setCompleting(id)
+    await fetch(`/api/admin/kb-requests/${id}/complete`, { method: 'POST' })
+    setCompleting(null)
+    onRefresh()
+  }
+
+  return (
+    <div className="bg-[#111827] rounded-xl border border-[#1e2535] overflow-hidden">
+      <div className="px-5 py-4 border-b border-[#1e2535] flex items-center justify-between">
+        <div>
+          <h3 className="text-white font-semibold text-sm">🔓 KB Account Requests</h3>
+          <p className="text-slate-500 text-xs mt-0.5">Yêu cầu mở tài khoản KB — hạn xử lý 3 ngày</p>
+        </div>
+        <div className="flex items-center gap-2 text-xs">
+          <span className="px-2.5 py-1 bg-amber-500/20 text-amber-400 rounded-full font-semibold">{kbCounts.pending} pending</span>
+          <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 rounded-full">{kbCounts.completed} done</span>
+          <span className="px-2.5 py-1 bg-slate-500/15 text-slate-500 rounded-full">{kbCounts.expired} expired</span>
+        </div>
+      </div>
+
+      {kbPending.length === 0 ? (
+        <div className="px-5 py-8 text-center text-slate-600 text-sm">
+          ✓ Không có request nào đang chờ
+        </div>
+      ) : (
+        <div className="divide-y divide-[#1e2535]">
+          {kbPending.map(r => {
+            const daysLeft = Math.max(0, Math.ceil((new Date(r.expires_at).getTime() - Date.now()) / 86400000))
+            return (
+              <div key={r.id} className="px-5 py-3.5 hover:bg-[#0f172a] transition-colors">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-white text-sm font-medium">{r.user_name ?? r.user_email}</p>
+                      {r.user_phone && <span className="text-slate-500 text-xs">{r.user_phone}</span>}
+                    </div>
+                    <p className="text-slate-500 text-xs mt-0.5">
+                      📄 {r.content_title ?? r.content_slug}
+                      <span className="ml-2 text-slate-600">({r.content_type})</span>
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
+                      daysLeft <= 1 ? 'bg-red-500/20 text-red-400' : daysLeft <= 2 ? 'bg-amber-500/20 text-amber-400' : 'bg-blue-500/20 text-blue-400'
+                    }`}>
+                      ⏰ {daysLeft}d
+                    </span>
+                    <button
+                      onClick={() => complete(r.id)}
+                      disabled={completing === r.id}
+                      className="px-3 py-1.5 bg-emerald-500/20 text-emerald-400 text-xs rounded-lg hover:bg-emerald-500/30 disabled:opacity-50 font-medium"
+                    >
+                      {completing === r.id ? '⏳' : '✓ Đã mở'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
