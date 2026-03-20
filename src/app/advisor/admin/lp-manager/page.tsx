@@ -88,6 +88,28 @@ function fmtVND(n: number) {
   if (!n) return '—'
   return (n / 1_000_000).toFixed(1) + 'M'
 }
+function fmtDate(iso: string) { return new Date(iso).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }) }
+
+type RawNewsArticle = {
+  id: number; crawl_date: string; title: string; link: string | null
+  description: string | null; source: string | null; published_at: string | null
+  tags: string[]; category: string | null; tickers: string[]; relevance: 1|2|3
+  status: 'pending' | 'approved' | 'ignored'
+}
+type ContentItem = { slug: string; title: string; pillar: string }
+type Lead = {
+  id: string; full_name: string | null; email: string | null; phone: string | null
+  ref_code: string; utm_source: string | null; status: string; crm_stage: string
+  notes: string | null; registered_at: string
+  agent_landing_pages: { slug: string; campaign_name: string | null } | null
+  sales_agents: { code: string; full_name: string } | null
+}
+const CRM_STAGES = [
+  { id:'new', label:'Mới', badge:'bg-blue-500/20 text-blue-400' },
+  { id:'contacted', label:'Đã liên hệ', badge:'bg-amber-500/20 text-amber-400' },
+  { id:'qualified', label:'Qualified', badge:'bg-purple-500/20 text-purple-400' },
+  { id:'opened', label:'Mở TK KBSV', badge:'bg-emerald-500/20 text-emerald-400' },
+]
 
 export default function LpManagerPage() {
   const [activeTab, setActiveTab] = useState<'campaigns' | 'clarity'>('campaigns')
@@ -97,6 +119,23 @@ export default function LpManagerPage() {
   const [clarityLoading, setClarityLoading] = useState(false)
   const [showCreate, setShowCreate] = useState(false)
   const [editNotes, setEditNotes] = useState<{ id: string; notes: string } | null>(null)
+  const [campaignSubTab, setCampaignSubTab] = useState<'list'|'news'|'workshop'|'crm'|'perf'>('list')
+  const [rawNews, setRawNews] = useState<RawNewsArticle[]>([])
+  const [rawNewsDates, setRawNewsDates] = useState<string[]>([])
+  const [rawNewsDate, setRawNewsDate] = useState('')
+  const [rawNewsFilter, setRawNewsFilter] = useState<'all'|'pending'|'approved'|'ignored'>('all')
+  const [loadingRawNews, setLoadingRawNews] = useState(false)
+  const [leads, setLeads] = useState<Lead[]>([])
+  const [loadingLeads, setLoadingLeads] = useState(false)
+  const [contentList, setContentList] = useState<ContentItem[]>([])
+  const [wsNewsMix, setWsNewsMix] = useState<RawNewsArticle|null>(null)
+  const [wsGenerating, setWsGenerating] = useState(false)
+  const [wsResult, setWsResult] = useState<{preview_url:string;campaign_id:string;campaign_name:string}|null>(null)
+  const [wsApproving, setWsApproving] = useState(false)
+  const [wsForm, setWsForm] = useState({ agent_code:'mq01', content_type:'macro_insight' as 'macro_insight'|'knowledgebase', content_slug:'', campaign_name:'', target_audience_hint:'', utm_source:'' })
+  const [noteModal, setNoteModal] = useState<Lead|null>(null)
+  const [noteText, setNoteText] = useState('')
+  const [savingNote, setSavingNote] = useState(false)
   const [utmModal, setUtmModal] = useState<Campaign | null>(null)
   const [generating, setGenerating] = useState(false)
   const [createForm, setCreateForm] = useState({
@@ -124,14 +163,77 @@ export default function LpManagerPage() {
       const res = await fetch('/api/admin/clarity-metrics')
       const data = await res.json()
       setClarityMetrics(data)
-    } catch (e) {
-      console.error('Failed to fetch clarity metrics', e)
-    } finally {
-      setClarityLoading(false)
-    }
+    } catch (e) { console.error('Failed to fetch clarity metrics', e) }
+    finally { setClarityLoading(false) }
   }, [])
 
+  const fetchRawNews = useCallback(async (date?: string, status?: string) => {
+    setLoadingRawNews(true)
+    const p = new URLSearchParams()
+    if (date) p.set('date', date)
+    if (status && status !== 'all') p.set('status', status)
+    const res = await fetch(`/api/admin/raw-news?${p}`)
+    const data = await res.json()
+    setRawNews(data.articles ?? [])
+    if (data.available_dates?.length) {
+      setRawNewsDates(data.available_dates)
+      if (!date && data.available_dates[0]) setRawNewsDate(data.available_dates[0])
+    }
+    setLoadingRawNews(false)
+  }, [])
+
+  const actionRawNews = async (id: number, action: 'approve'|'ignore'|'pending') => {
+    await fetch(`/api/admin/raw-news/${id}/action`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ action }) })
+    setRawNews(prev => prev.map(a => a.id === id ? { ...a, status: action==='approve'?'approved':action==='ignore'?'ignored':'pending' } : a))
+  }
+
+  const fetchLeads = useCallback(async () => {
+    setLoadingLeads(true)
+    const res = await fetch('/api/admin/leads?limit=300')
+    const { leads: data } = await res.json()
+    setLeads(data ?? [])
+    setLoadingLeads(false)
+  }, [])
+
+  const fetchContentList = useCallback(async (type: string) => {
+    const res = await fetch(`/api/admin/content-list?type=${type}`)
+    const { items } = await res.json()
+    setContentList(items ?? [])
+  }, [])
+
+  const wsGenerate = async () => {
+    if (!wsForm.content_slug || !wsForm.campaign_name) return
+    setWsGenerating(true); setWsResult(null)
+    const res = await fetch('/api/admin/lp-campaigns/generate', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ ...wsForm, news_context: wsNewsMix ? { title:wsNewsMix.title, category:wsNewsMix.category, analyst_view:wsNewsMix.description, data_point:null } : undefined }),
+    })
+    const data = await res.json(); setWsGenerating(false)
+    if (data.preview_url) setWsResult({ preview_url:`https://finpeace.cloud${data.preview_url}`, campaign_id:data.campaign_id, campaign_name:wsForm.campaign_name })
+    fetchCampaigns()
+  }
+  const wsApprove = async (id: string) => {
+    setWsApproving(true)
+    await fetch(`/api/admin/lp-campaigns/${id}/approve`, { method:'POST' })
+    setWsApproving(false); setWsResult(prev => prev ? { ...prev, campaign_id:'' } : null); fetchCampaigns()
+  }
+  const updateCrmStage = async (lead: Lead, crm_stage: string) => {
+    await fetch(`/api/admin/leads/${lead.id}/note`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ crm_stage }) })
+    setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, crm_stage } : l))
+  }
+  const saveNote = async () => {
+    if (!noteModal) return; setSavingNote(true)
+    await fetch(`/api/admin/leads/${noteModal.id}/note`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ notes:noteText }) })
+    setSavingNote(false); setLeads(prev => prev.map(l => l.id === noteModal.id ? { ...l, notes:noteText } : l)); setNoteModal(null)
+  }
+
   useEffect(() => { fetchCampaigns() }, [fetchCampaigns])
+  useEffect(() => {
+    if (campaignSubTab === 'news') fetchRawNews()
+    if (campaignSubTab === 'workshop') { fetchRawNews(); fetchContentList(wsForm.content_type) }
+    if (campaignSubTab === 'crm') fetchLeads()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [campaignSubTab])
   useEffect(() => {
     if (activeTab === 'clarity' && !clarityMetrics) fetchClarityMetrics()
   }, [activeTab, clarityMetrics, fetchClarityMetrics])
@@ -256,11 +358,30 @@ export default function LpManagerPage() {
         {/* Tab Content */}
         {activeTab === 'clarity' ? (
           <ClarityMonitorTab metrics={clarityMetrics} loading={clarityLoading} onRefresh={fetchClarityMetrics} />
-        ) : loading ? (
-          <div className="flex items-center justify-center h-48 text-slate-400">Loading campaigns...</div>
         ) : (
-          <div className="space-y-6">
-            {AGENTS.map(agentCode => {
+          <div className="space-y-4">
+            {/* Campaign Sub-Tabs */}
+            <div className="flex gap-1 bg-[#111827] rounded-xl p-1 border border-[#1e2535] w-fit">
+              {([
+                { id:'list', label:'📋 Campaigns' },
+                { id:'news', label:'📡 News Intelligence' },
+                { id:'workshop', label:'🚀 Workshop' },
+                { id:'crm', label:'🎯 Lead CRM' },
+                { id:'perf', label:'📊 Agent Perf' },
+              ] as const).map(t => (
+                <button key={t.id} onClick={() => setCampaignSubTab(t.id)}
+                  className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${campaignSubTab===t.id ? 'bg-[#c4a67a] text-[#0d1119]' : 'text-slate-400 hover:text-white hover:bg-[#1e2535]'}`}>
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            {/* ── Sub-tab: Campaigns List ── */}
+            {campaignSubTab === 'list' && (loading ? (
+              <div className="flex items-center justify-center h-48 text-slate-400">Loading campaigns...</div>
+            ) : (
+              <div className="space-y-6">
+                {AGENTS.map(agentCode => {
               const agentCampaigns = grouped[agentCode] ?? []
               const agentName = AGENT_NAMES[agentCode] ?? agentCode
               return (
@@ -420,10 +541,247 @@ export default function LpManagerPage() {
               )
             })}
           </div>
+        ))}
+
+            {/* ── Sub-tab: News Intelligence ── */}
+            {campaignSubTab === 'news' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-2">
+                    {rawNewsDates.slice(0,5).map(d => (
+                      <button key={d} onClick={() => { setRawNewsDate(d); fetchRawNews(d, rawNewsFilter) }}
+                        className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${rawNewsDate===d ? 'bg-[#c4a67a] text-[#0d1119]' : 'bg-[#1e2535] text-slate-400 hover:text-white'}`}>
+                        {fmtDate(d)}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex gap-1">
+                    {(['all','pending','approved','ignored'] as const).map(s => (
+                      <button key={s} onClick={() => { setRawNewsFilter(s); fetchRawNews(rawNewsDate||undefined, s) }}
+                        className={`px-2 py-1 rounded text-xs ${rawNewsFilter===s ? 'bg-[#c4a67a] text-[#0d1119]' : 'text-slate-500 hover:text-white'}`}>
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {loadingRawNews ? (
+                  <div className="text-center py-8 text-slate-500 text-sm">Loading tin tức...</div>
+                ) : rawNews.length === 0 ? (
+                  <div className="text-center py-8 text-slate-600 text-sm">Chưa có tin nào ngày này. Chạy pipeline crawl để feed dữ liệu.</div>
+                ) : (
+                  <div className="space-y-2">
+                    {rawNews.map(a => (
+                      <div key={a.id} className={`bg-[#111827] border rounded-xl p-4 transition-all ${ a.status==='approved' ? 'border-emerald-500/30' : a.status==='ignored' ? 'border-slate-500/20 opacity-50' : 'border-[#1e2535]' }`}>
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`text-xs px-1.5 py-0.5 rounded font-semibold ${ a.relevance===3?'bg-red-500/20 text-red-400':a.relevance===2?'bg-amber-500/20 text-amber-400':'bg-slate-500/20 text-slate-400' }`}>
+                                {a.relevance===3?'🔥 Hot':a.relevance===2?'⚡ Mid':'○ Low'}
+                              </span>
+                              <span className="text-slate-600 text-xs">{a.source} · {a.published_at ? fmtDate(a.published_at) : '—'}</span>
+                              {a.category && <span className="text-xs bg-[#1e2535] text-slate-400 px-1.5 py-0.5 rounded">{a.category}</span>}
+                            </div>
+                            <p className="text-white text-sm font-medium leading-snug mb-1">{a.title}</p>
+                            {a.description && <p className="text-slate-500 text-xs line-clamp-2">{a.description}</p>}
+                            {a.tickers.length > 0 && <div className="flex gap-1 mt-1">{a.tickers.map(t=><span key={t} className="text-xs bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded">{t}</span>)}</div>}
+                          </div>
+                          <div className="flex flex-col gap-1 shrink-0">
+                            {a.status !== 'approved' && <button onClick={()=>actionRawNews(a.id,'approve')} className="px-2 py-1 text-xs bg-emerald-500/20 text-emerald-400 rounded hover:bg-emerald-500/30">✓ Dùng</button>}
+                            {a.status !== 'ignored' && <button onClick={()=>actionRawNews(a.id,'ignore')} className="px-2 py-1 text-xs bg-slate-500/20 text-slate-400 rounded hover:bg-slate-500/30">✕</button>}
+                            {a.link && <a href={a.link} target="_blank" className="px-2 py-1 text-xs bg-blue-500/20 text-blue-400 rounded hover:bg-blue-500/30">↗ Link</a>}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ── Sub-tab: Campaign Workshop ── */}
+            {campaignSubTab === 'workshop' && (
+              <div className="grid md:grid-cols-2 gap-4">
+                {/* Left: config */}
+                <div className="space-y-4">
+                  <div className="bg-[#111827] border border-[#1e2535] rounded-xl p-5 space-y-4">
+                    <h3 className="text-white font-semibold text-sm">🚀 Tạo Campaign từ Tin Tức</h3>
+                    <div>
+                      <label className="text-slate-400 text-xs block mb-1">Sales Agent</label>
+                      <select value={wsForm.agent_code} onChange={e=>setWsForm(f=>({...f,agent_code:e.target.value}))}
+                        className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm">
+                        {Object.entries(AGENT_NAMES).map(([c,n])=><option key={c} value={c}>{n}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-slate-400 text-xs block mb-1">Loại nội dung</label>
+                      <select value={wsForm.content_type} onChange={e=>{const v=e.target.value as 'macro_insight'|'knowledgebase';setWsForm(f=>({...f,content_type:v,content_slug:''}));fetchContentList(v)}}
+                        className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm">
+                        <option value="macro_insight">📊 Macro Insight</option>
+                        <option value="knowledgebase">📚 Knowledgebase</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-slate-400 text-xs block mb-1">Bài content</label>
+                      <select value={wsForm.content_slug} onChange={e=>setWsForm(f=>({...f,content_slug:e.target.value}))}
+                        className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm">
+                        <option value="">-- Chọn bài --</option>
+                        {contentList.map(ci=><option key={ci.slug} value={ci.slug}>{ci.title||ci.slug}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-slate-400 text-xs block mb-1">Tên Campaign</label>
+                      <input value={wsForm.campaign_name} onChange={e=>setWsForm(f=>({...f,campaign_name:e.target.value}))}
+                        placeholder="vd: KBSV Korean March 2026"
+                        className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm placeholder-slate-600"/>
+                    </div>
+                    <div>
+                      <label className="text-slate-400 text-xs block mb-1">Target audience hint</label>
+                      <input value={wsForm.target_audience_hint} onChange={e=>setWsForm(f=>({...f,target_audience_hint:e.target.value}))}
+                        placeholder="vd: Korean expats lo lắng về tỷ giá"
+                        className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm placeholder-slate-600"/>
+                    </div>
+                    <button onClick={wsGenerate} disabled={wsGenerating||!wsForm.content_slug||!wsForm.campaign_name}
+                      className="w-full py-2.5 bg-[#c4a67a] text-[#0d1119] rounded-lg text-sm font-semibold hover:bg-[#d4b68a] disabled:opacity-50">
+                      {wsGenerating ? '⏳ AI đang generate...' : '✨ Generate LP với AI'}
+                    </button>
+                    {wsResult && (
+                      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-4 space-y-2">
+                        <p className="text-emerald-400 text-sm font-medium">✅ {wsResult.campaign_name}</p>
+                        <div className="flex gap-2">
+                          <a href={wsResult.preview_url} target="_blank" className="flex-1 text-center py-1.5 bg-blue-500/20 text-blue-400 text-xs rounded hover:bg-blue-500/30">👁 Preview</a>
+                          {wsResult.campaign_id && <button onClick={()=>wsApprove(wsResult!.campaign_id)} disabled={wsApproving} className="flex-1 py-1.5 bg-emerald-500/20 text-emerald-400 text-xs rounded hover:bg-emerald-500/30 disabled:opacity-50">
+                            {wsApproving?'⏳':'✓ Approve & Publish'}
+                          </button>}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {/* Right: pick news */}
+                <div className="bg-[#111827] border border-[#1e2535] rounded-xl p-5">
+                  <h3 className="text-white font-semibold text-sm mb-3">📡 Mix tin tức vào LP</h3>
+                  {wsNewsMix ? (
+                    <div className="bg-[#0d1119] rounded-lg p-3 mb-3">
+                      <p className="text-white text-xs font-medium mb-1">{wsNewsMix.title}</p>
+                      <button onClick={()=>setWsNewsMix(null)} className="text-slate-500 text-xs hover:text-red-400">✕ Bỏ mix</button>
+                    </div>
+                  ) : <p className="text-slate-600 text-xs mb-3">Chọn tin để AI context tự động</p>}
+                  <div className="space-y-1 max-h-80 overflow-y-auto">
+                    {rawNews.filter(a=>a.status==='approved'||a.status==='pending').slice(0,20).map(a=>(
+                      <button key={a.id} onClick={()=>setWsNewsMix(a)}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-all ${wsNewsMix?.id===a.id?'bg-[#c4a67a]/20 border border-[#c4a67a]/30':'bg-[#0d1119] hover:bg-[#1e2535]'}`}>
+                        <span className={`mr-1 ${a.relevance===3?'text-red-400':a.relevance===2?'text-amber-400':'text-slate-600'}`}>{'●'}</span>
+                        <span className="text-slate-200">{a.title.slice(0,70)}…</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── Sub-tab: Lead CRM ── */}
+            {campaignSubTab === 'crm' && (
+              <div>
+                {loadingLeads ? (
+                  <div className="text-center py-8 text-slate-500 text-sm">Loading leads...</div>
+                ) : (
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    {CRM_STAGES.map(stage => {
+                      const stageLeads = leads.filter(l=>l.crm_stage===stage.id)
+                      return (
+                        <div key={stage.id} className="bg-[#111827] border border-[#1e2535] rounded-xl overflow-hidden">
+                          <div className="px-4 py-3 border-b border-[#1e2535] flex items-center justify-between">
+                            <span className="text-white text-xs font-semibold">{stage.label}</span>
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${stage.badge}`}>{stageLeads.length}</span>
+                          </div>
+                          <div className="p-2 space-y-2 max-h-96 overflow-y-auto">
+                            {stageLeads.map(l=>(
+                              <div key={l.id} className="bg-[#0d1119] rounded-lg p-3 text-xs">
+                                <p className="text-white font-medium mb-1">{l.full_name || l.email || l.ref_code}</p>
+                                {l.phone && <p className="text-slate-500">{l.phone}</p>}
+                                <p className="text-slate-600 truncate">{l.sales_agents?.full_name} · {fmtDate(l.registered_at)}</p>
+                                <div className="flex gap-1 mt-2 flex-wrap">
+                                  {CRM_STAGES.filter(s=>s.id!==stage.id).map(s=>(
+                                    <button key={s.id} onClick={()=>updateCrmStage(l,s.id)} className={`px-1.5 py-0.5 rounded text-[10px] ${s.badge} hover:opacity-80`}>→{s.label}</button>
+                                  ))}
+                                  <button onClick={()=>{setNoteModal(l);setNoteText(l.notes||'')}} className="px-1.5 py-0.5 rounded text-[10px] bg-slate-500/20 text-slate-400 hover:opacity-80">📝</button>
+                                </div>
+                                {l.notes && <p className="text-slate-500 text-[10px] mt-1 italic">{l.notes.slice(0,60)}</p>}
+                              </div>
+                            ))}
+                            {stageLeads.length===0 && <p className="text-slate-700 text-xs text-center py-2">Trống</p>}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ── Sub-tab: Agent Performance ── */}
+            {campaignSubTab === 'perf' && (
+              <div className="bg-[#111827] border border-[#1e2535] rounded-xl overflow-hidden">
+                <div className="px-5 py-4 border-b border-[#1e2535]">
+                  <h3 className="text-white font-semibold text-sm">📊 Agent Performance</h3>
+                  <p className="text-slate-500 text-xs mt-0.5">Tổng hợp performance từ campaigns của từng agent</p>
+                </div>
+                <div className="divide-y divide-[#1e2535]">
+                  {AGENTS.map(code => {
+                    const agCampaigns = campaigns.filter(c=>c.agent_code===code)
+                    const active = agCampaigns.filter(c=>c.status==='active').length
+                    const agLeads = leads.filter(l=>l.sales_agents?.code===code)
+                    const converted = agLeads.filter(l=>l.crm_stage==='opened').length
+                    const cr = agLeads.length>0 ? (converted/agLeads.length*100).toFixed(1) : '—'
+                    return (
+                      <div key={code} className="px-5 py-4 flex items-center gap-4">
+                        <div className="w-32 shrink-0">
+                          <p className="text-white text-sm font-medium">{AGENT_NAMES[code]||code}</p>
+                          <p className="text-slate-600 text-xs">{code}</p>
+                        </div>
+                        <div className="flex gap-6 text-center text-xs flex-1">
+                          <div><p className="text-white font-bold">{agCampaigns.length}</p><p className="text-slate-500">campaigns</p></div>
+                          <div><p className="text-emerald-400 font-bold">{active}</p><p className="text-slate-500">active</p></div>
+                          <div><p className="text-[#c4a67a] font-bold">{agLeads.length}</p><p className="text-slate-500">leads</p></div>
+                          <div><p className="text-purple-400 font-bold">{converted}</p><p className="text-slate-500">opened KB</p></div>
+                          <div><p className={`font-bold ${parseFloat(cr)>=5?'text-emerald-400':'text-amber-400'}`}>{cr}{cr!=='—'?'%':''}</p><p className="text-slate-500">CR</p></div>
+                        </div>
+                        <div className="w-24 hidden md:block">
+                          <div className="h-1.5 bg-[#1e2535] rounded-full overflow-hidden">
+                            <div className={`h-full rounded-full ${parseFloat(cr)>=5?'bg-emerald-500':'bg-amber-500'}`} style={{width:`${Math.min(100,(parseFloat(cr)||0)*10)}%`}}/>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
 
+      {/* Note Modal (CRM) */}
+      {noteModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#111827] border border-[#1e2535] rounded-2xl p-6 w-full max-w-md">
+            <h2 className="text-lg font-bold text-white mb-1">📝 Ghi chú Lead</h2>
+            <p className="text-slate-500 text-xs mb-4">{noteModal.full_name || noteModal.email}</p>
+            <textarea value={noteText} onChange={e=>setNoteText(e.target.value)}
+              placeholder="Ghi chú về tình trạng, mong muốn, hẹn gặp..."
+              rows={4} className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm placeholder-slate-600 resize-none"/>
+            <div className="flex gap-3 mt-4">
+              <button onClick={()=>setNoteModal(null)} className="flex-1 py-2 border border-[#1e2535] text-slate-400 rounded-lg text-sm hover:bg-[#1e2535]">Huỷ</button>
+              <button onClick={saveNote} disabled={savingNote} className="flex-1 py-2 bg-[#c4a67a] text-[#0d1119] rounded-lg text-sm font-semibold disabled:opacity-50">
+                {savingNote ? '⏳ Lưu...' : '💾 Lưu ghi chú'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Create Campaign Modal */}
+
       {showCreate && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-[#111827] border border-[#1e2535] rounded-2xl p-6 w-full max-w-lg">
