@@ -354,6 +354,162 @@ interface Props {
     nextArticle: Article | null
 }
 
+// ── Article Engagement Bar (Like/Love + KB CTA) ───────────────────────────
+function ArticleEngagementBar({
+    slug, pillar, articleTitle, clr
+}: {
+    slug: string
+    pillar: string
+    articleTitle: string
+    clr: { from: string; to: string; glow: string }
+}) {
+    const [liked, setLiked] = useState(false)
+    const [loved, setLoved] = useState(false)
+    const [showModal, setShowModal] = useState(false)
+    const [form, setForm] = useState({ name: '', phone: '' })
+    const [submitting, setSubmitting] = useState(false)
+    const [submitted, setSubmitted] = useState(false)
+
+    const react = useCallback(async (reaction: 'like' | 'love') => {
+        if (reaction === 'like' && liked) return
+        if (reaction === 'love' && loved) return
+        if (reaction === 'like') setLiked(true)
+        if (reaction === 'love') setLoved(true)
+        fetch('/api/content/react', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content_type: 'knowledgebase', slug, pillar, reaction }),
+        }).catch(() => {})
+    }, [liked, loved, slug, pillar])
+
+    const submitKbRequest = async () => {
+        if (!form.phone) return
+        setSubmitting(true)
+        await fetch('/api/kb-account/request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_name: form.name || null,
+                user_phone: form.phone,
+                user_email: `${form.phone}@temp.finpeace.vn`,
+                content_type: 'knowledgebase',
+                content_slug: slug,
+                content_title: articleTitle,
+            }),
+        })
+        setSubmitting(false)
+        setSubmitted(true)
+        setShowModal(false)
+    }
+
+    return (
+        <>
+            <div
+                className="max-w-4xl mx-auto px-6 py-8"
+                style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+            >
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="flex flex-wrap items-center justify-between gap-4 rounded-2xl px-6 py-5"
+                    style={{
+                        background: `linear-gradient(145deg, ${clr.from}10, ${clr.to}06)`,
+                        border: `1px solid ${clr.from}25`,
+                    }}
+                >
+                    <div>
+                        <p className="text-white/70 text-sm font-semibold mb-2">Bài này có giúp ích cho bạn không?</p>
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => react('like')}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border ${
+                                    liked
+                                        ? 'bg-blue-500/30 text-blue-300 border-blue-500/40'
+                                        : 'bg-white/5 text-white/50 border-white/10 hover:bg-white/10'
+                                }`}
+                            >
+                                👍 {liked ? 'Đã thích' : 'Hữu ích'}
+                            </button>
+                            <button
+                                onClick={() => react('love')}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border ${
+                                    loved
+                                        ? 'bg-rose-500/30 text-rose-300 border-rose-500/40'
+                                        : 'bg-white/5 text-white/50 border-white/10 hover:bg-white/10'
+                                }`}
+                            >
+                                ❤️ {loved ? 'Yêu thích' : 'Yêu thích'}
+                            </button>
+                        </div>
+                    </div>
+
+                    {submitted ? (
+                        <div className="text-emerald-400 text-sm font-semibold">
+                            ✓ Đã gửi — Agent sẽ liên hệ sớm
+                        </div>
+                    ) : (
+                        <button
+                            onClick={() => setShowModal(true)}
+                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity"
+                            style={{ background: 'linear-gradient(135deg, #c4a67a, #d4b68a)', color: '#0d1119' }}
+                        >
+                            🔓 Mở tài khoản KB miễn phí
+                        </button>
+                    )}
+                </motion.div>
+            </div>
+
+            {showModal && (
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-[#111827] border border-[#1e2535] rounded-2xl p-6 w-full max-w-sm shadow-2xl"
+                    >
+                        <h2 className="text-lg font-bold text-white mb-1">🔓 Mở tài khoản KB</h2>
+                        <p className="text-slate-400 text-sm mb-2">
+                            Bạn đang đọc: <span className="text-slate-200 font-medium">{articleTitle}</span>
+                        </p>
+                        <p className="text-slate-500 text-xs mb-5">
+                            Agent sẽ liên hệ hỗ trợ trong 24h. Sau khi mở tài khoản, bạn được xem toàn bộ nội dung không giới hạn.
+                        </p>
+                        <div className="space-y-3">
+                            <input
+                                value={form.name}
+                                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                                placeholder="Họ tên (tuỳ chọn)"
+                                className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-[#c4a67a]"
+                            />
+                            <input
+                                value={form.phone}
+                                onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
+                                placeholder="Số điện thoại *"
+                                className="w-full bg-[#0d1119] border border-[#1e2535] rounded-lg px-3 py-2 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-[#c4a67a]"
+                            />
+                        </div>
+                        <div className="flex gap-3 mt-5">
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="flex-1 py-2 border border-[#1e2535] text-slate-400 rounded-lg text-sm hover:bg-white/5"
+                            >
+                                Huỷ
+                            </button>
+                            <button
+                                onClick={submitKbRequest}
+                                disabled={submitting || !form.phone}
+                                className="flex-1 py-2 bg-[#c4a67a] text-[#0d1119] rounded-lg text-sm font-bold disabled:opacity-50 hover:bg-[#d4b68a]"
+                            >
+                                {submitting ? '⏳ Đang gửi...' : 'Gửi yêu cầu'}
+                            </button>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+        </>
+    )
+}
+
 export default function ArticlePageClient({ pillar, article, pillarSlug, articleSlug, prevArticle, nextArticle }: Props) {
     const isGated = GATED_TRACKS.includes(pillar.track)
     const [unlocked, setUnlocked] = useState(false)
@@ -573,6 +729,14 @@ export default function ArticlePageClient({ pillar, article, pillarSlug, article
                     </div>
                 </div>
             </section>
+
+            {/* ── ENGAGEMENT BAR (Like/Love + KB CTA) ── */}
+            <ArticleEngagementBar
+                slug={articleSlug}
+                pillar={pillarSlug}
+                articleTitle={article.title}
+                clr={clr}
+            />
 
             {/* ── PREV / NEXT NAV ── */}
             <section
