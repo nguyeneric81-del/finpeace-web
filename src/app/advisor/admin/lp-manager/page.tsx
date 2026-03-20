@@ -298,9 +298,9 @@ export default function LpManagerPage() {
     grouped[c.agent_code].push(c)
   }
 
-  const AGENTS = ['mq01', 'aduc02', 'thuy03', 'huyen04', 'mduc05']
+  const AGENTS = ['mq01', 'aduc02', 'thuy03', 'huyen04', 'mduc05', 'dmd01']
   const AGENT_NAMES: Record<string, string> = {
-    mq01: 'Minh Quang', aduc02: 'Anh Đức', thuy03: 'Lê Thuỷ', huyen04: '🇰🇷 Minaviko', mduc05: 'Minh Đức'
+    mq01: 'Minh Quang', aduc02: 'Anh Đức', thuy03: 'Lê Thuỷ', huyen04: '🇰🇷 Minaviko', mduc05: 'Minh Đức', dmd01: '📈 Đặng Minh Đức'
   }
 
   return (
