@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/utils/supabase/admin'
+import { PILLARS, Article } from '@/app/knowledgebase/data'
 import { SALES_CONFIG } from '@/lib/salesConfig'
 import crypto from 'crypto'
 
@@ -75,7 +76,7 @@ Key stats: ${JSON.stringify(insight.key_stats)}
       `
     }
   } else if (content_type === 'knowledgebase') {
-    // Query kb_articles table in Supabase (seeded via scripts/seed_kb_articles.mjs)
+    // 1st: try Supabase kb_articles (seeded via scripts/seed_kb_articles.mjs)
     const { data: article } = await supabase
       .from('kb_articles')
       .select('title, summary, pillar')
@@ -88,11 +89,26 @@ Tiêu đề: ${article.title}
 Pillar: ${article.pillar}
 Nội dung tóm tắt: ${article.summary}
       `
+    } else {
+      // 2nd fallback: search in hardcoded PILLARS data
+      for (const pillar of PILLARS) {
+        const found = (pillar.articles as Article[]).find((a) => a.slug === content_slug)
+        if (found) {
+          contentTitle = found.title
+          baseContent = `
+Tiêu đề: ${found.title}
+Pillar: ${pillar.title}
+Độ khó: ${found.difficulty ?? ''}
+Mô tả: ${found.summary ?? found.title}
+          `
+          break
+        }
+      }
     }
   }
 
   if (!baseContent) {
-    return NextResponse.json({ error: 'Content not found' }, { status: 404 })
+    return NextResponse.json({ error: `Content not found for slug: "${content_slug}". Check content_type and slug.` }, { status: 404 })
   }
 
   // 3. Build AI prompt

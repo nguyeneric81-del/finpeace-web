@@ -15,7 +15,6 @@ INSERT INTO sales_agents (
   brand_color_accent,
   title,
   contact_phone,
-  contact_email,
   active
 )
 VALUES (
@@ -27,7 +26,6 @@ VALUES (
   '#4ade80',            -- green accent (phân biệt với gold của agents khác)
   'Stock Advisor & Trading Coach',
   '0398992555',
-  'minhduccle2@gmail.com',
   true
 )
 ON CONFLICT (code) DO UPDATE SET
@@ -38,12 +36,15 @@ ON CONFLICT (code) DO UPDATE SET
   brand_color_accent  = EXCLUDED.brand_color_accent,
   title            = EXCLUDED.title,
   contact_phone    = EXCLUDED.contact_phone,
-  contact_email    = EXCLUDED.contact_email,
   active           = true;
 
+
 -- ────────────────────────────────────────────────────────────
--- STEP 2: Seed 2 draft campaigns (dùng subquery để lấy agent_id)
--- Note: slug + content_slug sẽ được cập nhật sau khi bàn với ĐMĐ
+-- STEP 2: Seed 2 draft campaigns
+-- Chỉ dùng columns trong schema (phase5 + phase9):
+--   agent_id, slug, topic, content_type, campaign_name,
+--   utm_source, status, published
+-- (content_slug KHÔNG tồn tại trong agent_landing_pages)
 -- ────────────────────────────────────────────────────────────
 DO $$
 DECLARE
@@ -55,38 +56,36 @@ BEGIN
     RAISE EXCEPTION 'Agent dmd01 không tồn tại — chạy STEP 1 trước';
   END IF;
 
-  -- Campaign 1: Bắt đầu đầu tư (pain: sợ rủi ro, không biết bắt đầu)
+  -- Campaign 1: Bắt đầu đầu tư
   INSERT INTO agent_landing_pages (
-    agent_id, slug, topic, content_type, content_slug,
-    campaign_name, target_audience_hint, utm_source, status, published
+    agent_id, slug, topic,
+    content_type, campaign_name,
+    utm_source, status, published
   )
   VALUES (
     v_agent_id,
     'bat-dau-dau-tu',
     'Bắt đầu đầu tư từ đâu — Hướng dẫn đơn giản',
     'knowledgebase',
-    'bat-dau-dau-tu-tu-dau',
     'ĐMĐ — Emerging Investor Campaign (TikTok)',
-    'Người 25-35 sợ rủi ro, không biết bắt đầu đầu tư, không có nhiều thời gian',
     'tiktok',
     'draft',
     false
   )
   ON CONFLICT (agent_id, slug) DO NOTHING;
 
-  -- Campaign 2: Trading ngắn hạn (thế mạnh của ĐMĐ)
+  -- Campaign 2: Trading ngắn hạn
   INSERT INTO agent_landing_pages (
-    agent_id, slug, topic, content_type, content_slug,
-    campaign_name, target_audience_hint, utm_source, status, published
+    agent_id, slug, topic,
+    content_type, campaign_name,
+    utm_source, status, published
   )
   VALUES (
     v_agent_id,
     'trading-ngan-han',
     'Trading ngắn hạn an toàn — Chiến lược thực chiến',
     'macro_insight',
-    'phan-tich-ky-thuat-co-ban',
     'ĐMĐ — Trading Ngắn Hạn Campaign (Facebook)',
-    'Nhân viên văn phòng có tiền tiết kiệm, muốn tăng trưởng, quan tâm tới technical',
     'facebook',
     'draft',
     false

@@ -130,6 +130,7 @@ export default function LpManagerPage() {
   const [contentList, setContentList] = useState<ContentItem[]>([])
   const [wsNewsMix, setWsNewsMix] = useState<RawNewsArticle|null>(null)
   const [wsGenerating, setWsGenerating] = useState(false)
+  const [wsError, setWsError] = useState<string|null>(null)
   const [wsResult, setWsResult] = useState<{preview_url:string;campaign_id:string;campaign_name:string}|null>(null)
   const [wsApproving, setWsApproving] = useState(false)
   const [wsForm, setWsForm] = useState({ agent_code:'mq01', content_type:'macro_insight' as 'macro_insight'|'knowledgebase', content_slug:'', campaign_name:'', target_audience_hint:'', utm_source:'' })
@@ -203,13 +204,17 @@ export default function LpManagerPage() {
 
   const wsGenerate = async () => {
     if (!wsForm.content_slug || !wsForm.campaign_name) return
-    setWsGenerating(true); setWsResult(null)
+    setWsGenerating(true); setWsResult(null); setWsError(null)
     const res = await fetch('/api/admin/lp-campaigns/generate', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ ...wsForm, news_context: wsNewsMix ? { title:wsNewsMix.title, category:wsNewsMix.category, analyst_view:wsNewsMix.description, data_point:null } : undefined }),
     })
     const data = await res.json(); setWsGenerating(false)
-    if (data.preview_url) setWsResult({ preview_url:`https://finpeace.cloud${data.preview_url}`, campaign_id:data.campaign_id, campaign_name:wsForm.campaign_name })
+    if (data.error) {
+      setWsError(`❌ Lỗi: ${data.error}${data.details ? ' — ' + data.details : ''}`)
+    } else if (data.preview_url) {
+      setWsResult({ preview_url:`https://finpeace.cloud${data.preview_url}`, campaign_id:data.campaign_id, campaign_name:wsForm.campaign_name })
+    }
     fetchCampaigns()
   }
   const wsApprove = async (id: string) => {
@@ -644,6 +649,11 @@ export default function LpManagerPage() {
                       className="w-full py-2.5 bg-[#c4a67a] text-[#0d1119] rounded-lg text-sm font-semibold hover:bg-[#d4b68a] disabled:opacity-50">
                       {wsGenerating ? '⏳ AI đang generate...' : '✨ Generate LP với AI'}
                     </button>
+                    {wsError && (
+                      <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
+                        <p className="text-red-400 text-xs">{wsError}</p>
+                      </div>
+                    )}
                     {wsResult && (
                       <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-4 space-y-2">
                         <p className="text-emerald-400 text-sm font-medium">✅ {wsResult.campaign_name}</p>
