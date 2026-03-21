@@ -11,6 +11,14 @@ interface Agent {
   brand_tagline: string | null; brand_color_primary: string; brand_color_accent: string
   avatar_url: string | null; title: string | null
   contact_phone: string | null; contact_zalo: string | null
+  // Media fields (phase15)
+  youtube_video_id: string | null
+  bio: string | null
+  social_facebook: string | null
+  social_tiktok: string | null
+  social_youtube: string | null
+  // Agent type (phase16)
+  agent_type: 'inhouse' | 'independent' | null
 }
 
 interface MacroStory {
@@ -188,6 +196,12 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
         <div className="flex-1 min-w-0">
           <p className="text-xs font-bold uppercase tracking-widest truncate" style={{ color: accent, opacity: 0.85 }}>{agent.brand_name}</p>
           <p className="font-bold text-white text-sm leading-tight">{agent.full_name}</p>
+          {agent.agent_type === 'inhouse' && (
+            <p className="text-[10px] font-semibold uppercase tracking-widest mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>FinPeace Research</p>
+          )}
+          {agent.agent_type === 'independent' && (
+            <p className="text-[10px] font-semibold uppercase tracking-widest mt-0.5" style={{ color: accent, opacity: 0.5 }}>Đối tác độc lập · FinPeace</p>
+          )}
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           {agent.contact_phone && (
@@ -222,6 +236,27 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
             </div>
           )}
         </section>
+
+        {/* ── AGENT YOUTUBE VIDEO ── */}
+        {agent.youtube_video_id && (
+          <section>
+            <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div className="px-5 py-3 flex items-center gap-2" style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <span className="text-xs font-bold uppercase tracking-widest" style={{ color: agent.brand_color_accent, opacity: 0.8 }}>▶ Video từ {agent.full_name}</span>
+              </div>
+              <div className="relative aspect-video">
+                <iframe
+                  src={`https://www.youtube.com/embed/${agent.youtube_video_id}?rel=0&modestbranding=1`}
+                  title={`Video - ${agent.full_name}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full absolute inset-0"
+                  style={{ border: 'none' }}
+                />
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ── KEY STATS ── */}
         {story.key_stats?.length > 0 && (

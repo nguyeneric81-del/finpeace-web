@@ -7,7 +7,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from('sales_agents')
-    .select('id, code, full_name, brand_name, brand_color_accent, active')
+    .select('id, code, full_name, brand_name, brand_color_accent, active, agent_type')
     .eq('active', true)
     .order('code', { ascending: true })
 
