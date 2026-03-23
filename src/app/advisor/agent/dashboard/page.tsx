@@ -177,7 +177,15 @@ export default function AgentDashboardPage() {
         </div>
     )
 
-    if (!agent) return null
+    if (!agent) return (
+        <div className="min-h-screen flex items-center justify-center" style={{ background: D.bg }}>
+            <div className="text-center">
+                <p className="text-white font-medium mb-2">Không tìm thấy hồ sơ Agent</p>
+                <p className="text-sm mb-4" style={{ color: D.textMuted }}>Tài khoản chưa được liên kết với Sales Agent.</p>
+                <button onClick={handleLogout} className="text-sm text-rose-400 cursor-pointer hover:underline">Logout</button>
+            </div>
+        </div>
+    )
 
     const lpUrl = `/lp/${agent.code}`
     const accentColor = agent.brand_color_accent || D.green
