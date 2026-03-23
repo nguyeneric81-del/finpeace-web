@@ -52,6 +52,11 @@ type Campaign = {
     leads_total?: number; utm_source?: string; utm_campaign?: string;
 }
 type ContentItem = { slug: string; title: string; pillar: string }
+type RawNews = {
+    id: number; title: string; description: string | null;
+    source: string | null; published_at: string | null;
+    category: string | null; relevance: 1 | 2 | 3; status: string
+}
 
 // ── Stat Card ─────────────────────────────────────────────────────────────────
 function StatCard({ icon: Icon, label, value, color, bg }: {
@@ -159,6 +164,9 @@ export default function AgentDashboardPage() {
     const [generating, setGenerating] = useState(false)
     const [generateError, setGenerateError] = useState<string | null>(null)
     const [generateResult, setGenerateResult] = useState<{ preview_url: string; campaign_id: string; campaign_name: string } | null>(null)
+    const [newsItems, setNewsItems] = useState<RawNews[]>([])
+    const [selectedNews, setSelectedNews] = useState<RawNews | null>(null)
+    const [newsLoading, setNewsLoading] = useState(false)
 
     const router = useRouter()
     const supabase = createClient()
@@ -188,11 +196,19 @@ export default function AgentDashboardPage() {
         setContentList(items ?? [])
     }, [])
 
+    const fetchNews = useCallback(async () => {
+        setNewsLoading(true)
+        const res = await fetch('/api/admin/raw-news?status=approved')
+        const data = await res.json()
+        setNewsItems(data.articles ?? [])
+        setNewsLoading(false)
+    }, [])
+
     useEffect(() => { fetchData() }, [fetchData])
     useEffect(() => {
         if (activeTab === 'campaigns') fetchCampaigns()
-        if (activeTab === 'create') { fetchContentList(wsForm.content_type) }
-    }, [activeTab, fetchCampaigns, fetchContentList, wsForm.content_type])
+        if (activeTab === 'create') { fetchContentList(wsForm.content_type); fetchNews() }
+    }, [activeTab, fetchCampaigns, fetchContentList, fetchNews, wsForm.content_type])
 
     async function handleLogout() {
         await supabase.auth.signOut()
@@ -222,9 +238,14 @@ export default function AgentDashboardPage() {
     async function handleGenerate() {
         if (!wsForm.content_slug || !wsForm.campaign_name) { setGenerateError('Vui lòng chọn nội dung và đặt tên campaign'); return }
         setGenerating(true); setGenerateError(null); setGenerateResult(null)
+        const newsCtx = selectedNews ? {
+            title: selectedNews.title,
+            category: selectedNews.category,
+            analyst_view: selectedNews.description,
+        } : undefined
         const res = await fetch('/api/agent/lp/generate', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(wsForm),
+            body: JSON.stringify({ ...wsForm, news_context: newsCtx }),
         })
         const data = await res.json()
         setGenerating(false)
@@ -407,49 +428,44 @@ export default function AgentDashboardPage() {
 
                 {/* ── TAB: CREATE LP ── */}
                 {activeTab === 'create' && (
-                    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-                        <div className="rounded-2xl p-6 space-y-5" style={{ background: D.card, border: `1px solid ${D.border}` }}>
-                            <div>
-                                <h2 className="font-bold text-white flex items-center gap-2"><Sparkles className="w-4 h-4" style={{ color: D.purple }} />Tạo Landing Page với AI</h2>
-                                <p className="text-xs mt-1" style={{ color: D.textMuted }}>AI sẽ tạo nội dung theo phong cách và đối tượng khách hàng của bạn. Admin sẽ review + publish.</p>
-                            </div>
+                    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+                        <div className="mb-3">
+                            <h2 className="font-bold text-white flex items-center gap-2"><Sparkles className="w-4 h-4" style={{ color: D.purple }} />Tạo Landing Page với AI</h2>
+                            <p className="text-xs mt-1" style={{ color: D.textMuted }}>Chọn nội dung → mix tin tức → AI generate theo phong cách của bạn. Admin review + publish.</p>
+                        </div>
 
-                            {generateResult ? (
-                                <div className="rounded-xl p-5 space-y-3" style={{ background: D.greenBg, border: `1px solid ${D.greenBorder}` }}>
-                                    <p className="text-emerald-400 font-medium flex items-center gap-2"><Check className="w-4 h-4" />✅ {generateResult.campaign_name} — đã gửi cho Admin duyệt!</p>
-                                    <p className="text-xs" style={{ color: D.textMuted }}>Admin sẽ review và publish. Bạn có thể xem preview trước:</p>
-                                    <div className="flex gap-3">
-                                        <a href={generateResult.preview_url} target="_blank" className="flex-1 text-center py-2 rounded-lg text-xs font-medium" style={{ background: D.skyBg, color: D.sky }}>
-                                            <Eye className="w-3.5 h-3.5 inline mr-1" />Preview LP
-                                        </a>
-                                        <button onClick={() => { setGenerateResult(null); setWsForm({ content_type: 'macro_insight', content_slug: '', campaign_name: '', target_audience_hint: '' }) }}
-                                            className="flex-1 py-2 rounded-lg text-xs font-medium cursor-pointer" style={{ background: D.purpleBg, color: D.purple }}>
-                                            Tạo LP khác
-                                        </button>
-                                    </div>
+                        {generateResult ? (
+                            <div className="rounded-2xl p-5 space-y-3" style={{ background: D.greenBg, border: `1px solid ${D.greenBorder}` }}>
+                                <p className="text-emerald-400 font-medium flex items-center gap-2"><Check className="w-4 h-4" />✅ {generateResult.campaign_name} — đã gửi cho Admin duyệt!</p>
+                                <p className="text-xs" style={{ color: D.textMuted }}>Admin sẽ review và publish. Bạn có thể xem preview trước:</p>
+                                <div className="flex gap-3">
+                                    <a href={generateResult.preview_url} target="_blank" className="flex-1 text-center py-2 rounded-lg text-xs font-medium" style={{ background: D.skyBg, color: D.sky }}>
+                                        <Eye className="w-3.5 h-3.5 inline mr-1" />Preview LP
+                                    </a>
+                                    <button onClick={() => { setGenerateResult(null); setSelectedNews(null); setWsForm({ content_type: 'macro_insight', content_slug: '', campaign_name: '', target_audience_hint: '' }) }}
+                                        className="flex-1 py-2 rounded-lg text-xs font-medium cursor-pointer" style={{ background: D.purpleBg, color: D.purple }}>
+                                        Tạo LP khác
+                                    </button>
                                 </div>
-                            ) : (
-                                <div className="space-y-4">
+                            </div>
+                        ) : (
+                            <div className="grid md:grid-cols-2 gap-4">
+                                {/* ── Left: Form ── */}
+                                <div className="rounded-2xl p-5 space-y-4" style={{ background: D.card, border: `1px solid ${D.border}` }}>
                                     {/* Content Type */}
                                     <div>
                                         <label className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: D.textFaint }}>Loại nội dung</label>
                                         <div className="grid grid-cols-2 gap-2">
-                                            {[{ v: 'macro_insight', l: '📊 Macro Insight' }, { v: 'knowledgebase', l: '📚 Knowledgebase' }].map(opt => (
+                                            {[{ v: 'macro_insight', l: '📊 Macro Insight' }, { v: 'knowledgebase', l: '📚 KB Article' }].map(opt => (
                                                 <button key={opt.v}
                                                     onClick={() => { setWsForm(f => ({ ...f, content_type: opt.v as 'macro_insight' | 'knowledgebase', content_slug: '' })); fetchContentList(opt.v) }}
                                                     className="py-2.5 rounded-xl text-sm font-medium cursor-pointer transition-all"
-                                                    style={{
-                                                        background: wsForm.content_type === opt.v ? D.purpleBg : 'rgba(255,255,255,0.03)',
-                                                        color: wsForm.content_type === opt.v ? D.purple : D.textMuted,
-                                                        border: `1px solid ${wsForm.content_type === opt.v ? D.purple + '60' : D.border}`,
-                                                    }}>
+                                                    style={{ background: wsForm.content_type === opt.v ? D.purpleBg : 'rgba(255,255,255,0.03)', color: wsForm.content_type === opt.v ? D.purple : D.textMuted, border: `1px solid ${wsForm.content_type === opt.v ? D.purple + '60' : D.border}` }}>
                                                     {opt.l}
                                                 </button>
                                             ))}
                                         </div>
                                     </div>
-
-                                    {/* Content Slug */}
                                     <div>
                                         <label className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: D.textFaint }}>Bài content</label>
                                         <select value={wsForm.content_slug} onChange={e => setWsForm(f => ({ ...f, content_slug: e.target.value }))}
@@ -459,8 +475,6 @@ export default function AgentDashboardPage() {
                                             {contentList.map(ci => <option key={ci.slug} value={ci.slug}>{ci.title || ci.slug}</option>)}
                                         </select>
                                     </div>
-
-                                    {/* Campaign Name */}
                                     <div>
                                         <label className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: D.textFaint }}>Tên Campaign</label>
                                         <input value={wsForm.campaign_name} onChange={e => setWsForm(f => ({ ...f, campaign_name: e.target.value }))}
@@ -468,8 +482,6 @@ export default function AgentDashboardPage() {
                                             className="w-full rounded-xl px-3 py-2.5 text-sm text-slate-100 placeholder-slate-600 focus:outline-none"
                                             style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${D.border}` }} />
                                     </div>
-
-                                    {/* Target Audience */}
                                     <div>
                                         <label className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: D.textFaint }}>Target audience (tùy chọn)</label>
                                         <input value={wsForm.target_audience_hint} onChange={e => setWsForm(f => ({ ...f, target_audience_hint: e.target.value }))}
@@ -478,20 +490,72 @@ export default function AgentDashboardPage() {
                                             style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${D.border}` }} />
                                     </div>
 
+                                    {/* News mix indicator */}
+                                    {selectedNews && (
+                                        <div className="rounded-xl p-3 flex items-start gap-2" style={{ background: D.amberBg, border: `1px solid ${D.amber}40` }}>
+                                            <span className="text-amber-400 text-xs mt-0.5">📰</span>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-amber-400 text-xs font-medium">Mix tin tức:</p>
+                                                <p className="text-white text-xs truncate">{selectedNews.title}</p>
+                                            </div>
+                                            <button onClick={() => setSelectedNews(null)} className="text-amber-400 hover:text-white cursor-pointer shrink-0"><X className="w-3.5 h-3.5" /></button>
+                                        </div>
+                                    )}
+
                                     {generateError && (
                                         <div className="rounded-xl p-3" style={{ background: D.roseBg, border: `1px solid ${D.rose}40` }}>
                                             <p className="text-rose-400 text-sm">❌ {generateError}</p>
                                         </div>
                                     )}
-
                                     <button onClick={handleGenerate} disabled={generating || !wsForm.content_slug || !wsForm.campaign_name}
                                         className="w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 transition-all"
                                         style={{ background: D.purple, color: 'white' }}>
-                                        {generating ? <><Loader2 className="w-4 h-4 animate-spin" />AI đang generate...</> : <><Sparkles className="w-4 h-4" />✨ Generate LP với AI</>}
+                                        {generating ? <><Loader2 className="w-4 h-4 animate-spin" />AI đang generate...</> : <><Sparkles className="w-4 h-4" />{selectedNews ? '✨ Generate LP + Tin tức' : '✨ Generate LP với AI'}</>}
                                     </button>
                                 </div>
-                            )}
-                        </div>
+
+                                {/* ── Right: News Panel ── */}
+                                <div className="rounded-2xl p-5" style={{ background: D.card, border: `1px solid ${D.border}` }}>
+                                    <div className="flex items-center justify-between mb-3">
+                                        <h3 className="text-white font-semibold text-sm flex items-center gap-2">📡 Mix Tin Tức vào LP</h3>
+                                        <button onClick={fetchNews} className="cursor-pointer" style={{ color: D.textMuted }} title="Làm mới">
+                                            <RefreshCw className="w-3.5 h-3.5" />
+                                        </button>
+                                    </div>
+                                    <p className="text-xs mb-3" style={{ color: D.textMuted }}>Chọn 1 tin → AI sẽ inject vào hook để tạo urgency và tính thời sự.</p>
+
+                                    {newsLoading ? (
+                                        <div className="flex items-center justify-center py-8"><Loader2 className="animate-spin w-5 h-5" style={{ color: D.textMuted }} /></div>
+                                    ) : newsItems.length === 0 ? (
+                                        <div className="py-8 text-center">
+                                            <p className="text-xs" style={{ color: D.textMuted }}>Chưa có tin tức nào được duyệt.</p>
+                                            <p className="text-xs mt-1" style={{ color: D.textFaint }}>Admin cần approve tin trong News Intelligence.</p>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+                                            {newsItems.slice(0, 25).map(news => (
+                                                <button key={news.id} onClick={() => setSelectedNews(n => n?.id === news.id ? null : news)}
+                                                    className="w-full text-left p-3 rounded-xl text-xs transition-all cursor-pointer"
+                                                    style={{
+                                                        background: selectedNews?.id === news.id ? D.amberBg : 'rgba(255,255,255,0.03)',
+                                                        border: `1px solid ${selectedNews?.id === news.id ? D.amber + '60' : 'rgba(255,255,255,0.06)'}`,
+                                                    }}>
+                                                    <div className="flex items-center gap-1.5 mb-1">
+                                                        <span className={`font-bold ${news.relevance === 3 ? 'text-rose-400' : news.relevance === 2 ? 'text-amber-400' : 'text-slate-500'}`}>
+                                                            {news.relevance === 3 ? '🔥' : news.relevance === 2 ? '⚡' : '○'}
+                                                        </span>
+                                                        {news.category && <span className="px-1.5 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.06)', color: D.textMuted }}>{news.category}</span>}
+                                                        <span style={{ color: D.textFaint }}>{news.source}</span>
+                                                    </div>
+                                                    <p className="text-white leading-snug line-clamp-2">{news.title}</p>
+                                                    {news.description && <p className="mt-1 line-clamp-1" style={{ color: D.textMuted }}>{news.description}</p>}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </motion.div>
                 )}
             </div>
