@@ -76,19 +76,36 @@ export async function updateSession(request: NextRequest) {
             return NextResponse.redirect(u)
         }
 
-        // /advisor/admin — yêu cầu role admin
+        // /advisor/admin — yêu cầu role admin (advisor_token)
         if (rawPath.startsWith('/advisor/admin')) {
             if (!advisorRole) return redirect('/advisor/login')
             if (advisorRole !== 'admin') return redirect('/advisor', 'unauthorized')
         }
 
-        // /advisor/agent/dashboard — yêu cầu role admin hoặc agent
+        // /advisor/agent/dashboard — Agent dùng Supabase Auth riêng (không phải advisor_token)
         if (rawPath.startsWith('/advisor/agent/dashboard')) {
-            if (!advisorRole) return redirect('/advisor/agent/login')
-            if (!AGENT_ROLES.includes(advisorRole)) return redirect('/advisor/agent/login', 'access_denied')
+            const supabase = createServerClient(
+                process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+                {
+                    cookieOptions: { name: 'finpeace-auth', domain: '.finpeace.cloud' },
+                    cookies: {
+                        getAll() { return request.cookies.getAll() },
+                        setAll(cookiesToSet) {
+                            cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+                            supabaseResponse = NextResponse.next({ request })
+                            cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options))
+                        },
+                    },
+                }
+            )
+            const { data: { user } } = await supabase.auth.getUser()
+            const agentRole = user?.app_metadata?.role as string | undefined
+            if (!user) return redirect('/advisor/agent/login')
+            if (!agentRole || !AGENT_ROLES.includes(agentRole)) return redirect('/advisor/agent/login', 'access_denied')
         }
 
-        // /advisor/dashboard, /advisor/trading-plan — yêu cầu role trong TRADING_ROLES
+        // /advisor/dashboard, /advisor/trading-plan — yêu cầu role trong TRADING_ROLES (advisor_token)
         const requiresTrading =
             rawPath.startsWith('/advisor/dashboard') ||
             rawPath.startsWith('/advisor/trading-plan') ||
@@ -100,6 +117,7 @@ export async function updateSession(request: NextRequest) {
 
         return supabaseResponse
     }
+
 
 
     const supabase = createServerClient(
