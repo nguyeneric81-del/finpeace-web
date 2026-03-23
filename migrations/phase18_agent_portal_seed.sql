@@ -27,7 +27,7 @@ SET auth_user_id = (SELECT id FROM auth.users WHERE email = 'ducha@finpeace.vn' 
 WHERE code = 'aduc02' AND auth_user_id IS NULL;
 
 UPDATE sales_agents
-SET auth_user_id = (SELECT id FROM auth.users WHERE email = 'Lelethuy150801@gmail.com' LIMIT 1)
+SET auth_user_id = (SELECT id FROM auth.users WHERE email = 'thuylt@finpeace.vn' LIMIT 1)
 WHERE code = 'thuy03' AND auth_user_id IS NULL;
 
 -- huyen04, mduc05, dmd01: chưa có email — bổ sung sau
