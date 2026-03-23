@@ -49,7 +49,7 @@ export async function updateSession(request: NextRequest) {
 
     // --- ADVISOR SUBDOMAIN (advisor.finpeace.cloud) ---
     if (isAdvisorFlow) {
-        // Rewrite ngầm request (giữ nguyên URL của người dùng) để gọi nội dung từ thư mục /advisor
+        // Rewrite ngầm request (giữ nguyên URL của người dùng)
         if (!effectivePath.startsWith('/advisor')) {
             const advisorUrl = request.nextUrl.clone()
             advisorUrl.pathname = `/advisor${effectivePath === '/' ? '' : effectivePath}`
@@ -58,89 +58,49 @@ export async function updateSession(request: NextRequest) {
 
         const rawPath = effectivePath.startsWith('/advisor') ? effectivePath : `/advisor${effectivePath}`
 
-        // Routes public — không cần auth
+        // Routes public — không cần auth (login, register, landing pages)
         const isAdvisorPublic = ADVISOR_PUBLIC_PATHS.some(p => rawPath.startsWith(p))
-        if (isAdvisorPublic) return supabaseResponse;
+        if (isAdvisorPublic) return supabaseResponse
 
-        // Các trang cần auth — tạo supabase client
-        const supabase = createServerClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-            {
-                cookieOptions: { name: 'finpeace-auth', domain: '.finpeace.cloud' },
-                cookies: {
-                    getAll() { return request.cookies.getAll() },
-                    setAll(cookiesToSet) {
-                        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-                        supabaseResponse = NextResponse.next({ request })
-                        cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options))
-                    },
-                },
-            }
-        )
-        const { data: { user } } = await supabase.auth.getUser()
-        const userRole = user?.app_metadata?.role as string | undefined
+        // ── AUTH: Verify advisor_token JWT (nguồn sự thật duy nhất) ──
+        // Role được lấy từ advisor_users table lúc login → in vào JWT
+        // Thêm/xóa admin: chỉ cần đổi role trong DB, token mới sẽ reflect ngay
+        const advisorToken = request.cookies.get('advisor_token')?.value
+        const tokenPayload = advisorToken ? await verifyAdvisorToken(advisorToken) : null
+        const advisorRole = tokenPayload?.role
 
-        // Guard: /advisor/admin — chỉ admin
-        if (rawPath.startsWith('/advisor/admin')) {
-            // Kiểm tra advisor_token (custom auth từ advisor login)
-            const advisorToken = request.cookies.get('advisor_token')?.value
-            if (advisorToken) {
-                const payload = await verifyAdvisorToken(advisorToken)
-                if (payload?.role === 'admin') return supabaseResponse // ✅ Pass
-            }
-            // Fallback: Supabase Auth
-            if (!user) {
-                const loginUrl = request.nextUrl.clone()
-                loginUrl.pathname = '/advisor/login'
-                return NextResponse.redirect(loginUrl)
-            }
-            if (userRole !== 'admin') {
-                const forbiddenUrl = request.nextUrl.clone()
-                forbiddenUrl.pathname = '/advisor'
-                forbiddenUrl.searchParams.set('error', 'unauthorized')
-                return NextResponse.redirect(forbiddenUrl)
-            }
+        const redirect = (path: string, errorKey?: string) => {
+            const u = request.nextUrl.clone()
+            u.pathname = path
+            if (errorKey) u.searchParams.set('error', errorKey)
+            return NextResponse.redirect(u)
         }
 
-        // Guard: /advisor/dashboard, /advisor/trading-plan, /advisor/macro-insights
-        // Yêu cầu role thuộc zone Trading
-        const requiresTradingZone =
+        // /advisor/admin — yêu cầu role admin
+        if (rawPath.startsWith('/advisor/admin')) {
+            if (!advisorRole) return redirect('/advisor/login')
+            if (advisorRole !== 'admin') return redirect('/advisor', 'unauthorized')
+        }
+
+        // /advisor/agent/dashboard — yêu cầu role admin hoặc agent
+        if (rawPath.startsWith('/advisor/agent/dashboard')) {
+            if (!advisorRole) return redirect('/advisor/agent/login')
+            if (!AGENT_ROLES.includes(advisorRole)) return redirect('/advisor/agent/login', 'access_denied')
+        }
+
+        // /advisor/dashboard, /advisor/trading-plan — yêu cầu role trong TRADING_ROLES
+        const requiresTrading =
             rawPath.startsWith('/advisor/dashboard') ||
             rawPath.startsWith('/advisor/trading-plan') ||
             rawPath.startsWith('/advisor/macro-insights')
-
-        if (requiresTradingZone) {
-            if (!user) {
-                const loginUrl = request.nextUrl.clone()
-                loginUrl.pathname = '/advisor/login'
-                return NextResponse.redirect(loginUrl)
-            }
-            if (!userRole || !TRADING_ROLES.includes(userRole)) {
-                const forbiddenUrl = request.nextUrl.clone()
-                forbiddenUrl.pathname = '/advisor/login'
-                forbiddenUrl.searchParams.set('error', 'access_denied')
-                return NextResponse.redirect(forbiddenUrl)
-            }
+        if (requiresTrading) {
+            if (!advisorRole) return redirect('/advisor/login')
+            if (!TRADING_ROLES.includes(advisorRole)) return redirect('/advisor/login', 'access_denied')
         }
 
-        // Guard: /advisor/agent/dashboard — chỉ agent + admin
-        if (rawPath.startsWith('/advisor/agent/dashboard')) {
-            if (!user) {
-                const loginUrl = request.nextUrl.clone()
-                loginUrl.pathname = '/advisor/agent/login'
-                return NextResponse.redirect(loginUrl)
-            }
-            if (!userRole || !AGENT_ROLES.includes(userRole)) {
-                const forbiddenUrl = request.nextUrl.clone()
-                forbiddenUrl.pathname = '/advisor/agent/login'
-                forbiddenUrl.searchParams.set('error', 'access_denied')
-                return NextResponse.redirect(forbiddenUrl)
-            }
-        }
-
-        return supabaseResponse;
+        return supabaseResponse
     }
+
 
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
