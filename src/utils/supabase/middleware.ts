@@ -1,6 +1,23 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+// Roles cho phép truy cập Zone 2 (Trading) — advisor subdomain
+const TRADING_ROLES = ['admin', 'agent', 'customer_trading', 'customer_trading_kb']
+
+// Routes trong advisor không yêu cầu auth (public)
+const ADVISOR_PUBLIC_PATHS = [
+  '/advisor/login',
+  '/advisor/register',
+  '/advisor/landing-discipline',
+  '/advisor/landing-plan',
+  '/advisor/landing-trust',
+  '/advisor/agent/login',   // Agent login — public
+]
+
+// Roles cho phép vào Agent Portal
+const AGENT_ROLES = ['admin', 'agent']
+
+
 export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone()
     let supabaseResponse = NextResponse.next({ request });
@@ -16,8 +33,7 @@ export async function updateSession(request: NextRequest) {
     const effectivePath = request.nextUrl.pathname;
     const isProd = process.env.NODE_ENV === 'production';
 
-    // --- TỐI ƯU HIỆU NĂNG CHO ADVISOR SUBDOMAIN ---
-    // Bypass hoàn toàn Supabase Auth Check để tăng tốc độ tải
+    // --- ADVISOR SUBDOMAIN (advisor.finpeace.cloud) ---
     if (isAdvisorFlow) {
         // Rewrite ngầm request (giữ nguyên URL của người dùng) để gọi nội dung từ thư mục /advisor
         if (!effectivePath.startsWith('/advisor')) {
@@ -26,35 +42,78 @@ export async function updateSession(request: NextRequest) {
             return NextResponse.rewrite(advisorUrl)
         }
 
-        // Bảo vệ /advisor/admin — phải check role
         const rawPath = effectivePath.startsWith('/advisor') ? effectivePath : `/advisor${effectivePath}`
-        if (rawPath.startsWith('/advisor/admin')) {
-            const supabase = createServerClient(
-                process.env.NEXT_PUBLIC_SUPABASE_URL!,
-                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-                {
-                    cookieOptions: { name: 'finpeace-auth', domain: '.finpeace.cloud' },
-                    cookies: {
-                        getAll() { return request.cookies.getAll() },
-                        setAll(cookiesToSet) {
-                            cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-                            supabaseResponse = NextResponse.next({ request })
-                            cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options))
-                        },
+
+        // Routes public — không cần auth
+        const isAdvisorPublic = ADVISOR_PUBLIC_PATHS.some(p => rawPath.startsWith(p))
+        if (isAdvisorPublic) return supabaseResponse;
+
+        // Các trang cần auth — tạo supabase client
+        const supabase = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            {
+                cookieOptions: { name: 'finpeace-auth', domain: '.finpeace.cloud' },
+                cookies: {
+                    getAll() { return request.cookies.getAll() },
+                    setAll(cookiesToSet) {
+                        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+                        supabaseResponse = NextResponse.next({ request })
+                        cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options))
                     },
-                }
-            )
-            const { data: { user } } = await supabase.auth.getUser()
-            const isAdmin = user?.app_metadata?.role === 'admin'
+                },
+            }
+        )
+        const { data: { user } } = await supabase.auth.getUser()
+        const userRole = user?.app_metadata?.role as string | undefined
+
+        // Guard: /advisor/admin — chỉ admin
+        if (rawPath.startsWith('/advisor/admin')) {
             if (!user) {
                 const loginUrl = request.nextUrl.clone()
                 loginUrl.pathname = '/advisor/login'
                 return NextResponse.redirect(loginUrl)
             }
-            if (!isAdmin) {
+            if (userRole !== 'admin') {
                 const forbiddenUrl = request.nextUrl.clone()
                 forbiddenUrl.pathname = '/advisor'
                 forbiddenUrl.searchParams.set('error', 'unauthorized')
+                return NextResponse.redirect(forbiddenUrl)
+            }
+        }
+
+        // Guard: /advisor/dashboard, /advisor/trading-plan, /advisor/macro-insights
+        // Yêu cầu role thuộc zone Trading
+        const requiresTradingZone =
+            rawPath.startsWith('/advisor/dashboard') ||
+            rawPath.startsWith('/advisor/trading-plan') ||
+            rawPath.startsWith('/advisor/macro-insights')
+
+        if (requiresTradingZone) {
+            if (!user) {
+                const loginUrl = request.nextUrl.clone()
+                loginUrl.pathname = '/advisor/login'
+                return NextResponse.redirect(loginUrl)
+            }
+            if (!userRole || !TRADING_ROLES.includes(userRole)) {
+                const forbiddenUrl = request.nextUrl.clone()
+                forbiddenUrl.pathname = '/advisor/login'
+                forbiddenUrl.searchParams.set('error', 'access_denied')
+                return NextResponse.redirect(forbiddenUrl)
+            }
+        }
+
+        // Guard: /advisor/agent/dashboard — chỉ agent + admin
+        if (rawPath.startsWith('/advisor/agent/dashboard')) {
+            if (!user) {
+                const loginUrl = request.nextUrl.clone()
+                loginUrl.pathname = '/advisor/agent/login'
+                return NextResponse.redirect(loginUrl)
+            }
+            if (!userRole || !AGENT_ROLES.includes(userRole)) {
+                const forbiddenUrl = request.nextUrl.clone()
+                forbiddenUrl.pathname = '/advisor/agent/login'
+                forbiddenUrl.searchParams.set('error', 'access_denied')
                 return NextResponse.redirect(forbiddenUrl)
             }
         }
