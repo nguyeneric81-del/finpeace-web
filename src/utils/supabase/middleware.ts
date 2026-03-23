@@ -1,5 +1,19 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { jwtVerify } from 'jose'
+
+const ADVISOR_JWT_SECRET = new TextEncoder().encode(
+  (process.env.SUPABASE_SERVICE_ROLE_KEY ?? '').slice(0, 32)
+)
+
+async function verifyAdvisorToken(token: string): Promise<{ role: string } | null> {
+  try {
+    const { payload } = await jwtVerify(token, ADVISOR_JWT_SECRET)
+    return { role: payload.role as string }
+  } catch {
+    return null
+  }
+}
 
 // Roles cho phép truy cập Zone 2 (Trading) — advisor subdomain
 const TRADING_ROLES = ['admin', 'agent', 'customer_trading', 'customer_trading_kb']
@@ -69,6 +83,13 @@ export async function updateSession(request: NextRequest) {
 
         // Guard: /advisor/admin — chỉ admin
         if (rawPath.startsWith('/advisor/admin')) {
+            // Kiểm tra advisor_token (custom auth từ advisor login)
+            const advisorToken = request.cookies.get('advisor_token')?.value
+            if (advisorToken) {
+                const payload = await verifyAdvisorToken(advisorToken)
+                if (payload?.role === 'admin') return supabaseResponse // ✅ Pass
+            }
+            // Fallback: Supabase Auth
             if (!user) {
                 const loginUrl = request.nextUrl.clone()
                 loginUrl.pathname = '/advisor/login'
