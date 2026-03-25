@@ -63,13 +63,13 @@ export async function POST(req: NextRequest) {
                 }
             }
 
-            // Xác định status dựa trên is_confirmed
-            const planStatus = cleanPayload.is_confirmed ? 'active' : 'draft'
-            const finalPayload: any = { ...cleanPayload, status: planStatus }
+            // Giữ nguyên status ban đầu, hoặc mặc định là active
+            if (!cleanPayload.status) cleanPayload.status = 'active'
+            const finalPayload: any = { ...cleanPayload }
 
             // Logic ghi đè (Ticker-based overwrite):
-            // Chỉ archive bản cũ nếu bản mới này được publish (active)
-            if (finalPayload.ticker && (!payload.id) && planStatus === 'active') {
+            // Chỉ archive bản cũ nếu tạo mới 1 plan (không có id)
+            if (finalPayload.ticker && (!payload.id) && finalPayload.status === 'active') {
                 await supabase
                     .from('trading_plans')
                     .update({ status: 'archived' })
