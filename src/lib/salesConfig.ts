@@ -18,7 +18,7 @@ export const SALES_CONFIG: Record<string, SalesAgent> = {
   },
   aduc02: {
     name: 'Anh Đức',
-    email: 'anhduc@finpeace.cloud',
+    email: 'ducha@finpeace.vn',
     agentCode: 'aduc02',
   },
   thuy03: {
