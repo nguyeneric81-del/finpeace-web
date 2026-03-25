@@ -10,7 +10,7 @@ import {
 // ── Types ───────────────────────────────────────────────────────
 type BehindStory = { point: string; quote: string; source: string }
 type KeyStat = { label: string; value: string; positive?: boolean }
-type Company = { ticker: string; name: string; plan?: string }
+type Company = { ticker: string; name: string; plan?: string; image_url?: string }
 type ChartPoint = { name: string; value: number }
 
 type Insight = {
@@ -282,22 +282,42 @@ function InsightForm({ initial, onSave, onCancel }: {
           </Sec>
 
           {/* ── 6. Companies ── */}
-          <Sec title="Cổ phiếu trọng điểm" color="rose">
+          <Sec title="Cổ phiếu trọng điểm (Kèm Trading Plan)" color="rose">
             {f.companies.map((c, i) => (
-              <div key={i} className="flex gap-2 items-end">
-                <div className="w-28">
-                  <label className={lbl}>Ticker</label>
-                  <input value={c.ticker} onChange={e => setCompany(i, 'ticker', e.target.value.toUpperCase())}
-                    placeholder="HPG" className={inp} />
+              <div key={i} className="flex flex-col gap-3 p-4 border border-slate-100 rounded-xl">
+                <div className="flex gap-4 items-start">
+                  <div className="w-32 shrink-0">
+                    <label className={lbl}>Ticker</label>
+                    <input value={c.ticker} onChange={e => setCompany(i, 'ticker', e.target.value.toUpperCase())}
+                      placeholder="VD: HPG" className={inp} />
+                  </div>
+                  <div className="flex-1">
+                    <label className={lbl}>Tên công ty</label>
+                    <input value={c.name} onChange={e => setCompany(i, 'name', e.target.value)}
+                      placeholder="Hòa Phát Group" className={inp} />
+                  </div>
+                  <button onClick={() => removeCompany(i)} className="pt-8 shrink-0">
+                    <Trash2 className="w-5 h-5 text-rose-400 hover:text-rose-600 transistion-colors" />
+                  </button>
                 </div>
-                <div className="flex-1">
-                  <label className={lbl}>Tên công ty</label>
-                  <input value={c.name} onChange={e => setCompany(i, 'name', e.target.value)}
-                    placeholder="Hòa Phát Group" className={inp} />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className={lbl}>Trading Plan (Dùng cho Bot Discord báo TA)</label>
+                    <textarea value={c.plan || ''} onChange={e => setCompany(i, 'plan', e.target.value)} rows={3}
+                      placeholder="Điểm mua: 28.5 - 29.0&#10;Cắt lỗ: gãy 27.5&#10;Mục tiêu: 32.0" className={ta} />
+                  </div>
+                  <div>
+                    <label className={lbl}>Link ảnh Chart / Phân tích (Tuỳ chọn)</label>
+                    <input value={c.image_url || ''} onChange={e => setCompany(i, 'image_url', e.target.value)}
+                      placeholder="https://imgur.com/xyz.png" className={inp} />
+                    {c.image_url && (
+                      <div className="mt-2 text-xs text-sky-600 font-medium truncate">
+                        ✓ Đã đính kèm link ảnh
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <button onClick={() => removeCompany(i)} className="pb-2">
-                  <Trash2 className="w-4 h-4 text-rose-400 hover:text-rose-600" />
-                </button>
               </div>
             ))}
             <button onClick={addCompany}
