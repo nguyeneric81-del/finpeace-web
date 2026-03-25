@@ -545,6 +545,66 @@ export default function AttractConvertPage() {
 
         {/* ── Tab 2: Campaign Workshop ── */}
         {activeTab === 'campaign' && (
+          <div className="space-y-6">
+
+            {/* ── Pending Review: LPs xin duyệt từ Agent ── */}
+            {campaigns.filter(c => c.status === 'pending_review').length > 0 && (
+              <div className="bg-[#111827] border border-amber-500/30 rounded-xl p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-amber-400 text-lg">🔔</span>
+                    <h2 className="text-base font-semibold text-white">Chờ duyệt từ Agent</h2>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-medium">
+                      {campaigns.filter(c => c.status === 'pending_review').length} LP
+                    </span>
+                  </div>
+                  <p className="text-slate-500 text-xs">Agent đã submit — review và duyệt để publish</p>
+                </div>
+                <div className="space-y-3">
+                  {campaigns.filter(c => c.status === 'pending_review').map(c => {
+                    const lpUrl = `https://finpeace.cloud/lp/${c.agent_code}/${c.slug}`
+                    return (
+                      <div key={c.id} className="border border-[#2a3548] rounded-xl p-4 flex items-start gap-4 hover:border-amber-500/20 transition-colors">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400">◎ Chờ duyệt</span>
+                            <span className="text-xs text-slate-500">{c.content_type === 'macro_insight' ? '📊' : '📚'}</span>
+                            <span className="text-xs text-[#c4a67a] font-mono">@{c.agent_code}</span>
+                          </div>
+                          <p className="font-medium text-white text-sm">{c.campaign_name || c.slug}</p>
+                          <p className="text-slate-600 text-xs mt-0.5">/lp/{c.agent_code}/{c.slug}</p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <a href={lpUrl} target="_blank"
+                            className="px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 bg-[#1e2535] text-slate-300 hover:bg-[#2a3548] transition-colors">
+                            👁️ Preview
+                          </a>
+                          <button
+                            onClick={() => approveCampaign(c.id)}
+                            disabled={approving}
+                            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/40 transition-colors disabled:opacity-50">
+                            ✅ Duyệt & Publish
+                          </button>
+                          <button
+                            onClick={async () => {
+                              await fetch(`/api/admin/lp-campaigns/${c.id}`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ status: 'draft' }),
+                              })
+                              fetchCampaigns()
+                            }}
+                            className="px-3 py-1.5 rounded-lg text-xs bg-red-500/10 text-red-400/70 hover:bg-red-500/20 transition-colors">
+                            ✕ Từ chối
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Left: Raw News list từ News Intelligence */}
             <div>
@@ -783,6 +843,7 @@ export default function AttractConvertPage() {
                 <p className="text-slate-500 text-xs mb-2">{loadingCampaigns ? 'Đang tải...' : `${campaigns.filter(c => c.status === 'active').length} campaigns đang active`}</p>
               </div>
             </div>
+          </div>
           </div>
         )}
 

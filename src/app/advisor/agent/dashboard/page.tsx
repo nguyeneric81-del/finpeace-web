@@ -6,7 +6,7 @@ import {
     LogOut, Users, TrendingUp, UserCheck, Copy,
     Check, ExternalLink, Clock,
     Loader2, RefreshCw, KeyRound, X, LayoutDashboard,
-    Sparkles, FilePlus, Eye, ChevronRight
+    Sparkles, FilePlus, Eye, ChevronRight, SendHorizonal
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
@@ -99,13 +99,27 @@ function LeadRow({ lead }: { lead: Lead }) {
     )
 }
 
+
 // ── Campaign Row ───────────────────────────────────────────────────────────────
-function CampaignRow({ campaign, agentCode }: { campaign: Campaign; agentCode: string }) {
+function CampaignRow({ campaign, agentCode, onRequestApproval }: {
+    campaign: Campaign
+    agentCode: string
+    onRequestApproval?: (id: string) => Promise<void>
+}) {
     const cfg = CAMPAIGN_STATUS[campaign.status] ?? CAMPAIGN_STATUS.draft
     const lpUrl = `https://finpeace.cloud/lp/${agentCode}/${campaign.slug}`
     const cr = (campaign.views_7d ?? 0) > 0
         ? (((campaign.leads_7d ?? 0) / campaign.views_7d!) * 100).toFixed(1) + '%'
         : '—'
+    const [requesting, setRequesting] = useState(false)
+
+    const handleRequestApproval = async () => {
+        if (!onRequestApproval) return
+        setRequesting(true)
+        await onRequestApproval(campaign.id)
+        setRequesting(false)
+    }
+
     return (
         <div className="px-5 py-4 hover:bg-white/[0.02] transition-colors" style={{ borderBottom: `1px solid ${D.border}` }}>
             <div className="flex items-start justify-between gap-4">
@@ -113,6 +127,9 @@ function CampaignRow({ campaign, agentCode }: { campaign: Campaign; agentCode: s
                     <div className="flex items-center gap-2 mb-1">
                         <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: cfg.bg, color: cfg.color }}>{cfg.dot} {cfg.label}</span>
                         <span className="text-xs" style={{ color: D.textMuted }}>{campaign.content_type === 'macro_insight' ? '📊' : '📚'}</span>
+                        {campaign.status === 'active' && (
+                            <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: D.greenBg, color: D.green }}>✅ Đã duyệt</span>
+                        )}
                     </div>
                     <p className="font-medium text-white text-sm truncate">{campaign.campaign_name || campaign.slug}</p>
                     {campaign.generated_hook && <p className="text-xs mt-1 truncate italic" style={{ color: D.textMuted }}>"{campaign.generated_hook}"</p>}
@@ -124,6 +141,18 @@ function CampaignRow({ campaign, agentCode }: { campaign: Campaign; agentCode: s
                     <div><p className="text-white font-semibold text-sm">{cr}</p><p className="text-xs" style={{ color: D.textMuted }}>CR</p></div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
+                    {campaign.status === 'draft' && onRequestApproval && (
+                        <button
+                            onClick={handleRequestApproval}
+                            disabled={requesting}
+                            className="px-2 py-1 rounded text-xs flex items-center gap-1 disabled:opacity-50 cursor-pointer"
+                            style={{ background: D.amberBg, color: D.amber }}
+                            title="Xin Admin duyệt LP này"
+                        >
+                            {requesting ? <Loader2 className="w-3 h-3 animate-spin" /> : <SendHorizonal className="w-3 h-3" />}
+                            {requesting ? '...' : 'Xin duyệt'}
+                        </button>
+                    )}
                     <a href={lpUrl} target="_blank" className="px-2 py-1 rounded text-xs flex items-center gap-1" style={{ background: D.skyBg, color: D.sky }}>
                         <Eye className="w-3 h-3" /> Preview
                     </a>
@@ -164,6 +193,8 @@ export default function AgentDashboardPage() {
     const [generating, setGenerating] = useState(false)
     const [generateError, setGenerateError] = useState<string | null>(null)
     const [generateResult, setGenerateResult] = useState<{ preview_url: string; campaign_id: string; campaign_name: string } | null>(null)
+    const [requestingApproval, setRequestingApproval] = useState<string | null>(null) // campaign_id being requested
+    const [approvalSent, setApprovalSent] = useState(false)
     const [newsItems, setNewsItems] = useState<RawNews[]>([])
     const [selectedNews, setSelectedNews] = useState<RawNews | null>(null)
     const [newsLoading, setNewsLoading] = useState(false)
@@ -235,9 +266,29 @@ export default function AgentDashboardPage() {
         setCopied(true); setTimeout(() => setCopied(false), 2000)
     }
 
+    async function handleRequestApproval(campaignId: string) {
+        setRequestingApproval(campaignId)
+        const res = await fetch(`/api/agent/lp/${campaignId}/request-approval`, { method: 'POST' })
+        setRequestingApproval(null)
+        if (res.ok) {
+            // Optimistic update: flip status to pending_review in local state
+            setCampaigns(prev => prev.map(c => c.id === campaignId ? { ...c, status: 'pending_review' } : c))
+        }
+    }
+
+    async function handleRequestApprovalFromResult(campaignId: string) {
+        setRequestingApproval(campaignId)
+        const res = await fetch(`/api/agent/lp/${campaignId}/request-approval`, { method: 'POST' })
+        setRequestingApproval(null)
+        if (res.ok) {
+            setApprovalSent(true)
+            fetchCampaigns()
+        }
+    }
+
     async function handleGenerate() {
         if (!wsForm.content_slug || !wsForm.campaign_name) { setGenerateError('Vui lòng chọn nội dung và đặt tên campaign'); return }
-        setGenerating(true); setGenerateError(null); setGenerateResult(null)
+        setGenerating(true); setGenerateError(null); setGenerateResult(null); setApprovalSent(false)
         const newsCtx = selectedNews ? {
             title: selectedNews.title,
             category: selectedNews.category,
@@ -421,7 +472,7 @@ export default function AgentDashboardPage() {
                                         Tạo landing page đầu tiên <ChevronRight className="w-3.5 h-3.5" />
                                     </button>
                                 </div>
-                                : <div>{campaigns.map(c => <CampaignRow key={c.id} campaign={c} agentCode={agent.code} />)}</div>
+                                : <div>{campaigns.map(c => <CampaignRow key={c.id} campaign={c} agentCode={agent.code} onRequestApproval={handleRequestApproval} />)}</div>
                         }
                     </motion.div>
                 )}
@@ -435,18 +486,43 @@ export default function AgentDashboardPage() {
                         </div>
 
                         {generateResult ? (
-                            <div className="rounded-2xl p-5 space-y-3" style={{ background: D.greenBg, border: `1px solid ${D.greenBorder}` }}>
-                                <p className="text-emerald-400 font-medium flex items-center gap-2"><Check className="w-4 h-4" />✅ {generateResult.campaign_name} — đã gửi cho Admin duyệt!</p>
-                                <p className="text-xs" style={{ color: D.textMuted }}>Admin sẽ review và publish. Bạn có thể xem preview trước:</p>
+                            <div className="rounded-2xl p-5 space-y-3" style={{ background: D.card, border: `1px solid ${D.greenBorder}` }}>
+                                <div className="flex items-center gap-2">
+                                    <Check className="w-4 h-4 text-emerald-400" />
+                                    <p className="text-white font-semibold text-sm">{generateResult.campaign_name}</p>
+                                </div>
+
+                                {approvalSent ? (
+                                    <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: D.amberBg, border: `1px solid ${D.amber}40` }}>
+                                        <SendHorizonal className="w-4 h-4" style={{ color: D.amber }} />
+                                        <p className="text-sm font-medium" style={{ color: D.amber }}>Đã xin duyệt! Admin sẽ review và publish.</p>
+                                    </div>
+                                ) : (
+                                    <p className="text-xs" style={{ color: D.textMuted }}>LP đang ở trạng thái Draft. Preview trước rồi gửi Admin duyệt.</p>
+                                )}
+
                                 <div className="flex gap-3">
                                     <a href={generateResult.preview_url} target="_blank" className="flex-1 text-center py-2 rounded-lg text-xs font-medium" style={{ background: D.skyBg, color: D.sky }}>
                                         <Eye className="w-3.5 h-3.5 inline mr-1" />Preview LP
                                     </a>
-                                    <button onClick={() => { setGenerateResult(null); setSelectedNews(null); setWsForm({ content_type: 'macro_insight', content_slug: '', campaign_name: '', target_audience_hint: '' }) }}
-                                        className="flex-1 py-2 rounded-lg text-xs font-medium cursor-pointer" style={{ background: D.purpleBg, color: D.purple }}>
-                                        Tạo LP khác
-                                    </button>
+                                    {!approvalSent && (
+                                        <button
+                                            onClick={() => handleRequestApprovalFromResult(generateResult.campaign_id)}
+                                            disabled={requestingApproval === generateResult.campaign_id}
+                                            className="flex-1 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                                            style={{ background: D.amber, color: '#0d1119' }}
+                                        >
+                                            {requestingApproval === generateResult.campaign_id
+                                                ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Đang gửi...</>
+                                                : <><SendHorizonal className="w-3.5 h-3.5" />📨 Gửi Admin duyệt</>
+                                            }
+                                        </button>
+                                    )}
                                 </div>
+                                <button onClick={() => { setGenerateResult(null); setSelectedNews(null); setApprovalSent(false); setWsForm({ content_type: 'macro_insight', content_slug: '', campaign_name: '', target_audience_hint: '' }) }}
+                                    className="w-full py-2 rounded-lg text-xs font-medium cursor-pointer" style={{ background: D.purpleBg, color: D.purple }}>
+                                    ✨ Tạo LP khác
+                                </button>
                             </div>
                         ) : (
                             <div className="grid md:grid-cols-2 gap-4">
