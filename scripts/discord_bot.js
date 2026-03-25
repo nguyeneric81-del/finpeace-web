@@ -172,8 +172,17 @@ client.on('messageCreate', async (message) => {
           embed.addFields({ name: '🔥 Độ tự tin', value: plan.conviction_level, inline: true })
         }
 
+        // Xử lý an toàn link ảnh chart (Discord yêu cầu full URL)
         if (plan.chart_image_url) {
-          embed.setImage(plan.chart_image_url)
+          try {
+            if (plan.chart_image_url.startsWith('http')) {
+              embed.setImage(plan.chart_image_url)
+            } else if (plan.chart_image_url.startsWith('/')) {
+              embed.setImage(`https://advisor.finpeace.cloud${plan.chart_image_url}`)
+            }
+          } catch (imgErr) {
+            console.error('Invalid image URL:', plan.chart_image_url)
+          }
         }
 
         await message.reply({ embeds: [embed] })
