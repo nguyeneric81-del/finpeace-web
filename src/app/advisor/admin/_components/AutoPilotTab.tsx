@@ -44,7 +44,7 @@ export default function AutoPilotTab() {
 
   // Lọc dữ liệu cho 3 cột
   const colPending = pending.filter(p => ['pending', 'in_progress'].includes(p.status))
-  const colDrafts = plans.filter(p => p.status === 'active' && !p.is_confirmed)
+  const colDrafts = plans.filter(p => !p.is_confirmed && p.status !== 'archived')
   const colReady = plans.filter(p => p.status === 'active' && p.is_confirmed)
 
   return (
