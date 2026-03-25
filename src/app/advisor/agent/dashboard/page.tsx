@@ -156,8 +156,27 @@ function CampaignRow({ campaign, agentCode, onRequestApproval }: {
                     <a href={lpUrl} target="_blank" className="px-2 py-1 rounded text-xs flex items-center gap-1" style={{ background: D.skyBg, color: D.sky }}>
                         <Eye className="w-3 h-3" /> Preview
                     </a>
-                    <button onClick={() => { navigator.clipboard.writeText(lpUrl) }} className="px-2 py-1 rounded text-xs flex items-center gap-1" style={{ background: D.greenBg, color: D.green }}>
-                        <Copy className="w-3 h-3" /> Copy
+                    <button onClick={() => {
+                        const copy = (text: string) => {
+                            if (navigator.clipboard) {
+                                navigator.clipboard.writeText(text).catch(() => {
+                                    const el = document.createElement('textarea')
+                                    el.value = text; document.body.appendChild(el)
+                                    el.select(); document.execCommand('copy')
+                                    document.body.removeChild(el)
+                                })
+                            } else {
+                                const el = document.createElement('textarea')
+                                el.value = text; document.body.appendChild(el)
+                                el.select(); document.execCommand('copy')
+                                document.body.removeChild(el)
+                            }
+                        }
+                        copy(lpUrl)
+                        setRequesting(true) // reuse state as "copied" flash
+                        setTimeout(() => setRequesting(false), 1500)
+                    }} className="px-2 py-1 rounded text-xs flex items-center gap-1 cursor-pointer" style={{ background: D.greenBg, color: D.green }}>
+                        {requesting ? <><Check className="w-3 h-3" />Đã copy!</> : <><Copy className="w-3 h-3" />Copy</>}
                     </button>
                 </div>
             </div>
