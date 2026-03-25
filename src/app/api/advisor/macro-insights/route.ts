@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { postMacroInsightToDiscord } from '@/lib/discord'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -30,7 +31,17 @@ export async function POST(req: NextRequest) {
   // Upsert
   const { id, ...fields } = insight
   let result
+  let wasAlreadyPublished = false
+
   if (id) {
+    // Check if already published before update (avoid re-posting on edits)
+    const { data: existing } = await supabase
+      .from('macro_insights')
+      .select('published')
+      .eq('id', id)
+      .single()
+    wasAlreadyPublished = existing?.published === true
+
     // Update existing
     const { data, error } = await supabase
       .from('macro_insights')
@@ -56,6 +67,11 @@ export async function POST(req: NextRequest) {
       .single()
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     result = data
+  }
+
+  // Post to Discord khi lần đầu publish (không post lại khi edit)
+  if (fields.published === true && !wasAlreadyPublished && result) {
+    postMacroInsightToDiscord(result).catch(() => {})
   }
 
   return NextResponse.json(result)
