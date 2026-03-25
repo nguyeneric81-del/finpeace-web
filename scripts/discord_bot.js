@@ -54,43 +54,42 @@ client.on('messageCreate', async (message) => {
     try {
       await message.channel.sendTyping()
 
-      // Fetch the most recent macro insight containing this ticker
-      const { data, error } = await supabase
-        .from('macro_insights')
-        .select('*')
-        .eq('published', true)
-        .contains('companies', `[{"ticker": "${ticker}"}]`)
-        .order('id', { ascending: false })
-        .limit(1)
-
-      if (error) {
-        console.error('Supabase Error:', error)
-        await message.reply('Đã có lỗi xảy ra khi truy xuất dữ liệu. Vui lòng thử lại sau.')
-        return
-      }
-
-      if (!data || data.length === 0) {
-        await message.reply(`Hiện hệ thống chưa có góc nhìn nào cho mã **${ticker}**. Team phân tích sẽ cập nhật sớm nhất nhé!`)
-        return
-      }
-
-      const insight = data[0]
-      const company = insight.companies.find((c) => c.ticker === ticker)
-      
-      const statFields = (insight.key_stats ?? []).slice(0, 4).map(s => ({
-        name: (s.positive ? '📈 ' : '📉 ') + s.label,
-        value: '**' + s.value + '**',
-        inline: true,
-      }))
-
-      const analystView = insight.analyst_view || 'Chưa có thông tin nền tảng vĩ mô cụ thể.'
-      const planText = (company && company.plan) ? company.plan : (insight.impact_value || 'Chưa có Trading Plan cụ thể cho mã này.')
-
-      const embed = new EmbedBuilder()
-        .setTimestamp()
-        .setFooter({ text: 'FinPeace · Hiểu đúng — Đầu tư đúng', iconURL: 'https://finpeace.cloud/logo.png' })
-
       if (commandType === 'FA') {
+        // Fetch the most recent macro insight containing this ticker
+        const { data, error } = await supabase
+          .from('macro_insights')
+          .select('*')
+          .eq('published', true)
+          .contains('companies', `[{"ticker": "${ticker}"}]`)
+          .order('id', { ascending: false })
+          .limit(1)
+
+        if (error) {
+          console.error('Supabase Error:', error)
+          await message.reply('Đã có lỗi xảy ra khi truy xuất dữ liệu. Vui lòng thử lại sau.')
+          return
+        }
+
+        if (!data || data.length === 0) {
+          await message.reply(`Hiện hệ thống chưa có góc nhìn nào cho mã **${ticker}**. Team phân tích sẽ cập nhật sớm nhất nhé!`)
+          return
+        }
+
+        const insight = data[0]
+        const company = insight.companies.find((c) => c.ticker === ticker)
+        
+        const statFields = (insight.key_stats ?? []).slice(0, 4).map(s => ({
+          name: (s.positive ? '📈 ' : '📉 ') + s.label,
+          value: '**' + s.value + '**',
+          inline: true,
+        }))
+
+        const analystView = insight.analyst_view || 'Chưa có thông tin nền tảng vĩ mô cụ thể.'
+
+        const embed = new EmbedBuilder()
+          .setTimestamp()
+          .setFooter({ text: 'FinPeace · Hiểu đúng — Đầu tư đúng', iconURL: 'https://finpeace.cloud/logo.png' })
+
         // Build FA Embed
         const shortView = analystView.length > 500
           ? analystView.slice(0, 497) + '...'
@@ -108,6 +107,10 @@ client.on('messageCreate', async (message) => {
         await message.reply({ embeds: [embed] })
 
       } else {
+        const embed = new EmbedBuilder()
+          .setTimestamp()
+          .setFooter({ text: 'FinPeace · Hiểu đúng — Đầu tư đúng', iconURL: 'https://finpeace.cloud/logo.png' })
+
         // Build TA Embed using `trading_plans` table
         const { data: tpData, error: tpError } = await supabase
           .from('trading_plans')
