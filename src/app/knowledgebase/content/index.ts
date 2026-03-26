@@ -1,4 +1,13 @@
 import type { ContentBlock } from '../data'
+
+// Tài Chính Cá Nhân (Level 1)
+import { content as bucTranhTaiChinh } from './tai-chinh-ca-nhan/buc-tranh-tai-chinh'
+import { content as quanLyDongTien } from './tai-chinh-ca-nhan/quan-ly-dong-tien'
+import { content as chienLuocThoatNo } from './tai-chinh-ca-nhan/chien-luoc-thoat-no'
+import { content as quyKhanCap } from './tai-chinh-ca-nhan/quy-khan-cap'
+import { content as lamPhatVaLaiKep } from './tai-chinh-ca-nhan/lam-phat-va-lai-kep'
+import { content as dinhGiaBanThan } from './tai-chinh-ca-nhan/dinh-gia-ban-than'
+import { content as thietLapMucTieu } from './tai-chinh-ca-nhan/thiet-lap-muc-tieu'
 import { content as nguoiBanCoPHieu } from './tam-ly-thi-truong/nguoi-ban-co-phieu'
 import { content as fomoVaBauDan } from './tam-ly-thi-truong/fomo-va-bau-dan'
 import { content as kyLuatGiaoDich } from './tam-ly-thi-truong/ky-luat-giao-dich'
@@ -37,8 +46,19 @@ import { content as positionSizing } from './quan-tri-rui-ro/position-sizing'
 import { content as drawdownRecovery } from './quan-tri-rui-ro/drawdown-recovery'
 import { content as investmentPolicyStatement } from './ke-hoach-thuc-chien/investment-policy-statement'
 import { content as paperTrading } from './ke-hoach-thuc-chien/paper-trading'
+// Huyền Thoại Đầu Tư
+import { content as peterLynchOneUp } from './huyen-thoai-dau-tu/peter-lynch-one-up'
 
 export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
+    // Tài Chính Cá Nhân
+    'tai-chinh-ca-nhan/buc-tranh-tai-chinh': bucTranhTaiChinh,
+    'tai-chinh-ca-nhan/quan-ly-dong-tien': quanLyDongTien,
+    'tai-chinh-ca-nhan/chien-luoc-thoat-no': chienLuocThoatNo,
+    'tai-chinh-ca-nhan/quy-khan-cap': quyKhanCap,
+    'tai-chinh-ca-nhan/lam-phat-va-lai-kep': lamPhatVaLaiKep,
+    'tai-chinh-ca-nhan/dinh-gia-ban-than': dinhGiaBanThan,
+    'tai-chinh-ca-nhan/thiet-lap-muc-tieu': thietLapMucTieu,
+
     'tam-ly-thi-truong/nguoi-ban-co-phieu': nguoiBanCoPHieu,
     'tam-ly-thi-truong/fomo-va-bau-dan': fomoVaBauDan,
     'tam-ly-thi-truong/ky-luat-giao-dich': kyLuatGiaoDich,
@@ -77,6 +97,8 @@ export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     'quan-tri-rui-ro/drawdown-recovery': drawdownRecovery,
     'ke-hoach-thuc-chien/investment-policy-statement': investmentPolicyStatement,
     'ke-hoach-thuc-chien/paper-trading': paperTrading,
+    // Huyền Thoại Đầu Tư
+    'huyen-thoai-dau-tu/peter-lynch-one-up': peterLynchOneUp,
 }
 
 export function getArticleContent(pillarSlug: string, articleSlug: string): ContentBlock[] | null {

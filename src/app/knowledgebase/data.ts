@@ -1,7 +1,7 @@
 // FinPeace Knowledge Base — Content Data Structure
 // T-Shaped Learning Architecture: Foundation → Specialization → Mastery
 
-export type Track = 'foundation' | 'investor' | 'trader' | 'mastery'
+export type Track = 'foundation' | 'investor' | 'trader' | 'mastery' | 'legend'
 export type Level = 1 | 2 | 3
 
 export interface ContentBlockItem {
@@ -75,6 +75,78 @@ export interface Pillar {
 
 export const PILLARS: Pillar[] = [
     // ── LEVEL 1: FOUNDATION ──────────────────────────────────────────────────
+    {
+        id: 'personal-finance',
+        slug: 'tai-chinh-ca-nhan',
+        title: 'Tài Chính Cá Nhân',
+        subtitle: 'Personal Finance & Wealth Building',
+        description: 'Học cách giữ tiền trước khi học cách nhân tiền. Xóa mù tài chính, thoát nợ xấu, xây dựng quỹ khẩn cấp và thiết lập hệ thống tự động hóa dòng tiền.',
+        track: 'foundation',
+        level: 1,
+        icon: '💰',
+        color: 'bg-amber-50',
+        accentColor: 'text-amber-700',
+        borderColor: 'border-amber-200',
+        articleCount: 7,
+        articles: [
+            {
+                slug: 'buc-tranh-tai-chinh',
+                title: 'Bức Tranh Toàn Cảnh (Net Worth) - Tại Sao Cần Lập Bảng Cân Đối Kế Toán Cá Nhân?',
+                summary: 'Sự khác biệt lớn nhất giữa một người có Lương cao và người Giàu có là gì? Cách tính Giá Trị Tài Sản Ròng (Net Worth) để giật mình tỉnh giấc.',
+                readTime: 7,
+                difficulty: 'Cơ bản',
+                tags: ['Net Worth', 'Tài sản', 'Tiêu sản'],
+            },
+            {
+                slug: 'quan-ly-dong-tien',
+                title: 'Quản Lý Dòng Tiền & Lỗ Hổng Tiêu Dùng',
+                summary: 'JARS (6 cái lọ) vs 50/30/20 — Phương pháp nào mới thực sự khả thi cho người trẻ? Cách triệt tiêu Latte Factor ăn mòn tài khoản.',
+                readTime: 8,
+                difficulty: 'Cơ bản',
+                tags: ['Budgeting', 'Dòng tiền', 'JARS'],
+            },
+            {
+                slug: 'chien-luoc-thoat-no',
+                title: 'Chiến Lược Thoát Nợ Xấu Lãi Suất Cao',
+                summary: 'Phân biệt Nợ tốt và Nợ xấu. Áp dụng 2 chiến lược kinh điển: Debt Snowball (đánh tâm lý) vs Debt Avalanche (đập lãi suất).',
+                readTime: 10,
+                difficulty: 'Cơ bản',
+                tags: ['Nợ xấu', 'Debt Snowball', 'Lãi suất'],
+            },
+            {
+                slug: 'quy-khan-cap',
+                title: 'Thành Trì Quỹ Khẩn Cấp (Emergency Fund)',
+                summary: 'Tại sao 3-6 tháng sinh hoạt phí là điều kiện tiên quyết TRƯỚC KHI mua tờ cổ phiếu đầu tiên? Đừng để ốm đau bắt bạn cắt lỗ.',
+                readTime: 6,
+                difficulty: 'Cơ bản',
+                tags: ['Quỹ khẩn cấp', 'Bảo vệ', 'Tiết kiệm'],
+            },
+            {
+                slug: 'lam-phat-va-lai-kep',
+                title: 'Lạm Phát & Lãi Kép - Kẻ cắp và Kỳ Quan',
+                summary: 'Kẻ thù vô hình lạm phát và Kỳ quan thứ 8 lãi kép của Einstein. Lãi kép đòi hỏi Sự kỷ luật và Thời gian, không phải kỹ năng đặc biệt.',
+                readTime: 9,
+                difficulty: 'Cơ bản',
+                tags: ['Lãi kép', 'Lạm phát', 'Einstein'],
+            },
+            {
+                slug: 'dinh-gia-ban-than',
+                title: 'Định Giá Bản Thân & Nâng Cấp Active Income',
+                summary: 'Thu nhập đầu tư (Passive) tỷ lệ thuận với Vốn. Nâng cấp Active Income mới là cách nhanh nhất để bơm nhiên liệu cho cỗ máy Lãi kép.',
+                readTime: 11,
+                difficulty: 'Trung cấp',
+                tags: ['Active Income', 'Phát triển bản thân', 'Sự nghiệp'],
+            },
+            {
+                slug: 'thiet-lap-muc-tieu',
+                title: 'Thiết Lập Mục Tiêu Tự Do Tài Chính',
+                summary: 'Quy tắc 4% (Trinity Study) và số tiền Tự Do Tài Chính (FI Number). Lập lộ trình cụ thể thay vì chỉ hô hào khẩu hiệu.',
+                readTime: 12,
+                difficulty: 'Trung cấp',
+                tags: ['Mục tiêu', 'Tự do tài chính', 'Quy tắc 4%'],
+            },
+        ],
+    },
     {
         id: 'mindset',
         slug: 'tam-ly-thi-truong',
@@ -538,6 +610,33 @@ export const PILLARS: Pillar[] = [
             },
         ],
     },
+
+    // ── LEGEND: HUYỀN THOẠI ĐẦU TƯ ─────────────────────────────────────────
+    {
+        id: 'investment-legends',
+        slug: 'huyen-thoai-dau-tu',
+        title: 'Huyền Thoại Đầu Tư',
+        subtitle: 'Investment Legends — Học từ những bậc thầy',
+        description: 'Câu chuyện và triết lý đầu tư của những huyền thoại Phố Wall. Mỗi bài là một cuốn sách được chưng cất — giúp bạn học từ hàng thập kỷ kinh nghiệm trong 15 phút.',
+        track: 'legend',
+        level: 3,
+        icon: '🏛️',
+        color: 'bg-yellow-50',
+        accentColor: 'text-yellow-700',
+        borderColor: 'border-yellow-300',
+        articleCount: 1,
+        articles: [
+            {
+                slug: 'peter-lynch-one-up',
+                title: 'Peter Lynch: Người Bình Thường Đánh Bại Phố Wall — "One Up On Wall Street"',
+                summary: '29.2%/năm trong 13 năm. Peter Lynch chứng minh rằng lợi thế lớn nhất của nhà đầu tư cá nhân là biết quan sát cuộc sống xung quanh. Hệ thống 6 loại cổ phiếu, PEG ratio và triết lý "mua những gì bạn biết".',
+                readTime: 18,
+                difficulty: 'Trung cấp',
+                tags: ['Peter Lynch', 'One Up On Wall Street', 'Magellan Fund', 'Growth Investing', 'PEG'],
+                references: ['One Up On Wall Street — Peter Lynch', 'Beating the Street — Peter Lynch'],
+            },
+        ],
+    },
 ]
 
 // Helper functions
@@ -559,4 +658,6 @@ export const TRACKS = {
     investor: { label: 'Nhà Đầu Tư', sublabel: 'Level 2A — Chuyên sâu', icon: '💼', color: 'text-emerald-700' },
     trader: { label: 'Nhà Giao Dịch', sublabel: 'Level 2B — Chuyên sâu', icon: '⚡', color: 'text-blue-700' },
     mastery: { label: 'Thực Chiến', sublabel: 'Level 3 — Nâng cao', icon: '🏆', color: 'text-amber-700' },
+    legend: { label: 'Huyền Thoại', sublabel: 'Bậc thầy — Câu chuyện & Triết lý', icon: '🏛️', color: 'text-yellow-700' },
 } as const
+

@@ -125,9 +125,22 @@ export async function POST(req: Request) {
     ? `## Tin tức hôm nay\n- ${news_context.title}\n- ${news_context.analyst_view ?? ''}\nKết nối tin này vào hook để tạo urgency.`
     : ''
 
-  const prompt = `Bạn là ${agent.full_name} — ${agent.title}. Brand: ${agent.brand_name ?? agent.full_name}. Tagline: ${agent.brand_tagline ?? ''}. Tone: ${tone}. Thế mạnh: ${strengths || 'phân tích sâu'}. ${avoid ? `TRÁNH: ${avoid}` : ''}\nTarget: ${targetAudience}. Pain: ${inferredPain}. Ngôn ngữ: ${langLabel}.\n---\nNỘI DUNG:\n${baseContent}\n---\n${newsBlock ? newsBlock + '\n---\n' : ''}Tạo Landing Page cá nhân hoá. Hook chạm đúng pain của ${targetAudience}.\nTrả về JSON thuần (không markdown):\n{"hook": "1 câu <= 25 từ", "body": [${sectionsByType.join(', ')}], "cta": "1 câu <= 15 từ"}`
+  const designSystemPrompt = `
+BẠN ĐỒNG THỜI LÀ "UI/UX Pro Max v2.0 REASONING ENGINE":
+Nhiệm vụ: Phân tích Cá tính (Persona) của Agent và Ngữ cảnh nội dung để tự động cấu hình giao diện Landing Page tối ưu nhất.
+Yêu cầu Output JSON phải có thêm key "design_system" với cấu trúc:
+{
+  "theme": "dark" (BẮT BUỘC vì Base UI Framework đang chạy nền Dark),
+  "primary_color": "Mã Hex màu nhấn Chính (Ví dụ: #1E40AF - Tránh dùng màu chói neon)",
+  "accent_color": "Mã Hex phối phụ họa",
+  "background": "Mã Hex nền trang (Phải là màu RẤT TỐI, vd: #0B1121, #18181A)",
+  "font": "Tên Font Google (Ví dụ: 'Inter', 'Plus Jakarta Sans', 'Merriweather')",
+  "style": "Keyword (Ví dụ: 'Glassmorphism, Minimal, Trustworthy')"
+}`
 
-  let generated: { hook: string; body: { section: string; text: string }[]; cta: string }
+  const prompt = `Bạn là ${agent.full_name} — ${agent.title}. Brand: ${agent.brand_name ?? agent.full_name}. Tagline: ${agent.brand_tagline ?? ''}. Tone: ${tone}. Thế mạnh: ${strengths || 'phân tích sâu'}. ${avoid ? `TRÁNH: ${avoid}` : ''}\nTarget: ${targetAudience}. Pain: ${inferredPain}. Ngôn ngữ: ${langLabel}.\n---\nNỘI DUNG:\n${baseContent}\n---\n${newsBlock ? newsBlock + '\n---\n' : ''}${designSystemPrompt}\n---\nTạo Landing Page cá nhân hoá. Hook chạm đúng pain của ${targetAudience}.\nTrả về JSON thuần (không markdown):\n{"hook": "1 câu <= 25 từ", "body": [${sectionsByType.join(', ')}], "cta": "1 câu <= 15 từ", "design_system": {...}}`
+
+  let generated: { hook: string; body: { section: string; text: string }[]; cta: string; design_system?: Record<string, string> }
   try {
     const text = (await callGroq(prompt)).trim()
     const jsonStr = text.replace(/^```json\n?/, '').replace(/\n?```$/, '').trim()
@@ -150,6 +163,7 @@ export async function POST(req: Request) {
       generated_hook: generated.hook,
       generated_body: generated.body,
       generated_cta: generated.cta,
+      design_system: generated.design_system || null,
       preview_token: previewToken,
       custom_hook: generated.hook,
       custom_cta: generated.cta,

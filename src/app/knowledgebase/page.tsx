@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowRight, BookOpen, ChevronRight, Zap, TrendingUp, Shield, Target, Brain, BarChart3, Layers } from 'lucide-react'
+import { ArrowRight, BookOpen, ChevronRight, Zap, TrendingUp, Shield, Target, Brain, BarChart3, Layers, Star } from 'lucide-react'
 import { PILLARS, TRACKS, getPillarsByTrack, type Track } from './data'
 
 const fadeUp = (delay = 0) => ({
@@ -61,9 +61,18 @@ const TRACK_CONFIG: Record<Track, {
         border: 'border-amber-500/30',
         icon: <Target className="w-4 h-4" />,
     },
+    legend: {
+        gradient: 'from-yellow-500/20 to-amber-600/10',
+        glow: 'shadow-yellow-500/20',
+        badge: 'bg-yellow-500/15 border-yellow-400/30 text-yellow-300',
+        badgeText: 'HUYỀN THOẠI',
+        border: 'border-yellow-500/30',
+        icon: <Star className="w-4 h-4" />,
+    },
 }
 
 const PILLAR_ACCENTS: Record<string, { from: string; to: string; text: string; dot: string }> = {
+    'tai-chinh-ca-nhan':     { from: '#F59E0B', to: '#FCD34D', text: 'text-amber-300', dot: 'bg-amber-400' },
     'tam-ly-thi-truong':     { from: '#7C3AED', to: '#9F67FA', text: 'text-violet-300', dot: 'bg-violet-400' },
     'co-che-thi-truong':     { from: '#475569', to: '#64748B', text: 'text-slate-300', dot: 'bg-slate-400' },
     'phan-tich-co-ban':      { from: '#059669', to: '#10B981', text: 'text-emerald-300', dot: 'bg-emerald-400' },
@@ -74,6 +83,7 @@ const PILLAR_ACCENTS: Record<string, { from: string; to: string; text: string; d
     'quan-ly-danh-muc':      { from: '#4F46E5', to: '#6366F1', text: 'text-indigo-300', dot: 'bg-indigo-400' },
     'quan-tri-rui-ro':       { from: '#E11D48', to: '#F43F5E', text: 'text-rose-300', dot: 'bg-rose-400' },
     'ke-hoach-thuc-chien':   { from: '#EA580C', to: '#F97316', text: 'text-orange-300', dot: 'bg-orange-400' },
+    'huyen-thoai-dau-tu':    { from: '#CA8A04', to: '#EAB308', text: 'text-yellow-300', dot: 'bg-yellow-400' },
 }
 
 function PillarCard({ pillar, index }: { pillar: typeof PILLARS[0]; index: number }) {
@@ -450,6 +460,9 @@ export default function KnowledgebasePage() {
                 </div>
                 <div id="mastery">
                     <TrackSection track="mastery" />
+                </div>
+                <div id="legend">
+                    <TrackSection track="legend" />
                 </div>
             </section>
 

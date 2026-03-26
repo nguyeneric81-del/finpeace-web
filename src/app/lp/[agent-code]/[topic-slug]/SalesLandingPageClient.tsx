@@ -139,9 +139,12 @@ function TrendChart({ data, color, label }: { data: { name: string; value: numbe
 }
 
 export default function SalesLandingPageClient({ agent, story, lpConfig, agentCode, topicSlug, lpId, lang }: Props) {
-  const primary = agent.brand_color_primary
-  const accent = agent.brand_color_accent
+  const ds = lpConfig?.design_system ?? {}
+  const bg = ds.background || agent.brand_color_primary || '#0B1121'
+  const primary = ds.primary_color || agent.brand_color_primary
+  const accent = ds.accent_color || agent.brand_color_accent
   const ac = story.accent_color || accent
+  const fontFam = ds.font ? `"${ds.font}", 'Be Vietnam Pro', system-ui, sans-serif` : "'Be Vietnam Pro', system-ui, sans-serif"
   const hook = lpConfig?.custom_hook || story.title
   const s = STRINGS[lang as keyof typeof STRINGS] ?? STRINGS.vi
   const cta = lpConfig?.custom_cta || s.defaultCta
@@ -185,10 +188,14 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
   }
 
   return (
-    <div className="min-h-screen text-slate-100" style={{ background: primary, fontFamily: "'Be Vietnam Pro', system-ui, sans-serif" }}>
+    <div className="min-h-screen text-slate-100 relative overflow-hidden" style={{ background: '#070A13', fontFamily: fontFam }}>
+      {/* ── GLOWING ORBS (GLASSMORPHISM EFFECT) ── */}
+      <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full opacity-[0.25] pointer-events-none" style={{ background: `radial-gradient(circle, ${primary} 0%, transparent 70%)` }} />
+      <div className="absolute top-[20%] right-[-20%] w-[50%] h-[50%] rounded-full opacity-[0.15] pointer-events-none" style={{ background: `radial-gradient(circle, ${accent} 0%, transparent 70%)` }} />
+      <div className="absolute bottom-[-10%] left-[10%] w-[40%] h-[40%] rounded-full opacity-[0.12] pointer-events-none" style={{ background: `radial-gradient(circle, ${primary} 0%, transparent 70%)` }} />
 
       {/* ── AGENT HEADER ── */}
-      <header className="px-6 py-5 flex items-center gap-4 sticky top-0 z-20" style={{ background: primary + 'E8', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+      <header className="px-6 py-5 flex items-center gap-4 sticky top-0 z-30 transition-all duration-300" style={{ background: 'rgba(7, 10, 19, 0.65)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
         {agent.avatar_url
           ? <img src={agent.avatar_url} alt={agent.full_name} className="w-11 h-11 rounded-full object-cover border-2 flex-shrink-0" style={{ borderColor: accent }} />
           : <div className="w-11 h-11 rounded-full flex items-center justify-center text-lg font-black border-2 flex-shrink-0" style={{ background: accent + '30', borderColor: accent, color: accent }}>{agent.full_name.charAt(0)}</div>
@@ -220,15 +227,18 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
       <div className="max-w-4xl mx-auto px-6 py-12 space-y-14">
 
         {/* ── HERO ── */}
-        <section>
-          <div className="h-0.5 rounded-full mb-8 w-20" style={{ background: `linear-gradient(90deg, ${ac}, transparent)` }} />
-          <span className="inline-block px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6" style={{ background: ac + '18', color: ac, border: `1px solid ${ac}35` }}>
+        <section className="relative z-10 pt-4">
+          <div className="h-1 rounded-full mb-8 w-24" style={{ background: `linear-gradient(90deg, ${ac}, transparent)` }} />
+          <span className="inline-block px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest mb-6 shadow-lg transition hover:scale-105" style={{ background: ac + '11', color: ac, border: `1px solid ${ac}35`, backdropFilter: 'blur(10px)' }}>
             {story.category} · {story.date_label}
           </span>
-          <h1 className="text-3xl md:text-5xl font-black text-white leading-tight mb-6">{hook}</h1>
+          <h1 className="text-4xl md:text-6xl font-black leading-tight mb-8 bg-clip-text text-transparent pb-2" style={{ backgroundImage: `linear-gradient(135deg, #ffffff 0%, ${ac} 100%)` }}>
+            {hook}
+          </h1>
           {story.impact_value && (
-            <div className="flex items-start gap-3 rounded-2xl p-5" style={{
-              background: story.impact_positive ? 'rgba(16,185,129,0.08)' : 'rgba(244,63,94,0.08)',
+            <div className="flex items-start gap-4 rounded-3xl p-6 shadow-2xl transition hover:scale-[1.02] duration-300" style={{
+              background: story.impact_positive ? 'rgba(16,185,129,0.04)' : 'rgba(244,63,94,0.04)',
+              backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
               border: `1px solid ${story.impact_positive ? 'rgba(16,185,129,0.2)' : 'rgba(244,63,94,0.2)'}`,
             }}>
               {story.impact_positive ? <TrendingUp className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" /> : <TrendingDown className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />}
@@ -264,11 +274,13 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
             <p className="text-xs font-bold uppercase tracking-widest mb-5 flex items-center gap-2" style={{ opacity: 0.4 }}>
               <BarChart2 className="w-3.5 h-3.5" />{s.statsLabel}
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10">
               {story.key_stats.map((s, i) => (
-                <div key={i} className="rounded-2xl p-5 space-y-2" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  <p className="text-2xl font-black font-mono" style={{ color: s.positive === true ? '#34d399' : s.positive === false ? '#fb7185' : ac }}>{s.value}</p>
-                  <p className="text-xs font-medium leading-snug" style={{ opacity: 0.5 }}>{s.label}</p>
+                <div key={i} className="rounded-3xl p-6 space-y-2 transition-all duration-300 hover:scale-[1.03] hover:-translate-y-1 shadow-xl" style={{
+                  background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.08)'
+                }}>
+                  <p className="text-3xl font-black font-mono tracking-tight" style={{ color: s.positive === true ? '#34d399' : s.positive === false ? '#fb7185' : ac }}>{s.value}</p>
+                  <p className="text-xs font-bold leading-snug tracking-wide" style={{ color: 'rgba(255,255,255,0.5)' }}>{s.label}</p>
                 </div>
               ))}
             </div>
@@ -291,8 +303,8 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
 
         {/* ── DATA POINT ── */}
         {story.data_point && (
-          <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
-            <p className="text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-1.5" style={{ opacity: 0.4 }}>
+          <div className="rounded-3xl p-6 relative z-10 shadow-xl" style={{ background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3 flex items-center gap-1.5" style={{ opacity: 0.4 }}>
               <BarChart2 className="w-3 h-3" />{s.dataLabel}
             </p>
             <p className="text-sm font-semibold" style={{ color: ac }}>{story.data_point}</p>
@@ -312,11 +324,11 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
               <div className="absolute left-5 top-0 bottom-0 w-px" style={{ background: 'rgba(255,255,255,0.07)' }} />
               <div className="space-y-8">
                 {story.behind_story.map((item, i) => (
-                  <div key={i} className="relative pl-14">
-                    <div className="absolute left-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-black border" style={{ background: primary, borderColor: ac + '40', color: ac }}>{i + 1}</div>
-                    <p className="text-base font-semibold text-white mb-3 leading-relaxed">{item.point}</p>
-                    <div className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.03)', borderLeft: `3px solid ${ac}55` }}>
-                      <Quote className="w-3.5 h-3.5 mb-2" style={{ opacity: 0.3 }} />
+                  <div key={i} className="relative pl-14 group">
+                    <div className="absolute left-[-2px] w-11 h-11 rounded-full flex items-center justify-center text-sm font-black border transition-all duration-300 group-hover:scale-110 shadow-lg" style={{ background: primary, borderColor: ac + '60', color: ac }}>{i + 1}</div>
+                    <p className="text-lg font-bold text-white mb-3 mt-1 leading-relaxed tracking-wide shadow-sm">{item.point}</p>
+                    <div className="rounded-3xl p-6 shadow-xl transition-all duration-300 group-hover:bg-white/5" style={{ background: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.04)', borderLeft: `4px solid ${ac}` }}>
+                      <Quote className="w-4 h-4 mb-3" style={{ color: ac, opacity: 0.6 }} />
                       <p className="text-sm italic leading-relaxed mb-3" style={{ color: 'rgba(255,255,255,0.55)' }}>&ldquo;{item.quote}&rdquo;</p>
                       <div className="flex items-center gap-2">
                         <Clock className="w-3 h-3" style={{ opacity: 0.3 }} />
@@ -438,16 +450,16 @@ export default function SalesLandingPageClient({ agent, story, lpConfig, agentCo
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input type="text" placeholder={s.namePlaceholder} required value={form.full_name}
                   onChange={e => setForm(p => ({ ...p, full_name: e.target.value }))}
-                  className="w-full rounded-xl px-4 py-3 text-sm bg-white/10 border border-white/15 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30"
+                  className="w-full rounded-2xl px-5 py-4 text-sm bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 transition-all font-medium backdrop-blur-md"
                 />
                 <div className="grid md:grid-cols-2 gap-4">
                   <input type="email" placeholder={s.emailPlaceholder} value={form.email}
                     onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                    className="w-full rounded-xl px-4 py-3 text-sm bg-white/10 border border-white/15 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30"
+                    className="w-full rounded-2xl px-5 py-4 text-sm bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 transition-all font-medium backdrop-blur-md"
                   />
                   <input type="tel" placeholder={s.phonePlaceholder} value={form.phone}
                     onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
-                    className="w-full rounded-xl px-4 py-3 text-sm bg-white/10 border border-white/15 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30"
+                    className="w-full rounded-2xl px-5 py-4 text-sm bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-white/30 transition-all font-medium backdrop-blur-md"
                   />
                 </div>
                 {error && <p className="text-rose-400 text-sm">{error}</p>}
