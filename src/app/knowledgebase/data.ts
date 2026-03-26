@@ -624,7 +624,7 @@ export const PILLARS: Pillar[] = [
         color: 'bg-yellow-50',
         accentColor: 'text-yellow-700',
         borderColor: 'border-yellow-300',
-        articleCount: 4,
+        articleCount: 5,
         articles: [
             {
                 slug: 'peter-lynch-one-up',
@@ -661,6 +661,15 @@ export const PILLARS: Pillar[] = [
                 difficulty: 'Cơ bản',
                 tags: ['Nicolas Darvas', 'Box Theory', 'Breakout', 'Trend Following', 'Momentum'],
                 references: ['How I Made $2,000,000 In The Stock Market — Nicolas Darvas'],
+            },
+            {
+                slug: 'buffett-the-snowball',
+                title: 'Warren Buffett: "Snowball Effect" — 20.1%/Năm Trong 58 Năm',
+                summary: '93% tài sản $100 tỷ được tạo ra sau tuổi 65. Bí mật: moat bền vững, lãnh đạo trung thực, giá hợp lý, và nắm giữ mãi mãi. Oracle of Omaha và 4 tiêu chí vàng.',
+                readTime: 20,
+                difficulty: 'Trung cấp',
+                tags: ['Warren Buffett', 'Value Investing', 'Moat', 'Berkshire Hathaway', 'Compounding', 'Snowball'],
+                references: ['The Snowball — Alice Schroeder', 'Berkshire Hathaway Annual Letters — Warren Buffett'],
             },
         ],
     },
