@@ -624,7 +624,7 @@ export const PILLARS: Pillar[] = [
         color: 'bg-yellow-50',
         accentColor: 'text-yellow-700',
         borderColor: 'border-yellow-300',
-        articleCount: 2,
+        articleCount: 3,
         articles: [
             {
                 slug: 'peter-lynch-one-up',
@@ -643,6 +643,15 @@ export const PILLARS: Pillar[] = [
                 difficulty: 'Nâng cao',
                 tags: ['Jesse Livermore', 'Stock Operator', 'Speculation', 'Pivot Points', 'Trading Psychology'],
                 references: ['How To Trade In Stocks — Jesse Livermore', 'Reminiscences of a Stock Operator — Edwin Lefèvre'],
+            },
+            {
+                slug: 'william-oneil-canslim',
+                title: 'William O\'Neil: Người Kết Hợp FA + TA + Momentum — Hệ Thống CANSLIM',
+                summary: 'Nghiên cứu 500 cổ phiếu vĩ đại nhất lịch sử để tìm mẫu số chung. CANSLIM — 7 tiêu chí lọc cổ phiếu tăng trưởng mạnh nhất, từ EPS đến mô hình giá Cup-and-Handle.',
+                readTime: 22,
+                difficulty: 'Nâng cao',
+                tags: ['William O\'Neil', 'CANSLIM', 'IBD', 'Cup-and-Handle', 'Growth Investing', 'Momentum'],
+                references: ['How To Make Money In Stocks — William O\'Neil'],
             },
         ],
     },
