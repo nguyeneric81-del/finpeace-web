@@ -18,20 +18,23 @@ type Story = {
 
 const CategoryIcon = ({ category }: { category: string }) => {
   const map: Record<string, React.ReactNode> = {
-    'Chuỗi Cung Ứng': <Globe className="w-3.5 h-3.5" />,
-    'Chính sách Tiền tệ': <DollarSign className="w-3.5 h-3.5" />,
-    'Đầu tư Nước ngoài': <Factory className="w-3.5 h-3.5" />,
-    'Hạ tầng & Tăng trưởng': <Hammer className="w-3.5 h-3.5" />,
+    'Macro_Market': <Globe className="w-3.5 h-3.5" />,
+    'Company_VVIA': <BarChart2 className="w-3.5 h-3.5" />,
   }
-  return <>{map[category] ?? <BarChart2 className="w-3.5 h-3.5" />}</>
+  return <>{map[category] ?? <Flame className="w-3.5 h-3.5" />}</>
 }
 
 
 
 export default function MacroInsightsListClient({ stories }: { stories: Story[] }) {
-  const availableMonths = Array.from(new Set(stories.map(s => s.date))).sort((a, b) => b.localeCompare(a))
+  const availableCategories = ['Tất cả', ...Array.from(new Set(stories.map(s => s.category))).sort()]
+  const [activeCategory, setActiveCategory] = useState('Tất cả')
+
+  const categoryFiltered = activeCategory === 'Tất cả' ? stories : stories.filter(s => s.category === activeCategory)
+
+  const availableMonths = Array.from(new Set(categoryFiltered.map(s => s.date))).sort((a, b) => b.localeCompare(a))
   const [activeMonth, setActiveMonth] = useState(availableMonths[0] ?? '')
-  const filteredStories = stories.filter(s => s.date === activeMonth)
+  const filteredStories = categoryFiltered.filter(s => s.date === activeMonth)
 
   return (
     <div className="min-h-screen text-slate-200 overflow-x-hidden" style={{ background: '#020617', fontFamily: "'Be Vietnam Pro', system-ui, sans-serif" }}>
@@ -63,6 +66,23 @@ export default function MacroInsightsListClient({ stories }: { stories: Story[] 
           <p className="text-slate-400 text-lg max-w-2xl leading-relaxed">
             Định lượng tác động Vĩ mô xuống tận Nhóm ngành hẹp — soi chiếu trực tiếp vào Kế hoạch giao dịch.
           </p>
+        </div>
+
+        {/* ── CATEGORY TABS ── */}
+        <div className="flex items-center gap-3 mb-6 overflow-x-auto pb-1">
+          <div className="flex items-center gap-1.5 text-slate-500 mr-2 shrink-0">
+            <Flame className="w-4 h-4" />
+            <span className="text-xs font-bold uppercase tracking-widest">Loại Tin</span>
+          </div>
+          {availableCategories.map(cat => (
+            <button key={cat} onClick={() => { setActiveCategory(cat); setActiveMonth(''); }}
+              className="shrink-0 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 cursor-pointer"
+              style={activeCategory === cat
+                ? { background: 'rgba(16,185,129,0.15)', color: '#10b981', border: '1px solid rgba(16,185,129,0.4)', boxShadow: '0 0 16px rgba(16,185,129,0.15)' }
+                : { background: 'rgba(255,255,255,0.04)', color: '#94a3b8', border: '1px solid rgba(255,255,255,0.07)' }
+              }
+            >{cat.replace('Company_VVIA', 'Cổ Phiếu VVIA').replace('Macro_Market', 'Thị Trường Vĩ Mô')}</button>
+          ))}
         </div>
 
         {/* ── MONTH TABS ── */}

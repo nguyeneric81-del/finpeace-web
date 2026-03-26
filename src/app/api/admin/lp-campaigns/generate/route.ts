@@ -57,6 +57,7 @@ export async function POST(req: Request) {
   // 2. Fetch base content — inject ALL available fields
   let baseContent = ''
   let contentTitle = ''
+  let contentCat = ''
 
   if (content_type === 'macro_insight') {
     const { data: insight } = await supabase
@@ -66,6 +67,7 @@ export async function POST(req: Request) {
       .single()
     if (insight) {
       contentTitle = insight.title
+      contentCat = insight.category ?? ''
       const keyStatsStr = Array.isArray(insight.key_stats)
         ? (insight.key_stats as { label: string; value: string }[]).map(s => `• ${s.label}: ${s.value}`).join('\n')
         : JSON.stringify(insight.key_stats ?? {})
@@ -153,12 +155,19 @@ ${found.references?.length ? `\nTham khảo: ${found.references.join(', ')}` : '
 
   // Dynamic section structure based on content type
   const sectionsByType = content_type === 'macro_insight'
-    ? [
-        `{"section": "Chuyện gì đang xảy ra và tại sao bạn cần biết ngay", "text": "..."}`,
-        `{"section": "Tác động thực tế đến danh mục của ${targetAudience}", "text": "..."}`,
-        `{"section": "Cơ hội hoặc rủi ro bạn không nên bỏ lỡ", "text": "..."}`,
-        `{"section": "Bước hành động cụ thể bạn nên làm ngay hôm nay", "text": "..."}`,
-      ]
+    ? contentCat === 'Company_VVIA'
+      ? [
+          `{"section": "Vén màn sự thật về Định giá & Sức khoẻ Tài chính", "text": "..."}`,
+          `{"section": "Lợi thế Cạnh tranh & Động lực Tăng trưởng", "text": "..."}`,
+          `{"section": "Kịch bản Sốc (Stress Test) và Rủi ro tiềm ẩn", "text": "..."}`,
+          `{"section": "Chiến lược Hành động & Vùng Chờ Mua an toàn", "text": "..."}`
+        ]
+      : [
+          `{"section": "Chuyện gì đang xảy ra và tại sao bạn cần biết ngay", "text": "..."}`,
+          `{"section": "Tác động thực tế đến danh mục của ${targetAudience}", "text": "..."}`,
+          `{"section": "Cơ hội hoặc rủi ro bạn không nên bỏ lỡ", "text": "..."}`,
+          `{"section": "Bước hành động cụ thể bạn nên làm ngay hôm nay", "text": "..."}`,
+        ]
     : [
         `{"section": "Tại sao kiến thức này quan trọng với ${targetAudience}", "text": "..."}`,
         `{"section": "Sai lầm phổ biến mà hầu hết người mới mắc phải", "text": "..."}`,

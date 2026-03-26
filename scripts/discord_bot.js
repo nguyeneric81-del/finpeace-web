@@ -1,6 +1,7 @@
 // scripts/discord_bot.js
 const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js')
 const { createClient } = require('@supabase/supabase-js')
+const crypto = require('crypto')
 require('dotenv').config({ path: '.env.local' })
 
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN
@@ -36,6 +37,7 @@ client.on('messageCreate', async (message) => {
 
   let commandType = null
   let ticker = ''
+  let kbQuery = ''
 
   if (lowerText.startsWith('!fa ') || lowerText.startsWith('!coban ')) {
     commandType = 'FA'
@@ -43,9 +45,74 @@ client.on('messageCreate', async (message) => {
   } else if (lowerText.startsWith('!ta ') || lowerText.startsWith('!kythuat ') || lowerText.startsWith('!tuvan ')) {
     commandType = 'TA'
     ticker = text.split(' ')[1]?.trim().toUpperCase()
+  } else if (lowerText.startsWith('!kb ')) {
+    commandType = 'KB'
+    kbQuery = text.substring(4).trim()
   }
 
   if (commandType) {
+    if (commandType === 'KB') {
+      if (!kbQuery) return message.reply('Vui lòng nhập câu hỏi sau lệnh `!kb`. VD: `!kb Mẫu hình VCP là gì?`')
+      
+      const thinkingMsg = await message.reply('⏳ **Bot đang lục lọi bộ não 23.000 trang sách Local để trả lời...**')
+      
+      try {
+        const res = await fetch('https://list-cruises-essentially-fog.trycloudflare.com/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: kbQuery })
+        })
+        
+        if (!res.ok) {
+          return thinkingMsg.edit('❌ Giao thức đường hầm về Mac Mini (Local RAG) đang tắt hoặc bị gián đoạn.')
+        }
+        
+        const data = await res.json()
+        let replyText = `**🧠 TRẢ LỜI TỪ KHO SÁCH FINPEACE**\n\n${data.answer}`
+        
+        if (data.sources && data.sources.length > 0) {
+          replyText += `\n\n📚 **Nguồn trích xuất (Tài liệu nội bộ):**\n${data.sources.map(s => `- ${s}`).join('\n')}`
+        }
+        
+        // CHUNKING LOGIC: Vượt ngục Discord 2000 chars limit
+        const maxLength = 1900;
+        let chunks = [];
+        
+        if (replyText.length <= maxLength) {
+            chunks.push(replyText);
+        } else {
+            const lines = replyText.split('\n');
+            let currentStr = '';
+            for (const line of lines) {
+                if (currentStr.length + line.length + 1 > maxLength) {
+                    if (currentStr) chunks.push(currentStr);
+                    if (line.length > maxLength) { // Edge case: dòng quá dài
+                        for (let j = 0; j < line.length; j += maxLength) {
+                            chunks.push(line.substring(j, j + maxLength));
+                        }
+                        currentStr = '';
+                    } else {
+                        currentStr = line + '\n';
+                    }
+                } else {
+                    currentStr += line + '\n';
+                }
+            }
+            if (currentStr.trim().length > 0) chunks.push(currentStr);
+        }
+        
+        await thinkingMsg.edit(chunks[0]);
+        for (let i = 1; i < chunks.length; i++) {
+            await message.channel.send(chunks[i]);
+        }
+        
+      } catch (err) {
+        console.error('KB API Error:', err)
+        await thinkingMsg.edit('❌ Gặp sự cố đường truyền về trung tâm dữ liệu Local. Vui lòng check lại Cloudflare Tunnel.')
+      }
+      return
+    }
+
     if (!ticker) {
       await message.reply(`Vui lòng nhập mã cổ phiếu. Ví dụ: \`${lowerText.split(' ')[0]} HPG\``)
       return
@@ -86,25 +153,54 @@ client.on('messageCreate', async (message) => {
 
         const analystView = insight.analyst_view || 'Chưa có thông tin nền tảng vĩ mô cụ thể.'
 
-        const embed = new EmbedBuilder()
-          .setTimestamp()
-          .setFooter({ text: 'FinPeace · Hiểu đúng — Đầu tư đúng', iconURL: 'https://finpeace.cloud/logo.png' })
+        const maxLength = 4000;
+        let chunks = [];
+        const lines = analystView.split('\n');
+        let currentStr = '';
+        for (const line of lines) {
+            if (currentStr.length + line.length + 1 > maxLength) {
+                if (currentStr) chunks.push(currentStr);
+                if (line.length > maxLength) { 
+                    for (let j = 0; j < line.length; j += maxLength) {
+                        chunks.push(line.substring(j, j + maxLength));
+                    }
+                    currentStr = '';
+                } else {
+                    currentStr = line + '\n';
+                }
+            } else {
+                currentStr += line + '\n';
+            }
+        }
+        if (currentStr.trim().length > 0) chunks.push(currentStr);
 
-        // Build FA Embed
-        const shortView = analystView.length > 500
-          ? analystView.slice(0, 497) + '...'
-          : analystView
-
-        embed
+        const embed1 = new EmbedBuilder()
           .setColor(0x3b82f6) // Blue for FA
           .setAuthor({ name: `Phân tích Cơ bản (FA) | ${ticker}` })
           .setTitle(company ? `${company.ticker} — ${company.name}` : `Cổ phiếu ${ticker}`)
-          .setDescription(`> ${shortView}`)
+          .setDescription(chunks[0] || 'Chưa có thông tin nền tảng vĩ mô cụ thể.')
         
         if (statFields.length > 0) {
-          embed.addFields(statFields)
+          embed1.addFields(statFields)
         }
-        await message.reply({ embeds: [embed] })
+        
+        if (chunks.length === 1) {
+          embed1.setTimestamp().setFooter({ text: 'FinPeace · Hiểu đúng — Đầu tư đúng', iconURL: 'https://finpeace.cloud/logo.png' })
+        }
+        
+        await message.reply({ embeds: [embed1] })
+
+        // Send subsequent chunks as separate embeds to keep styling consistent
+        for (let i = 1; i < chunks.length; i++) {
+          const followUpEmbed = new EmbedBuilder()
+            .setColor(0x3b82f6)
+            .setDescription(chunks[i])
+          
+          if (i === chunks.length - 1) {
+             followUpEmbed.setTimestamp().setFooter({ text: 'FinPeace · Hiểu đúng — Đầu tư đúng', iconURL: 'https://finpeace.cloud/logo.png' })
+          }
+          await message.channel.send({ embeds: [followUpEmbed] })
+        }
 
       } else {
         const embed = new EmbedBuilder()
@@ -129,25 +225,29 @@ client.on('messageCreate', async (message) => {
         if (!tpData || tpData.length === 0) {
           // Bổ sung vào pending_tickers
           try {
-            const { data: pendingData } = await supabase.from('pending_tickers').select('*').eq('ticker', ticker).maybeSingle()
+            const userUuid = crypto.createHash('md5').update(message.author.id).digest('hex').replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5');
+            const { data: pendingData, error: checkErr } = await supabase.from('pending_tickers').select('*').eq('ticker', ticker).maybeSingle()
+            if (checkErr) console.error('Lỗi check pending_tickers:', checkErr)
             
             if (pendingData) {
-              const newRequesters = [...new Set([...(pendingData.requester_ids || []), message.author.id])]
-              await supabase.from('pending_tickers').update({ 
+              const newRequesters = [...new Set([...(pendingData.requester_ids || []), userUuid])]
+              const { error: updErr } = await supabase.from('pending_tickers').update({ 
                 requested_count: pendingData.requested_count + 1,
                 requester_ids: newRequesters,
                 status: 'pending'
               }).eq('ticker', ticker)
+              if (updErr) console.error('Lỗi update pending_tickers:', updErr)
             } else {
-              await supabase.from('pending_tickers').insert({
+              const { error: insErr } = await supabase.from('pending_tickers').insert({
                 ticker: ticker,
                 requested_count: 1,
-                requester_ids: [message.author.id],
+                requester_ids: [userUuid],
                 status: 'pending'
               })
+              if (insErr) console.error('Lỗi insert pending_tickers:', insErr)
             }
           } catch (upsertErr) {
-            console.error('Lỗi khi lưu pending_tickers:', upsertErr)
+            console.error('Lỗi unhandled khi lưu pending_tickers:', upsertErr)
           }
 
           await message.reply(`Hiện hệ thống chưa có Bản Kế Hoạch Giao Dịch (Trading Plan) nào cho mã **${ticker}**. Mật vụ FinPeace đã ghi nhận yêu cầu của bác và sẽ cập nhật phân tích sớm nhất nhé!`)
