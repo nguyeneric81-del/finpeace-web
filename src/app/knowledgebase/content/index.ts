@@ -48,6 +48,7 @@ import { content as investmentPolicyStatement } from './ke-hoach-thuc-chien/inve
 import { content as paperTrading } from './ke-hoach-thuc-chien/paper-trading'
 // Huyền Thoại Đầu Tư
 import { content as peterLynchOneUp } from './huyen-thoai-dau-tu/peter-lynch-one-up'
+import { content as jesseLivermoreStockOperator } from './huyen-thoai-dau-tu/jesse-livermore-stock-operator'
 
 export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     // Tài Chính Cá Nhân
@@ -99,6 +100,7 @@ export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     'ke-hoach-thuc-chien/paper-trading': paperTrading,
     // Huyền Thoại Đầu Tư
     'huyen-thoai-dau-tu/peter-lynch-one-up': peterLynchOneUp,
+    'huyen-thoai-dau-tu/jesse-livermore-stock-operator': jesseLivermoreStockOperator,
 }
 
 export function getArticleContent(pillarSlug: string, articleSlug: string): ContentBlock[] | null {

@@ -624,7 +624,7 @@ export const PILLARS: Pillar[] = [
         color: 'bg-yellow-50',
         accentColor: 'text-yellow-700',
         borderColor: 'border-yellow-300',
-        articleCount: 1,
+        articleCount: 2,
         articles: [
             {
                 slug: 'peter-lynch-one-up',
@@ -634,6 +634,15 @@ export const PILLARS: Pillar[] = [
                 difficulty: 'Trung cấp',
                 tags: ['Peter Lynch', 'One Up On Wall Street', 'Magellan Fund', 'Growth Investing', 'PEG'],
                 references: ['One Up On Wall Street — Peter Lynch', 'Beating the Street — Peter Lynch'],
+            },
+            {
+                slug: 'jesse-livermore-stock-operator',
+                title: 'Jesse Livermore: Bi Kịch Vĩ Đại Nhất Phố Wall — "How To Trade In Stocks"',
+                summary: 'Kiếm 100 triệu đô từ cuú sụp đổ 1929, rồi phá sản và qua đời vì không tuân thủ được chính các quy tắc mình đặt ra. 5 nguyên tắc vàng về timing, trend và kỷ luật cảm xúc.',
+                readTime: 20,
+                difficulty: 'Nâng cao',
+                tags: ['Jesse Livermore', 'Stock Operator', 'Speculation', 'Pivot Points', 'Trading Psychology'],
+                references: ['How To Trade In Stocks — Jesse Livermore', 'Reminiscences of a Stock Operator — Edwin Lefèvre'],
             },
         ],
     },
