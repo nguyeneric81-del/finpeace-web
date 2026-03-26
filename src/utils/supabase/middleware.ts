@@ -156,6 +156,7 @@ export async function updateSession(request: NextRequest) {
         effectivePath.startsWith('/api/agent') ||
         (effectivePath.startsWith('/advisor') && !effectivePath.startsWith('/advisor/admin')) || // admin cần auth
         effectivePath.startsWith('/knowledgebase') || // KB là public content
+        effectivePath.startsWith('/training') || // Training Deck là public content
         effectivePath.startsWith('/lp') || // Sales landing pages - public
         effectivePath.startsWith('/monitor') || // Monitor & agent performance pages - public
         effectivePath === '/monitor.html' ||
