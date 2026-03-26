@@ -624,7 +624,7 @@ export const PILLARS: Pillar[] = [
         color: 'bg-yellow-50',
         accentColor: 'text-yellow-700',
         borderColor: 'border-yellow-300',
-        articleCount: 3,
+        articleCount: 4,
         articles: [
             {
                 slug: 'peter-lynch-one-up',
@@ -652,6 +652,15 @@ export const PILLARS: Pillar[] = [
                 difficulty: 'Nâng cao',
                 tags: ['William O\'Neil', 'CANSLIM', 'IBD', 'Cup-and-Handle', 'Growth Investing', 'Momentum'],
                 references: ['How To Make Money In Stocks — William O\'Neil'],
+            },
+            {
+                slug: 'darvas-box-theory',
+                title: 'Nicolas Darvas: Vũ Công Chinh Phục Phố Wall — "How I Made $2,000,000 In The Stock Market"',
+                summary: '$3,000 → $2,000,000 trong 18 tháng từ các khách sạn nước ngoài qua điện tín. Box Theory — 4 quy tắc đơn giản nhất lịch sử đầu tư: vẽ hộp, buy stop, stop loss, pyramid.',
+                readTime: 18,
+                difficulty: 'Cơ bản',
+                tags: ['Nicolas Darvas', 'Box Theory', 'Breakout', 'Trend Following', 'Momentum'],
+                references: ['How I Made $2,000,000 In The Stock Market — Nicolas Darvas'],
             },
         ],
     },

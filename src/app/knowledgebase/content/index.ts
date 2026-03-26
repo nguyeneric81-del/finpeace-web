@@ -50,6 +50,7 @@ import { content as paperTrading } from './ke-hoach-thuc-chien/paper-trading'
 import { content as peterLynchOneUp } from './huyen-thoai-dau-tu/peter-lynch-one-up'
 import { content as jesseLivermoreStockOperator } from './huyen-thoai-dau-tu/jesse-livermore-stock-operator'
 import { content as williamOneilCanslim } from './huyen-thoai-dau-tu/william-oneil-canslim'
+import { content as darvasBoxTheory } from './huyen-thoai-dau-tu/darvas-box-theory'
 
 export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     // Tài Chính Cá Nhân
@@ -103,6 +104,7 @@ export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     'huyen-thoai-dau-tu/peter-lynch-one-up': peterLynchOneUp,
     'huyen-thoai-dau-tu/jesse-livermore-stock-operator': jesseLivermoreStockOperator,
     'huyen-thoai-dau-tu/william-oneil-canslim': williamOneilCanslim,
+    'huyen-thoai-dau-tu/darvas-box-theory': darvasBoxTheory,
 }
 
 export function getArticleContent(pillarSlug: string, articleSlug: string): ContentBlock[] | null {
