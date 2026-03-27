@@ -55,6 +55,7 @@ import { content as buffettTheSnowball } from './huyen-thoai-dau-tu/buffett-the-
 
 // Phân Tích Doanh Nghiệp (VVIA)
 import { content as vviaBankMbb } from './phan-tich-doanh-nghiep/vvia-bank-mbb-2026'
+import { content as vviaTechFpt } from './phan-tich-doanh-nghiep/vvia-tech-fpt-2026'
 
 export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     // Tài Chính Cá Nhân
@@ -113,6 +114,7 @@ export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     
     // Doanh Nghiệp
     'phan-tich-doanh-nghiep/vvia-bank-mbb-2026': vviaBankMbb,
+    'phan-tich-doanh-nghiep/vvia-tech-fpt-2026': vviaTechFpt,
 }
 
 export function getArticleContent(pillarSlug: string, articleSlug: string): ContentBlock[] | null {

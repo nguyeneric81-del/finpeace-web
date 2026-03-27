@@ -687,15 +687,23 @@ export const PILLARS: Pillar[] = [
         color: 'bg-indigo-50',
         accentColor: 'text-indigo-700',
         borderColor: 'border-indigo-200',
-        articleCount: 1,
+        articleCount: 2,
         articles: [
             {
                 slug: 'vvia-bank-mbb-2026',
-                title: 'Khám Sức Khỏe Ngân Hàng VVIA Bank: Đánh giá MBB',
+                title: 'Đánh giá MBB',
                 summary: 'Định giá ngân hàng TMCP Quân Đội (MBB) qua lăng kính của Benjamin Graham và Warren Buffett. Lợi thế vô địch CASA liệu có làm lu mờ rủi ro bao phủ nợ xấu?',
                 readTime: 5,
                 difficulty: 'Trung cấp',
                 tags: ['MBB', 'Ngân Hàng', 'CASA', 'VVIA Bank'],
+            },
+            {
+                slug: 'vvia-tech-fpt-2026',
+                title: 'Đánh giá FPT',
+                summary: 'Kịch bản AI bào mòn Outsourcing nhân công giá rẻ và góc nhìn thực tế về đà phanh gấp của FPT. Đội ngũ Phân tích Định chế có đang lạc quan thái quá?',
+                readTime: 6,
+                difficulty: 'Nâng cao',
+                tags: ['FPT', 'Công nghệ', 'AI', 'VVIA'],
             }
         ],
     },
