@@ -57,7 +57,7 @@ client.on('messageCreate', async (message) => {
       const thinkingMsg = await message.reply('⏳ **Bot đang lục lọi bộ não 23.000 trang sách Local để trả lời...**')
       
       try {
-        const res = await fetch('https://list-cruises-essentially-fog.trycloudflare.com/query', {
+        const res = await fetch('https://rag.finpeace.cloud/query', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query: kbQuery })
