@@ -225,7 +225,8 @@ client.on('messageCreate', async (message) => {
         if (!tpData || tpData.length === 0) {
           // Bổ sung vào pending_tickers
           try {
-            const userUuid = crypto.createHash('md5').update(message.author.id).digest('hex').replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5');
+            const hash = crypto.createHash('md5').update(message.author.id).digest('hex');
+            const userUuid = `${hash.slice(0,8)}-${hash.slice(8,12)}-${hash.slice(12,16)}-${hash.slice(16,20)}-${hash.slice(20,32)}`;
             const { data: pendingData, error: checkErr } = await supabase.from('pending_tickers').select('*').eq('ticker', ticker).maybeSingle()
             if (checkErr) console.error('Lỗi check pending_tickers:', checkErr)
             
