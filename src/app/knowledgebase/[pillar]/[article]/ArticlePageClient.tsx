@@ -71,14 +71,37 @@ function CandleChart({ candles }: { candles: CandleShape[] }) {
     )
 }
 
+function parseFormattedText(text: string, textClass: string) {
+    if (!text) return null;
+    return text.split('\n').filter(l => l.trim()).map((line, i) => {
+        const isBullet = line.trim().startsWith('-');
+        const cleanLine = isBullet ? line.replace(/^\s*-\s*/, '') : line;
+        
+        const parts = cleanLine.split(/(\*\*.*?\*\*)/g).map((part, j) => {
+            if (part.startsWith('**') && part.endsWith('**')) {
+                return <strong key={j} className="font-extrabold text-current brightness-150">{part.slice(2, -2)}</strong>
+            }
+            return part;
+        });
+
+        if (isBullet) {
+            return (
+                <div key={i} className="flex items-start gap-2.5 pl-2">
+                    <span className="shrink-0 mt-2 w-1.5 h-1.5 rounded-full bg-current opacity-60"></span>
+                    <p className={`flex-1 ${textClass} m-0`}>{parts}</p>
+                </div>
+            )
+        }
+        return <p key={i} className={`${textClass} m-0`}>{parts}</p>
+    })
+}
+
 function ContentBlockRenderer({ block }: { block: ContentBlock }) {
     switch (block.type) {
         case 'intro':
             return (
                 <div className="space-y-4">
-                    {(block.content as string).split('\n\n').map((para, i) => para.trim() && (
-                        <p key={i} className="text-white/65 text-base leading-relaxed">{para.trim()}</p>
-                    ))}
+                    {parseFormattedText(block.content as string, 'text-white/65 text-base leading-relaxed')}
                 </div>
             )
         case 'key-insight':
@@ -91,15 +114,19 @@ function ContentBlockRenderer({ block }: { block: ContentBlock }) {
                         boxShadow: '0 4px 16px rgba(34,197,94,0.08)',
                     }}
                 >
-                    <p className="text-emerald-400 font-bold text-sm mb-2">{block.title}</p>
-                    <p className="text-emerald-200/80 font-semibold leading-relaxed">{block.content as string}</p>
+                    <p className="text-emerald-400 font-bold text-sm mb-3">{block.title}</p>
+                    <div className="space-y-3 text-emerald-200/80">
+                        {parseFormattedText(block.content as string, 'font-medium leading-relaxed')}
+                    </div>
                 </div>
             )
         case 'concept':
             return (
                 <div>
                     <h3 className="text-white font-bold text-lg mb-3">{block.title}</h3>
-                    <p className="text-white/55 leading-relaxed text-justify">{block.content as string}</p>
+                    <div className="space-y-3 text-white/55">
+                        {parseFormattedText(block.content as string, 'leading-relaxed text-justify')}
+                    </div>
                 </div>
             )
         case 'quote':
@@ -161,8 +188,10 @@ function ContentBlockRenderer({ block }: { block: ContentBlock }) {
                         border: '1.5px solid rgba(251,191,36,0.25)',
                     }}
                 >
-                    <h3 className="text-amber-400 font-bold text-sm mb-2">{block.title}</h3>
-                    <p className="text-amber-200/70 text-sm leading-relaxed">{block.content as string}</p>
+                    <h3 className="text-amber-400 font-bold text-sm mb-3">{block.title}</h3>
+                    <div className="space-y-3 text-amber-200/70">
+                        {parseFormattedText(block.content as string, 'text-sm leading-relaxed')}
+                    </div>
                 </div>
             )
         case 'summary':
