@@ -673,6 +673,32 @@ export const PILLARS: Pillar[] = [
             },
         ],
     },
+
+    // ── DOANH NGHIỆP: PHÂN TÍCH CHUYÊN SÂU ─────────────────────────────────
+    {
+        id: 'company-analysis',
+        slug: 'phan-tich-doanh-nghiep',
+        title: 'Phân Tích Doanh Nghiệp',
+        subtitle: 'Company Analysis — VVIA Framework',
+        description: 'Kho lưu trữ các bài phân tích chuyên sâu bóc tách nội hàm doanh nghiệp theo chuẩn 4 Tầng của hệ thống Vietnam Value Investing Analyzer (VVIA).',
+        track: 'mastery',
+        level: 3,
+        icon: '🏢',
+        color: 'bg-indigo-50',
+        accentColor: 'text-indigo-700',
+        borderColor: 'border-indigo-200',
+        articleCount: 1,
+        articles: [
+            {
+                slug: 'vvia-bank-mbb-2026',
+                title: 'Khám Sức Khỏe Ngân Hàng VVIA Bank: Đánh giá MBB',
+                summary: 'Định giá ngân hàng TMCP Quân Đội (MBB) qua lăng kính của Benjamin Graham và Warren Buffett. Lợi thế vô địch CASA liệu có làm lu mờ rủi ro bao phủ nợ xấu?',
+                readTime: 5,
+                difficulty: 'Trung cấp',
+                tags: ['MBB', 'Ngân Hàng', 'CASA', 'VVIA Bank'],
+            }
+        ],
+    },
 ]
 
 // Helper functions

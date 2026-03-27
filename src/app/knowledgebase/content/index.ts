@@ -53,6 +53,9 @@ import { content as williamOneilCanslim } from './huyen-thoai-dau-tu/william-one
 import { content as darvasBoxTheory } from './huyen-thoai-dau-tu/darvas-box-theory'
 import { content as buffettTheSnowball } from './huyen-thoai-dau-tu/buffett-the-snowball'
 
+// Phân Tích Doanh Nghiệp (VVIA)
+import { content as vviaBankMbb } from './phan-tich-doanh-nghiep/vvia-bank-mbb-2026'
+
 export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     // Tài Chính Cá Nhân
     'tai-chinh-ca-nhan/buc-tranh-tai-chinh': bucTranhTaiChinh,
@@ -107,6 +110,9 @@ export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     'huyen-thoai-dau-tu/william-oneil-canslim': williamOneilCanslim,
     'huyen-thoai-dau-tu/darvas-box-theory': darvasBoxTheory,
     'huyen-thoai-dau-tu/buffett-the-snowball': buffettTheSnowball,
+    
+    // Doanh Nghiệp
+    'phan-tich-doanh-nghiep/vvia-bank-mbb-2026': vviaBankMbb,
 }
 
 export function getArticleContent(pillarSlug: string, articleSlug: string): ContentBlock[] | null {
