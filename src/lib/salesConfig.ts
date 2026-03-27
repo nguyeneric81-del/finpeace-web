@@ -4,16 +4,21 @@
 // Agent code phải khớp với sales_agents.code trong Supabase.
 // ──────────────────────────────────────────────────────────────
 
-export interface SalesAgent {
+export interface SalesAgentConfig {
   name: string
   email: string      // Email nhận thông báo lead mới
   agentCode: string  // Code trong URL LP: /lp/[agentCode]/...
 }
 
-export const SALES_CONFIG: Record<string, SalesAgent> = {
+export const SALES_CONFIG: Record<string, SalesAgentConfig> = {
+  joice06: {
+    name: 'Joice Lê',
+    email: 'info@finpeace.vn', // Email For Joice
+    agentCode: 'joice06',
+  },
   mq01: {
     name: 'Minh Quang',
-    email: 'minhquang@finpeace.cloud',
+    email: 'quangnhatvtn@gmail.com',
     agentCode: 'mq01',
   },
   aduc02: {
