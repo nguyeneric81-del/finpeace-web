@@ -57,6 +57,7 @@ import { content as buffettTheSnowball } from './huyen-thoai-dau-tu/buffett-the-
 import { content as vviaBankMbb } from './phan-tich-doanh-nghiep/vvia-bank-mbb-2026'
 import { content as vviaTechFpt } from './phan-tich-doanh-nghiep/vvia-tech-fpt-2026'
 import { vviaSteelHpg2026 as vviaSteelHpg } from './phan-tich-doanh-nghiep/vvia-steel-hpg-2026'
+import { vviaSecuritiesSsi2026 as vviaSecuritiesSsi } from './phan-tich-doanh-nghiep/vvia-securities-ssi-2026'
 
 export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     // Tài Chính Cá Nhân
@@ -117,6 +118,7 @@ export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     'phan-tich-doanh-nghiep/vvia-bank-mbb-2026': vviaBankMbb,
     'phan-tich-doanh-nghiep/vvia-tech-fpt-2026': vviaTechFpt,
     'phan-tich-doanh-nghiep/vvia-steel-hpg-2026': vviaSteelHpg,
+    'phan-tich-doanh-nghiep/vvia-securities-ssi-2026': vviaSecuritiesSsi,
 }
 
 export function getArticleContent(pillarSlug: string, articleSlug: string): ContentBlock[] | null {

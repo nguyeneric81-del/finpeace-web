@@ -689,7 +689,7 @@ export const PILLARS: Pillar[] = [
         color: 'bg-indigo-50',
         accentColor: 'text-indigo-700',
         borderColor: 'border-indigo-200',
-        articleCount: 3,
+        articleCount: 4,
         articles: [
             {
                 slug: 'vvia-bank-mbb-2026',
@@ -714,6 +714,14 @@ export const PILLARS: Pillar[] = [
                 readTime: 5,
                 difficulty: 'Trung cấp',
                 tags: ['HPG', 'Thép', 'Dung Quất', 'VVIA'],
+            },
+            {
+                slug: 'vvia-securities-ssi-2026',
+                title: 'Đánh giá SSI',
+                summary: 'Vị thế "Anh cả đỏ" ngành chứng khoán trước cuộc chiến Zero-Fee và nâng hạng thị trường. Lợi thế quy mô vốn hay gánh nặng cồng kềnh?',
+                readTime: 6,
+                difficulty: 'Trung cấp',
+                tags: ['SSI', 'Chứng khoán', 'Tài chính', 'VVIA'],
             }
         ],
     },
