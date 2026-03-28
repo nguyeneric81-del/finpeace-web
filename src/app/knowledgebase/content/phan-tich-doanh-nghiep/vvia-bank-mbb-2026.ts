@@ -21,9 +21,18 @@ export const content: ContentBlock[] = [
         content: '- **ROE (Tỷ suất sinh lời):** Luôn duy trì > 20%, lọt top cao nhất Châu Á.\n- **Tỷ lệ chi phí (CIR):** Rất tối ưu ở mức 31.5% đến 33.0%. Hệ thống Digital Banking làm việc thay cho hàng vạn nhân viên vật lý.'
     },
     {
-        type: 'warning',
-        title: '🛑 Tầng 4 (Stress Test): Cục Nghẹn Trái Phiếu',
-        content: 'MBB từng là một trong những ngân hàng chi lớn để nắm giữ Trái phiếu Doanh nghiệp (đặc biệt là Novaland/Trung Nam). Mặc dù đã xử lý dần dần, rủi ro đáo hạn và phụ thuộc vào phục hồi BĐS vẫn là áp lực ngắn hạn kìm hãm cổ phiếu bứt phá mạnh.'
+        type: 'widget',
+        content: '',
+        widgetName: 'BankingStressTest',
+        widgetProps: {
+            ticker: 'MBB',
+            coreProfit: 38000,
+            totalLoan: 600000,
+            baseCASA: 38.0,
+            baseNPL: 2.0,
+            baseLLR: 95.0,
+            costOfFundsGap: 240
+        }
     },
     {
         type: 'steps',
