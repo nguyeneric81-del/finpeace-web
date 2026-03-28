@@ -689,7 +689,7 @@ export const PILLARS: Pillar[] = [
         color: 'bg-indigo-50',
         accentColor: 'text-indigo-700',
         borderColor: 'border-indigo-200',
-        articleCount: 2,
+        articleCount: 3,
         articles: [
             {
                 slug: 'vvia-bank-mbb-2026',
@@ -706,6 +706,14 @@ export const PILLARS: Pillar[] = [
                 readTime: 6,
                 difficulty: 'Nâng cao',
                 tags: ['FPT', 'Công nghệ', 'AI', 'VVIA'],
+            },
+            {
+                slug: 'vvia-steel-hpg-2026',
+                title: 'Đánh giá HPG',
+                summary: 'Cỗ máy in tiền khổng lồ Dung Quất 2 và kỷ luật thép của Chủ tịch Trần Đình Long. Đi tìm biên an toàn cho cổ phiếu quốc dân.',
+                readTime: 5,
+                difficulty: 'Trung cấp',
+                tags: ['HPG', 'Thép', 'Dung Quất', 'VVIA'],
             }
         ],
     },
