@@ -16,9 +16,16 @@ export const content: ContentBlock[] = [
         content: '- **Tăng trưởng Global IT:** Bị AI như Copilot cắn trả, khiến Pricing Power (Quyền lực định giá) giảm sút. Biên lợi gộp giật lùi từ 38.5% xuống mức Báo Động 31%. Tốc độ tăng trưởng doanh thu dự phóng bị cắt máu từ 28% xuống còn **10%/năm**.\n- **ROIC Rải Đá:** Tụt thẳng từ kỷ lục 25.2% xuống **16.5%** vì rào cản nhân công giá rẻ bị phá vỡ. FPT phải đốt CAPEX khủng khiếp vào Datacenter và GPU để bắt kịp thế giới.'
     },
     {
-        type: 'key-insight',
-        title: '⚖️ Tầng 3 (Tính Toán Định Giá)',
-        content: '- **Mô hình DCF Chiết khấu:** Đạt mức **111.000 VNĐ/cp** (Trong kịch bản Stress test tăng trưởng giảm về 10%, WACC=11%).\n- **Mô hình Graham (Biên an toàn 50%):** Ép giá nhặt xác ở mức **104.000 VNĐ/cp**.\n- **📌 Khuyến Nghị Cắt Ruột:** Vùng giải ngân an toàn là 104k - 111k. Mua đuổi xa hơn vùng này là Trả Tiền cho Kỳ vọng. Warren Buffett từng cắt lỗ toàn bộ Mảng công nghệ IBM năm 2018 khi Con hào IT phai nhạt vì Kỷ nguyên AWS Cloud đè bẹp.'
+        type: 'widget',
+        content: '',
+        widgetName: 'ValuationSlider',
+        widgetProps: {
+            ticker: 'FPT',
+            basePrice: 111000,
+            baseGrowth: 10,
+            multiplier: 1600,
+            currentPrice: 130000
+        }
     },
     {
         type: 'warning',

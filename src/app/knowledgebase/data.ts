@@ -34,7 +34,7 @@ export interface CandleShape {
 }
 
 export interface ContentBlock {
-    type: 'intro' | 'key-insight' | 'concept' | 'quote' | 'checklist' | 'warning' | 'summary' | 'steps' | 'candle-patterns' | 'contract'
+    type: 'intro' | 'key-insight' | 'concept' | 'quote' | 'checklist' | 'warning' | 'summary' | 'steps' | 'candle-patterns' | 'contract' | 'widget'
     title?: string
     content: string | string[]
     author?: string
@@ -43,6 +43,8 @@ export interface ContentBlock {
     patterns?: CandlePatternItem[]   // dùng cho type: 'candle-patterns'
     clauses?: ContractClause[]       // dùng cho type: 'contract'
     signatureFields?: string[]       // dùng cho type: 'contract' — các dòng ký tên
+    widgetName?: string              // dùng cho type: 'widget'
+    widgetProps?: any                // props truyền vào widget
 }
 
 export interface Article {
