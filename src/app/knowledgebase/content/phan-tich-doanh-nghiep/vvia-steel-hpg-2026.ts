@@ -35,6 +35,6 @@ export const vviaSteelHpg2026: ContentBlock[] = [
     },
     {
         type: 'summary',
-        content: 'Hoà Phát là cỗ xe lu lầm lỳ tiến về phía trước. Bạn chỉ việc lên xe khi giá thị trường rẻ hơn mức giá trị thực tế do chính bạn tự tin định lượng.'
+        content: ['Hoà Phát là cỗ xe lu lầm lỳ tiến về phía trước. Bạn chỉ việc lên xe khi giá thị trường rẻ hơn mức giá trị thực tế do chính bạn tự tin định lượng.']
     }
 ]
