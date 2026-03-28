@@ -59,6 +59,12 @@ import { vviaBankVcb2026 as vviaBankVcb } from './phan-tich-doanh-nghiep/vvia-ba
 import { vviaBankTcb2026 as vviaBankTcb } from './phan-tich-doanh-nghiep/vvia-bank-tcb-2026'
 import { vviaBankVpb2026 as vviaBankVpb } from './phan-tich-doanh-nghiep/vvia-bank-vpb-2026'
 import { vviaBankAcb2026 as vviaBankAcb } from './phan-tich-doanh-nghiep/vvia-bank-acb-2026'
+import { vviaBankCtg2026 as vviaBankCtg } from './phan-tich-doanh-nghiep/vvia-bank-ctg-2026'
+import { vviaBankBid2026 as vviaBankBid } from './phan-tich-doanh-nghiep/vvia-bank-bid-2026'
+import { vviaBankStb2026 as vviaBankStb } from './phan-tich-doanh-nghiep/vvia-bank-stb-2026'
+import { vviaBankVib2026 as vviaBankVib } from './phan-tich-doanh-nghiep/vvia-bank-vib-2026'
+import { vviaBankTpb2026 as vviaBankTpb } from './phan-tich-doanh-nghiep/vvia-bank-tpb-2026'
+import { vviaBankHdb2026 as vviaBankHdb } from './phan-tich-doanh-nghiep/vvia-bank-hdb-2026'
 import { content as vviaTechFpt } from './phan-tich-doanh-nghiep/vvia-tech-fpt-2026'
 import { vviaSteelHpg2026 as vviaSteelHpg } from './phan-tich-doanh-nghiep/vvia-steel-hpg-2026'
 import { vviaSecuritiesSsi2026 as vviaSecuritiesSsi } from './phan-tich-doanh-nghiep/vvia-securities-ssi-2026'
@@ -124,6 +130,12 @@ export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     'phan-tich-doanh-nghiep/vvia-bank-tcb-2026': vviaBankTcb,
     'phan-tich-doanh-nghiep/vvia-bank-vpb-2026': vviaBankVpb,
     'phan-tich-doanh-nghiep/vvia-bank-acb-2026': vviaBankAcb,
+    'phan-tich-doanh-nghiep/vvia-bank-ctg-2026': vviaBankCtg,
+    'phan-tich-doanh-nghiep/vvia-bank-bid-2026': vviaBankBid,
+    'phan-tich-doanh-nghiep/vvia-bank-stb-2026': vviaBankStb,
+    'phan-tich-doanh-nghiep/vvia-bank-vib-2026': vviaBankVib,
+    'phan-tich-doanh-nghiep/vvia-bank-tpb-2026': vviaBankTpb,
+    'phan-tich-doanh-nghiep/vvia-bank-hdb-2026': vviaBankHdb,
     'phan-tich-doanh-nghiep/vvia-tech-fpt-2026': vviaTechFpt,
     'phan-tich-doanh-nghiep/vvia-steel-hpg-2026': vviaSteelHpg,
     'phan-tich-doanh-nghiep/vvia-securities-ssi-2026': vviaSecuritiesSsi,
