@@ -31,7 +31,10 @@ export const content: ContentBlock[] = [
             baseCASA: 38.0,
             baseNPL: 2.0,
             baseLLR: 95.0,
-            costOfFundsGap: 240
+            costOfFundsGap: 240,
+            currentEquity: 100000,
+            sharesOutstanding: 5287,
+            currentPrice: 25800
         }
     },
     {

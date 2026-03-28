@@ -11,8 +11,10 @@ interface BankingStressTestProps {
     baseCASA: number        // Tỷ lệ CASA gốc (VD: 38.0)
     baseNPL: number         // Tỷ lệ nợ xấu gốc (VD: 2.0)
     baseLLR: number         // Tỉ lệ bao phủ gốc (VD: 95.0)
-    costOfFundsGap: number  // Mỗi 1% CASA giảm, chi phí vốn tăng thêm (Quy ra Tỷ VNĐ cho mỗi 1% huy động).
-                             // VD: Với huy động 600k tỷ, chênh lệch giữa lãi CASA & Tiết kiệm là ~4% => 1% CASA giảm tốn 600k * 1% * 4% = 240 tỷ.
+    costOfFundsGap: number  // Mỗi 1% CASA giảm, chi phí vốn tăng thêm (Quy ra Tỷ VNĐ)
+    currentEquity: number   // Vốn Chủ Sở Hữu lũy kế tính đến trước Q hiện tại (Tỷ VNĐ) VD: 100000
+    sharesOutstanding: number // Khối lượng cổ phiếu lưu hành (Triệu CP) VD: 5287
+    currentPrice: number    // Giá trên sàn hiện hành (VNĐ) VD: 25800
 }
 
 export default function BankingStressTest({
@@ -22,10 +24,14 @@ export default function BankingStressTest({
     baseCASA = 38.0,
     baseNPL = 2.0,
     baseLLR = 95.0,
-    costOfFundsGap = 240
+    costOfFundsGap = 240,
+    currentEquity = 100000,
+    sharesOutstanding = 5287,
+    currentPrice = 25800
 }: BankingStressTestProps) {
     const [casaChange, setCasaChange] = useState<number>(0) // Từ -20 đến 10
     const [nplChange, setNplChange] = useState<number>(0)   // Từ 0 đến 5
+    const [targetPB, setTargetPB] = useState<number>(1.5)   // P/B Kỳ vọng (0.5 đến 3.0)
 
     const [finalProfit, setFinalProfit] = useState<number>(coreProfit)
     const [animateValue, setAnimateValue] = useState<number>(coreProfit)
@@ -72,10 +78,35 @@ export default function BankingStressTest({
         return Math.round(val).toLocaleString('vi-VN') + ' Tỷ'
     }
 
+    const formatPrice = (val: number) => {
+        return Math.round(val).toLocaleString('vi-VN') + ' đ'
+    }
+
     const currentCASA = baseCASA + casaChange
     const currentNPL = baseNPL + nplChange
 
     const isBankrupt = finalProfit <= 0
+
+    // P/B Valuation Logic
+    const projectedEquity = currentEquity + finalProfit
+    const projectedBVPS = (projectedEquity * 1000000000) / (sharesOutstanding * 1000000)
+    const fairPrice = projectedBVPS * targetPB
+    
+    // Smooth fair price animation
+    const [animateFairPrice, setAnimateFairPrice] = useState<number>(fairPrice)
+    useEffect(() => {
+        const step = (fairPrice - animateFairPrice) / 10
+        if (Math.abs(fairPrice - animateFairPrice) > 50) {
+            const timer = setTimeout(() => {
+                setAnimateFairPrice(prev => prev + step)
+            }, 16)
+            return () => clearTimeout(timer)
+        } else {
+            setAnimateFairPrice(fairPrice)
+        }
+    }, [fairPrice, animateFairPrice])
+
+    const upside = ((animateFairPrice - currentPrice) / currentPrice) * 100
 
     return (
         <div 
@@ -188,7 +219,7 @@ export default function BankingStressTest({
                         <div className="w-full h-px border-b border-dashed border-slate-600/50 my-1"></div>
                         
                         <div>
-                            <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: isBankrupt ? '#FCA5A5' : '#94A3B8' }}>LỢI NHUẬN RÒNG CUỐI CÙNG</p>
+                            <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: isBankrupt ? '#FCA5A5' : '#94A3B8' }}>LỢI NHUẬN RÒNG SAU SỐC</p>
                             <motion.p 
                                 className="text-4xl font-black tabular-nums tracking-tight"
                                 style={{ color: isBankrupt ? '#EF4444' : finalProfit < coreProfit/2 ? '#F59E0B' : '#10B981' }}
@@ -196,6 +227,51 @@ export default function BankingStressTest({
                                 {isBankrupt ? '-' : ''}{formatVND(Math.abs(animateValue))}
                             </motion.p>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* P/B Valuation Panel */}
+            <div className="bg-black/30 border border-indigo-500/20 rounded-xl p-5 mt-2">
+                <div className="flex flex-col md:flex-row gap-6">
+                    {/* PB Control */}
+                    <div className="flex-1">
+                        <div className="flex justify-between items-end mb-2">
+                            <label className="text-indigo-300 font-semibold text-sm">
+                                Định Giá Bằng P/B ({targetPB.toFixed(2)}x)
+                            </label>
+                            <span className="text-sm font-bold text-indigo-400">
+                                BVPS Dự Phóng: <span className="text-md text-white tabular-nums">{formatPrice(projectedBVPS)}</span>
+                            </span>
+                        </div>
+                        <p className="text-slate-500 text-xs mb-3">Với Vốn chủ sở hữu dự phóng: {formatVND(projectedEquity)}</p>
+                        <input 
+                            type="range" min="0.5" max="3" step="0.1"
+                            value={targetPB}
+                            onChange={(e) => setTargetPB(Number(e.target.value))}
+                            className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                        />
+                        <div className="flex justify-between text-[10px] text-slate-500 font-medium px-1 mt-1">
+                            <span>0.5x (Khủng hoảng)</span>
+                            <span>{targetPB.toFixed(1)}x (Kỳ vọng)</span>
+                            <span>3.0x (Trượt giá bong bóng)</span>
+                        </div>
+                    </div>
+
+                    {/* Fair Price Display */}
+                    <div className="w-full md:w-1/3 shrink-0 flex flex-col justify-center items-end bg-indigo-950/30 p-4 rounded-lg border border-indigo-500/20">
+                        <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest mb-1">Mức Giá Hợp Lý</p>
+                        <div className="flex items-baseline gap-2">
+                            <motion.span 
+                                className="text-3xl font-black tabular-nums tracking-tight text-white mb-1"
+                            >
+                                {formatPrice(animateFairPrice)}
+                            </motion.span>
+                        </div>
+                        <div className={`text-sm font-bold flex items-center gap-1 ${upside >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                            {upside >= 0 ? '▲ Biên An Toàn' : '▼ Cắt Lỗ'} {Math.abs(upside).toFixed(1)}%
+                        </div>
+                        <p className="text-[10px] text-slate-500 mt-1">Giá hiện hành: {formatPrice(currentPrice)}</p>
                     </div>
                 </div>
             </div>
