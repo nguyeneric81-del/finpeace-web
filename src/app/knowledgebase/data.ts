@@ -707,6 +707,7 @@ export const PILLARS: Pillar[] = [
                 readTime: 5,
                 difficulty: 'Trung cấp',
                 tags: ['VCB', 'Big4', 'Ngân hàng', 'VVIA'],
+                hasFlashcards: true,
             },
             {
                 slug: 'vvia-bank-tcb-2026',
