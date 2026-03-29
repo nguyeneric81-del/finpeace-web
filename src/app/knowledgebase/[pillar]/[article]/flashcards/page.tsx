@@ -6,15 +6,17 @@ import { flashcardsRegistry } from '../../../content/phan-tich-doanh-nghiep/flas
 import Flashcard from '@/components/ui/Flashcard'
 
 interface PageProps {
-  params: { pillar: string; article: string }
+  params: Promise<{ pillar: string; article: string }>
 }
 
-export default function ArticleFlashcardPage({ params }: PageProps) {
+export default async function ArticleFlashcardPage({ params }: PageProps) {
+  const resolvedParams = await params
+  
   // Find pillar & article
-  const pillar = PILLARS.find(p => p.slug === params.pillar)
+  const pillar = PILLARS.find(p => p.slug === resolvedParams.pillar)
   if (!pillar) return notFound()
 
-  const article = pillar.articles.find(a => a.slug === params.article)
+  const article = pillar.articles.find(a => a.slug === resolvedParams.article)
   if (!article) return notFound()
 
   // Find flashcard data for this article
