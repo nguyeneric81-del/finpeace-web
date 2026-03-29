@@ -217,6 +217,47 @@ function ContentBlockRenderer({ block }: { block: ContentBlock }) {
                     </div>
                 </div>
             )
+        case 'legend-verdict':
+            return (
+                <div
+                    className="relative overflow-hidden rounded-2xl p-6"
+                    style={{
+                        background: 'linear-gradient(135deg, rgba(251,191,36,0.08), rgba(245,158,11,0.03))',
+                        border: '1.5px solid rgba(251,191,36,0.3)',
+                        boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+                    }}
+                >
+                    <div className="absolute top-4 right-6 text-amber-500/10">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                        </svg>
+                    </div>
+
+                    <div className="relative z-10">
+                        <div className="flex items-center gap-4 mb-5">
+                            <div className="w-12 h-12 bg-amber-500/20 rounded-full flex items-center justify-center border border-amber-500/50 shrink-0">
+                                <span className="text-2xl">🏛️</span>
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-amber-400 text-lg tracking-wide">{block.author || "Lời Bình Huyền Thoại"}</h3>
+                                <p className="text-amber-200/50 text-[11px] uppercase tracking-widest font-semibold mt-0.5">Góc nhìn & Lời khuyên</p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4 text-emerald-50 italic text-[15px] pl-4 border-l-2 border-amber-500/40">
+                            {(Array.isArray(block.content) ? block.content : [block.content]).map((item, i) => {
+                                // Nếu câu bắt đầu bằng ngoặc kép, gỡ đi để render đẹp hơn
+                                const text = item.replace(/^["']|["']$/g, '').trim()
+                                return (
+                                    <p key={i} className="leading-relaxed opacity-90 drop-shadow-sm">
+                                        "{text}"
+                                    </p>
+                                )
+                            })}
+                        </div>
+                    </div>
+                </div>
+            )
         case 'steps':
             return (
                 <div>

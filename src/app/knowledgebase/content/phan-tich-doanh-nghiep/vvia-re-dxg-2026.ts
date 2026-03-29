@@ -38,9 +38,9 @@ export const vviaReDxg2026: ContentBlock[] = [
         source: '"Vũ Công Trên Nấm Mồ" (The Gravedancer)'
     },
     {
-        type: 'summary',
+        type: 'legend-verdict',
+        author: 'Sam Zell',
         content: [
-            'Lời bình của Sam Zell về DXG:',
             '"Sale giỏi cỡ nào cũng bằng thừa nếu hàng không ra được sổ.',
             'Hãy thử kéo cột Kẹt Pháp Lý - DXG đang dính đòn kẹt vốn nội thương. Nếu gỡ được Gem Riverside, cổ phiếu này sẽ X2. Nếu không, nó chỉ là canh bạc đi ngang dài hạn."'
         ]

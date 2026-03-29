@@ -38,9 +38,9 @@ export const vviaReKdh2026: ContentBlock[] = [
         source: 'Cha đẻ Phương pháp Đầu tư Giá trị'
     },
     {
-        type: 'summary',
+        type: 'legend-verdict',
+        author: 'Bộ đôi Graham & Buffett',
         content: [
-            'Lời bình của bộ đôi Graham & Buffett:',
             '"Khang Điền có một Bảng cân đối kế toán tuyệt đẹp. Nợ vay mỏng khuyết, tiền mặt đầy và tài sản là thực tế chứ không phải lời hứa.',
             'Sử dụng Stress Widget, ngay cả khi cho hạ giá tồn kho, KDH vẫn đứng vững và sinh lời cho cổ đông dài hạn."'
         ]

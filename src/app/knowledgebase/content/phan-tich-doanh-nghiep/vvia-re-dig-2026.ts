@@ -38,9 +38,9 @@ export const vviaReDig2026: ContentBlock[] = [
         source: '"Vũ Công Trên Nấm Mồ" (The Gravedancer) - Vua sắn bắn BĐS Mỹ'
     },
     {
-        type: 'summary',
+        type: 'legend-verdict',
+        author: 'Sam Zell',
         content: [
-            'Lời bình của Sam Zell về DIG:',
             '"Tôi thích quỹ đất rộng, nhưng tôi ghét những công ty ngâm đất ròng rã vì không có tiền phát triển.',
             'Khi thanh trượt Đóng băng pháp lý nhích lên, các giá trị trên sổ của DIG trở nên vô nghĩa. Bạn đang mua DIG vì kỳ vọng sự fomo của đám đông hơn là giá trị ròng thực tế."'
         ]

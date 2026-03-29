@@ -38,9 +38,9 @@ export const vviaReNvl2026: ContentBlock[] = [
         source: 'Ông vua Chu Kỳ (Market Cycles) & Trái Phiếu Nợ Rác'
     },
     {
-        type: 'summary',
+        type: 'legend-verdict',
+        author: 'Howard Marks',
         content: [
-            'Lời bình của Howard Marks về NVL:',
             '"Novaland là ví dụ kinh điển của việc sử dụng nợ ngắn hạn tài trợ cho tài sản dài hạn đóng băng.',
             'Nếu kéo thanh trượt Kẹt Pháp Lý lên 50%, Vốn chủ sở hữu của NVL gần như bay hơi. Tôi thích mua tài sản nợ xấu (distressed assets), nhưng chỉ khi nó thực sự vỡ trận và giá rẻ mạt như cho không."'
         ]

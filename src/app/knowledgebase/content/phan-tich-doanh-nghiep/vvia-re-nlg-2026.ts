@@ -38,9 +38,9 @@ export const vviaReNlg2026: ContentBlock[] = [
         source: 'Huyền thoại đầu tư Giá Trị (Value Investing)'
     },
     {
-        type: 'summary',
+        type: 'legend-verdict',
+        author: 'Warren Buffett',
         content: [
-            'Lời bình của Warren Buffett về NLG:',
             '"Nam Long là một trong số ít doanh nghiệp VN hiểu sâu sắc về Con Hào Kinh Tế - đó chính là sản phẩm phục vụ nhu cầu thật.',
             'Kéo thử thanh trượt rủi ro xuống, sức khỏe của sổ sách NLG vẫn sống tốt. NLG sử dụng dòng tiền khách hàng trả trước (Float) xuất sắc để vận hành, không cần vay nợ đầm đìa."'
         ]

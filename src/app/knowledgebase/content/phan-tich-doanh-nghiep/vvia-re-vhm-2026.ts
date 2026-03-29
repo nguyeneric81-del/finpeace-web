@@ -38,9 +38,9 @@ export const vviaReVhm2026: ContentBlock[] = [
         source: 'Nhà phiệt tỷ phú Châu Á - Góc nhìn BĐS Phương Đông'
     },
     {
-        type: 'summary',
+        type: 'legend-verdict',
+        author: 'Lý Gia Thành',
         content: [
-            'Lời bình của Lý Gia Thành về VHM:',
             '"Họ có vị trí, họ có dòng tiền khổng lồ, họ thu tiền trước của người mua. Đây là đẳng cấp của một đế chế BĐS thực thụ.',
             'Tuy nhiên, vì cấu trúc tập đoàn, tiền kiếm được không ở lại túi cổ đông. Nếu tôi mua VHM, tôi mua vì quỹ đất quá rẻ so với sổ sách, chứ không trông chờ một cú tăng giá phi mã ngày một ngày hai."'
         ]

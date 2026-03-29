@@ -34,7 +34,7 @@ export interface CandleShape {
 }
 
 export interface ContentBlock {
-    type: 'intro' | 'key-insight' | 'concept' | 'quote' | 'checklist' | 'warning' | 'summary' | 'steps' | 'candle-patterns' | 'contract' | 'widget'
+    type: 'intro' | 'key-insight' | 'concept' | 'quote' | 'checklist' | 'warning' | 'summary' | 'steps' | 'candle-patterns' | 'contract' | 'widget' | 'legend-verdict'
     title?: string
     content: string | string[]
     author?: string

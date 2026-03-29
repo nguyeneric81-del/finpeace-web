@@ -38,9 +38,9 @@ export const vviaRePdr2026: ContentBlock[] = [
         source: 'Sói Già Nợ Rác'
     },
     {
-        type: 'summary',
+        type: 'legend-verdict',
+        author: 'Howard Marks',
         content: [
-            'Lời bình của Howard Marks về PDR:',
             '"Tuyệt hảo! Hành động dọn sạch trái phiếu của PDR chính xác là cách một quản trị viên thoát khỏi điểm chết chu kỳ.',
             'Kéo thanh trượt Lãi suất Lên 5%, PDR gần như không hấn gì vì họ không còn vay quá nhiều. Đây là cổ phiếu Turnaround (Đảo chiều rủi ro) hiếm có."'
         ]
