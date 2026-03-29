@@ -601,6 +601,7 @@ function ArticleEngagementBar({
 export default function ArticlePageClient({ pillar, article, pillarSlug, articleSlug, prevArticle, nextArticle }: Props) {
     const isGated = GATED_TRACKS.includes(pillar.track)
     const [unlocked, setUnlocked] = useState(false)
+    const [openGroup, setOpenGroup] = useState<string | null>(article.industry || 'Khác')
 
     useEffect(() => {
         if (isKbUnlocked()) setUnlocked(true)
@@ -767,31 +768,71 @@ export default function ArticlePageClient({ pillar, article, pillarSlug, article
                                 </p>
                             </div>
                             <div className="p-2 space-y-1">
-                                {pillar.articles.map((a, i) => {
-                                    const isActive = a.slug === articleSlug
-                                    return (
-                                        <Link
-                                            key={a.slug}
-                                            href={`/knowledgebase/${pillar.slug}/${a.slug}`}
-                                            className="flex items-center gap-2 text-xs rounded-xl px-3 py-2 transition-all"
-                                            style={isActive
-                                                ? { background: `${clr.from}20`, color: clr.to, fontWeight: 700 }
-                                                : { color: 'rgba(255,255,255,0.4)' }
-                                            }
-                                        >
-                                            <span
-                                                className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black shrink-0"
+                                {(() => {
+                                    const hasIndustry = pillar.articles.some(a => a.industry);
+                                    
+                                    const renderSidebarLink = (a: typeof pillar.articles[0], index: number) => {
+                                        const isActive = a.slug === articleSlug;
+                                        return (
+                                            <Link
+                                                key={a.slug}
+                                                href={`/knowledgebase/${pillar.slug}/${a.slug}`}
+                                                className={`flex items-center gap-2 text-xs rounded-xl px-3 py-2 transition-all ${!isActive ? 'hover:bg-white/5' : ''}`}
                                                 style={isActive
-                                                    ? { background: `${clr.from}30`, color: clr.to }
-                                                    : { background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.3)' }
+                                                    ? { background: `${clr.from}20`, color: clr.to, fontWeight: 700 }
+                                                    : { color: 'rgba(255,255,255,0.4)' }
                                                 }
                                             >
-                                                {i + 1}
-                                            </span>
-                                            <span className="line-clamp-1">{a.title.split('—')[0].split(':')[0].trim()}</span>
-                                        </Link>
-                                    )
-                                })}
+                                                <span
+                                                    className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black shrink-0"
+                                                    style={isActive
+                                                        ? { background: `${clr.from}30`, color: clr.to }
+                                                        : { background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.3)' }
+                                                    }
+                                                >
+                                                    {index + 1}
+                                                </span>
+                                                <span className="line-clamp-1">{a.title.split('—')[0].split(':')[0].trim()}</span>
+                                            </Link>
+                                        );
+                                    };
+
+                                    if (!hasIndustry) {
+                                        return pillar.articles.map((a, i) => renderSidebarLink(a, i));
+                                    }
+
+                                    const grouped = pillar.articles.reduce((acc, curr) => {
+                                        const grp = curr.industry || 'Khác';
+                                        if (!acc[grp]) acc[grp] = [];
+                                        acc[grp].push(curr);
+                                        return acc;
+                                    }, {} as Record<string, typeof pillar.articles>);
+
+                                    return Object.entries(grouped).map(([industry, articles]) => {
+                                        const isOpen = openGroup === industry;
+                                        return (
+                                            <div key={industry} className="mb-1">
+                                                <button
+                                                    onClick={() => setOpenGroup(isOpen ? null : industry)}
+                                                    className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-white/50 hover:text-white/80 hover:bg-white/5 rounded-xl transition-all"
+                                                >
+                                                    <span>{industry}</span>
+                                                    <span className="text-[10px] opacity-40">
+                                                        {isOpen ? '▲' : '▼'}
+                                                    </span>
+                                                </button>
+                                                {isOpen && (
+                                                    <div className="pl-1 pr-1 pt-1 pb-2 space-y-1">
+                                                        {articles.map((a) => {
+                                                            const globalIndex = pillar.articles.findIndex(art => art.slug === a.slug);
+                                                            return renderSidebarLink(a, globalIndex);
+                                                        })}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    });
+                                })()}
                             </div>
                         </motion.div>
 

@@ -56,6 +56,7 @@ export interface Article {
     tags: string[]
     references?: string[] // Sách/tác giả tham khảo
     hasFlashcards?: boolean // Optional flag to show Flashcards feature
+    industry?: string // Phân loại ngành nghề (Dùng trong group Articles của Pillar Doanh Nghiệp)
 }
 
 export interface Pillar {
@@ -694,6 +695,7 @@ export const PILLARS: Pillar[] = [
         articles: [
             {
                 slug: 'vvia-bank-mbb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá MBB',
                 summary: 'Định giá ngân hàng TMCP Quân Đội (MBB) qua lăng kính của Benjamin Graham và Warren Buffett. Lợi thế vô địch CASA liệu có làm lu mờ rủi ro bao phủ nợ xấu?',
                 readTime: 4,
@@ -702,6 +704,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-vcb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá VCB (Vietcombank)',
                 summary: 'Ông vua định giá hệ thống nhờ lợi thế CASA công vụ vĩnh cửu và bộ bao phủ nợ xấu vô song.',
                 readTime: 5,
@@ -711,6 +714,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-tcb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá TCB (Techcombank)',
                 summary: 'Kẻ săn đuổi vương miện CASA với hệ sinh thái khách hàng VIP và cuộc chơi Trái phiếu/Bất động sản.',
                 readTime: 5,
@@ -719,6 +723,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-vpb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá VPB (VPBank)',
                 summary: 'Cỗ máy đốt cháy giai đoạn bằng tín dụng tiêu dùng rủi ro cao: High Risk - High Return.',
                 readTime: 6,
@@ -727,6 +732,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-acb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá ACB (Á Châu)',
                 summary: 'Bức tường thành phòng thủ tuyệt đối trước trái phiếu doanh nghiệp rác.',
                 readTime: 4,
@@ -735,6 +741,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-ctg-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá CTG (VietinBank)',
                 summary: 'Gã khổng lồ đang thức giấc sau khi làm sạch toàn bộ nợ rác yếu kém.',
                 readTime: 5,
@@ -743,6 +750,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-bid-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá BID (BIDV)',
                 summary: 'Quái vật khổng lồ về dư nợ với sự gột rửa thành công từ bàn tay KEB Hana.',
                 readTime: 5,
@@ -751,6 +759,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-stb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá STB (Sacombank)',
                 summary: 'Canh bạc đổi đời tái cơ cấu, cuộc chơi giành lại vinh quang thuở nào.',
                 readTime: 6,
@@ -759,6 +768,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-vib-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá VIB',
                 summary: 'Ngôi vương bán lẻ đánh cược trọn vẹn sức mạnh vào tài chính hộ gia đình mảng nhà xe.',
                 readTime: 4,
@@ -767,6 +777,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-tpb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá TPB (TPBank)',
                 summary: 'Biểu tượng ngân hàng thời đại số 4.0 và nhóm nợ khuất lấp phía sau cánh gà.',
                 readTime: 4,
@@ -775,6 +786,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-hdb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá HDB (HDBank)',
                 summary: 'Kẻ độc quyền tín dụng nông thôn kết nối từ hệ sinh thái chuỗi Vietjet khổng lồ.',
                 readTime: 5,
@@ -783,6 +795,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-lpb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá LPB (LPBank)',
                 summary: 'Mãnh hổ lột xác thần tốc dưới chế độ quản trị mới nhưng kéo theo thách thức pha loãng.',
                 readTime: 5,
@@ -791,6 +804,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-shb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá SHB (Sài Gòn Hà Nội)',
                 summary: 'Ông lớn "Bo cung" - Ngân hàng tư nhân quy mô siêu tạ với áp lực LLR thiếu hụt.',
                 readTime: 6,
@@ -799,6 +813,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-eib-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá EIB (Eximbank)',
                 summary: 'Ông hoàng một thời kẹt trong "Chiến tranh vương quyền" - Bộ đệm thủng đáy.',
                 readTime: 5,
@@ -807,6 +822,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-msb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá MSB (Maritime Bank)',
                 summary: 'Ngôi sao CASA tàng hình có đáng giá? Chướng ngại vật nợ xấu SMEs quy mô vừa.',
                 readTime: 4,
@@ -815,6 +831,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-ocb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá OCB (Phương Đông)',
                 summary: 'Viên ngọc miền Nam và quả táo đắng của những khoản trái phiếu BĐS dở dang.',
                 readTime: 4,
@@ -823,6 +840,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-ssb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá SSB (SeABank)',
                 summary: 'Giao dịch thuật toán bo cung và vương quyền bảo hộ vững chãi tự nội bộ.',
                 readTime: 5,
@@ -831,6 +849,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-nab-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá NAB (Nam Á)',
                 summary: 'Ngân hàng mới nổi phía Nam, nỗ lực số hóa đẩy tốc độ vay cá nhân.',
                 readTime: 4,
@@ -839,6 +858,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-abb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá ABB (An Bình)',
                 summary: 'Lớp rêu phong chậm tiến phủ lên lợi thế sinh thái nghìn tỷ của Geleximco.',
                 readTime: 3,
@@ -847,6 +867,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-bab-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá BAB (Bắc Á)',
                 summary: 'Bến đỗ an toàn tĩnh lặng dốc lòng vì một TH True Milk vững chãi.',
                 readTime: 3,
@@ -855,6 +876,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-nvb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá NVB (Quốc Dân)',
                 summary: 'Bệnh nhân chờ giải phẫu. Lỗ kỷ lục và cuộc chiến sinh tồn tìm nguồn vốn máu Sun Group.',
                 readTime: 5,
@@ -863,6 +885,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-klb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá KLB (Kiên Long)',
                 summary: 'Chiếc ghế nóng luân chuyển ở khu vực Đồng Bằng Tây Nam Bộ.',
                 readTime: 4,
@@ -871,6 +894,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-bvb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá BVB (Bản Việt)',
                 summary: 'Viet Capital tí hon ở sàn ngân hàng nhưng ôm trọn bí quyết từ đế chế thao lược.',
                 readTime: 4,
@@ -879,6 +903,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-pgb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá PGB (PGBank)',
                 summary: 'Thành Công Group cầm lái, một công cuộc tái thiết lập bắt đầu từ con số 0.',
                 readTime: 4,
@@ -887,6 +912,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-vab-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá VAB (Việt Á Bank)',
                 summary: 'Lớp băng cuối bảng chật vật níu giữ tăng trưởng và CASA cạn kiệt.',
                 readTime: 3,
@@ -895,6 +921,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-sgb-2026',
+                industry: 'Ngân hàng',
                 title: 'Đánh giá SGB (Saigonbank)',
                 summary: 'Hóa thạch đứng yên thời bao cấp - Tín dụng siêu phẳng lặng nhưng LLR đáng giá.',
                 readTime: 3,
@@ -903,6 +930,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-tech-fpt-2026',
+                industry: 'Công nghệ',
                 title: 'Đánh giá FPT',
                 summary: 'Kịch bản AI bào mòn Outsourcing nhân công giá rẻ và góc nhìn thực tế về đà phanh gấp của FPT. Đội ngũ Phân tích Định chế có đang lạc quan thái quá?',
                 readTime: 6,
@@ -911,6 +939,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-steel-hpg-2026',
+                industry: 'Thép',
                 title: 'Đánh giá HPG',
                 summary: 'Cỗ máy in tiền khổng lồ Dung Quất 2 và kỷ luật thép của Chủ tịch Trần Đình Long. Đi tìm biên an toàn cho cổ phiếu quốc dân.',
                 readTime: 5,
@@ -919,6 +948,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-securities-ssi-2026',
+                industry: 'Chứng khoán',
                 title: 'Đánh giá SSI',
                 summary: 'Vị thế "Anh cả đỏ" ngành chứng khoán trước cuộc chiến Zero-Fee và nâng hạng thị trường. Lợi thế quy mô vốn hay gánh nặng cồng kềnh?',
                 readTime: 6,
@@ -927,6 +957,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-re-vhm-2026',
+                industry: 'Bất động sản',
                 title: 'Đánh giá VHM (Vinhomes)',
                 summary: 'Kẻ khổng lồ của đại đô thị, sức mạnh bán buôn wholesale và rủi ro dòng máu chảy ngược về VinFast.',
                 readTime: 6,
@@ -935,6 +966,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-re-nvl-2026',
+                industry: 'Bất động sản',
                 title: 'Đánh giá NVL (Novaland)',
                 summary: 'Cú sập khung của đòn bẩy tỷ đô và cơn ác mộng kẹt thanh khoản trái phiếu/pháp lý.',
                 readTime: 7,
@@ -943,6 +975,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-re-dig-2026',
+                industry: 'Bất động sản',
                 title: 'Đánh giá DIG (DIC Corp)',
                 summary: 'Niềm tin quỹ đất rổ giá siêu ảo và trò chơi đếm cua trong lỗ của dòng tiền đầu cơ bầy đàn.',
                 readTime: 5,
@@ -951,6 +984,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-re-pdr-2026',
+                industry: 'Bất động sản',
                 title: 'Đánh giá PDR (Phát Đạt)',
                 summary: 'Quyết định cắt tay xả nợ trái phiếu tàn khốc và sự hồi sinh ngoạn mục từ cõi chết thanh khoản.',
                 readTime: 5,
@@ -959,6 +993,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-re-dxg-2026',
+                industry: 'Bất động sản',
                 title: 'Đánh giá DXG (Đất Xanh)',
                 summary: 'Đế chế môi giới tham vọng lướt sóng làm chủ đầu tư và vết sẹo kẹt pháp lý Gem Riverside.',
                 readTime: 5,
@@ -967,6 +1002,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-re-nlg-2026',
+                industry: 'Bất động sản',
                 title: 'Đánh giá NLG (Nam Long)',
                 summary: 'Nhà bán lẻ BĐS vừa túi tiền, thành trì an toàn tuyệt đối nhưng thiếu đi những cú tăng trưởng nhân X thần thánh.',
                 readTime: 4,
@@ -975,6 +1011,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-re-kdh-2026',
+                industry: 'Bất động sản',
                 title: 'Đánh giá KDH (Khang Điền)',
                 summary: 'Ốc đảo pháp lý sạch bao quanh Sài Gòn, nợ mỏng như giấy nhưng động lực tăng trưởng bị giới hạn bởi sự cẩn trọng.',
                 readTime: 4,

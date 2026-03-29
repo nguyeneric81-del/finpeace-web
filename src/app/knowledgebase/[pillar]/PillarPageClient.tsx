@@ -346,73 +346,109 @@ export default function PillarPageClient({ pillar }: { pillar: Pillar }) {
                     Danh Sách Bài Học
                 </motion.h2>
 
-                <div className="space-y-3">
-                    {pillar.articles.map((article, i) => {
-                        const diff = DIFFICULTY_STYLE[article.difficulty] ?? DIFFICULTY_STYLE['Cơ bản']
-                        return (
-                            <motion.div
-                                key={article.slug}
-                                {...fadeUp(i * 0.04)}
-                                whileHover={{ x: 4 }}
-                            >
-                                <Link href={`/knowledgebase/${pillar.slug}/${article.slug}`} className="block cursor-pointer">
-                                    <div
-                                        className="rounded-2xl p-5 transition-all duration-200 group"
-                                        style={{
-                                            background: 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
-                                            border: '1px solid rgba(255,255,255,0.07)',
-                                            boxShadow: '0 4px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04)',
-                                        }}
-                                    >
-                                        <div className="flex items-start gap-4">
-                                            <div
-                                                className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm shrink-0"
-                                                style={{
-                                                    background: `${clr.from}20`,
-                                                    color: clr.to,
-                                                    border: `1.5px solid ${clr.from}35`,
-                                                }}
-                                            >
-                                                {String(i + 1).padStart(2, '0')}
-                                            </div>
-
-                                            <div className="flex-1 min-w-0">
-                                                <h3 className="font-bold text-white/85 text-sm leading-snug mb-2 group-hover:text-white transition-colors">
-                                                    {article.title}
-                                                </h3>
-                                                <p className="text-white/40 text-xs leading-relaxed mb-3">
-                                                    {article.summary}
-                                                </p>
-
-                                                <div className="flex flex-wrap items-center gap-2">
-                                                    <span
-                                                        className="text-xs font-semibold px-2.5 py-0.5 rounded-full border"
-                                                        style={{ background: diff.bg, color: diff.text, borderColor: diff.border }}
-                                                    >
-                                                        {article.difficulty}
-                                                    </span>
-                                                    <span className="flex items-center gap-1 text-xs text-white/30">
-                                                        <Clock className="w-3 h-3" /> {article.readTime} phút
-                                                    </span>
-                                                    {article.tags.slice(0, 2).map((tag: string) => (
-                                                        <span key={tag} className="text-xs text-white/20 px-2 py-0.5 rounded-full"
-                                                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                                                            {tag}
-                                                        </span>
-                                                    ))}
+                <div className="space-y-10">
+                    {(() => {
+                        const hasIndustry = pillar.articles.some(a => a.industry);
+                        
+                        const renderArticleCard = (article: typeof pillar.articles[0], index: number) => {
+                            const diff = DIFFICULTY_STYLE[article.difficulty] ?? DIFFICULTY_STYLE['Cơ bản']
+                            return (
+                                <motion.div
+                                    key={article.slug}
+                                    {...fadeUp(index * 0.04)}
+                                    whileHover={{ x: 4 }}
+                                >
+                                    <Link href={`/knowledgebase/${pillar.slug}/${article.slug}`} className="block cursor-pointer">
+                                        <div
+                                            className="rounded-2xl p-5 transition-all duration-200 group"
+                                            style={{
+                                                background: 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
+                                                border: '1px solid rgba(255,255,255,0.07)',
+                                                boxShadow: '0 4px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04)',
+                                            }}
+                                        >
+                                            <div className="flex items-start gap-4">
+                                                <div
+                                                    className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm shrink-0"
+                                                    style={{
+                                                        background: `${clr.from}20`,
+                                                        color: clr.to,
+                                                        border: `1.5px solid ${clr.from}35`,
+                                                    }}
+                                                >
+                                                    {String(index + 1).padStart(2, '0')}
                                                 </div>
-                                            </div>
 
-                                            <ChevronRight
-                                                className="w-4 h-4 shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                style={{ color: clr.to }}
-                                            />
+                                                <div className="flex-1 min-w-0">
+                                                    <h3 className="font-bold text-white/85 text-sm leading-snug mb-2 group-hover:text-white transition-colors">
+                                                        {article.title}
+                                                    </h3>
+                                                    <p className="text-white/40 text-xs leading-relaxed mb-3">
+                                                        {article.summary}
+                                                    </p>
+
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <span
+                                                            className="text-xs font-semibold px-2.5 py-0.5 rounded-full border"
+                                                            style={{ background: diff.bg, color: diff.text, borderColor: diff.border }}
+                                                        >
+                                                            {article.difficulty}
+                                                        </span>
+                                                        <span className="flex items-center gap-1 text-xs text-white/30">
+                                                            <Clock className="w-3 h-3" /> {article.readTime} phút
+                                                        </span>
+                                                        {article.tags.slice(0, 2).map((tag: string) => (
+                                                            <span key={tag} className="text-xs text-white/20 px-2 py-0.5 rounded-full"
+                                                                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                                                                {tag}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                <ChevronRight
+                                                    className="w-4 h-4 shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    style={{ color: clr.to }}
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                </Link>
-                            </motion.div>
-                        )
-                    })}
+                                    </Link>
+                                </motion.div>
+                            )
+                        }
+
+                        if (!hasIndustry) {
+                            return (
+                                <div className="space-y-3">
+                                    {pillar.articles.map((article, i) => renderArticleCard(article, i))}
+                                </div>
+                            );
+                        }
+
+                        // Group by industry
+                        const grouped = pillar.articles.reduce((acc, curr) => {
+                            const grp = curr.industry || 'Khác';
+                            if (!acc[grp]) acc[grp] = [];
+                            acc[grp].push(curr);
+                            return acc;
+                        }, {} as Record<string, typeof pillar.articles>);
+
+                        return Object.entries(grouped).map(([industry, articles], groupIndex) => (
+                            <div key={industry} className="space-y-4">
+                                <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                                    <span style={{ color: clr.to }}>■</span> 
+                                    {industry} 
+                                    <span className="text-white/30 text-xs ml-1 font-normal tracking-wide">({articles.length} mã)</span>
+                                </h3>
+                                <div className="space-y-3">
+                                    {articles.map(article => {
+                                        const originalIndex = pillar.articles.findIndex(a => a.slug === article.slug);
+                                        return renderArticleCard(article, originalIndex);
+                                    })}
+                                </div>
+                            </div>
+                        ));
+                    })()}
                 </div>
 
                 {/* ── ENGAGEMENT BAR ── */}
