@@ -695,6 +695,7 @@ export const PILLARS: Pillar[] = [
         articles: [
             {
                 slug: 'vvia-bank-mbb-2026',
+                hasFlashcards: true,
                 industry: 'Ngân hàng',
                 title: 'Đánh giá MBB',
                 summary: 'Định giá ngân hàng TMCP Quân Đội (MBB) qua lăng kính của Benjamin Graham và Warren Buffett. Lợi thế vô địch CASA liệu có làm lu mờ rủi ro bao phủ nợ xấu?',
@@ -714,6 +715,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-bank-tcb-2026',
+                hasFlashcards: true,
                 industry: 'Ngân hàng',
                 title: 'Đánh giá TCB (Techcombank)',
                 summary: 'Kẻ săn đuổi vương miện CASA với hệ sinh thái khách hàng VIP và cuộc chơi Trái phiếu/Bất động sản.',
@@ -930,6 +932,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-tech-fpt-2026',
+                hasFlashcards: true,
                 industry: 'Công nghệ',
                 title: 'Đánh giá FPT',
                 summary: 'Kịch bản AI bào mòn Outsourcing nhân công giá rẻ và góc nhìn thực tế về đà phanh gấp của FPT. Đội ngũ Phân tích Định chế có đang lạc quan thái quá?',
@@ -939,6 +942,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-steel-hpg-2026',
+                hasFlashcards: true,
                 industry: 'Thép',
                 title: 'Đánh giá HPG',
                 summary: 'Cỗ máy in tiền khổng lồ Dung Quất 2 và kỷ luật thép của Chủ tịch Trần Đình Long. Đi tìm biên an toàn cho cổ phiếu quốc dân.',
@@ -948,6 +952,7 @@ export const PILLARS: Pillar[] = [
             },
             {
                 slug: 'vvia-securities-ssi-2026',
+                hasFlashcards: true,
                 industry: 'Chứng khoán',
                 title: 'Đánh giá SSI',
                 summary: 'Vị thế "Anh cả đỏ" ngành chứng khoán trước cuộc chiến Zero-Fee và nâng hạng thị trường. Lợi thế quy mô vốn hay gánh nặng cồng kềnh?',
