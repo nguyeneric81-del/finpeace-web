@@ -1,6 +1,7 @@
 'use client'
 import { useState, useCallback, useEffect } from 'react'
 import { Plus, Pencil, Trash2, Loader2, X, Save, Eye, EyeOff, ChevronDown, ChevronUp } from 'lucide-react'
+import KBPerformanceSection from './KBPerformanceSection'
 
 type BehindStory = { point: string; quote: string; source: string }
 type KeyStat = { label: string; value: string; positive?: boolean }
@@ -175,7 +176,7 @@ export default function ThongTinTab() {
       {editing !== null && <InsightForm initial={editing} onSave={handleSave} onCancel={()=>setEditing(null)}/>}
 
       <div className="flex gap-1 bg-[#111827] border border-[#1e2535] rounded-xl p-1 mb-5 w-fit">
-        {[{id:'macro',label:'📈 Macro Insights'},{id:'kb',label:'📚 KB Requests'}].map(s=>(
+        {[{id:'macro',label:'📈 Macro Insights'},{id:'kbperf',label:'📊 KB Performance'},{id:'kb',label:'📚 KB Requests'}].map(s=>(
           <button key={s.id} onClick={()=>setSection(s.id)}
             className={`py-2 px-4 rounded-lg text-sm font-medium transition-all ${section===s.id?'bg-[#c4a67a] text-[#0d1119]':'text-slate-400 hover:text-white'}`}>{s.label}</button>
         ))}
@@ -217,6 +218,8 @@ export default function ThongTinTab() {
           )}
         </div>
       )}
+
+      {section === 'kbperf' && <KBPerformanceSection />}
 
       {section === 'kb' && (
         <div className="text-center py-16 bg-[#111827] border border-[#1e2535] rounded-2xl">
