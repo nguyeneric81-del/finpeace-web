@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, BookOpen, Clock, Tag, Quote, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BookOpen, Clock, Tag, Quote, ChevronLeft, ChevronRight, Zap } from 'lucide-react'
 import {
     type ContentBlock, type ContentBlockItem, type CandlePatternItem,
     type CandleShape, type ContractClause, type Pillar, type Article
@@ -677,6 +677,17 @@ export default function ArticlePageClient({ pillar, article, pillarSlug, article
                     <motion.p {...fadeUp(0.12)} className="text-white/50 text-base leading-relaxed mb-6 max-w-2xl">
                         {article.summary}
                     </motion.p>
+
+                    {article.hasFlashcards && (
+                        <motion.div {...fadeUp(0.13)} className="mb-8">
+                            <Link href={`/knowledgebase/${pillar.slug}/${article.slug}/flashcards`}>
+                                <button className="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all shadow-[0_0_15px_rgba(16,185,129,0.15)] group">
+                                    <Zap className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+                                    Học Nhanh Nội Dung Qua Flashcards
+                                </button>
+                            </Link>
+                        </motion.div>
+                    )}
 
                     {/* Tags */}
                     <motion.div {...fadeUp(0.15)} className="flex flex-wrap gap-2">

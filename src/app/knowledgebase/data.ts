@@ -55,6 +55,7 @@ export interface Article {
     difficulty: 'Cơ bản' | 'Trung cấp' | 'Nâng cao'
     tags: string[]
     references?: string[] // Sách/tác giả tham khảo
+    hasFlashcards?: boolean // Optional flag to show Flashcards feature
 }
 
 export interface Pillar {

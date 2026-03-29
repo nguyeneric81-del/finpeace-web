@@ -22,45 +22,51 @@ export default function Flashcard({ front, back, index, total }: FlashcardProps)
         }`}
       >
         {/* Front Face: Q */}
-        <div className="absolute inset-0 [backface-visibility:hidden] w-full h-full bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-3xl shadow-xl border border-amber-200/60 p-6 sm:p-10 flex flex-col justify-between overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-300 to-amber-500 opacity-80" />
+        <div className="absolute inset-0 [backface-visibility:hidden] w-full h-full bg-[#0D0D18] rounded-3xl shadow-2xl border border-emerald-500/30 p-6 sm:p-10 flex flex-col justify-between overflow-hidden">
+          {/* Subtle Glow Overlay */}
+          <div className="absolute -top-32 -left-32 w-64 h-64 rounded-full opacity-20 bg-emerald-500 blur-3xl pointer-events-none" />
           
-          <div className="flex justify-between items-center text-amber-700/60 text-xs sm:text-sm font-bold tracking-widest uppercase">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-500/50 to-teal-400/50" />
+          
+          <div className="flex justify-between items-center text-emerald-400/80 text-xs sm:text-sm font-bold tracking-widest uppercase z-10">
             <span className="flex items-center gap-2">
-              <span className="text-xl">🤔</span> Concept / Câu hỏi
+              <span className="text-xl opacity-80">🤔</span> Concept / Tư duy
             </span>
-            <span>Card {index} of {total}</span>
+            <span className="opacity-70">Thẻ {index}/{total}</span>
           </div>
           
           <div className="flex-1 flex items-center justify-center text-center z-10">
-            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-800 leading-tight">
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight">
               {front}
             </h3>
           </div>
           
-          <div className="text-center text-amber-600/80 text-sm font-medium animate-pulse">
+          <div className="text-center text-emerald-500/70 text-xs font-semibold animate-pulse z-10 uppercase tracking-widest">
             Chạm để lật thẻ ➔
           </div>
         </div>
 
         {/* Back Face: A */}
-        <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] w-full h-full bg-gradient-to-br from-emerald-50 to-teal-100/50 rounded-3xl shadow-xl border border-emerald-200/60 p-6 sm:p-10 flex flex-col justify-between overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-teal-500 opacity-80" />
+        <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] w-full h-full bg-[#0D0D18] rounded-3xl shadow-2xl border border-teal-500/30 p-6 sm:p-10 flex flex-col justify-between overflow-hidden">
+          {/* Subtle Glow Overlay */}
+          <div className="absolute -bottom-32 -right-32 w-64 h-64 rounded-full opacity-15 bg-teal-400 blur-3xl pointer-events-none" />
           
-          <div className="flex justify-between items-center text-emerald-700/60 text-xs sm:text-sm font-bold tracking-widest uppercase">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400/50 to-emerald-500/50" />
+          
+          <div className="flex justify-between items-center text-teal-400/80 text-xs sm:text-sm font-bold tracking-widest uppercase z-10">
             <span className="flex items-center gap-2">
-              <span className="text-xl">💡</span> Giải mã / Lời giải
+              <span className="text-xl opacity-80">💡</span> Giải mã / Trọng tâm
             </span>
-            <span>Card {index} of {total}</span>
+            <span className="opacity-70">Thẻ {index}/{total}</span>
           </div>
           
           <div className="flex-1 flex items-center justify-center text-center z-10 mt-4 overflow-y-auto custom-scrollbar">
-            <p className="text-lg sm:text-xl lg:text-2xl text-slate-700 leading-relaxed font-medium">
+            <p className="text-lg sm:text-xl lg:text-2xl text-slate-200 leading-relaxed font-medium">
               {back}
             </p>
           </div>
           
-          <div className="text-center text-emerald-600/80 text-sm font-medium mt-4">
+          <div className="text-center text-teal-500/70 text-xs font-semibold mt-4 z-10 uppercase tracking-widest">
             Chạm để quay lại ↺
           </div>
         </div>
