@@ -12,6 +12,7 @@ import { useState, useCallback, useEffect } from 'react'
 import ContentGate, { isKbUnlocked } from '@/components/knowledgebase/ContentGate'
 import ValuationSlider from '@/components/knowledgebase/widgets/ValuationSlider'
 import BankingStressTest from '@/components/knowledgebase/widgets/BankingStressTest'
+import RealEstateStressTest from '@/components/knowledgebase/widgets/RealEstateStressTest'
 
 const GATED_TRACKS = ['investor', 'trader', 'mastery']
 const FREE_BLOCKS_COUNT = 3
@@ -377,6 +378,9 @@ function ContentBlockRenderer({ block }: { block: ContentBlock }) {
             }
             if (block.widgetName === 'BankingStressTest') {
                 return <BankingStressTest {...(block.widgetProps || {})} />
+            }
+            if (block.widgetName === 'RealEstateStressTest') {
+                return <RealEstateStressTest {...(block.widgetProps || {})} />
             }
             return (
                 <div className="p-4 border border-dashed border-red-500/50 bg-red-500/10 rounded-xl text-red-200 text-sm">

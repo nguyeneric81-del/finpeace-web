@@ -71,9 +71,25 @@ import { vviaBankEib2026 as vviaBankEib } from './phan-tich-doanh-nghiep/vvia-ba
 import { vviaBankMsb2026 as vviaBankMsb } from './phan-tich-doanh-nghiep/vvia-bank-msb-2026'
 import { vviaBankOcb2026 as vviaBankOcb } from './phan-tich-doanh-nghiep/vvia-bank-ocb-2026'
 import { vviaBankSsb2026 as vviaBankSsb } from './phan-tich-doanh-nghiep/vvia-bank-ssb-2026'
+import { vviaBankNab2026 as vviaBankNab } from './phan-tich-doanh-nghiep/vvia-bank-nab-2026'
+import { vviaBankAbb2026 as vviaBankAbb } from './phan-tich-doanh-nghiep/vvia-bank-abb-2026'
+import { vviaBankBab2026 as vviaBankBab } from './phan-tich-doanh-nghiep/vvia-bank-bab-2026'
+import { vviaBankNvb2026 as vviaBankNvb } from './phan-tich-doanh-nghiep/vvia-bank-nvb-2026'
+import { vviaBankKlb2026 as vviaBankKlb } from './phan-tich-doanh-nghiep/vvia-bank-klb-2026'
+import { vviaBankBvb2026 as vviaBankBvb } from './phan-tich-doanh-nghiep/vvia-bank-bvb-2026'
+import { vviaBankPgb2026 as vviaBankPgb } from './phan-tich-doanh-nghiep/vvia-bank-pgb-2026'
+import { vviaBankVab2026 as vviaBankVab } from './phan-tich-doanh-nghiep/vvia-bank-vab-2026'
+import { vviaBankSgb2026 as vviaBankSgb } from './phan-tich-doanh-nghiep/vvia-bank-sgb-2026'
 import { content as vviaTechFpt } from './phan-tich-doanh-nghiep/vvia-tech-fpt-2026'
 import { vviaSteelHpg2026 as vviaSteelHpg } from './phan-tich-doanh-nghiep/vvia-steel-hpg-2026'
 import { vviaSecuritiesSsi2026 as vviaSecuritiesSsi } from './phan-tich-doanh-nghiep/vvia-securities-ssi-2026'
+import { vviaReVhm2026 as vviaReVhm } from './phan-tich-doanh-nghiep/vvia-re-vhm-2026'
+import { vviaReNvl2026 as vviaReNvl } from './phan-tich-doanh-nghiep/vvia-re-nvl-2026'
+import { vviaReDig2026 as vviaReDig } from './phan-tich-doanh-nghiep/vvia-re-dig-2026'
+import { vviaRePdr2026 as vviaRePdr } from './phan-tich-doanh-nghiep/vvia-re-pdr-2026'
+import { vviaReDxg2026 as vviaReDxg } from './phan-tich-doanh-nghiep/vvia-re-dxg-2026'
+import { vviaReNlg2026 as vviaReNlg } from './phan-tich-doanh-nghiep/vvia-re-nlg-2026'
+import { vviaReKdh2026 as vviaReKdh } from './phan-tich-doanh-nghiep/vvia-re-kdh-2026'
 
 export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     // Tài Chính Cá Nhân
@@ -148,9 +164,25 @@ export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     'phan-tich-doanh-nghiep/vvia-bank-msb-2026': vviaBankMsb,
     'phan-tich-doanh-nghiep/vvia-bank-ocb-2026': vviaBankOcb,
     'phan-tich-doanh-nghiep/vvia-bank-ssb-2026': vviaBankSsb,
+    'phan-tich-doanh-nghiep/vvia-bank-nab-2026': vviaBankNab,
+    'phan-tich-doanh-nghiep/vvia-bank-abb-2026': vviaBankAbb,
+    'phan-tich-doanh-nghiep/vvia-bank-bab-2026': vviaBankBab,
+    'phan-tich-doanh-nghiep/vvia-bank-nvb-2026': vviaBankNvb,
+    'phan-tich-doanh-nghiep/vvia-bank-klb-2026': vviaBankKlb,
+    'phan-tich-doanh-nghiep/vvia-bank-bvb-2026': vviaBankBvb,
+    'phan-tich-doanh-nghiep/vvia-bank-pgb-2026': vviaBankPgb,
+    'phan-tich-doanh-nghiep/vvia-bank-vab-2026': vviaBankVab,
+    'phan-tich-doanh-nghiep/vvia-bank-sgb-2026': vviaBankSgb,
     'phan-tich-doanh-nghiep/vvia-tech-fpt-2026': vviaTechFpt,
     'phan-tich-doanh-nghiep/vvia-steel-hpg-2026': vviaSteelHpg,
     'phan-tich-doanh-nghiep/vvia-securities-ssi-2026': vviaSecuritiesSsi,
+    'phan-tich-doanh-nghiep/vvia-re-vhm-2026': vviaReVhm,
+    'phan-tich-doanh-nghiep/vvia-re-nvl-2026': vviaReNvl,
+    'phan-tich-doanh-nghiep/vvia-re-dig-2026': vviaReDig,
+    'phan-tich-doanh-nghiep/vvia-re-pdr-2026': vviaRePdr,
+    'phan-tich-doanh-nghiep/vvia-re-dxg-2026': vviaReDxg,
+    'phan-tich-doanh-nghiep/vvia-re-nlg-2026': vviaReNlg,
+    'phan-tich-doanh-nghiep/vvia-re-kdh-2026': vviaReKdh,
 }
 
 export function getArticleContent(pillarSlug: string, articleSlug: string): ContentBlock[] | null {
