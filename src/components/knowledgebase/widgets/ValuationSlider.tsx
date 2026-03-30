@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Info, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { Info, AlertTriangle, CheckCircle2, RefreshCw } from 'lucide-react'
 
 interface ValuationSliderProps {
     ticker: string
     basePrice: number     // Giá khi tăng trưởng ở mức cơ bản (VD: 111000)
     baseGrowth: number    // Tăng trưởng cơ bản (VD: 10%)
     multiplier: number    // Mức độ nhạy (VD: 1600 VND cho mỗi 1% tăng trưởng)
-    currentPrice: number  // Giá thị trường hiện tại (VD: 130000)
+    currentPrice: number  // Giá fallback nếu không fetch được
 }
 
 export default function ValuationSlider({
@@ -17,11 +17,33 @@ export default function ValuationSlider({
     basePrice = 111000,
     baseGrowth = 10,
     multiplier = 1600,
-    currentPrice = 130000
+    currentPrice: fallbackPrice = 130000
 }: ValuationSliderProps) {
     const [growth, setGrowth] = useState<number>(baseGrowth)
     const [fairValue, setFairValue] = useState<number>(basePrice)
     const [animateValue, setAnimateValue] = useState<number>(basePrice)
+    const [livePrice, setLivePrice] = useState<number>(fallbackPrice)
+    const [priceDate, setPriceDate] = useState<string | null>(null)
+    const [priceLoading, setPriceLoading] = useState(true)
+
+    // Fetch live price on mount
+    useEffect(() => {
+        async function fetchPrice() {
+            setPriceLoading(true)
+            try {
+                const res = await fetch(`/api/stock-price?ticker=${ticker}`)
+                const data = await res.json()
+                if (data.price && data.price > 0) {
+                    setLivePrice(data.price)
+                    setPriceDate(data.date)
+                }
+            } catch { /* fallback to prop */ }
+            setPriceLoading(false)
+        }
+        fetchPrice()
+    }, [ticker])
+
+    const currentPrice = livePrice
 
     // Calculate Fair Value based on growth
     useEffect(() => {
@@ -70,7 +92,15 @@ export default function ValuationSlider({
                     </p>
                 </div>
                 <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl px-4 py-2 shrink-0">
-                    <p className="text-slate-400 text-xs font-medium mb-0.5">Giá trị trường hiện tại</p>
+                    <p className="text-slate-400 text-xs font-medium mb-0.5 flex items-center gap-1.5">
+                        Giá trị trường hiện tại
+                        {priceLoading && <RefreshCw className="w-3 h-3 animate-spin text-slate-500" />}
+                        {priceDate && !priceLoading && (
+                            <span className="bg-emerald-500/20 text-emerald-400 text-[9px] px-1.5 py-0.5 rounded-full font-semibold">
+                                Live · {priceDate}
+                            </span>
+                        )}
+                    </p>
                     <p className="text-slate-200 font-bold text-lg">{formatVND(currentPrice)}</p>
                 </div>
             </div>
