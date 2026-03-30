@@ -3,17 +3,17 @@ import type { ContentBlock } from '../../data'
 export const content: ContentBlock[] = [
     {
         type: 'intro',
-        content: '**Định giá Fair Value (DCF):** 111,000 VNĐ\n\n**Đánh giá tổng quan:** ⚠️ **Cảnh Giác** — FPT đang đối mặt với kỷ nguyên AI bào mòn lợi thế Outsourcing nhân công giá rẻ. Đám đông đang "Say Rượu Lạc Quan", nhưng các chỉ số ROIC đang cho thấy dấu hiệu phanh gấp.'
+        content: '**Định giá Fair Value (DCF):** 111,000 VNĐ\n\n**Đánh giá tổng quan:** 🟢 **Cơ Hội Tích Sản** — Thị trường đã "trừng phạt" FPT quá tay. Từ mốc 130,000đ (khi bài viết gốc cảnh báo định giá quá cao), cổ phiếu đã rơi hơn **40%** về vùng 76,000đ — thấp hơn Fair Value tới gần **46%**. Đây chính là lúc triết lý Graham lên tiếng: khi Đám đông hoảng loạn, người kiên nhẫn bắt đầu gom.'
     },
     {
         type: 'key-insight',
-        title: '🏛 Tầng 1 (An Toàn - Graham): Pháo Đài Tiền Mặt Cứu Giá',
-        content: '- **Tiền Mặt = 26.000 Tỷ VNĐ:** Tuy AI (Trí tuệ Nhân tạo) đang đấm mạnh vào Tương lai Outsourcing, Quá khứ đã để lại cho FPT một tấm khiên Titan đủ cho Ban lãnh đạo rẽ hướng đầu tư thay vì chỉ định vị là thợ code.\n- **Thanh khoản (Current Ratio 1.35 & D/E 0.58):** Lợi thế phòng thủ Graham bảo vệ khỏi nguy cơ vỡ nợ, nhưng không chống được sự suy giảm định giá dài hạn.'
+        title: '🏛 Tầng 1 (An Toàn - Graham): Pháo Đài Tiền Mặt — Bây Giờ Mới Là Lúc Phát Huy',
+        content: '- **Tiền Mặt = 26.000 Tỷ VNĐ:** Khi giá cổ phiếu còn 130.000đ, tấm khiên tiền mặt này chỉ là "bảo hiểm." Nay khi giá rơi về 76.000đ, nó trở thành **vũ khí chiến lược**: FPT có đủ nguồn lực để đầu tư vào AI, Datacenter và chuyển đổi mô hình kinh doanh mà **không cần huy động vốn thêm** — điều mà nhiều công ty cùng ngành không làm được.\n- **Thanh khoản (Current Ratio 1.35 & D/E 0.58):** Nền tảng tài chính vẫn vững. Đây KHÔNG phải trường hợp "công ty gặp khó khăn tài chính" — mà là thị trường định giá lại (re-rating) toàn bộ ngành Tech.'
     },
     {
         type: 'key-insight',
-        title: '📉 Tầng 2 (Con Hào - Buffett & Greenblatt): Cỗ Phanh ROIC',
-        content: '- **Tăng trưởng Global IT:** Bị AI như Copilot cắn trả, khiến Pricing Power (Quyền lực định giá) giảm sút. Biên lợi gộp giật lùi từ 38.5% xuống mức Báo Động 31%. Tốc độ tăng trưởng doanh thu dự phóng bị cắt máu từ 28% xuống còn **10%/năm**.\n- **ROIC Rải Đá:** Tụt thẳng từ kỷ lục 25.2% xuống **16.5%** vì rào cản nhân công giá rẻ bị phá vỡ. FPT phải đốt CAPEX khủng khiếp vào Datacenter và GPU để bắt kịp thế giới.'
+        title: '📉 Tầng 2 (Con Hào - Buffett & Greenblatt): Rủi Ro Vẫn Còn, Nhưng Giá Đã Phản Ánh',
+        content: '- **Tăng trưởng Global IT:** AI như Copilot vẫn đang bào mòn Pricing Power của Outsourcing truyền thống. Biên lợi gộp co hẹp từ 38.5% về 31%. Tốc độ tăng trưởng doanh thu thực tế hạ từ 28% xuống **10%/năm**. Những rủi ro này là thật.\n- **NHƯNG:** Ở mức giá 76.000đ, thị trường đang "wipe sạch" mọi kỳ vọng tăng trưởng. Đây là mức giá cho kịch bản FPT **không tăng trưởng gì cả** — tức là Downside đã được price-in gần hết. ROIC 16.5% vẫn cao hơn Cost of Capital (~10-12%), nghĩa là FPT vẫn đang tạo giá trị cho cổ đông.\n- **CAPEX vào AI/Datacenter:** Khoản đầu tư hàng trăm triệu USD vào Nvidia được thị trường coi là "đốt tiền." Nhưng nếu FPT chuyển đổi thành công từ "thợ code giá rẻ" sang "AI Solutions Provider," đây sẽ là khoản đầu tư định hình lại Con Hào trong 3-5 năm tới.'
     },
     {
         type: 'widget',
@@ -24,12 +24,17 @@ export const content: ContentBlock[] = [
             basePrice: 111000,
             baseGrowth: 10,
             multiplier: 1600,
-            currentPrice: 130000
+            currentPrice: 76100
         }
     },
     {
+        type: 'key-insight',
+        title: '🔄 Tầng 3 (Kịch Bản): Từ "Cảnh Giác" Sang "Quan Sát Tích Cực"',
+        content: '- **Kịch bản Bi quan (Growth 5%):** Fair Value ≈ 103.000đ → vẫn cao hơn giá hiện tại **35%**. Downside rất hạn chế.\n- **Kịch bản Cơ sở (Growth 10%):** Fair Value = 111.000đ → Margin of Safety **+46%**. Đây là vùng Graham gọi là "mua với giá 54 xu cho 1 đồng giá trị."\n- **Kịch bản Lạc quan (Growth 15%):** Fair Value ≈ 119.000đ → Upside tiềm năng **+56%**.\n- **Kết luận:** Cả 3 kịch bản đều cho thấy giá hiện tại **dưới Fair Value**. Rủi ro/lợi nhuận bất đối xứng rõ rệt — nghiêng về phía người mua.'
+    },
+    {
         type: 'warning',
-        title: '🗣️ Tầng 4 (Stress Test): Lớp Bọc Thép Báo Chí vs Thực Tế',
-        content: '- **Góc nhìn Định Chế (SSI/VNDirect):** Giới Phân Tích đang Say Rượu Lạc Quan, duy trì mốc Target Price > 135.000đ và ước tính Tăng trưởng rực rỡ > 20%.\n- **Báo chí Thực tế:** *"FPT chi hàng trăm triệu USD mua Nvidia"* — Dòng tít của Ban Lãnh đạo xác nhận chính xác nguy cơ cạn kiệt Con hào Giá rẻ. AI đang ép FPT phải ném cả Núi Tiền vào Đốt Lò CAPEX để tồn tại. Góc nhìn của Máy Tính ngược dòng đánh bại niềm kiêu hãnh của Đám đông thị trường!'
+        title: '🗣️ Tầng 4 (Stress Test): Bài Học Từ Cú Sập — VVIA Đã Cảnh Báo Đúng',
+        content: '- **Nhìn lại:** Khi FPT ở mức 130.000đ, VVIA đã cảnh báo "Đám đông Say Rượu Lạc Quan" và Margin of Safety **-14.6%**. Thị trường sau đó giảm hơn 40%. Góc nhìn của Máy Tính đã đánh bại niềm kiêu hãnh của Đám đông.\n- **Bây giờ:** Giới phân tích đã cắt Target Price về vùng 90.000-100.000đ. Tâm lý thị trường chuyển sang bi quan cùng cực. Nhưng lịch sử cho thấy: **khi tất cả mọi người đều sợ, đó thường là đáy.**\n- **Góc nhìn VVIA:** FPT ở mức 76.000đ là cơ hội mà Value Investor chờ đợi — nhưng cần kiên nhẫn. Khuyến nghị **tích lũy từng phần**, không all-in, và đặt kỳ vọng 12-18 tháng. Kỷ luật là vũ khí duy nhất chống lại nỗi sợ.'
     }
 ]

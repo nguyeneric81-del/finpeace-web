@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
     TrendingUp, TrendingDown, PiggyBank, Building, CreditCard,
     BarChart3, ArrowRight, CheckCircle2, Sparkles, User, ShieldCheck,
-    Briefcase, Heart, Plus, Trash2
+    Briefcase, Heart, Plus, Trash2, Brain
 } from 'lucide-react'
 
 const fmtVND = (v: number) => {
@@ -37,8 +37,8 @@ const EMPLOYMENT_TYPES = [
     { value: 'retired', label: 'Đã nghỉ hưu' },
 ]
 
-type AssetEntry = { name: string; group: string; amount: number; monthly_payment?: number }
-type InsuranceEntry = { type: string; insurer: string; coverage: number; premium: number; years_paid: number }
+type AssetEntry = { name: string; group: string; amount: number; monthly_payment?: number; is_business_debt?: boolean; asset_location?: string }
+type InsuranceEntry = { type: string; insurer: string; coverage: number; premium: number; years_paid: number; is_ci_rider?: boolean; is_medical?: boolean }
 
 interface KYCGateProps {
     userId: string
@@ -50,11 +50,12 @@ const STEPS = [
     { id: 2, label: 'Thu Chi', icon: BarChart3 },
     { id: 3, label: 'Tài Sản', icon: Building },
     { id: 4, label: 'Bảo Hiểm', icon: ShieldCheck },
+    { id: 5, label: 'Khẩu Vị', icon: Brain },
 ]
 
 export function KYCGate({ userId, onComplete }: KYCGateProps) {
     const supabase = createClient()
-    const [step, setStep] = useState<1 | 2 | 3 | 4>(1)
+    const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1)
     const [saving, setSaving] = useState(false)
 
     // Step 1: Personal Profile
@@ -84,23 +85,29 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
 
     // Step 3: Assets
     const [assets, setAssets] = useState<AssetEntry[]>([
-        { name: '', group: 'Thanh Khoản', amount: 0 }
+        { name: '', group: 'Thanh Khoản', amount: 0, asset_location: 'domestic' }
     ])
-    const addAsset = () => setAssets(prev => [...prev, { name: '', group: 'Thanh Khoản', amount: 0 }])
+    const addAsset = () => setAssets(prev => [...prev, { name: '', group: 'Thanh Khoản', amount: 0, asset_location: 'domestic' }])
     const removeAsset = (i: number) => setAssets(prev => prev.filter((_, idx) => idx !== i))
-    const updateAsset = (i: number, field: keyof AssetEntry, value: string | number) =>
+    const updateAsset = (i: number, field: keyof AssetEntry, value: string | number | boolean) =>
         setAssets(prev => prev.map((a, idx) => idx === i ? { ...a, [field]: value } : a))
     const netWorth = assets.reduce((sum, a) => a.group === 'Nợ' ? sum - a.amount : sum + a.amount, 0)
 
     // Step 4: Insurance
     const [insurances, setInsurances] = useState<InsuranceEntry[]>([
-        { type: 'health', insurer: '', coverage: 0, premium: 0, years_paid: 0 }
+        { type: 'health', insurer: '', coverage: 0, premium: 0, years_paid: 0, is_ci_rider: false, is_medical: true }
     ])
     const [hasNoInsurance, setHasNoInsurance] = useState(false)
-    const addInsurance = () => setInsurances(prev => [...prev, { type: 'health', insurer: '', coverage: 0, premium: 0, years_paid: 0 }])
+    const addInsurance = () => setInsurances(prev => [...prev, { type: 'health', insurer: '', coverage: 0, premium: 0, years_paid: 0, is_ci_rider: false, is_medical: false }])
     const removeInsurance = (i: number) => setInsurances(prev => prev.filter((_, idx) => idx !== i))
-    const updateInsurance = (i: number, field: keyof InsuranceEntry, value: string | number) =>
+    const updateInsurance = (i: number, field: keyof InsuranceEntry, value: string | number | boolean) =>
         setInsurances(prev => prev.map((a, idx) => idx === i ? { ...a, [field]: value } : a))
+
+    // Step 5: Psychology & Goals
+    const [healthStatus, setHealthStatus] = useState('good')
+    const [financialPriority, setFinancialPriority] = useState('growth')
+    const [biggestFear, setBiggestFear] = useState('health')
+    const [legacyGoal, setLegacyGoal] = useState('wealth')
 
     // ── SAVE HANDLERS ──
 
@@ -148,7 +155,7 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
     async function handleSaveStep3(e: React.FormEvent) {
         e.preventDefault()
         const validAssets = assets.filter(a => a.name && a.amount > 0)
-        if (validAssets.length === 0) return alert('Vui lòng thêm ít nhất 1 tài sản.')
+        if (validAssets.length === 0) return alert('Vui lòng thêm ít nhất 1 tài sản hoặc khoản nợ.')
         setSaving(true)
 
         // Delete old assets
@@ -168,8 +175,10 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                 asset_group: a.group,
                 amount: a.amount,
                 monthly_payment: a.monthly_payment || 0,
-                risk_level: a.group === 'Nợ' ? 5 : a.group === 'Đầu Tư' ? 3 : 1,
+                risk_level: a.group === 'Nợ' ? (a.is_business_debt ? 5 : 4) : a.group === 'Đầu Tư' ? 3 : 1,
                 is_liquid: a.group === 'Thanh Khoản',
+                is_business_debt: a.is_business_debt || false,
+                asset_location: a.asset_location || 'domestic'
             })
             if (insertErr) {
                 console.error('[KYCGate Step3] Insert error:', insertErr, 'Asset:', a)
@@ -198,9 +207,27 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                     coverage_amount: ins.coverage || 0,
                     annual_premium: ins.premium || 0,
                     years_paid: ins.years_paid || 0,
+                    is_ci_rider: ins.is_ci_rider || false,
+                    is_medical: ins.is_medical || false
                 })
             }
         }
+
+        setSaving(false)
+        setStep(5)
+    }
+
+    async function handleSaveStep5(e: React.FormEvent) {
+        e.preventDefault()
+        setSaving(true)
+
+        // Save Psychological Profile
+        await supabase.from('profiles').update({
+            health_status: healthStatus,
+            financial_priority: financialPriority,
+            biggest_fear: biggestFear,
+            legacy_goal: legacyGoal,
+        }).eq('id', userId)
 
         const totalInc = incomeNum  // already computed from step 2 state
         const savingCalculated = savingNum  // pre-computed: max(0, income - expense)
@@ -247,10 +274,10 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                 <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
                     <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-1.5 mb-4">
                         <Sparkles className="w-4 h-4 text-emerald-400" />
-                        <span className="text-emerald-300 text-sm font-medium">Nhận Diện Tài Chính — Bước Đầu Tiên</span>
+                        <span className="text-emerald-300 text-sm font-medium">Nhận Diện Tài Chính — Trải nghiệm chuyên sâu HNW</span>
                     </div>
                     <h1 className="text-3xl font-bold text-white mb-2">Khai Báo Hồ Sơ Tài Chính</h1>
-                    <p className="text-slate-400">Chuẩn CFP · Bảo mật hoàn toàn · ~5 phút</p>
+                    <p className="text-slate-400">Chuẩn CFP · Tích hợp Persona API · Bảo mật hoàn toàn</p>
 
                     {/* Step indicator */}
                     <div className="flex items-center justify-center gap-1.5 mt-6">
@@ -262,9 +289,9 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                                 <div key={s.id} className="flex items-center gap-1.5">
                                     <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${isActive ? 'bg-emerald-500 text-white' : isDone ? 'bg-emerald-900/50 text-emerald-400' : 'bg-white/5 text-white/30'}`}>
                                         {isDone ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Icon className="w-3.5 h-3.5" />}
-                                        {s.label}
+                                        <span className="hidden sm:inline">{s.label}</span>
                                     </div>
-                                    {idx < STEPS.length - 1 && <div className={`w-5 h-px ${isDone ? 'bg-emerald-500' : 'bg-white/10'}`} />}
+                                    {idx < STEPS.length - 1 && <div className={`w-3 sm:w-5 h-px ${isDone ? 'bg-emerald-500' : 'bg-white/10'}`} />}
                                 </div>
                             )
                         })}
@@ -297,7 +324,7 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                                         <label className="text-sm text-slate-300">Số người phụ thuộc</label>
                                         <select value={dependents} onChange={e => setDependents(e.target.value)}
                                             className="w-full bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-400">
-                                            {[0, 1, 2, 3, 4, '5+'].map(n => <option key={n} value={n} className="bg-slate-800">{n} người</option>)}
+                                            {[0, 1, 2, 3, 4, 5, 6].map(n => <option key={n} value={n} className="bg-slate-800">{n === 6 ? '6+ người' : `${n} người`}</option>)}
                                         </select>
                                     </div>
                                 </div>
@@ -336,7 +363,7 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                                     <BarChart3 className="w-5 h-5 text-emerald-400" />
                                     Dòng Tiền Hàng Năm
                                 </h2>
-                                <p className="text-slate-400 text-sm">Nhập theo năm (hoặc tháng × 12). Phân tách giúp tính chính xác tỷ lệ cắt giảm được.</p>
+                                <p className="text-slate-400 text-sm">Nhập theo năm (hoặc tháng × 12). Cấu trúc dòng tiền sẽ được dùng để đo Needs-based analysis 10 năm.</p>
 
                                 {/* Income */}
                                 <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 space-y-3">
@@ -349,9 +376,9 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                                                 className="w-full bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-400 placeholder:text-white/20" />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-xs text-slate-300 flex items-center gap-1"><Sparkles className="w-3 h-3 text-amber-400" /> Thu nhập thụ động / năm (cổ tức, cho thuê, lãi)</label>
+                                            <label className="text-xs text-slate-300 flex items-center gap-1"><Sparkles className="w-3 h-3 text-amber-400" /> Thu nhập thụ động</label>
                                             <input type="number" min={0} step={1000000} value={passiveIncome} onChange={e => setPassiveIncome(e.target.value)}
-                                                placeholder="VD: 60,000,000 (cả năm)"
+                                                placeholder="60,000,000"
                                                 className="w-full bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-amber-400 placeholder:text-white/20" />
                                         </div>
                                     </div>
@@ -362,31 +389,31 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                                     <p className="text-xs font-bold text-rose-300 uppercase tracking-wider">Chi Tiêu / Năm (phân tách)</p>
                                     <div className="space-y-3">
                                         <div className="space-y-1.5">
-                                            <label className="text-xs text-slate-300 flex items-center gap-1"><TrendingDown className="w-3 h-3 text-rose-400" />Chi Cố Định (thuê nhà, EMI vay, bảo hiểm)</label>
+                                            <label className="text-xs text-slate-300 flex items-center gap-1"><TrendingDown className="w-3 h-3 text-rose-400" />Chi Cố Định (bắt buộc duy trì cuộc sống)</label>
                                             <input type="number" min={0} step={1000000} value={fixedExp} onChange={e => setFixedExp(e.target.value)}
                                                 placeholder="VD: 120,000,000"
                                                 className="w-full bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-rose-400 placeholder:text-white/20" />
                                         </div>
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="space-y-1.5">
-                                                <label className="text-xs text-slate-300">Chi Biến Đổi (ăn, đi lại, điện nước)</label>
+                                                <label className="text-xs text-slate-300">Chi Biến Đổi</label>
                                                 <input type="number" min={0} step={500000} value={variableExp} onChange={e => setVariableExp(e.target.value)}
                                                     placeholder="VD: 96,000,000"
                                                     className="w-full bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-rose-400 placeholder:text-white/20" />
                                             </div>
                                             <div className="space-y-1.5">
-                                                <label className="text-xs text-slate-300">Chi Tùy Ý (giải trí, du lịch)</label>
+                                                <label className="text-xs text-slate-300">Chi Tùy Ý</label>
                                                 <input type="number" min={0} step={500000} value={discretionaryExp} onChange={e => setDiscretionaryExp(e.target.value)}
                                                     placeholder="VD: 24,000,000"
                                                     className="w-full bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-rose-400 placeholder:text-white/20" />
                                             </div>
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-xs text-slate-300 flex items-center gap-1"><CreditCard className="w-3 h-3 text-orange-400" /> Trả nợ / tháng (tổng EMI các khoản vay)</label>
+                                            <label className="text-xs text-slate-300 flex items-center gap-1"><CreditCard className="w-3 h-3 text-orange-400" /> Trả nợ / tháng (tổng EMI)</label>
                                             <input type="number" min={0} step={500000} value={monthlyDebtPmt} onChange={e => setMonthlyDebtPmt(e.target.value)}
                                                 placeholder="VD: 8,000,000"
                                                 className="w-full bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-orange-400 placeholder:text-white/20" />
-                                            {monthlyDebtPmt && <p className="text-[10px] text-orange-300">DSR: {dsr}% thu nhập dùng trả nợ (ngưỡng an toàn ≤ 35%)</p>}
+                                            {monthlyDebtPmt && <p className="text-[10px] text-orange-300">DSR: {dsr}% thu nhập (ngưỡng an toàn ≤ 35%)</p>}
                                         </div>
                                     </div>
                                 </div>
@@ -397,20 +424,18 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                                         <div>
                                             <p className="text-xs text-slate-400 uppercase tracking-wide">Tiết kiệm / năm</p>
                                             <p className="text-2xl font-bold text-white mt-0.5">{fmtVND(savingNum)}</p>
-                                            <p className="text-xs text-slate-400 mt-1">≈ {fmtVND(savingNum / 12)} / tháng</p>
                                         </div>
                                         <div className="text-right">
                                             <p className="text-xs text-slate-400">Tỷ lệ PYF</p>
                                             <p className={`text-3xl font-black ${Number(savingRate) >= 20 ? 'text-emerald-400' : Number(savingRate) >= 10 ? 'text-amber-400' : 'text-rose-400'}`}>{savingRate}%</p>
-                                            <p className="text-[10px] text-slate-400">Chuẩn CFP ≥ 20%</p>
                                         </div>
                                     </motion.div>
                                 )}
 
                                 <div className="flex gap-3">
-                                    <button type="button" onClick={() => setStep(1)} className="flex-1 border border-white/20 text-white/60 hover:text-white rounded-xl py-3 text-sm transition-colors">← Quay lại</button>
-                                    <button type="submit" disabled={saving} className="flex-[2] bg-emerald-500 hover:bg-emerald-400 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50">
-                                        {saving ? 'Đang lưu...' : <><span>Tiếp: Khai Báo Tài Sản</span><ArrowRight className="w-4 h-4" /></>}
+                                    <button type="button" onClick={() => setStep(1)} className="flex-1 border border-white/20 text-white/60 hover:text-white rounded-xl py-3 text-sm transition-colors">←</button>
+                                    <button type="submit" disabled={saving} className="flex-[4] bg-emerald-500 hover:bg-emerald-400 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50">
+                                        {saving ? 'Đang lưu...' : <><span>Tiếp: Khai Báo Tài Sản & Nợ</span><ArrowRight className="w-4 h-4" /></>}
                                     </button>
                                 </div>
                             </form>
@@ -425,6 +450,7 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                                     <Building className="w-5 h-5 text-violet-400" />
                                     Danh Mục Tài Sản & Nợ
                                 </h2>
+                                <p className="text-slate-400 text-sm">Việc xác định nợ kinh doanh giúp thuật toán tính chính xác mức bảo vệ cần thiết (Debt Factor).</p>
 
                                 <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
                                     {assets.map((a, i) => (
@@ -443,14 +469,30 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                                                     value={a.amount || ''} onChange={e => updateAsset(i, 'amount', Number(e.target.value))}
                                                     className="bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2 text-sm placeholder:text-white/30 focus:outline-none focus:border-violet-400" />
                                             </div>
+                                            
+                                            {/* Extra Fields based on Group */}
                                             {a.group === 'Nợ' && (
-                                                <input type="number" min={0} step={100000} placeholder="Trả góp hàng tháng (VNĐ)"
-                                                    value={a.monthly_payment || ''} onChange={e => updateAsset(i, 'monthly_payment', Number(e.target.value))}
-                                                    className="w-full bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2 text-sm placeholder:text-white/30 focus:outline-none focus:border-orange-400" />
+                                                <div className="space-y-3 mt-2">
+                                                    <input type="number" min={0} step={100000} placeholder="Trả góp hàng tháng (VNĐ)"
+                                                        value={a.monthly_payment || ''} onChange={e => updateAsset(i, 'monthly_payment', Number(e.target.value))}
+                                                        className="w-full bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2 text-sm placeholder:text-white/30 focus:outline-none focus:border-orange-400" />
+                                                    <label className="flex items-center gap-2 cursor-pointer p-2 bg-rose-500/10 border border-rose-500/20 rounded-lg">
+                                                        <input type="checkbox" checked={!!a.is_business_debt} onChange={e => updateAsset(i, 'is_business_debt', e.target.checked)} className="w-4 h-4 accent-rose-500" />
+                                                        <span className="text-xs text-rose-300">Đây là Nợ kinh doanh (Rủi ro thanh khoản cao)</span>
+                                                    </label>
+                                                </div>
                                             )}
+                                            {a.group !== 'Nợ' && (
+                                                <select value={a.asset_location || 'domestic'} onChange={e => updateAsset(i, 'asset_location', e.target.value)}
+                                                    className="w-full bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-400 mt-2">
+                                                    <option value="domestic" className="bg-slate-800">Cơ sở tài sản Trong nước (Thanh khoản bình thường)</option>
+                                                    <option value="offshore" className="bg-slate-800">Cơ sở tài sản Ở nước ngoài / Khó thanh khoản ngay</option>
+                                                </select>
+                                            )}
+
                                             {assets.length > 1 && (
                                                 <button type="button" onClick={() => removeAsset(i)}
-                                                    className="flex items-center gap-1 text-xs text-rose-400 hover:text-rose-300 transition-colors">
+                                                    className="flex items-center gap-1 text-xs text-rose-400 hover:text-rose-300 transition-colors mt-2">
                                                     <Trash2 className="w-3 h-3" /> Xóa
                                                 </button>
                                             )}
@@ -460,7 +502,7 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
 
                                 <button type="button" onClick={addAsset}
                                     className="w-full border border-dashed border-white/20 text-white/50 hover:text-white hover:border-white/40 rounded-xl py-2.5 text-sm flex items-center justify-center gap-2 transition-colors">
-                                    <Plus className="w-4 h-4" /> Thêm tài sản / khoản nợ
+                                    <Plus className="w-4 h-4" /> Thêm danh mục
                                 </button>
 
                                 <div className={`rounded-xl p-4 flex justify-between items-center ${netWorth >= 0 ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-rose-500/10 border border-rose-500/20'}`}>
@@ -474,8 +516,8 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <button type="button" onClick={() => setStep(2)} className="flex-1 border border-white/20 text-white/60 hover:text-white rounded-xl py-3 text-sm transition-colors">← Quay lại</button>
-                                    <button type="submit" disabled={saving} className="flex-[2] bg-emerald-500 hover:bg-emerald-400 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50">
+                                    <button type="button" onClick={() => setStep(2)} className="flex-1 border border-white/20 text-white/60 hover:text-white rounded-xl py-3 text-sm transition-colors">←</button>
+                                    <button type="submit" disabled={saving} className="flex-[4] bg-emerald-500 hover:bg-emerald-400 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50">
                                         {saving ? 'Đang lưu...' : <><span>Tiếp: Khai Báo Bảo Hiểm</span><ArrowRight className="w-4 h-4" /></>}
                                     </button>
                                 </div>
@@ -489,11 +531,9 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                             <form onSubmit={handleSaveStep4} className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6 space-y-5">
                                 <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                                     <ShieldCheck className="w-5 h-5 text-sky-400" />
-                                    Khai Báo Bảo Hiểm & Rủi Ro
+                                    Bảo Viện & Rủi Ro
                                 </h2>
-                                <p className="text-slate-400 text-sm">
-                                    CFP yêu cầu đánh giá "áo giáp" trước khi thiết kế danh mục đầu tư. Bước này giúp phát hiện khoảng trống bảo vệ.
-                                </p>
+                                <p className="text-slate-400 text-sm">Xác định các "tấm khiên" đang có để loại trừ khi phân tích khoảng trống bảo vệ (Gap Analysis).</p>
 
                                 <label className="flex items-center gap-3 cursor-pointer p-3 bg-white/5 border border-white/10 rounded-xl">
                                     <input type="checkbox" checked={hasNoInsurance} onChange={e => setHasNoInsurance(e.target.checked)}
@@ -509,7 +549,6 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                                                     className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
                                                     <div className="grid grid-cols-2 gap-3">
                                                         <div className="col-span-2">
-                                                            <label className="text-xs text-slate-400 mb-1 block">Loại bảo hiểm</label>
                                                             <div className="flex flex-wrap gap-2">
                                                                 {INSURANCE_TYPES.map(t => (
                                                                     <button key={t.value} type="button"
@@ -529,10 +568,29 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                                                         <input type="number" placeholder="Phí/năm (VNĐ)" value={ins.premium || ''}
                                                             onChange={e => updateInsurance(i, 'premium', Number(e.target.value))}
                                                             className="bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2 text-sm placeholder:text-white/30 focus:outline-none focus:border-sky-400" />
+                                                        
                                                         {ins.type === 'bhxh' && (
                                                             <input type="number" placeholder="Số năm đã đóng BHXH" value={ins.years_paid || ''}
                                                                 onChange={e => updateInsurance(i, 'years_paid', Number(e.target.value))}
                                                                 className="bg-white/10 border border-white/10 text-white rounded-lg px-3 py-2 text-sm placeholder:text-white/30 focus:outline-none focus:border-sky-400" />
+                                                        )}
+
+                                                        {/* Phân rã CI và Y Tế */}
+                                                        {ins.type !== 'bhxh' && (
+                                                            <div className="col-span-2 space-y-2 mt-1">
+                                                                {(ins.type === 'life_whole' || ins.type === 'life_term') && (
+                                                                    <label className="flex items-center gap-2 cursor-pointer p-2 bg-sky-500/5 rounded-lg border border-sky-500/10">
+                                                                        <input type="checkbox" checked={!!ins.is_ci_rider} onChange={e => updateInsurance(i, 'is_ci_rider', e.target.checked)} className="w-4 h-4 accent-sky-500" />
+                                                                        <span className="text-xs text-slate-300">Gói này bao gồm chi trả Bệnh Hiểm Nghèo (CI) theo mệnh giá</span>
+                                                                    </label>
+                                                                )}
+                                                                {ins.type === 'health' && (
+                                                                    <label className="flex items-center gap-2 cursor-pointer p-2 bg-sky-500/5 rounded-lg border border-sky-500/10">
+                                                                        <input type="checkbox" checked={!!ins.is_medical} onChange={e => updateInsurance(i, 'is_medical', e.target.checked)} className="w-4 h-4 accent-sky-500" />
+                                                                        <span className="text-xs text-slate-300">Đây là thẻ chi trả viện phí thực tế (Medical Rider)</span>
+                                                                    </label>
+                                                                )}
+                                                            </div>
                                                         )}
                                                     </div>
                                                     {insurances.length > 1 && (
@@ -551,21 +609,86 @@ export function KYCGate({ userId, onComplete }: KYCGateProps) {
                                     </div>
                                 )}
 
-                                {/* Protection coverage quick calc */}
-                                {!hasNoInsurance && incomeNum > 0 && (
-                                    <div className="bg-sky-500/10 border border-sky-500/20 rounded-xl p-4 text-sm">
-                                        <p className="text-xs text-sky-300 font-bold uppercase tracking-wider mb-2">Gợi Ý CFP — Mức Bảo Hiểm Tử Kỳ Cần Có</p>
-                                        <p className="text-white/70">
-                                            Human Capital của bạn: <strong className="text-sky-400">{fmtVND(incomeNum * (65 - (dob ? new Date().getFullYear() - new Date(dob).getFullYear() : 35)))}</strong>
-                                        </p>
-                                        <p className="text-white/50 text-xs mt-1">= Thu nhập × số năm còn lại. Mức bảo hiểm lý tưởng ≥ 10× thu nhập năm.</p>
-                                    </div>
-                                )}
+                                <div className="flex gap-3 mt-4">
+                                    <button type="button" onClick={() => setStep(3)} className="flex-1 border border-white/20 text-white/60 hover:text-white rounded-xl py-3 text-sm transition-colors">←</button>
+                                    <button type="submit" disabled={saving} className="flex-[4] bg-emerald-500 hover:bg-emerald-400 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50">
+                                        {saving ? 'Đang lưu...' : <><span>Tiếp: Khẩu Vị & Mục Tiêu</span><ArrowRight className="w-4 h-4" /></>}
+                                    </button>
+                                </div>
+                            </form>
+                        </motion.div>
+                    )}
 
-                                <div className="flex gap-3">
-                                    <button type="button" onClick={() => setStep(3)} className="flex-1 border border-white/20 text-white/60 hover:text-white rounded-xl py-3 text-sm transition-colors">← Quay lại</button>
-                                    <button type="submit" disabled={saving} className="flex-[2] bg-emerald-500 hover:bg-emerald-400 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50">
-                                        {saving ? 'Đang hoàn tất...' : <><Heart className="w-4 h-4 fill-white" /><span>Hoàn Thành — Vào Dashboard!</span></>}
+                    {/* ── STEP 5: PSYCHOLOGY & GOALS ── */}
+                    {step === 5 && (
+                        <motion.div key="step5" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
+                            <form onSubmit={handleSaveStep5} className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6 space-y-6">
+                                <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                                    <Brain className="w-5 h-5 text-indigo-400" />
+                                    Khẩu Vị & Mục Tiêu
+                                </h2>
+                                <p className="text-slate-400 text-sm">
+                                    Giải pháp Tài chính không phụ thuộc hoàn toàn vào con số, mà được thiết kế phù hợp với tâm lý và nhu cầu chuyển giao di sản của bạn.
+                                </p>
+
+                                <div className="space-y-4">
+                                    {/* Health */}
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-slate-300">Tình trạng Sức khỏe Cá nhân & Gia đình</label>
+                                        <select value={healthStatus} onChange={e => setHealthStatus(e.target.value)}
+                                            className="w-full bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-400">
+                                            <option value="good" className="bg-slate-800">Hoàn toàn khỏe mạnh, không có bệnh lý nền</option>
+                                            <option value="stable" className="bg-slate-800">Sức khỏe ổn định, thi thoảng khám tổng quát</option>
+                                            <option value="family_history" className="bg-slate-800">Có tiền sử gia đình về bệnh lý (Ung thư, tim mạch...)</option>
+                                            <option value="chronic" className="bg-slate-800">Đang có bệnh mãn tính / cần theo dõi thường xuyên</option>
+                                        </select>
+                                    </div>
+
+                                    {/* Priority */}
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-slate-300">Ưu tiên Tài chính hiện tại (Giai đoạn {new Date().getFullYear()})</label>
+                                        <select value={financialPriority} onChange={e => setFinancialPriority(e.target.value)}
+                                            className="w-full bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-400">
+                                            <option value="growth" className="bg-slate-800">Tối đa hóa lợi nhuận (Chấp nhận biến động cao)</option>
+                                            <option value="balanced" className="bg-slate-800">Tăng trưởng ổn định & kiểm soát rủi ro vừa phải</option>
+                                            <option value="protection" className="bg-slate-800">Bảo vệ tài sản gốc & chống rủi ro sức khỏe triệt để</option>
+                                            <option value="income" className="bg-slate-800">Tạo dòng tiền thụ động ổn định (Cổ tức, trái phiếu)</option>
+                                            <option value="legacy" className="bg-slate-800">Lập kế hoạch chuyển giao di sản / thừa kế</option>
+                                        </select>
+                                    </div>
+
+                                    {/* Big Fear */}
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-slate-300">Nỗi bận tâm lớn nhất về Tài chính là gì?</label>
+                                        <select value={biggestFear} onChange={e => setBiggestFear(e.target.value)}
+                                            className="w-full bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-400">
+                                            <option value="health" className="bg-slate-800">Bạo bệnh rút cạn tiền tích lũy của gia đình</option>
+                                            <option value="income_loss" className="bg-slate-800">Mất nguồn thu nhập chính, không trả nổi nợ/chi tiêu</option>
+                                            <option value="market" className="bg-slate-800">Sập hầm thị trường đầu tư, mất mát tài sản lớn</option>
+                                            <option value="succession" className="bg-slate-800">Xung đột khi chuyển giao doanh nghiệp / tài sản</option>
+                                            <option value="tax" className="bg-slate-800">Gánh nặng thuế thừa kế / chi phí pháp lý</option>
+                                            <option value="liquidity" className="bg-slate-800">Không rút được tiền mặt khi có biến cố</option>
+                                        </select>
+                                    </div>
+
+                                    {/* Legacy Goal */}
+                                    {(financialPriority === 'legacy' || occupation.toLowerCase().includes('chủ') || employmentType === 'business' || netWorth > 10000000000) && (
+                                        <div className="space-y-2 bg-indigo-500/10 border border-indigo-500/20 p-4 rounded-xl">
+                                            <label className="text-sm font-medium text-indigo-300">Mục tiêu Thừa kế (Dành cho nhóm cấu trúc rủi ro đặc biệt)</label>
+                                            <select value={legacyGoal} onChange={e => setLegacyGoal(e.target.value)}
+                                                className="w-full bg-white/10 border border-white/20 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-400 mt-2">
+                                                <option value="wealth" className="bg-slate-800">Để lại khối tài sản lớn cho con cái / gia đình</option>
+                                                <option value="education" className="bg-slate-800">Đảm bảo Quỹ giáo dục Quốc tế cho con dù có biến cố</option>
+                                                <option value="mixed" className="bg-slate-800">Phân mảnh: Từ thiện + Giáo dục + Quỹ chuyển giao</option>
+                                            </select>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="flex gap-3 pt-4 border-t border-white/10">
+                                    <button type="button" onClick={() => setStep(4)} className="flex-1 border border-white/20 text-white/60 hover:text-white rounded-xl py-3 text-sm transition-colors">←</button>
+                                    <button type="submit" disabled={saving} className="flex-[4] bg-emerald-500 hover:bg-emerald-400 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg shadow-emerald-500/20 disabled:opacity-50">
+                                        {saving ? 'Đang hoàn tất...' : <><Heart className="w-4 h-4 fill-white" /><span>Hoàn Thành — Xây Chân Dung!</span></>}
                                     </button>
                                 </div>
                             </form>

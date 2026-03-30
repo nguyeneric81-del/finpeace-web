@@ -935,7 +935,7 @@ export const PILLARS: Pillar[] = [
                 hasFlashcards: true,
                 industry: 'Công nghệ',
                 title: 'Đánh giá FPT',
-                summary: 'Kịch bản AI bào mòn Outsourcing nhân công giá rẻ và góc nhìn thực tế về đà phanh gấp của FPT. Đội ngũ Phân tích Định chế có đang lạc quan thái quá?',
+                summary: 'Từ cảnh báo "Say Rượu Lạc Quan" ở 130.000đ đến cơ hội tích sản ở 76.000đ — VVIA đã đúng khi cổ phiếu giảm 40%. Bây giờ Margin of Safety +46%: nên tham lam hay tiếp tục sợ hãi?',
                 readTime: 6,
                 difficulty: 'Nâng cao',
                 tags: ['FPT', 'Công nghệ', 'AI', 'VVIA'],
