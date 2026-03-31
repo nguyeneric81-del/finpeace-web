@@ -8,6 +8,7 @@ const ClarityTab   = dynamic(() => import('./_components/ClarityTab'),   { loadi
 const BlueprintTab = dynamic(() => import('./_components/BlueprintTab'), { loading: () => <Loading/> })
 const AutoPilotTab = dynamic(() => import('./_components/AutoPilotTab'), { loading: () => <Loading/> })
 const ThongTinTab  = dynamic(() => import('./_components/ThongTinTab'),  { loading: () => <Loading/> })
+const FinanceTab   = dynamic(() => import('./_components/FinanceTab'),   { loading: () => <Loading/> })
 
 function Loading() {
   return <div className="h-40 flex items-center justify-center"><Loader2 className="animate-spin text-[#c4a67a] w-6 h-6"/></div>
@@ -119,12 +120,7 @@ export default function AdminConsolidatedPage() {
         {/* ── TAB: TÀI CHÍNH CÁ NHÂN ── */}
         {mainTab === 'finance' && (
           <div className="space-y-6">
-            <div className="bg-[#111827] border border-[#1e2535] rounded-2xl p-6 text-center">
-              <p className="text-3xl mb-3">🌿</p>
-              <h3 className="text-white font-bold text-lg mb-2">Tài chính cá nhân</h3>
-              <p className="text-slate-400 text-sm">Quản trị các tham số giao diện Financial Planning</p>
-              <p className="text-slate-600 text-xs mt-2">Anh sẽ bổ sung chi tiết sau — đang chờ spec</p>
-            </div>
+            <FinanceTab />
           </div>
         )}
 
