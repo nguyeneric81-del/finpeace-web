@@ -57,38 +57,54 @@ try:
             except Exception as e:
                 print(f"Failed to insert valuation for {stock_code}: {e}")
 
-    # 2. Extract Customer Emails to link Profiles to sip_service_plans
-    if 'CustomerPlan.T' in xl.sheet_names:
-        print("\n--- Processing CustomerPlan.T (SIP Plans) ---")
-        df_plans = xl.parse('CustomerPlan.T')
+    # 2. Extract Customer Emails from StockFollow.T and create plans
+    if 'StockFollow.T' in xl.sheet_names:
+        print("\n--- Processing StockFollow.T (SIP Plans) ---")
+        df_plans = xl.parse('StockFollow.T')
         
-        # Fetch all existing profiles
-        existing_profiles = supabase.table("profiles").select("id, email").execute()
-        profile_map = {p['email'].lower(): p['id'] for p in existing_profiles.data if p.get('email')}
-
         for idx, row in df_plans.iterrows():
-            email = str(clean_val(row.get('email'))).strip().lower()
-            if not email or email not in profile_map:
-                print(f"Skipping {email} - User does not exist in Supabase profiles yet.")
+            email = str(clean_val(row.get('Email'))).strip().lower()
+            stock_code = clean_val(row.get('MCK'))
+            if not email or email == 'nan' or not stock_code:
                 continue
+
+            # Fetch existing profiles
+            existing_profiles = supabase.table("profiles").select("id, email").execute()
+            profile_map = {p['email'].lower(): p['id'] for p in existing_profiles.data if p.get('email')}
                 
-            user_id = profile_map[email]
+            user_id = profile_map.get(email)
+
+            if not user_id:
+                print(f"Creating new Auth user for {email}...")
+                try:
+                    # Silently create the auth user
+                    user_resp = supabase.auth.admin.create_user({
+                        "email": email,
+                        "password": "TempPassword123!A",
+                        "email_confirm": True
+                    })
+                    user_id = user_resp.user.id
+                except Exception as create_err:
+                    print(f"Failed to create Auth account for {email}: {create_err}")
+                    continue
+
             plan_data = {
                 "user_id": user_id,
-                "start_date": str(clean_val(row.get('Start_date'))).split(' ')[0] if clean_val(row.get('Start_date')) else None,
-                "end_date": str(clean_val(row.get('end_date'))).split(' ')[0] if clean_val(row.get('end_date')) else None,
+                "stock_code": stock_code.strip().upper(),
+                "start_date": str(clean_val(row.get('Add'))).split(' ')[0] if clean_val(row.get('Add')) else None,
+                "end_date": str(clean_val(row.get('Cancel'))).split(' ')[0] if clean_val(row.get('Cancel')) else None,
                 "securities_company": str(clean_val(row.get('S_Company'))),
                 "securities_account": str(clean_val(row.get('S_Account'))),
                 "assigned_dealer": str(clean_val(row.get('Dealer'))),
-                "status": "Active"
+                "status": "Active" if clean_val(row.get('Status')) != "Expired" else "Closed"
             }
 
             try:
-                # Insert the service plan mapping the user explicitly
+                # Upsert / insert the service plan mapping for the stock code
                 supabase.table("sip_service_plans").insert(plan_data).execute()
-                print(f"Inserted SIP Service Plan for {email}")
+                print(f"Inserted SIP Service Plan for {email} -> {stock_code}")
             except Exception as e:
-                print(f"Failed to insert plan for {email}: {e}")
+                print(f"Failed to insert plan for {email} ({stock_code}): {e}")
 
     print("\nData migration script finished successfully.")
 

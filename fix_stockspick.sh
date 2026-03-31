@@ -1,0 +1,1 @@
+sed -i '' 's/const listData = await getListRes.json()/const tkTextSafe = (await getListRes.text()).replace(\/"id":\\s*(\\d+)\/g, "\\\"id\\\":\\\"$1\\\"");\n  const listData = JSON.parse(tkTextSafe);/g' src/lib/stockspick.ts

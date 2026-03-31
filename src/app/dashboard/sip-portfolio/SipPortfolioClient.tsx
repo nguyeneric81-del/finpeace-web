@@ -31,8 +31,11 @@ export default function SipPortfolioClient({ plans, performanceData, insights }:
   const uniqueStocks = Array.from(new Set(plans.map(p => p.stock_code)));
   const COLORS = ['#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#f43f5e', '#a855f7'];
 
+  // Filter out invalid future months (Excel formula artifacts where formula evaluates to exactly -100%)
+  const cleanPerformanceData = performanceData.filter(d => Number(d.sip_return_pct) !== -1);
+
   // Format data for Recharts (group by month, plot individual tickers)
-  const groupedByMonth = performanceData.reduce((acc: any, curr: any) => {
+  const groupedByMonth = cleanPerformanceData.reduce((acc: any, curr: any) => {
     if (!acc[curr.month]) {
       acc[curr.month] = {
         name: curr.month,
@@ -149,7 +152,7 @@ export default function SipPortfolioClient({ plans, performanceData, insights }:
                   </span>
                   {item.expected_growth && (
                     <span className="px-2 py-1 text-xs font-semibold text-blue-700 bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 rounded-md">
-                      Growth: {item.expected_growth}
+                      Growth: {Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 1 }).format(Number(item.expected_growth))}
                     </span>
                   )}
                 </div>

@@ -213,139 +213,67 @@ function HealthCard({
 }
 
 // ============================================================
-// PROTECTION DASHBOARD COMPONENT (Persona Engine Output)
+// PROTECTION DASHBOARD COMPONENT
 // ============================================================
 function ProtectionDashboard({ data }: { data: any }) {
     if (!data || data.error) return <div className="text-center py-10 text-white/50">Đang tải cấu trúc bảo vệ...</div>
     
     const {
-        grossSA, netSA, saRounded, eliteTier, eliteBenefits,
-        personaBreakdown, bestPersona, recommendedProduct,
+        grossSA, netSA,
         financialMetrics
     } = data
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
-            {/* Header / Persona Match */}
-            <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-3xl p-8 relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -ml-20 -mt-20"></div>
-                <div className="relative z-10 w-full md:w-2/3">
-                    <div className="flex items-center gap-2 mb-2 text-indigo-300">
-                        <Brain className="w-5 h-5" />
-                        <span className="text-xs font-bold uppercase tracking-wider">Mô Hình Dữ Liệu AIA HNW · Chân Dung Tối Ưu</span>
-                    </div>
-                    <h2 className="text-3xl font-black text-white mb-2">{bestPersona}</h2>
-                    <p className="text-white/60 mb-6 text-sm">Thuật toán Persona Engine phân tích các yếu tố tâm lý, rủi ro, và di sản để khớp chân dung cá tính của bạn với gói bảo vệ phù hợp nhất.</p>
-                    
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-                        {Object.entries(personaBreakdown).sort((a: any, b: any) => b[1] - a[1]).slice(0, 3).map(([key, score]: [string, any], idx) => (
-                            <div key={key} className={`p-3 rounded-xl border ${idx === 0 ? 'bg-indigo-500/20 border-indigo-500/40' : 'bg-white/5 border-white/10'}`}>
-                                <div className="text-[10px] text-white/50 uppercase truncate mb-1">{key}</div>
-                                <div className={`text-xl font-bold ${idx === 0 ? 'text-indigo-400' : 'text-white/80'}`}>{score} đ</div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                
-                <div className="relative z-10 bg-slate-900/60 backdrop-blur border border-white/10 rounded-2xl p-5 md:w-1/3 text-center shrink-0">
-                    <p className="text-xs text-white/50 uppercase mb-2">Đề Xuất Phân Bổ Kiến Trúc</p>
-                    <p className="text-2xl font-bold text-emerald-400 mb-2">{recommendedProduct}</p>
-                    <p className="text-xs text-white/40">Giải pháp khớp nhất với phân bố rủi ro & khát vọng di sản của {bestPersona}.</p>
-                </div>
-            </div>
+        <div className="space-y-8 animate-in fade-in duration-500 max-w-xl mx-auto">
+            {/* Needs-Based Analysis (Gross SA Waterfall) */}
+            <div className="bg-slate-800/50 border border-white/10 rounded-3xl p-6 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Needs-Based Analysis (Gross SA Waterfall) */}
-                <div className="bg-slate-800/50 border border-white/10 rounded-3xl p-6">
-                    <div className="flex items-center gap-2 mb-6">
-                        <Crosshair className="w-5 h-5 text-sky-400" />
-                        <h3 className="text-lg font-bold text-white">Needs-Based Analysis (Gap Protection)</h3>
-                    </div>
-
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl">
-                            <div>
-                                <p className="text-xs text-white/50 mb-1">Thanh toán Nợ (Kinh doanh & Cá nhân)</p>
-                                <p className="text-sm font-semibold text-rose-300">{fmtVNDShort(financialMetrics.totalDebt)}</p>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-xs text-white/50 mb-1">Bảo lãnh sống (10 năm)</p>
-                                <p className="text-sm font-semibold text-amber-300">{fmtVNDShort(financialMetrics.annualExpense * 10)}</p>
-                            </div>
-                        </div>
-                        <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl">
-                            <div>
-                                <p className="text-xs text-white/50 mb-1">Quỹ bảo lãnh Y Tế (Reserve)</p>
-                                <p className="text-sm font-semibold text-teal-300">2.0 Tỷ (Ước tính Elite)</p>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-xs text-white/50 mb-1">Truyền thừa di sản (40% Tài sản)</p>
-                                <p className="text-sm font-semibold text-violet-300">{fmtVNDShort(financialMetrics.totalAssetValue * 0.4)}</p>
-                            </div>
-                        </div>
-
-                        <div className="border-t border-white/10 my-4"></div>
-
-                        <div className="flex justify-between items-end">
-                            <div>
-                                <p className="text-xs text-white/50">TỔNG NHU CẦU BẢO VỆ (Gross SA)</p>
-                                <p className="text-2xl font-bold text-white mt-1">{fmtVNDShort(grossSA)}</p>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-xs text-white/50">ĐÃ CÓ (Trừ đi)</p>
-                                <p className="text-lg font-bold text-emerald-400 mt-1">- {fmtVNDShort(financialMetrics.totalLifeCoverage)}</p>
-                            </div>
-                        </div>
-
-                        <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-4 mt-4 text-center relative overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-rose-500/5 to-transparent animate-pulse"></div>
-                            <p className="text-xs text-rose-300 font-bold tracking-wide uppercase">Cần thiết kế thêm (Net SA Gap)</p>
-                            <p className="text-4xl font-black text-rose-400 mt-1">{fmtVNDShort(netSA)}</p>
-                            <p className="text-[10px] text-rose-300/60 mt-2">Dựa trên chuẩn CFP: Đủ để xóa nợ, bảo bọc 10 năm sinh hoạt, quỹ y tế và cam kết di sản.</p>
-                        </div>
-                    </div>
+                <div className="relative z-10 flex items-center gap-2 mb-6">
+                    <Crosshair className="w-5 h-5 text-sky-400" />
+                    <h3 className="text-lg font-bold text-white">Needs-Based Analysis (Gap Protection)</h3>
                 </div>
 
-                {/* AIA Elite Tier Qualification */}
-                <div className="bg-slate-800/50 border border-white/10 rounded-3xl p-6 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
-                    <div className="relative z-10 flex items-center gap-2 mb-6">
-                        <Sparkles className="w-5 h-5 text-amber-400" />
-                        <h3 className="text-lg font-bold text-white">Xếp Hạng AIA Elite Membership</h3>
+                <div className="space-y-4 relative z-10">
+                    <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl">
+                        <div>
+                            <p className="text-xs text-white/50 mb-1">Thanh toán Nợ (Kinh doanh & Cá nhân)</p>
+                            <p className="text-sm font-semibold text-rose-300">{fmtVNDShort(financialMetrics.totalDebt)}</p>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-xs text-white/50 mb-1">Bảo lãnh sống (10 năm)</p>
+                            <p className="text-sm font-semibold text-amber-300">{fmtVNDShort(financialMetrics.annualExpense * 10)}</p>
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl">
+                        <div>
+                            <p className="text-xs text-white/50 mb-1">Quỹ bảo lãnh Y Tế (Reserve)</p>
+                            <p className="text-sm font-semibold text-teal-300">2.0 Tỷ</p>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-xs text-white/50 mb-1">Truyền thừa di sản (40% Tài sản)</p>
+                            <p className="text-sm font-semibold text-violet-300">{fmtVNDShort(financialMetrics.totalAssetValue * 0.4)}</p>
+                        </div>
                     </div>
 
-                    <div className="relative z-10">
-                        <div className="flex items-end gap-3 mb-6">
-                            <div className="text-4xl font-black bg-gradient-to-r from-amber-200 to-amber-500 text-transparent bg-clip-text">
-                                {eliteTier !== 'None' ? eliteTier : 'Tiêu chuẩn'}
-                            </div>
-                            <div className="text-sm text-white/50 pb-1">Dựa trên Mệnh giá thiết kế: <strong className="text-white">{fmtVNDShort(saRounded)}</strong> (Làm tròn)</div>
-                        </div>
+                    <div className="border-t border-white/10 my-4"></div>
 
-                        {eliteTier === 'None' ? (
-                            <p className="text-slate-400 text-sm">Gói thiết kế dưới 4 Tỷ VND không áp dụng chuỗi đặc quyền HNW Elite Club. Nhưng vẫn tiếp cận chất lượng tư vấn chuẩn CFP.</p>
-                        ) : (
-                            <div className="space-y-3">
-                                <p className="text-xs font-bold text-amber-400 uppercase">Đặc Quyền Kèm Theo (Không thu phí)</p>
-                                {eliteBenefits.map((b: string, i: number) => (
-                                    <div key={i} className="flex items-center gap-3 bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl">
-                                        <div className="w-6 h-6 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
-                                            <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />
-                                        </div>
-                                        <span className="text-sm text-amber-100">{b}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                        
-                        {saRounded < 40_000_000_000 && eliteTier !== 'None' && (
-                            <div className="mt-8 p-4 bg-white/5 border border-white/10 rounded-xl">
-                                <p className="text-xs text-white/50 italic mb-2">Thăng hạng Elite kế tiếp: Cần thêm mức bảo vệ để chạm tới <strong className="text-white">{eliteTier === 'Elite Premier' ? '15 Tỷ' : '40 Tỷ'}</strong>.</p>
-                                <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
-                                    <div className="h-full bg-amber-500 rounded-full" style={{ width: `${(saRounded / (eliteTier === 'Elite Premier' ? 15_000_000_000 : 40_000_000_000)) * 100}%` }}></div>
-                                </div>
-                            </div>
-                        )}
+                    <div className="flex justify-between items-end">
+                        <div>
+                            <p className="text-xs text-white/50">TỔNG NHU CẦU BẢO VỆ (Gross SA)</p>
+                            <p className="text-2xl font-bold text-white mt-1">{fmtVNDShort(grossSA)}</p>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-xs text-white/50">ĐÃ CÓ (Trừ đi)</p>
+                            <p className="text-lg font-bold text-emerald-400 mt-1">- {fmtVNDShort(financialMetrics.totalLifeCoverage)}</p>
+                        </div>
+                    </div>
+
+                    <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-4 mt-6 text-center relative overflow-hidden shadow-lg shadow-rose-500/10">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-rose-500/5 to-transparent animate-pulse"></div>
+                        <p className="text-xs text-rose-300 font-bold tracking-wide uppercase">Cần Bảo hiểm nhân thọ</p>
+                        <p className="text-5xl font-black text-rose-400 mt-2 mb-1">{fmtVNDShort(netSA)}</p>
+                        <p className="text-[10px] text-rose-300/60 mt-3 border-t border-rose-500/20 pt-2">Dựa trên chuẩn CFP: Đủ để xóa nợ, bảo bọc 10 năm sinh hoạt, quỹ y tế và cam kết di sản.</p>
                     </div>
                 </div>
             </div>

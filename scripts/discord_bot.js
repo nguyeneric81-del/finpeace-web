@@ -28,9 +28,30 @@ client.once('ready', () => {
   console.log(`✅ FinPeace Bot đã sẵn sàng as ${client.user.tag}`)
 })
 
+// ─── Allowed category name (Discord category = channel group) ───────────────
+const ALLOWED_CATEGORY_NAME = 'StockPicks'
+
 client.on('messageCreate', async (message) => {
   // Ignore bots
   if (message.author.bot) return
+
+  // ✅ Only respond inside the StockPicks category
+  // StockPicks channel names visible in Discord sidebar
+  const STOCKPICKS_CHANNELS = [
+    'thông-báo', 'watchlist-đầu-cơ', 'watchlist-cơ-bản',
+    'quality-stocks-ptcb', 'câu-chuyện-thị-trường',
+    'hỏi-đáp', 'hỏi-đáp-học-viên',
+    'hỗ-trợ-dịch-vụ', 'hỗ-trợ-dùng-app',
+    'kênh-loãng-hỏi-bot-thoải-mái',
+  ]
+  const parentCategory = message.channel.parent
+  const channelName = message.channel.name || ''
+  console.log(`[DEBUG] ch="${channelName}" cat="${parentCategory?.name}" msg="${message.content.substring(0,40)}"`)
+
+  const inStockPicksByCategory = parentCategory && parentCategory.name === ALLOWED_CATEGORY_NAME
+  const inStockPicksByChannelName = STOCKPICKS_CHANNELS.some(ch => channelName.includes(ch))
+
+  if (!inStockPicksByCategory && !inStockPicksByChannelName) return
 
   const text = message.content.trim()
   const lowerText = text.toLowerCase()
