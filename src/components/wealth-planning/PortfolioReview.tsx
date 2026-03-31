@@ -773,6 +773,25 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
 
                     {/* RECOMMENDATIONS */}
                     <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.5 }}>
+                        <div className="flex items-center justify-between mb-5">
+                            <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center">
+                                    <Zap className="w-4 h-4 text-amber-400" />
+                                </div>
+                                <div>
+                                    <h2 className="text-base font-bold text-white">Bước Tiếp Theo</h2>
+                                    <p className="text-xs text-white/40">Ưu tiên hành động ngay</p>
+                                </div>
+                            </div>
+                            {onNavigateToScenarios && (
+                                <Button
+                                    onClick={onNavigateToScenarios}
+                                    className="bg-emerald-500 hover:bg-emerald-400 text-white text-xs px-4 py-2 h-auto rounded-xl shadow-lg shadow-emerald-500/25 transition-all"
+                                >
+                                    Thiết Kế Tương Lai <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                                </Button>
+                            )}
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {computed.recommendations.map((rec, i) => (
                                 <motion.div
