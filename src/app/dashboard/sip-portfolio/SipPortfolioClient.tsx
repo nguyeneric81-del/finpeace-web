@@ -27,13 +27,41 @@ export default function SipPortfolioClient({ plans, performanceData, insights }:
     );
   }
 
-  // Format data for Recharts (multiply percentage by 100 for proper display)
-  const chartData = performanceData.map(d => ({
-    name: d.month,
-    'SIP Return (%)': d.sip_return_pct ? Number((d.sip_return_pct * 100).toFixed(2)) : 0,
-    'VN-Index (%)': d.vnindex_return_pct ? Number((d.vnindex_return_pct * 100).toFixed(2)) : 0,
-    rawNav: d.cumulative_nav,
-  }));
+  // Deduplicate unique active stock codes for the lines
+  const uniqueStocks = Array.from(new Set(plans.map(p => p.stock_code)));
+  const COLORS = ['#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#f43f5e', '#a855f7'];
+
+  // Format data for Recharts (group by month, plot individual tickers)
+  const groupedByMonth = performanceData.reduce((acc: any, curr: any) => {
+    if (!acc[curr.month]) {
+      acc[curr.month] = {
+        name: curr.month,
+        'VN-Index (%)': curr.vnindex_return_pct ? Number((curr.vnindex_return_pct * 100).toFixed(2)) : 0,
+        tempSipReturnSum: 0,
+        stockCount: 0,
+        rawNavTotal: 0,
+      };
+    }
+    
+    // Set dynamic stock KPI key
+    const returnVal = curr.sip_return_pct ? Number((curr.sip_return_pct * 100).toFixed(2)) : 0;
+    acc[curr.month][curr.stock_code] = returnVal;
+    
+    // Tracking average and total metrics per month node
+    acc[curr.month].tempSipReturnSum += returnVal;
+    acc[curr.month].stockCount += 1;
+    acc[curr.month].rawNavTotal += Number(curr.cumulative_nav || 0);
+
+    return acc;
+  }, {});
+
+  const chartData: any[] = Object.values(groupedByMonth).sort((a: any, b: any) => a.name.localeCompare(b.name));
+  
+  // Calculate final KPI values derived from the newest chronological month
+  const latestMonthData = chartData.length > 0 ? chartData[chartData.length - 1] : null;
+  const averageYtdReturn = latestMonthData && latestMonthData.stockCount > 0 
+    ? (latestMonthData.tempSipReturnSum / latestMonthData.stockCount).toFixed(2) 
+    : '0.00';
 
   return (
     <div className="space-y-8">
@@ -41,24 +69,19 @@ export default function SipPortfolioClient({ plans, performanceData, insights }:
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Enrollment</p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{plans.length} Tickers</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{uniqueStocks.length} Tickers</p>
         </div>
         <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Estimated Portfolio NAV</p>
-          {/* Pick the latest cumulative NAV across their performance data (naïve approach for demo) */}
           <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">
-            {performanceData.length > 0 
-                ? `${Number(performanceData[performanceData.length - 1].cumulative_nav).toLocaleString()} VND` 
-                : 'Pending Data'}
+            {latestMonthData ? `${Number(latestMonthData.rawNavTotal).toLocaleString()} VND` : 'Pending Data'}
           </p>
         </div>
         <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">YTD Return</p>
+          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Avg Portfolio Return</p>
           <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-1 flex items-center">
             <LucideTrendingUp className="w-6 h-6 mr-2" />
-            {performanceData.length > 0 
-                ? `${(performanceData[performanceData.length - 1].sip_return_pct * 100).toFixed(2)}%` 
-                : '0.00%'}
+            {averageYtdReturn}%
           </p>
         </div>
       </div>
@@ -77,7 +100,17 @@ export default function SipPortfolioClient({ plans, performanceData, insights }:
                 itemStyle={{ fontWeight: 'bold' }}
               />
               <Legend />
-              <Line type="monotone" dataKey="SIP Return (%)" stroke="#10b981" strokeWidth={3} activeDot={{ r: 8 }} />
+              {uniqueStocks.map((stock, i) => (
+                <Line 
+                  key={stock} 
+                  type="monotone" 
+                  dataKey={stock} 
+                  stroke={COLORS[i % COLORS.length]} 
+                  strokeWidth={3} 
+                  activeDot={{ r: 8 }} 
+                  isAnimationActive={true}
+                />
+              ))}
               <Line type="monotone" dataKey="VN-Index (%)" stroke="#3b82f6" strokeWidth={2} strokeDasharray="5 5" />
             </LineChart>
           </ResponsiveContainer>

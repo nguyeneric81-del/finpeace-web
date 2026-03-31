@@ -180,28 +180,39 @@ export default function FinanceTab() {
               </thead>
               <tbody className="divide-y divide-[#1e2535]">
                 {clients.map(client => (
-                  <tr key={client.id} className="hover:bg-[#1e2535]/30 group transition">
+                  <tr key={client.user_id} className="hover:bg-[#1e2535]/30 group transition">
                     <td className="px-5 py-3">
-                      <div className="text-white font-medium">{client.profiles?.email || 'N/A'}</div>
-                      <div className="text-xs text-slate-500">{client.profiles?.full_name || 'CRM Direct'}</div>
+                      <div className="text-white font-medium">{client.email}</div>
+                      <div className="text-xs text-slate-500">{client.full_name}</div>
                     </td>
                     <td className="px-5 py-3">
-                      <span className="inline-flex items-center px-2 py-1 rounded bg-emerald-500/10 text-emerald-400 font-bold font-mono text-xs border border-emerald-500/20">
-                        {client.stock_code}
-                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        {client.plans.map((p: any) => (
+                           <span key={p.id} className={`inline-flex items-center px-1.5 py-0.5 rounded font-bold font-mono text-[10px] border ${p.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-slate-800 text-slate-500 border-slate-700'}`}>
+                             {p.stock_code} {p.status !== 'Active' ? ' (Đã đóng)' : ''}
+                           </span>
+                        ))}
+                      </div>
                     </td>
                     <td className="px-5 py-3">
-                      <div className="text-slate-300">{client.securities_company || '--'}</div>
-                      <div className="text-[10px] text-slate-500">{client.securities_account ? `TK: ${client.securities_account}` : 'Chưa nhập TK'}</div>
+                      {(() => {
+                        const activePlan = client.plans.find((p:any) => p.status === 'Active') || client.plans[0];
+                        return (
+                          <>
+                            <div className="text-slate-300 text-xs font-semibold">{activePlan?.securities_company || '--'}</div>
+                            <div className="text-[10px] text-slate-500">{activePlan?.securities_account ? `TK: ${activePlan.securities_account}` : 'Chưa nhập TK'}</div>
+                          </>
+                        )
+                      })()}
                     </td>
                     <td className="px-5 py-3">
-                      <span className={`px-2 py-1 text-[10px] uppercase font-bold rounded-full ${client.status === 'Active' ? 'bg-[#c4a67a]/20 text-[#c4a67a]' : 'bg-slate-800 text-slate-400'}`}>
-                        {client.status}
+                      <span className={`px-2 py-1 text-[10px] font-bold rounded-full ${client.plans.some((p:any) => p.status === 'Active') ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-400'}`}>
+                        {client.plans.filter((p:any) => p.status === 'Active').length} Active / {client.plans.length} Tổng
                       </span>
                     </td>
                     <td className="px-5 py-3">
                       <button 
-                        onClick={() => handleSelectClient(client.user_id, client.profiles?.email)}
+                        onClick={() => handleSelectClient(client.user_id, client.email)}
                         className="text-xs font-semibold px-3 py-1.5 bg-[#1e2535] hover:bg-emerald-600 hover:text-white rounded-md transition"
                       >
                         Tiến trình

@@ -4,7 +4,7 @@ import { createAdminClient } from '@/utils/supabase/admin';
 export async function GET(req: Request) {
   const supabase = createAdminClient();
 
-  // Fetch all active/pending sip_service_plans, joining with profiles to get the user's email
+  // Fetch all active/pending sip_service_plans, joining with profiles
   const { data, error } = await supabase
     .from('sip_service_plans')
     .select(`
@@ -26,7 +26,28 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ clients: data || [] });
+  // Deduplicate and group into Client objects natively containing their SIP plans
+  const groupedClients = Object.values(
+    (data || []).reduce((acc: any, plan: any) => {
+      const uid = plan.user_id;
+      if (!acc[uid]) {
+        acc[uid] = {
+          user_id: uid,
+          email: plan.profiles?.email || 'N/A',
+          full_name: plan.profiles?.full_name || 'CRM Direct',
+          phone: plan.profiles?.phone,
+          plans: []
+        };
+      }
+      // strip out huge relations to avoid bloat
+      const cleanedPlan = { ...plan };
+      delete cleanedPlan.profiles;
+      acc[uid].plans.push(cleanedPlan);
+      return acc;
+    }, {})
+  );
+
+  return NextResponse.json({ clients: groupedClients });
 }
 
 export async function POST(req: Request) {
