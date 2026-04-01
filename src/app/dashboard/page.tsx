@@ -50,25 +50,25 @@ export default async function DashboardPage() {
     const totalInvestment = liquidAssets + investmentAssets
 
     return (
-        <div className="flex-1 space-y-8 p-8 pt-6 min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
+        <div className="flex-1 space-y-8 p-8 pt-6 min-h-screen bg-transparent">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-black text-white tracking-tight">
+                    <h2 className="text-3xl font-black text-slate-800 tracking-tight">
                         Xin chào, {profile?.full_name || user.email?.split('@')[0]} 👋
                     </h2>
-                    <p className="text-white/40 mt-1 text-sm">
+                    <p className="text-slate-500 mt-1 text-sm">
                         Đây là bức tranh tài chính cá nhân của bạn hôm nay.
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
                     <a href="/dashboard/wealth-planning">
-                        <button className="flex items-center gap-2 text-xs font-bold text-emerald-400 border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 px-4 py-2 rounded-xl transition-all">
+                        <button className="flex items-center gap-2 text-xs font-bold text-emerald-700 border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 px-4 py-2 rounded-xl transition-all shadow-sm">
                             ✧ Lập Kế Hoạch Tài Chính
                         </button>
                     </a>
                     <form action="/auth/signout" method="post">
-                        <button type="submit" className="text-xs font-bold text-white/40 border border-white/10 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl transition-all">
+                        <button type="submit" className="text-xs font-bold text-slate-500 border border-slate-200 bg-white hover:bg-slate-50 px-4 py-2 rounded-xl transition-all shadow-sm">
                             Đăng xuất
                         </button>
                     </form>
@@ -77,7 +77,7 @@ export default async function DashboardPage() {
 
             {/* VÙNG 1: Vital Signs */}
             <section>
-                <p className="text-xs font-black uppercase tracking-widest text-white/25 mb-4">Chỉ Số Sinh Tồn — CFP Standards</p>
+                <p className="text-xs font-black uppercase tracking-widest text-emerald-700/70 mb-4">Chỉ Số Sinh Tồn — CFP Standards</p>
                 <OverviewCards
                     netWorth={netWorth}
                     debtRatio={debtRatio}
@@ -88,7 +88,7 @@ export default async function DashboardPage() {
 
             {/* VÙNG 2: Khu Vườn Khởi Sinh + Stress Test */}
             <section>
-                <p className="text-xs font-black uppercase tracking-widest text-white/25 mb-4">Phân Tích Sức Mạnh &amp; Sức Chịu Đựng</p>
+                <p className="text-xs font-black uppercase tracking-widest text-emerald-700/70 mb-4">Phân Tích Sức Mạnh &amp; Sức Chịu Đựng</p>
                 <div className="grid gap-6 lg:grid-cols-5">
                     <div className="lg:col-span-3">
                         <InvestmentGarden

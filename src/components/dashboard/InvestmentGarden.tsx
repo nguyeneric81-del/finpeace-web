@@ -56,9 +56,9 @@ export function InvestmentGarden({
     const hasData = initialInvestment > 0 || monthlySaving > 0
 
     return (
-        <Card className="shadow-sm border-blue-100 h-full">
-            <CardHeader className="bg-gradient-to-r from-blue-50/70 to-white border-b">
-                <CardTitle className="text-blue-800">Khu Vườn Khởi Sinh 🌱</CardTitle>
+        <Card className="glass-card shadow-sm border-white/60 h-full">
+            <CardHeader className="bg-gradient-to-r from-emerald-50/50 to-transparent border-b border-slate-100/50">
+                <CardTitle className="text-emerald-800">Khu Vườn Khởi Sinh 🌱</CardTitle>
                 <CardDescription>
                     Với tài sản và tiết kiệm <strong>hiện tại</strong>, trong {years} năm tới bạn sẽ có...
                 </CardDescription>
@@ -79,8 +79,8 @@ export function InvestmentGarden({
                                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="colorTaiSan" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.35} />
-                                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.35} />
+                                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                                         </linearGradient>
                                         <linearGradient id="colorVon" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%" stopColor="#94a3b8" stopOpacity={0.25} />
@@ -102,7 +102,7 @@ export function InvestmentGarden({
                                             return [fmtVal, name]
                                         }}
                                     />
-                                    <Area type="monotone" dataKey="tai_san" stroke="#3b82f6" strokeWidth={2.5} fillOpacity={1} fill="url(#colorTaiSan)" />
+                                    <Area type="monotone" dataKey="tai_san" stroke="#059669" strokeWidth={2.5} fillOpacity={1} fill="url(#colorTaiSan)" />
                                     <Area type="monotone" dataKey="von_goc" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="4 4" fillOpacity={1} fill="url(#colorVon)" />
                                 </AreaChart>
                             </ResponsiveContainer>
@@ -119,12 +119,12 @@ export function InvestmentGarden({
                             </div>
                             <div className="text-center">
                                 <p className="text-xs text-slate-400">Tổng tài sản</p>
-                                <p className="text-base font-bold text-blue-700 mt-0.5">{fmtVND(finalWealth)}</p>
+                                <p className="text-base font-bold text-emerald-800 mt-0.5">{fmtVND(finalWealth)}</p>
                             </div>
                         </div>
 
-                        <div className="mt-3 p-3 bg-blue-50 rounded-lg text-center">
-                            <p className="text-xs text-blue-700">
+                        <div className="mt-3 p-3 bg-emerald-50/50 rounded-xl text-center border border-emerald-100/50">
+                            <p className="text-xs text-emerald-800">
                                 💡 Dự phóng với lãi suất <strong>{(expectedReturnRate * 100).toFixed(0)}%/năm</strong> (danh mục hỗn hợp thị trường).
                                 Vốn gốc của bạn sinh lời thêm <strong>{gainRatio}%</strong> nhờ sức mạnh lãi kép.
                             </p>

@@ -83,7 +83,7 @@ const ZONES: Record<Zone, {
     "hoang-vu": {
         label: "Vùng Hoang Vu",
         icon: <Flame className="w-6 h-6" />,
-        gradient: "from-rose-600/30 via-rose-500/10 to-transparent",
+        gradient: "from-rose-200/30 via-rose-100/10 to-white",
         glow: "shadow-rose-500/30",
         badgeBg: "bg-rose-500/20", badgeText: "text-rose-300",
         ringColor: "ring-rose-500/40",
@@ -92,7 +92,7 @@ const ZONES: Record<Zone, {
     "kiem-soat": {
         label: "Vùng Kiểm Soát",
         icon: <AlertCircle className="w-6 h-6" />,
-        gradient: "from-amber-500/30 via-amber-400/10 to-transparent",
+        gradient: "from-amber-200/30 via-amber-100/10 to-white",
         glow: "shadow-amber-500/30",
         badgeBg: "bg-amber-500/20", badgeText: "text-amber-300",
         ringColor: "ring-amber-500/40",
@@ -179,35 +179,38 @@ function HealthCard({
     status: "good" | "warn" | "danger"; note: string; delay?: number; gradient: string
 }) {
     const cfg = {
-        good: { bar: "bg-emerald-400", glow: "shadow-emerald-500/30", text: "text-emerald-300", icon: <CheckCircle2 className="w-4 h-4 text-emerald-400" /> },
-        warn: { bar: "bg-amber-400", glow: "shadow-amber-500/30", text: "text-amber-300", icon: <AlertCircle className="w-4 h-4 text-amber-400" /> },
-        danger: { bar: "bg-rose-400", glow: "shadow-rose-500/30", text: "text-rose-300", icon: <AlertCircle className="w-4 h-4 text-rose-400" /> },
+        good: { bar: "bg-emerald-200", glow: "shadow-emerald-200/20", text: "text-emerald-600", icon: <CheckCircle2 className="w-4 h-4 text-emerald-600" /> },
+        warn: { bar: "bg-amber-200", glow: "shadow-amber-200/20", text: "text-amber-600", icon: <AlertCircle className="w-4 h-4 text-amber-600" /> },
+        danger: { bar: "bg-rose-200", glow: "shadow-rose-200/20", text: "text-rose-600", icon: <AlertCircle className="w-4 h-4 text-rose-600" /> },
     }[status]
 
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay, duration: 0.5 }}
-            className={`relative overflow-hidden rounded-2xl p-5 bg-gradient-to-br ${gradient} backdrop-blur border border-white/10 shadow-lg ${cfg.glow} hover:-translate-y-1 transition-all duration-300 cursor-default`}
+            className={`relative overflow-hidden rounded-2xl p-5 bg-gradient-to-br ${gradient} backdrop-blur border border-white/60 shadow-lg ${cfg.glow} hover:-translate-y-1 transition-all duration-300 cursor-default`}
         >
-            <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-white/5 -mr-6 -mt-6" />
+            <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-white/40 -mr-6 -mt-6" />
             <div className="flex items-start justify-between mb-3">
-                <p className="text-xs font-semibold text-white/50 uppercase tracking-wider">{label}</p>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{label}</p>
                 {cfg.icon}
             </div>
             <div className="flex items-baseline gap-1 mb-3">
                 <span className={`text-2xl font-black ${cfg.text}`}>{value}</span>
-                {unit && <span className="text-sm text-white/40">{unit}</span>}
+                {unit && <span className="text-xs font-medium text-slate-400">{unit}</span>}
             </div>
-            <div className="w-full h-1 rounded-full bg-white/10 mb-3">
+            <div className="w-full h-1.5 rounded-full bg-slate-200/50 mb-3 overflow-hidden">
                 <motion.div
                     initial={{ width: 0 }} animate={{ width: status === "good" ? "85%" : status === "warn" ? "50%" : "20%" }}
                     transition={{ duration: 0.8, delay: delay + 0.2 }}
-                    className={`h-1 rounded-full ${cfg.bar}`}
+                    className={`h-full rounded-full ${cfg.bar}`}
                 />
             </div>
-            <p className="text-xs text-white/60 leading-relaxed">{note}</p>
-            <p className="text-[10px] text-white/30 mt-1">Ngưỡng: {target}</p>
+            <p className="text-xs text-slate-600 leading-relaxed font-medium">{note}</p>
+            <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-slate-200/50">
+                <span className="text-[10px] text-slate-400 uppercase font-bold">Ngưỡng:</span>
+                <span className="text-[10px] text-slate-500 font-bold">{target}</span>
+            </div>
         </motion.div>
     )
 }
@@ -216,7 +219,7 @@ function HealthCard({
 // PROTECTION DASHBOARD COMPONENT
 // ============================================================
 function ProtectionDashboard({ data }: { data: any }) {
-    if (!data || data.error) return <div className="text-center py-10 text-white/50">Đang tải cấu trúc bảo vệ...</div>
+    if (!data || data.error) return <div className="text-center py-10 text-slate-500 font-medium">Đang tải cấu trúc bảo vệ...</div>
     
     const {
         grossSA, netSA,
@@ -226,54 +229,54 @@ function ProtectionDashboard({ data }: { data: any }) {
     return (
         <div className="space-y-8 animate-in fade-in duration-500 max-w-xl mx-auto">
             {/* Needs-Based Analysis (Gross SA Waterfall) */}
-            <div className="bg-slate-800/50 border border-white/10 rounded-3xl p-6 relative overflow-hidden">
+            <div className="bg-white border border-slate-200 shadow-xl rounded-3xl p-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
 
                 <div className="relative z-10 flex items-center gap-2 mb-6">
-                    <Crosshair className="w-5 h-5 text-sky-400" />
-                    <h3 className="text-lg font-bold text-white">Needs-Based Analysis (Gap Protection)</h3>
+                    <Crosshair className="w-5 h-5 text-sky-600" />
+                    <h3 className="text-lg font-bold text-slate-800">Needs-Based Analysis (Gap Protection)</h3>
                 </div>
 
                 <div className="space-y-4 relative z-10">
-                    <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl">
+                    <div className="flex justify-between items-center bg-slate-50 border border-slate-100 p-3 rounded-xl">
                         <div>
-                            <p className="text-xs text-white/50 mb-1">Thanh toán Nợ (Kinh doanh & Cá nhân)</p>
-                            <p className="text-sm font-semibold text-rose-300">{fmtVNDShort(financialMetrics.totalDebt)}</p>
+                            <p className="text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-tight">Thanh toán Nợ (Kinh doanh & Cá nhân)</p>
+                            <p className="text-sm font-black text-rose-600">{fmtVNDShort(financialMetrics.totalDebt)}</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-xs text-white/50 mb-1">Bảo lãnh sống (10 năm)</p>
-                            <p className="text-sm font-semibold text-amber-300">{fmtVNDShort(financialMetrics.annualExpense * 10)}</p>
+                            <p className="text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-tight">Bảo lãnh sống (10 năm)</p>
+                            <p className="text-sm font-black text-amber-600">{fmtVNDShort(financialMetrics.annualExpense * 10)}</p>
                         </div>
                     </div>
-                    <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl">
+                    <div className="flex justify-between items-center bg-slate-50 border border-slate-100 p-3 rounded-xl">
                         <div>
-                            <p className="text-xs text-white/50 mb-1">Quỹ bảo lãnh Y Tế (Reserve)</p>
-                            <p className="text-sm font-semibold text-teal-300">2.0 Tỷ</p>
+                            <p className="text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-tight">Quỹ bảo lãnh Y Tế (Reserve)</p>
+                            <p className="text-sm font-black text-teal-600">2.0 Tỷ</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-xs text-white/50 mb-1">Truyền thừa di sản (40% Tài sản)</p>
-                            <p className="text-sm font-semibold text-violet-300">{fmtVNDShort(financialMetrics.totalAssetValue * 0.4)}</p>
+                            <p className="text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-tight">Truyền thừa di sản (40% Tài sản)</p>
+                            <p className="text-sm font-black text-violet-600">{fmtVNDShort(financialMetrics.totalAssetValue * 0.4)}</p>
                         </div>
                     </div>
 
-                    <div className="border-t border-white/10 my-4"></div>
+                    <div className="border-t border-slate-200 my-4"></div>
 
                     <div className="flex justify-between items-end">
                         <div>
-                            <p className="text-xs text-white/50">TỔNG NHU CẦU BẢO VỆ (Gross SA)</p>
-                            <p className="text-2xl font-bold text-white mt-1">{fmtVNDShort(grossSA)}</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">TỔNG NHU CẦU BẢO VỆ (Gross SA)</p>
+                            <p className="text-3xl font-black text-slate-800 mt-1">{fmtVNDShort(grossSA)}</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-xs text-white/50">ĐÃ CÓ (Trừ đi)</p>
-                            <p className="text-lg font-bold text-emerald-400 mt-1">- {fmtVNDShort(financialMetrics.totalLifeCoverage)}</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">ĐÃ CÓ (Trừ đi)</p>
+                            <p className="text-lg font-black text-emerald-600 mt-1">- {fmtVNDShort(financialMetrics.totalLifeCoverage)}</p>
                         </div>
                     </div>
 
-                    <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-4 mt-6 text-center relative overflow-hidden shadow-lg shadow-rose-500/10">
+                    <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 mt-6 text-center relative overflow-hidden shadow-lg shadow-rose-500/10 mt-8">
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-rose-500/5 to-transparent animate-pulse"></div>
-                        <p className="text-xs text-rose-300 font-bold tracking-wide uppercase">Cần Bảo hiểm nhân thọ</p>
-                        <p className="text-5xl font-black text-rose-400 mt-2 mb-1">{fmtVNDShort(netSA)}</p>
-                        <p className="text-[10px] text-rose-300/60 mt-3 border-t border-rose-500/20 pt-2">Dựa trên chuẩn CFP: Đủ để xóa nợ, bảo bọc 10 năm sinh hoạt, quỹ y tế và cam kết di sản.</p>
+                        <p className="text-xs text-rose-600 font-bold tracking-wide uppercase">Cần Bảo hiểm nhân thọ</p>
+                        <p className="text-5xl font-black text-rose-600 mt-2 mb-1">{fmtVNDShort(netSA)}</p>
+                        <p className="text-[10px] text-rose-500 font-medium mt-3 border-t border-rose-200 pt-2 opacity-80">Dựa trên chuẩn CFP: Đủ để xóa nợ, bảo bọc 10 năm sinh hoạt, quỹ y tế và cam kết di sản.</p>
                     </div>
                 </div>
             </div>
@@ -381,7 +384,7 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
         return (
             <div className="space-y-6 p-6">
                 {[1, 2, 3].map(i => (
-                    <div key={i} className="h-32 animate-pulse bg-white/5 rounded-2xl border border-white/10" />
+                    <div key={i} className="h-32 animate-pulse bg-slate-50 rounded-2xl border border-slate-100" />
                 ))}
             </div>
         )
@@ -396,14 +399,14 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
             target: "> 0 và tăng dần",
             status: computed.netWorth > 0 ? "good" : "danger" as any,
             note: computed.netWorth >= 0 ? "Gốc rễ đang vươn sâu vào đất." : "Hầm rễ chưa chạm đất — bắt đầu từ hôm nay.",
-            gradient: "from-emerald-900/60 via-emerald-800/20 to-slate-900/40",
+            gradient: "from-emerald-50 via-emerald-100/30 to-white",
         },
         {
             label: "Tỷ Lệ Nợ", value: `${computed.debtRatio.toFixed(0)}%`, unit: undefined,
             target: "< 35% (CFP)",
             status: computed.debtRatio < 35 ? "good" : computed.debtRatio < 50 ? "warn" : "danger" as any,
             note: computed.debtRatio < 35 ? "Gánh nặng nhẹ nhàng." : "Cần dọn bớt sỏi nợ.",
-            gradient: "from-sky-900/60 via-sky-800/20 to-slate-900/40",
+            gradient: "from-sky-50 via-sky-100/30 to-white",
         },
         {
             label: "Quỹ Khẩn Cấp", value: computed.emergencyMonths > 0 ? computed.emergencyMonths.toFixed(1) : "—",
@@ -411,21 +414,21 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
             target: "≥ 6 tháng",
             status: computed.emergencyMonths >= 6 ? "good" : computed.emergencyMonths >= 3 ? "warn" : "danger" as any,
             note: computed.emergencyMonths >= 6 ? "Hầm trú ẩn đã vững chắc." : "Hầm đang xây — cần thêm đồ dự phòng.",
-            gradient: "from-violet-900/60 via-violet-800/20 to-slate-900/40",
+            gradient: "from-violet-50 via-violet-100/30 to-white",
         },
         {
             label: "Tỷ Lệ Bảo Vệ", value: `${computed.protectionRatio.toFixed(0)}%`, unit: undefined,
             target: "10–20% Tổng TS",
             status: computed.protectionRatio >= 10 ? "good" : computed.protectionRatio >= 5 ? "warn" : "danger" as any,
             note: computed.protectionRatio >= 10 ? "Áo giáp đang mặc vừa vặn." : "Cần kiểm tra lại bảo hiểm.",
-            gradient: "from-amber-900/60 via-amber-800/20 to-slate-900/40",
+            gradient: "from-amber-50 via-amber-100/30 to-white",
         },
         {
             label: "Tỷ Lệ PYF", value: `${computed.pyfRate.toFixed(0)}%`, unit: "tiết kiệm",
             target: "≥ 20% Thu Nhập",
             status: computed.pyfRate >= 20 ? "good" : computed.pyfRate >= 10 ? "warn" : "danger" as any,
             note: computed.pyfRate >= 20 ? "Gieo hạt đều đặn — lãi kép đang làm việc." : "Đã có hạt mầm, cần tăng thêm.",
-            gradient: "from-rose-900/60 via-rose-800/20 to-slate-900/40",
+            gradient: "from-rose-50 via-rose-100/30 to-white",
         },
         {
             label: "Debt Service Ratio",
@@ -451,20 +454,20 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
             note: cashflow?.monthly_debt_payment
                 ? `Trả nợ ${fmtVNDShort(cashflow.monthly_debt_payment)}/tháng — DSR=${cashflow.annual_income > 0 ? (cashflow.monthly_debt_payment * 12 / cashflow.annual_income * 100).toFixed(0) : '?'}%`
                 : 'Cập nhật dòng tiền để tính DSR.',
-            gradient: "from-indigo-900/60 via-indigo-800/20 to-slate-900/40",
+            gradient: "from-indigo-50 via-indigo-100/30 to-white",
         },
     ]
 
     return (
         <div className="space-y-6">
             <div className="flex justify-center mb-8">
-                <div className="flex bg-white/5 p-1 rounded-xl w-fit border border-white/10 shadow-lg">
+                <div className="flex bg-slate-100 p-1.5 rounded-2xl w-fit border border-slate-200 shadow-inner">
                     <button onClick={() => setActiveTab('overview')} 
-                        className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === 'overview' ? 'bg-emerald-500 text-white shadow shadow-emerald-500/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'overview' ? 'bg-white text-emerald-600 shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-800'}`}>
                         <TrendingUp className="w-4 h-4" /> Tổng Quan Tài Sản
                     </button>
                     <button onClick={() => setActiveTab('protection')} 
-                        className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTab === 'protection' ? 'bg-indigo-500 text-white shadow shadow-indigo-500/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'protection' ? 'bg-white text-indigo-600 shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-800'}`}>
                         <ShieldCheck className="w-4 h-4" /> Giải Pháp Bảo Vệ
                     </button>
                 </div>
@@ -476,27 +479,27 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
                 <div className="space-y-10 animate-in fade-in duration-500">
                     {/* ZONE HERO */}
                     <motion.section initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                        <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${zone.gradient} border border-white/10 backdrop-blur p-7 shadow-2xl ${zone.glow}`}>
+                        <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${zone.gradient} border border-white/60 backdrop-blur p-7 shadow-xl ${zone.glow}`}>
                             {/* Glow orb */}
-                            <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/5 blur-3xl" />
-                            <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-white/3 blur-2xl" />
+                            <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/40 blur-3xl" />
+                            <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-white/20 blur-2xl" />
 
                             <div className="relative flex items-start justify-between gap-4">
                                 <div>
                                     <div className="flex items-center gap-2 mb-3">
-                                        <MapPin className="w-4 h-4 text-white/50" />
-                                        <span className="text-xs font-semibold text-white/50 uppercase tracking-wider">Vị Trí Tài Chính Hiện Tại</span>
+                                        <MapPin className="w-4 h-4 text-slate-400" />
+                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Vị Trí Tài Chính Hiện Tại</span>
                                     </div>
-                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${zone.badgeBg} border border-white/10 mb-4`}>
-                                        <span className={zone.badgeText}>{zone.icon}</span>
-                                        <span className={`text-sm font-bold ${zone.badgeText}`}>{zone.label}</span>
+                                    <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full ${zone.badgeBg} border border-white/40 mb-4 shadow-sm`}>
+                                        <span className={zone.badgeText.replace('300', '600')}>{zone.icon}</span>
+                                        <span className={`text-sm font-black ${zone.badgeText.replace('300', '600')}`}>{zone.label}</span>
                                     </div>
-                                    <p className="text-white/70 text-sm max-w-lg leading-relaxed">{zone.desc}</p>
+                                    <p className="text-slate-600 text-sm max-w-lg leading-relaxed font-medium">{zone.desc}</p>
                                 </div>
                                 {/* Net Worth highlight */}
                                 <div className="shrink-0 text-right">
-                                    <p className="text-xs text-white/40 mb-1">Tài Sản Ròng</p>
-                                    <p className={`text-3xl font-black ${computed.netWorth >= 0 ? "text-emerald-300" : "text-rose-300"}`}>
+                                    <p className="text-[10px] font-bold text-slate-400 mb-1 uppercase">Tài Sản Ròng</p>
+                                    <p className={`text-3xl font-black ${computed.netWorth >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
                                         {fmtVNDShort(computed.netWorth)}
                                     </p>
                                 </div>
@@ -509,12 +512,12 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
                                     const isActive = i === zoneIndex
                                     const isPast = i < zoneIndex
                                     return (
-                                        <div key={z} className={`relative rounded-xl p-3 text-center border transition-all duration-300 ${isActive ? `ring-2 ${zd.ringColor} ${zd.badgeBg} border-white/20` : isPast ? "bg-white/5 border-white/10" : "bg-white/3 border-white/5 opacity-40"}`}>
-                                            <div className={`mx-auto w-7 h-7 rounded-full flex items-center justify-center mb-1.5 ${isActive ? zd.badgeBg : "bg-white/10"}`}>
-                                                <span className={`${isActive ? zd.badgeText : "text-white/30"} [&>svg]:w-3.5 [&>svg]:h-3.5`}>{zd.icon}</span>
+                                        <div key={z} className={`relative rounded-xl p-3 text-center border transition-all duration-300 ${isActive ? `ring-2 ${zd.ringColor} ${zd.badgeBg} border-white/40 shadow-sm` : isPast ? "bg-white/40 border-slate-200" : "bg-slate-50/50 border-slate-100 opacity-40 grayscale"}`}>
+                                            <div className={`mx-auto w-7 h-7 rounded-full flex items-center justify-center mb-1.5 ${isActive ? zd.badgeBg : "bg-slate-200/50"}`}>
+                                                <span className={`${isActive ? zd.badgeText.replace('300', '600') : "text-slate-400"} [&>svg]:w-3.5 [&>svg]:h-3.5`}>{zd.icon}</span>
                                             </div>
-                                            <p className={`text-[10px] font-semibold ${isActive ? zd.badgeText : "text-white/30"}`}>{zd.label}</p>
-                                            {isActive && <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-white rounded-full ring-2 ring-slate-900" />}
+                                            <p className={`text-[10px] font-bold ${isActive ? zd.badgeText.replace('300', '600') : "text-slate-400"}`}>{zd.label}</p>
+                                            {isActive && <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white shadow-sm" />}
                                         </div>
                                     )
                                 })}
@@ -525,12 +528,12 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
                     {/* HEALTH INDICATORS */}
                     <section>
                         <div className="flex items-center gap-2 mb-5">
-                            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                                <HeartPulse className="w-4 h-4 text-emerald-400" />
+                            <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+                                <HeartPulse className="w-4 h-4 text-emerald-600" />
                             </div>
                             <div>
-                                <h2 className="text-base font-bold text-white">Xét Nghiệm Sức Khỏe Tài Chính</h2>
-                                <p className="text-xs text-white/40">6 chỉ số sinh tồn — chuẩn CFP</p>
+                                <h2 className="text-base font-black text-slate-800">Xét Nghiệm Sức Khỏe Tài Chính</h2>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">6 chỉ số sinh tồn — chuẩn CFP</p>
                             </div>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -543,20 +546,20 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
                     {/* ASSET TOWER */}
                     <section>
                         <div className="flex items-center gap-2 mb-5">
-                            <div className="w-8 h-8 rounded-lg bg-violet-500/20 flex items-center justify-center">
-                                <TrendingUp className="w-4 h-4 text-violet-400" />
+                            <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
+                                <TrendingUp className="w-4 h-4 text-violet-600" />
                             </div>
                             <div>
-                                <h2 className="text-base font-bold text-white">Cơ Cấu Tài Sản — Tháp Sinh Mệnh</h2>
-                                <p className="text-xs text-white/40">Từ Gốc Rễ lên Tán Lá</p>
+                                <h2 className="text-base font-black text-slate-800">Cơ Cấu Tài Sản — Tháp Sinh Mệnh</h2>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Từ Gốc Rễ lên Tán Lá</p>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* Pyramid */}
-                            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-white/10 backdrop-blur p-6 shadow-xl">
+                            <div className="relative overflow-hidden rounded-2xl bg-white border border-slate-200 p-6 shadow-lg">
                                 <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-violet-500/5 blur-3xl" />
-                                <p className="text-xs text-white/40 mb-6 font-medium">Cấu trúc từ Gốc Rễ (Móng) lên Tán Lá (Tăng Trưởng)</p>
+                                <p className="text-[10px] font-bold text-slate-400 mb-6 uppercase">Cấu trúc từ Gốc Rễ (Móng) lên Tán Lá (Tăng Trưởng)</p>
                                 <div className="flex flex-col items-center gap-1.5 w-full">
                                     <motion.div initial={{ opacity: 0, scaleX: 0.6 }} animate={{ opacity: 1, scaleX: 1 }} transition={{ delay: 0.4 }}
                                         className="w-1/4 min-w-[90px] h-14 bg-gradient-to-r from-rose-500 to-orange-500 rounded-t-2xl flex flex-col items-center justify-center text-white shadow-lg shadow-rose-500/30 group cursor-pointer hover:w-1/3 transition-all duration-300 relative">
@@ -584,20 +587,20 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
                                     </motion.div>
                                 </div>
 
-                                <div className="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">
+                                <div className="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center">
                                     <div>
-                                        <p className="text-xs text-white/40">Tổng Tài Sản</p>
-                                        <p className="text-sm font-bold text-emerald-400">{fmtVND(computed.totalAssets)}</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase">Tổng Tài Sản</p>
+                                        <p className="text-sm font-black text-emerald-600">{fmtVND(computed.totalAssets)}</p>
                                     </div>
-                                    <Minus className="w-4 h-4 text-white/20" />
+                                    <Minus className="w-4 h-4 text-slate-200" />
                                     <div>
-                                        <p className="text-xs text-white/40">Tổng Nợ</p>
-                                        <p className="text-sm font-bold text-rose-400">{fmtVND(computed.totalLiabilities)}</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase">Tổng Nợ</p>
+                                        <p className="text-sm font-black text-rose-600">{fmtVND(computed.totalLiabilities)}</p>
                                     </div>
-                                    <ChevronRight className="w-4 h-4 text-white/20" />
+                                    <ChevronRight className="w-4 h-4 text-slate-200" />
                                     <div className="text-right">
-                                        <p className="text-xs text-white/40">Tài Sản Ròng</p>
-                                        <p className={`text-sm font-bold ${computed.netWorth >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase">Tài Sản Ròng</p>
+                                        <p className={`text-sm font-black ${computed.netWorth >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
                                             {fmtVND(computed.netWorth)}
                                         </p>
                                     </div>
@@ -605,8 +608,8 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
                             </div>
 
                             {/* Asset list */}
-                            <div className="rounded-2xl bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-white/10 backdrop-blur p-6 space-y-4 overflow-y-auto max-h-[480px] shadow-xl">
-                                <p className="text-xs text-white/40 font-medium uppercase tracking-wider">Chi Tiết Từng Hạng Mục</p>
+                            <div className="rounded-2xl bg-white border border-slate-200 p-6 space-y-4 overflow-y-auto max-h-[480px] shadow-lg">
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Chi Tiết Từng Hạng Mục</p>
                                 {Object.entries(GROUP_STYLE)
                                     .filter(([g]) => computed.groupedAssets[g] && computed.groupedAssets[g].length > 0)
                                     .map(([group, style]) => (
@@ -617,14 +620,14 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
                                             </div>
                                             <div className="space-y-1.5 pl-1">
                                                 {computed.groupedAssets[group].map(a => (
-                                                    <div key={a.id} className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
+                                                    <div key={a.id} className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-slate-50/50 hover:bg-slate-100/80 border border-transparent hover:border-slate-200 transition-all">
                                                         <div>
-                                                            <p className="text-xs font-medium text-white/80">{a.asset_name}</p>
+                                                            <p className="text-xs font-bold text-slate-700">{a.asset_name}</p>
                                                             {a.risk_level > 0 && a.asset_group !== GROUP.DEBT && (
-                                                                <p className="text-[10px] text-white/30">Rủi ro Lvl {a.risk_level}</p>
+                                                                <p className="text-[10px] font-medium text-slate-400">Rủi ro Lvl {a.risk_level}</p>
                                                             )}
                                                         </div>
-                                                        <span className={`text-xs font-bold ${group === GROUP.DEBT ? "text-rose-400" : "text-white/80"}`}>
+                                                        <span className={`text-xs font-black ${group === GROUP.DEBT ? "text-rose-600" : "text-slate-800"}`}>
                                                             {group === GROUP.DEBT ? "-" : ""}{fmtVND(Number(a.amount))}
                                                         </span>
                                                     </div>
@@ -640,62 +643,62 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
                     {cashflow && (
                         <section>
                             <div className="flex items-center gap-2 mb-5">
-                                <div className="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center">
-                                    <Droplets className="w-4 h-4 text-sky-400" />
+                            <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center">
+                                <Droplets className="w-4 h-4 text-sky-600" />
+                            </div>
+                            <div>
+                                <h2 className="text-base font-black text-slate-800">Sức Khỏe Dòng Tiền</h2>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Thu chi & tỷ lệ PYF</p>
+                            </div>
+                        </div>
+
+                        <div className="rounded-2xl bg-white border border-slate-200 p-6 space-y-6 shadow-xl">
+                            <div className="space-y-4">
+                                <div>
+                                    <div className="flex justify-between text-[10px] font-bold mb-2 uppercase tracking-wide">
+                                        <span className="flex items-center gap-1.5 text-slate-400"><TrendingUp className="w-3.5 h-3.5 text-emerald-500" />Thu Nhập / Năm</span>
+                                        <span className="text-emerald-600">{fmtVND(cashflow.annual_income)}</span>
+                                    </div>
+                                    <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
+                                        <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 0.8, delay: 0.2 }}
+                                            className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.3)]" />
+                                    </div>
                                 </div>
                                 <div>
-                                    <h2 className="text-base font-bold text-white">Sức Khỏe Dòng Tiền</h2>
-                                    <p className="text-xs text-white/40">Thu chi & tỷ lệ PYF</p>
-                                </div>
-                            </div>
-
-                            <div className="rounded-2xl bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-white/10 backdrop-blur p-6 space-y-6 shadow-xl">
-                                <div className="space-y-4">
-                                    <div>
-                                        <div className="flex justify-between text-xs mb-2">
-                                            <span className="flex items-center gap-1.5 text-white/50"><TrendingUp className="w-3.5 h-3.5 text-emerald-400" />Thu Nhập / Năm</span>
-                                            <span className="font-bold text-emerald-400">{fmtVND(cashflow.annual_income)}</span>
-                                        </div>
-                                        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                                            <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 0.8, delay: 0.2 }}
-                                                className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" />
-                                        </div>
+                                    <div className="flex justify-between text-[10px] font-bold mb-2 uppercase tracking-wide">
+                                        <span className="flex items-center gap-1.5 text-slate-400"><TrendingDown className="w-3.5 h-3.5 text-amber-500" />Chi Tiêu / Năm</span>
+                                        <span className="text-amber-600">{fmtVND(cashflow.annual_expense)}</span>
                                     </div>
-                                    <div>
-                                        <div className="flex justify-between text-xs mb-2">
-                                            <span className="flex items-center gap-1.5 text-white/50"><TrendingDown className="w-3.5 h-3.5 text-amber-400" />Chi Tiêu / Năm</span>
-                                            <span className="font-bold text-amber-400">{fmtVND(cashflow.annual_expense)}</span>
-                                        </div>
-                                        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                                            <motion.div initial={{ width: 0 }}
-                                                animate={{ width: `${Math.min((cashflow.annual_expense / cashflow.annual_income) * 100, 100)}%` }}
-                                                transition={{ duration: 0.8, delay: 0.3 }}
-                                                className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="pt-4 border-t border-white/10">
-                                    <div className="flex justify-between items-center mb-3">
-                                        <div>
-                                            <p className="text-xs font-bold text-white/80 flex items-center gap-1.5">
-                                                <Sprout className="w-3.5 h-3.5 text-emerald-400" /> Đồng Hồ PYF — Trả Cho Mình Trước
-                                            </p>
-                                        </div>
-                                        <span className={`text-2xl font-black ${computed.pyfRate >= 20 ? "text-emerald-400" : computed.pyfRate >= 10 ? "text-amber-400" : "text-rose-400"}`}>
-                                            {computed.pyfRate.toFixed(0)}%
-                                        </span>
-                                    </div>
-                                    <div className="relative h-3 bg-white/10 rounded-full overflow-hidden">
-                                        <motion.div
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${Math.min(computed.pyfRate, 100)}%` }}
-                                            transition={{ duration: 1, delay: 0.4 }}
-                                            className={`h-full rounded-full ${computed.pyfRate >= 20 ? "bg-gradient-to-r from-emerald-400 to-teal-500" : computed.pyfRate >= 10 ? "bg-gradient-to-r from-amber-400 to-orange-500" : "bg-gradient-to-r from-rose-400 to-rose-600"}`}
-                                        />
+                                    <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
+                                        <motion.div initial={{ width: 0 }}
+                                            animate={{ width: `${Math.min((cashflow.annual_expense / cashflow.annual_income) * 100, 100)}%` }}
+                                            transition={{ duration: 0.8, delay: 0.3 }}
+                                            className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.3)]" />
                                     </div>
                                 </div>
                             </div>
+
+                            <div className="pt-4 border-t border-slate-100">
+                                <div className="flex justify-between items-center mb-3">
+                                    <div>
+                                        <p className="text-xs font-black text-slate-700 flex items-center gap-1.5 uppercase tracking-tight">
+                                            <Sprout className="w-3.5 h-3.5 text-emerald-500" /> Đồng Hồ PYF — Trả Cho Mình Trước
+                                        </p>
+                                    </div>
+                                    <span className={`text-2xl font-black ${computed.pyfRate >= 20 ? "text-emerald-600" : computed.pyfRate >= 10 ? "text-amber-600" : "text-rose-600"}`}>
+                                        {computed.pyfRate.toFixed(0)}%
+                                    </span>
+                                </div>
+                                <div className="relative h-4 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${Math.min(computed.pyfRate, 100)}%` }}
+                                        transition={{ duration: 1, delay: 0.4 }}
+                                        className={`h-full rounded-full ${computed.pyfRate >= 20 ? "bg-gradient-to-r from-emerald-400 to-teal-500" : computed.pyfRate >= 10 ? "bg-gradient-to-r from-amber-400 to-orange-500" : "bg-gradient-to-r from-rose-400 to-rose-600"}`}
+                                    />
+                                </div>
+                            </div>
+                        </div>
                         </section>
                     )}
 
@@ -703,13 +706,13 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
                     <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.5 }}>
                         <div className="flex items-center justify-between mb-5">
                             <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center">
-                                    <Zap className="w-4 h-4 text-amber-400" />
-                                </div>
-                                <div>
-                                    <h2 className="text-base font-bold text-white">Bước Tiếp Theo</h2>
-                                    <p className="text-xs text-white/40">Ưu tiên hành động ngay</p>
-                                </div>
+                            <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                                <Zap className="w-4 h-4 text-amber-600" />
+                            </div>
+                            <div>
+                                <h2 className="text-base font-black text-slate-800">Bước Tiếp Theo</h2>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Ưu tiên hành động ngay</p>
+                            </div>
                             </div>
                             {onNavigateToScenarios && (
                                 <Button
@@ -726,14 +729,17 @@ export function PortfolioReview({ userId, onNavigateToScenarios }: { userId: str
                                     key={i}
                                     initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.6 + i * 0.1 }}
-                                    className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${rec.color} border backdrop-blur p-5 shadow-lg`}
+                                    className={`relative overflow-hidden rounded-2xl bg-white border border-slate-200 p-5 shadow-lg group hover:-translate-y-1 transition-all duration-300`}
                                 >
-                                    <div className="flex items-start justify-between mb-3">
-                                        <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white">{rec.icon}</div>
-                                        <span className="text-[10px] font-bold bg-white/10 text-white/70 px-2 py-0.5 rounded-full">{rec.cta}</span>
+                                    <div className={`absolute inset-0 bg-gradient-to-br ${rec.color} opacity-10 group-hover:opacity-20 transition-opacity`} />
+                                    <div className="relative z-10">
+                                        <div className="flex items-start justify-between mb-3">
+                                            <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">{rec.icon}</div>
+                                            <span className="text-[10px] font-black bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full uppercase tracking-tighter">{rec.cta}</span>
+                                        </div>
+                                        <p className="text-sm font-black text-slate-800 mb-1">{rec.title}</p>
+                                        <p className="text-xs text-slate-600 leading-relaxed font-medium">{rec.detail}</p>
                                     </div>
-                                    <p className="text-sm font-bold text-white mb-1">{rec.title}</p>
-                                    <p className="text-xs text-white/60 leading-relaxed">{rec.detail}</p>
                                 </motion.div>
                             ))}
                         </div>

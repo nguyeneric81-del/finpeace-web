@@ -127,19 +127,19 @@ export function WealthPlanningClient({ user, profile }: { user: any; profile: an
     const currentStep = SCREENS.find(s => s.id === screen)?.step || 1
 
     return (
-        <div className="flex-1 min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
+        <div className="flex-1 min-h-screen bg-transparent">
             {/* Top Nav */}
-            <div className="sticky top-0 z-20 bg-slate-900/80 backdrop-blur border-b border-white/10">
+            <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-14">
                         {/* Left: Back + Title */}
                         <div className="flex items-center gap-3">
-                            <a href="/dashboard" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
-                                <ArrowLeft className="w-4 h-4 text-slate-500" />
+                            <a href="/dashboard" className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                                <ArrowLeft className="w-4 h-4 text-slate-600" />
                             </a>
                             <div>
-                                <h1 className="text-sm font-semibold text-slate-800 dark:text-white">Kế Hoạch Tài Chính</h1>
-                                <p className="text-xs text-slate-400">{profile?.full_name || user.email?.split('@')[0]}</p>
+                                <h1 className="text-sm font-bold text-slate-800">Kế Hoạch Tài Chính</h1>
+                                <p className="text-xs font-medium text-slate-500">{profile?.full_name || user.email?.split('@')[0]}</p>
                             </div>
                         </div>
 
@@ -156,7 +156,7 @@ export function WealthPlanningClient({ user, profile }: { user: any; profile: an
                                                 if (isDone || isActive) setScreen(s.id as Screen)
                                                 if (s.id === 'action') loadFinancialPlan()
                                             }}
-                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${isActive ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : isDone ? 'text-slate-600 hover:bg-slate-100 dark:text-slate-400' : 'text-slate-400 cursor-default'}`}
+                                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${isActive ? 'bg-emerald-100 text-emerald-800 shadow-sm' : isDone ? 'text-slate-600 hover:bg-slate-100' : 'text-slate-400 cursor-default'}`}
                                         >
                                             <Icon className="w-3.5 h-3.5" />
                                             {s.label}
@@ -172,24 +172,24 @@ export function WealthPlanningClient({ user, profile }: { user: any; profile: an
                         {/* Right: buttons */}
                         <div className="flex items-center gap-2">
                             <Link href="/dashboard/wealth-planning/simulator"
-                                className="flex items-center gap-1.5 text-xs font-medium text-amber-400 hover:text-amber-300 border border-amber-500/30 hover:border-amber-400 bg-amber-500/10 px-3 py-1.5 rounded-lg transition-all">
+                                className="flex items-center gap-1.5 text-xs font-bold text-amber-700 hover:text-amber-800 border border-amber-200 hover:border-amber-300 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-lg transition-all shadow-sm">
                                 <Zap className="w-3.5 h-3.5" />
                                 Simulator
                             </Link>
                             <Link href="/dashboard/wealth-planning/report"
-                                className="flex items-center gap-1.5 text-xs font-medium text-violet-400 hover:text-violet-300 border border-violet-500/30 hover:border-violet-400 bg-violet-500/10 px-3 py-1.5 rounded-lg transition-all">
+                                className="flex items-center gap-1.5 text-xs font-bold text-violet-700 hover:text-violet-800 border border-violet-200 hover:border-violet-300 bg-violet-50 hover:bg-violet-100 px-3 py-1.5 rounded-lg transition-all shadow-sm">
                                 <FileText className="w-3.5 h-3.5" />
                                 Báo Cáo CFP
                             </Link>
                             <button
                                 onClick={() => setShowCheckIn(true)}
-                                className="flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 px-3 py-1.5 rounded-lg transition-all"
+                                className="flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 border border-slate-200 bg-white hover:border-emerald-200 px-3 py-1.5 rounded-lg transition-all shadow-sm"
                             >
                                 <CalendarCheck className="w-3.5 h-3.5" />
                                 Check-in
                             </button>
-                            <Link href="/dashboard/wealth-planning/profile" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Cập nhật hồ sơ CFP">
-                                <Settings className="w-4 h-4 text-slate-400" />
+                            <Link href="/dashboard/wealth-planning/profile" className="p-2 hover:bg-slate-100 rounded-lg transition-colors border border-transparent shadow-sm" title="Cập nhật hồ sơ CFP">
+                                <Settings className="w-4 h-4 text-slate-500" />
                             </Link>
                         </div>
                     </div>

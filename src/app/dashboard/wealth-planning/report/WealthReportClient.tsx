@@ -21,15 +21,15 @@ import { ReportCoverPage } from './sections/ReportCoverPage'
 export function MissingDataBanner({ fields, tab }: { fields: string[], tab: 'profile' | 'cashflow' | 'insurance' }) {
     const tabLabels: Record<string, string> = { profile: 'Cá Nhân', cashflow: 'Dòng Tiền', insurance: 'Bảo Hiểm & Rủi Ro' }
     return (
-        <div className="flex items-center justify-between gap-4 bg-amber-500/10 border border-amber-500/25 rounded-2xl px-5 py-4 mb-4">
+        <div className="flex items-center justify-between gap-4 bg-amber-50 border border-amber-200 shadow-sm rounded-2xl px-5 py-4 mb-4">
             <div className="flex items-center gap-3">
-                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
-                <p className="text-sm text-amber-200">
-                    Thiếu: <span className="font-semibold">{fields.join(', ')}</span>
+                <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
+                <p className="text-sm text-amber-700">
+                    Thiếu dữ liệu: <span className="font-bold">{fields.join(', ')}</span>
                 </p>
             </div>
             <Link href={`/dashboard/wealth-planning/profile?tab=${tab}`}
-                className="shrink-0 text-xs font-bold text-amber-300 hover:text-amber-200 border border-amber-500/30 px-3 py-1.5 rounded-xl transition-colors whitespace-nowrap">
+                className="shrink-0 text-xs font-bold text-amber-600 hover:text-amber-700 border border-amber-300 hover:bg-amber-100 px-3 py-1.5 rounded-xl transition-colors whitespace-nowrap">
                 Cập nhật → Tab "{tabLabels[tab]}"
             </Link>
         </div>
@@ -88,10 +88,10 @@ export function WealthReportClient({ user, profile }: { user: any; profile: any 
     const sharedProps = { profile, assets, cashflow, scenario, snapshots, insurance, actionPlans, generatedDate }
 
     if (loading) return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 flex items-center justify-center">
-            <div className="flex items-center gap-3 text-white/40">
-                <div className="w-5 h-5 border-2 border-white/20 border-t-emerald-400 rounded-full animate-spin" />
-                Đang tải báo cáo tài chính...
+        <div className="min-h-screen bg-transparent flex items-center justify-center">
+            <div className="flex items-center gap-3 text-slate-500 font-medium">
+                <div className="w-5 h-5 border-2 border-slate-200 border-t-emerald-500 rounded-full animate-spin" />
+                Đang tải báo cáo CFP...
             </div>
         </div>
     )
@@ -112,19 +112,19 @@ export function WealthReportClient({ user, profile }: { user: any; profile: any 
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
+        <div className="min-h-screen bg-transparent">
             {/* Top nav */}
-            <div className="sticky top-0 z-30 bg-slate-900/90 backdrop-blur border-b border-white/10 print:hidden">
+            <div className="sticky top-0 z-30 bg-white/70 backdrop-blur border-b border-slate-200 print:hidden">
                 <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Link href="/dashboard/wealth-planning" className="flex items-center gap-1.5 text-white/50 hover:text-white text-sm transition-colors">
+                        <Link href="/dashboard/wealth-planning" className="flex items-center gap-1.5 text-slate-500 hover:text-emerald-600 text-sm font-bold transition-colors">
                             <ArrowLeft className="w-4 h-4" /> Kế hoạch tài chính
                         </Link>
-                        <span className="text-white/20">/</span>
-                        <span className="text-white font-medium text-sm">Báo Cáo Tổng Thể</span>
+                        <span className="text-slate-300">/</span>
+                        <span className="text-slate-800 font-bold text-sm">Báo Cáo Tổng Thể</span>
                     </div>
                     <button onClick={handlePrint}
-                        className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-emerald-500/20">
+                        className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm">
                         <Printer className="w-4 h-4" /> In / Xuất PDF
                     </button>
                 </div>
@@ -134,12 +134,12 @@ export function WealthReportClient({ user, profile }: { user: any; profile: any 
                 {/* Sidebar nav */}
                 <aside className="w-44 shrink-0 print:hidden">
                     <div className="sticky top-20 space-y-1">
-                        <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest mb-3 px-2">Mục Lục</p>
+                        <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-3 px-2">Mục Lục Report</p>
                         {SECTIONS.map(s => {
                             const Icon = s.icon
                             return (
                                 <button key={s.id} onClick={() => setActiveSection(s.id)}
-                                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-left transition-all ${activeSection === s.id ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'text-white/40 hover:bg-white/5 hover:text-white/70'}`}>
+                                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-left transition-all ${activeSection === s.id ? 'bg-white text-emerald-600 border border-slate-200 shadow-sm' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 border border-transparent hover:border-slate-300'}`}>
                                     <Icon className="w-3.5 h-3.5 shrink-0" /> {s.label}
                                 </button>
                             )
@@ -154,17 +154,17 @@ export function WealthReportClient({ user, profile }: { user: any; profile: any 
                     </motion.div>
 
                     {/* Navigation arrows */}
-                    <div className="flex justify-between mt-8 pt-6 border-t border-white/10 print:hidden">
+                    <div className="flex justify-between mt-8 pt-6 border-t border-slate-200 print:hidden">
                         {SECTIONS.findIndex(s => s.id === activeSection) > 0 && (
                             <button onClick={() => setActiveSection(SECTIONS[SECTIONS.findIndex(s => s.id === activeSection) - 1].id)}
-                                className="flex items-center gap-2 text-white/50 hover:text-white text-sm transition-colors">
+                                className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-black text-sm transition-colors">
                                 <ArrowLeft className="w-4 h-4" />
                                 {SECTIONS[SECTIONS.findIndex(s => s.id === activeSection) - 1].label}
                             </button>
                         )}
                         {SECTIONS.findIndex(s => s.id === activeSection) < SECTIONS.length - 1 && (
                             <button onClick={() => setActiveSection(SECTIONS[SECTIONS.findIndex(s => s.id === activeSection) + 1].id)}
-                                className="ml-auto flex items-center gap-2 text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors">
+                                className="ml-auto flex items-center gap-2 text-emerald-600 hover:text-emerald-500 text-sm font-black transition-colors">
                                 {SECTIONS[SECTIONS.findIndex(s => s.id === activeSection) + 1].label}
                                 <ArrowLeft className="w-4 h-4 rotate-180" />
                             </button>

@@ -213,35 +213,35 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
         setInsurances(prev => prev.map((ins, idx) => idx === i ? { ...ins, [field]: value } : ins))
 
     const TAB_COLORS: Record<string, string> = {
-        sky: 'bg-sky-500/20 border-sky-500/40 text-sky-300',
-        emerald: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300',
-        amber: 'bg-amber-500/20 border-amber-500/40 text-amber-300',
-        violet: 'bg-violet-500/20 border-violet-500/40 text-violet-300',
+        sky: 'bg-sky-50 border-sky-200 text-sky-700 shadow-sm',
+        emerald: 'bg-emerald-50 border-emerald-200 text-emerald-700 shadow-sm',
+        amber: 'bg-amber-50 border-amber-200 text-amber-700 shadow-sm',
+        violet: 'bg-violet-50 border-violet-200 text-violet-700 shadow-sm',
     }
 
-    const inputCls = 'w-full bg-white/8 border border-white/15 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-400 placeholder:text-white/25 transition-colors'
-    const labelCls = 'block text-xs font-semibold text-white/50 uppercase tracking-wider mb-2'
+    const inputCls = 'w-full bg-white border border-slate-200 text-slate-800 font-medium rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-400 focus:shadow-sm placeholder:text-slate-400 transition-all'
+    const labelCls = 'block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2'
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
+        <div className="min-h-screen bg-transparent">
             {/* Header */}
-            <div className="sticky top-0 z-20 bg-slate-900/90 backdrop-blur border-b border-white/10">
+            <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm">
                 <div className="max-w-3xl mx-auto px-4 h-14 flex items-center gap-4">
-                    <Link href="/dashboard/wealth-planning" className="flex items-center gap-1.5 text-white/50 hover:text-white text-sm transition-colors">
+                    <Link href="/dashboard/wealth-planning" className="flex items-center gap-1.5 text-slate-500 hover:text-slate-800 font-medium text-sm transition-colors">
                         <ArrowLeft className="w-4 h-4" /> Kế hoạch tài chính
                     </Link>
-                    <span className="text-white/20">/</span>
-                    <span className="text-white font-semibold text-sm">Cập Nhật Hồ Sơ CFP</span>
+                    <span className="text-slate-300">/</span>
+                    <span className="text-slate-800 font-bold text-sm">Cập Nhật Hồ Sơ CFP</span>
                 </div>
             </div>
 
             <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
                 {/* Info banner */}
-                <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl px-5 py-4 flex items-start gap-3">
-                    <span className="text-amber-400 text-lg shrink-0">💡</span>
+                <div className="bg-amber-50/80 backdrop-blur-sm border border-amber-200/60 rounded-2xl px-5 py-4 flex items-start gap-3 shadow-sm">
+                    <span className="text-amber-500 text-lg shrink-0">💡</span>
                     <div>
-                        <p className="text-amber-300 font-semibold text-sm">Tại sao cần cập nhật?</p>
-                        <p className="text-white/50 text-xs mt-0.5">Báo cáo CFP cần các thông tin này để tính chính xác Risk Management, IPS, và Debt Service Ratio. Chỉ cần làm 1 lần, hệ thống sẽ tự động dùng lại.</p>
+                        <p className="text-amber-800 font-bold text-sm">Tại sao cần cập nhật?</p>
+                        <p className="text-amber-700/80 font-medium text-xs mt-0.5">Báo cáo CFP cần các thông tin này để tính chính xác Risk Management, IPS, và Debt Service Ratio. Chỉ cần làm 1 lần, hệ thống sẽ tự động dùng lại.</p>
                     </div>
                 </div>
 
@@ -258,8 +258,8 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                         )
                         return (
                             <button key={tab.id} onClick={() => { setActiveTab(tab.id); if (tab.id === 'assets') loadAssets() }}
-                                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold border transition-all ${isActive ? TAB_COLORS[tab.color] : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/8 hover:text-white/70'}`}>
-                                {isDone && !isActive ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Icon className="w-4 h-4" />}
+                                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-bold transition-all ${isActive ? TAB_COLORS[tab.color] : 'glass-card border-slate-200/50 text-slate-500 hover:bg-slate-50 hover:text-slate-800'}`}>
+                                {isDone && !isActive ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <Icon className="w-4 h-4" />}
                                 {tab.label}
                             </button>
                         )
@@ -271,10 +271,10 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                     {/* ── TAB 1: PERSONAL PROFILE ── */}
                     {activeTab === 'profile' && (
                         <motion.div key="profile" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}
-                            className="bg-white/5 border border-white/10 rounded-3xl p-6 space-y-5">
+                            className="glass-card border border-slate-200/60 shadow-sm rounded-3xl p-6 space-y-5">
                             <div>
-                                <h3 className="text-lg font-black text-white">Thông Tin Cá Nhân</h3>
-                                <p className="text-white/40 text-sm mt-1">Dùng để tính horizon đầu tư, mức bảo hiểm khuyến nghị, và phân tích hưu trí.</p>
+                                <h3 className="text-lg font-black text-slate-800">Thông Tin Cá Nhân</h3>
+                                <p className="text-slate-500 text-sm mt-1">Dùng để tính horizon đầu tư, mức bảo hiểm khuyến nghị, và phân tích hưu trí.</p>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
@@ -283,14 +283,14 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                                     <input type="date" value={dob} onChange={e => setDob(e.target.value)}
                                         max={new Date().toISOString().split('T')[0]}
                                         className={inputCls} />
-                                    {dob && <p className="text-xs text-sky-300 mt-1.5">
+                                    {dob && <p className="text-xs text-sky-600 font-bold mt-1.5">
                                         {new Date().getFullYear() - new Date(dob).getFullYear()} tuổi · còn ~{65 - (new Date().getFullYear() - new Date(dob).getFullYear())} năm tích lũy
                                     </p>}
                                 </div>
                                 <div>
                                     <label className={labelCls}>Số Người Phụ Thuộc</label>
                                     <select value={dependents} onChange={e => setDependents(e.target.value)} className={inputCls}>
-                                        {[0, 1, 2, 3, 4, 5].map(n => <option key={n} value={n} className="bg-slate-800">{n} người</option>)}
+                                        {[0, 1, 2, 3, 4, 5].map(n => <option key={n} value={n} className="bg-white text-slate-800">{n} người</option>)}
                                     </select>
                                 </div>
                             </div>
@@ -307,7 +307,7 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                                 <div className="grid grid-cols-2 gap-2">
                                     {EMPLOYMENT_TYPES.map(t => (
                                         <button key={t.value} type="button" onClick={() => setEmploymentType(t.value)}
-                                            className={`px-4 py-2.5 rounded-xl text-sm font-medium border transition-all ${employmentType === t.value ? 'bg-sky-500/20 border-sky-500/40 text-sky-300' : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10'}`}>
+                                            className={`px-4 py-2.5 rounded-xl text-sm font-bold border transition-all ${employmentType === t.value ? 'bg-sky-50 border-sky-200 text-sky-700 shadow-sm' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'}`}>
                                             {t.label}
                                         </button>
                                     ))}
@@ -331,22 +331,22 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                     {/* ── TAB 2: CASHFLOW BREAKDOWN ── */}
                     {activeTab === 'cashflow' && (
                         <motion.div key="cashflow" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}
-                            className="bg-white/5 border border-white/10 rounded-3xl p-6 space-y-5">
+                            className="glass-card border border-slate-200/60 shadow-sm rounded-3xl p-6 space-y-5">
                             <div>
-                                <h3 className="text-lg font-black text-white">Chi Tiết Dòng Tiền</h3>
-                                <p className="text-white/40 text-sm mt-1">Phân tách chi tiêu giúp báo cáo xác định khoản nào có thể cắt giảm để tăng tiết kiệm.</p>
+                                <h3 className="text-lg font-black text-slate-800">Chi Tiết Dòng Tiền</h3>
+                                <p className="text-slate-500 text-sm mt-1">Phân tách chi tiêu giúp báo cáo xác định khoản nào có thể cắt giảm để tăng tiết kiệm.</p>
                             </div>
 
                             {/* Income */}
-                            <div className="bg-blue-500/8 border border-blue-500/15 rounded-2xl p-4 space-y-3">
-                                <p className="text-xs font-black text-blue-300 uppercase tracking-wider">📥 Thu Nhập / Năm</p>
+                            <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 space-y-3">
+                                <p className="text-xs font-black text-blue-700 uppercase tracking-widest">📥 Thu Nhập / Năm</p>
                                 <div className="grid grid-cols-2 gap-3">
                                     <div>
                                         <label className={labelCls}>Thu nhập chính (lương, KD)</label>
                                         <input type="number" min={0} step={1000000} value={annualIncome}
                                             onChange={e => setAnnualIncome(e.target.value)}
                                             placeholder="600,000,000" className={inputCls} />
-                                        {annualIncome && <p className="text-xs text-blue-300 mt-1">≈ {fmtVND(Number(annualIncome) / 12)}/tháng</p>}
+                                        {annualIncome && <p className="text-xs text-blue-600 font-bold mt-1">≈ {fmtVND(Number(annualIncome) / 12)}/tháng</p>}
                                     </div>
                                     <div>
                                         <label className={labelCls}>Thu nhập thụ động / năm</label>
@@ -358,18 +358,18 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                             </div>
 
                             {/* Expenses */}
-                            <div className="bg-rose-500/8 border border-rose-500/15 rounded-2xl p-4 space-y-3">
-                                <p className="text-xs font-black text-rose-300 uppercase tracking-wider">📤 Chi Tiêu / Năm — Phân Tách 3 Loại</p>
+                            <div className="bg-rose-50/50 border border-rose-100 rounded-2xl p-4 space-y-3">
+                                <p className="text-xs font-black text-rose-700 uppercase tracking-widest">📤 Chi Tiêu / Năm — Phân Tách 3 Loại</p>
                                 <div className="space-y-3">
                                     <div>
-                                        <label className={labelCls}>🔒 Chi Cố Định (thuê nhà, EMI vay, bảo hiểm)</label>
+                                        <label className={labelCls}>🔒 Chi Cố Định (thuê nhà, vay, bảo hiểm)</label>
                                         <input type="number" min={0} step={1000000} value={fixedExp}
                                             onChange={e => setFixedExp(e.target.value)}
                                             placeholder="VD: 120,000,000" className={inputCls} />
                                     </div>
                                     <div className="grid grid-cols-2 gap-3">
                                         <div>
-                                            <label className={labelCls}>🔄 Chi Biến Đổi (ăn, xăng, điện nước)</label>
+                                            <label className={labelCls}>🔄 Chi Biến Đổi (ăn, điện nước)</label>
                                             <input type="number" min={0} step={500000} value={variableExp}
                                                 onChange={e => setVariableExp(e.target.value)}
                                                 placeholder="VD: 96,000,000" className={inputCls} />
@@ -382,11 +382,11 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                                         </div>
                                     </div>
                                     <div>
-                                        <label className={labelCls}>💳 Tổng Trả Nợ / Tháng (EMI tất cả các khoản vay)</label>
+                                        <label className={labelCls}>💳 Tổng Trả Nợ / Tháng (EMI)</label>
                                         <input type="number" min={0} step={500000} value={monthlyDebt}
                                             onChange={e => setMonthlyDebt(e.target.value)}
                                             placeholder="VD: 8,000,000" className={inputCls} />
-                                        {dsr && <p className={`text-xs mt-1 ${Number(dsr) <= 35 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                                        {dsr && <p className={`text-xs mt-1.5 font-bold ${Number(dsr) <= 35 ? 'text-emerald-600' : 'text-rose-600'}`}>
                                             DSR: {dsr}% thu nhập dùng trả nợ {Number(dsr) <= 35 ? '✓ An toàn' : '⚠ Vượt ngưỡng 35%'}
                                         </p>}
                                     </div>
@@ -395,15 +395,15 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
 
                             {/* Summary */}
                             {totalIncome > 0 && (
-                                <div className={`rounded-2xl border p-4 flex justify-between items-center ${Number(pyf) >= 20 ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-amber-500/10 border-amber-500/20'}`}>
+                                <div className={`glass-card rounded-2xl border p-4 flex justify-between items-center shadow-sm ${Number(pyf) >= 20 ? 'bg-emerald-50/80 border-emerald-200/60' : 'bg-amber-50/80 border-amber-200/60'}`}>
                                     <div>
-                                        <p className="text-xs text-white/40 uppercase font-bold tracking-wider">Tiết Kiệm / Năm</p>
-                                        <p className="text-xl font-black text-white">{fmtVND(saving_)}</p>
+                                        <p className="text-xs text-slate-500 uppercase font-black tracking-widest">Tiết Kiệm / Năm</p>
+                                        <p className="text-xl font-black text-slate-800 mt-0.5">{fmtVND(saving_)}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-xs text-white/40 uppercase font-bold tracking-wider">Tỷ Lệ PYF</p>
-                                        <p className={`text-3xl font-black ${Number(pyf) >= 20 ? 'text-emerald-400' : 'text-amber-400'}`}>{pyf}%</p>
-                                        <p className="text-[10px] text-white/30">CFP: ≥ 20%</p>
+                                        <p className="text-xs text-slate-500 uppercase font-black tracking-widest">Tỷ Lệ PYF</p>
+                                        <p className={`text-3xl font-black mt-0.5 ${Number(pyf) >= 20 ? 'text-emerald-600' : 'text-amber-600'}`}>{pyf}%</p>
+                                        <p className="text-[10px] text-slate-400 font-bold">CFP: ≥ 20%</p>
                                     </div>
                                 </div>
                             )}
@@ -424,20 +424,20 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                     {/* ── TAB 3: ASSETS & DEBT ── */}
                     {activeTab === 'assets' && (
                         <motion.div key="assets" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}
-                            className="bg-white/5 border border-white/10 rounded-3xl p-6 space-y-5">
+                            className="glass-card border border-slate-200/60 shadow-sm rounded-3xl p-6 space-y-5">
                             <div>
-                                <h3 className="text-lg font-black text-white">Tài Sản & Nợ</h3>
-                                <p className="text-white/40 text-sm mt-1">Cập nhật danh mục tài sản và nợ. Thay đổi sẽ cập nhật ngay vào dashboard.</p>
+                                <h3 className="text-lg font-black text-slate-800">Tài Sản & Nợ</h3>
+                                <p className="text-slate-500 text-sm mt-1">Cập nhật danh mục tài sản và nợ. Thay đổi sẽ cập nhật ngay vào dashboard.</p>
                             </div>
 
                             <div className="space-y-3">
                                 {assetList.map((a, i) => (
-                                    <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+                                    <div key={i} className="bg-white border border-slate-200 shadow-sm rounded-2xl p-4 space-y-3">
                                         <div className="flex flex-wrap gap-2">
                                             {ASSET_GROUPS.map(g => (
                                                 <button key={g.value} type="button"
                                                     onClick={() => setAssetList(prev => prev.map((x, idx) => idx === i ? { ...x, group: g.value } : x))}
-                                                    className={`text-xs px-3 py-1.5 rounded-full border transition-all ${a.group === g.value ? 'bg-amber-500/20 border-amber-500/40 text-amber-300' : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'}`}>
+                                                    className={`text-xs px-3 py-1.5 font-bold rounded-full border transition-all ${a.group === g.value ? 'bg-amber-50 border-amber-200 text-amber-700 shadow-sm' : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'}`}>
                                                     {g.icon} {g.label}
                                                 </button>
                                             ))}
@@ -458,8 +458,8 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                                         )}
                                     </div>
                                 ))}
-                                <button onClick={() => setAssetList(prev => [...prev, { name: '', group: 'Thanh Khoản', amount: '' }])}
-                                    className="w-full border border-dashed border-white/20 text-white/40 hover:text-white/70 hover:border-white/30 rounded-2xl py-2.5 text-sm flex items-center justify-center gap-2 transition-colors">
+                                 <button onClick={() => setAssetList(prev => [...prev, { name: '', group: 'Thanh Khoản', amount: '' }])}
+                                    className="w-full border border-dashed border-slate-300 text-slate-500 font-medium hover:text-slate-800 hover:border-slate-400 rounded-2xl py-2.5 text-sm flex items-center justify-center gap-2 transition-colors">
                                     <Plus className="w-4 h-4" /> Thêm tài sản / khoản nợ
                                 </button>
                             </div>
@@ -482,27 +482,27 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                             className="space-y-5">
 
                             {/* Insurance block */}
-                            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 space-y-5">
+                            <div className="glass-card border border-slate-200/60 shadow-sm rounded-3xl p-6 space-y-5">
                                 <div>
-                                    <h3 className="text-lg font-black text-white">Bảo Hiểm Hiện Có</h3>
-                                    <p className="text-white/40 text-sm mt-1">Giúp đánh giá khoảng trống rủi ro và tính Human Capital theo chuẩn CFP Section 6.</p>
+                                    <h3 className="text-lg font-black text-slate-800">Bảo Hiểm Hiện Có</h3>
+                                    <p className="text-slate-500 text-sm mt-1">Giúp đánh giá khoảng trống rủi ro và tính Human Capital theo chuẩn CFP.</p>
                                 </div>
 
-                                <label className="flex items-center gap-3 cursor-pointer p-3 bg-white/5 border border-white/10 rounded-xl">
+                                <label className="flex items-center gap-3 cursor-pointer p-4 bg-white border border-slate-200 shadow-sm rounded-xl hover:bg-slate-50 transition-colors">
                                     <input type="checkbox" checked={hasNoInsurance} onChange={e => setHasNoInsurance(e.target.checked)} className="w-4 h-4 accent-emerald-500" />
-                                    <span className="text-sm text-white/70">Tôi chưa có bảo hiểm nào</span>
+                                    <span className="text-sm font-bold text-slate-700">Tôi chưa có bảo hiểm nào</span>
                                 </label>
 
                                 {!hasNoInsurance && (
                                     <div className="space-y-3">
                                         {insurances.map((ins, i) => (
-                                            <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3">
+                                            <div key={i} className="bg-white border border-slate-200 shadow-sm rounded-2xl p-5 space-y-4">
                                                 {/* Type selector */}
                                                 <div className="flex flex-wrap gap-2">
                                                     {INSURANCE_TYPES.map(t => (
                                                         <button key={t.value} type="button"
                                                             onClick={() => updateIns(i, 'type', t.value)}
-                                                            className={`text-xs px-3 py-1.5 rounded-full border transition-all ${ins.type === t.value ? 'bg-violet-500/20 border-violet-500/40 text-violet-300' : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'}`}>
+                                                            className={`text-xs px-3 py-1.5 font-bold rounded-full border transition-all ${ins.type === t.value ? 'bg-violet-50 border-violet-200 text-violet-700 shadow-sm' : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'}`}>
                                                             {t.icon} {t.label}
                                                         </button>
                                                     ))}
@@ -510,17 +510,17 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                                                 <div className="grid grid-cols-2 gap-3">
                                                     <input placeholder="Công ty BH" value={ins.insurer}
                                                         onChange={e => updateIns(i, 'insurer', e.target.value)}
-                                                        className="bg-white/8 border border-white/15 text-white rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-violet-400 placeholder:text-white/25" />
+                                                        className="bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-violet-400 focus:bg-white placeholder:text-slate-400" />
                                                     <input type="number" placeholder="Mệnh giá (VNĐ)" value={ins.coverage}
                                                         onChange={e => updateIns(i, 'coverage', e.target.value)}
-                                                        className="bg-white/8 border border-white/15 text-white rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-violet-400 placeholder:text-white/25" />
+                                                        className="bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-violet-400 focus:bg-white placeholder:text-slate-400" />
                                                     <input type="number" placeholder="Phí/năm (VNĐ)" value={ins.premium}
                                                         onChange={e => updateIns(i, 'premium', e.target.value)}
-                                                        className="bg-white/8 border border-white/15 text-white rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-violet-400 placeholder:text-white/25" />
+                                                        className="bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-violet-400 focus:bg-white placeholder:text-slate-400" />
                                                     {ins.type === 'bhxh' && (
                                                         <input type="number" placeholder="Số năm đã đóng BHXH" value={ins.years_paid}
                                                             onChange={e => updateIns(i, 'years_paid', e.target.value)}
-                                                            className="bg-white/8 border border-white/15 text-white rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-violet-400 placeholder:text-white/25" />
+                                                            className="bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-violet-400 focus:bg-white placeholder:text-slate-400" />
                                                     )}
                                                 </div>
                                                 {insurances.length > 1 && (
@@ -532,7 +532,7 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                                             </div>
                                         ))}
                                         <button onClick={() => setInsurances(prev => [...prev, { type: 'health', insurer: '', coverage: '', premium: '', years_paid: '' }])}
-                                            className="w-full border border-dashed border-white/20 text-white/40 hover:text-white/70 hover:border-white/30 rounded-2xl py-2.5 text-sm flex items-center justify-center gap-2 transition-colors">
+                                            className="w-full border border-dashed border-slate-300 text-slate-500 font-bold hover:text-slate-800 hover:border-slate-400 rounded-2xl py-3 text-sm flex items-center justify-center gap-2 transition-colors">
                                             <Plus className="w-4 h-4" /> Thêm bảo hiểm
                                         </button>
                                     </div>
@@ -540,32 +540,32 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
                             </div>
 
                             {/* Risk Quiz */}
-                            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 space-y-5">
+                            <div className="glass-card border border-slate-200/60 shadow-sm rounded-3xl p-6 space-y-5">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <h3 className="text-lg font-black text-white">Đánh Giá Khẩu Vị Rủi Ro</h3>
-                                        <p className="text-white/40 text-sm mt-1">5 câu hỏi · dùng để tạo Investment Policy Statement (IPS).</p>
+                                        <h3 className="text-lg font-black text-slate-800">Đánh Giá Khẩu Vị Rủi Ro</h3>
+                                        <p className="text-slate-500 text-sm mt-1">5 câu hỏi · dùng để tạo Investment Policy Statement (IPS).</p>
                                     </div>
                                     {riskResult && (
-                                        <div className={`text-center px-4 py-2 rounded-2xl border ${riskResult.profile === 'conservative' ? 'bg-emerald-500/15 border-emerald-500/30' : riskResult.profile === 'moderate' ? 'bg-sky-500/15 border-sky-500/30' : 'bg-amber-500/15 border-amber-500/30'}`}>
-                                            <p className="text-xs text-white/40 font-bold uppercase tracking-wider">Kết Quả</p>
-                                            <p className={`text-base font-black ${riskResult.profile === 'conservative' ? 'text-emerald-400' : riskResult.profile === 'moderate' ? 'text-sky-400' : 'text-amber-400'}`}>{riskResult.label}</p>
-                                            <p className="text-xs text-white/30">{riskResult.score}/100 điểm</p>
+                                        <div className={`text-center px-5 py-2.5 rounded-2xl shadow-sm border ${riskResult.profile === 'conservative' ? 'bg-emerald-50 border-emerald-200' : riskResult.profile === 'moderate' ? 'bg-sky-50 border-sky-200' : 'bg-amber-50 border-amber-200'}`}>
+                                            <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Kết Quả</p>
+                                            <p className={`text-lg font-black ${riskResult.profile === 'conservative' ? 'text-emerald-700' : riskResult.profile === 'moderate' ? 'text-sky-700' : 'text-amber-700'}`}>{riskResult.label}</p>
+                                            <p className="text-xs text-slate-500 font-bold mt-0.5">{riskResult.score}/100 điểm</p>
                                         </div>
                                     )}
                                 </div>
 
-                                <div className="space-y-5">
+                                <div className="space-y-6">
                                     {RISK_QUESTIONS.map((q, qi) => (
-                                        <div key={qi} className="space-y-2">
-                                            <p className="text-sm text-white/80 font-medium">{qi + 1}. {q.q}</p>
+                                        <div key={qi} className="space-y-3">
+                                            <p className="text-sm text-slate-800 font-bold">{qi + 1}. {q.q}</p>
                                             <div className="space-y-2">
                                                 {q.options.map((opt, oi) => {
                                                     const point = oi * 2
                                                     return (
                                                         <button key={oi} type="button"
                                                             onClick={() => setAnswers(prev => prev.map((a, idx) => idx === qi ? point : a))}
-                                                            className={`w-full text-left px-4 py-2.5 rounded-xl text-sm border transition-all ${answers[qi] === point ? 'bg-violet-500/20 border-violet-500/40 text-violet-200' : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/8 hover:text-white/70'}`}>
+                                                            className={`w-full text-left px-5 py-3 rounded-xl text-sm border transition-all ${answers[qi] === point ? 'bg-violet-50 border-violet-200 text-violet-800 font-bold shadow-sm' : 'bg-white border-slate-200 text-slate-600 font-medium hover:bg-slate-50'}`}>
                                                             {opt.replace(/ \(\d+đ\)/, '')}
                                                         </button>
                                                     )
@@ -577,7 +577,7 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
 
                                 {answers.every(a => a !== null) && !quizDone && (
                                     <button onClick={calcRisk}
-                                        className="w-full border border-violet-500/40 bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 font-bold py-3 rounded-2xl flex items-center justify-center gap-2 transition-colors">
+                                        className="w-full border border-violet-200 bg-violet-50 hover:bg-violet-100 text-violet-700 font-bold py-3 rounded-2xl flex items-center justify-center gap-2 transition-colors shadow-sm">
                                         <ChevronRight className="w-4 h-4" /> Xem Kết Quả Risk Profile
                                     </button>
                                 )}
@@ -602,8 +602,8 @@ export function ProfileUpdateClient({ user, profile, cashflow, insurance }: any)
 
                 {/* Quick nav to report */}
                 <Link href="/dashboard/wealth-planning/report"
-                    className="flex items-center justify-center gap-2 w-full py-3 border border-white/10 text-white/40 hover:text-white hover:border-white/20 rounded-2xl text-sm transition-colors">
-                    Xem Báo Cáo CFP ngay <ChevronRight className="w-4 h-4" />
+                    className="flex items-center justify-center gap-2 w-full py-4 glass-card border-slate-200/60 shadow-sm text-slate-500 font-bold hover:text-slate-800 hover:border-slate-300 rounded-2xl text-sm transition-all focus:outline-none">
+                    Xem Báo Cáo CFP ngay <ChevronRight className="w-5 h-5" />
                 </Link>
             </div>
         </div>

@@ -76,44 +76,44 @@ export function StressTestPanel({
 
     const statusCfg = {
         pass: {
-            border: 'border-l-emerald-500',
-            bg: 'bg-emerald-500/8',
-            badge: 'bg-emerald-500/20 border-emerald-500/30 text-emerald-300',
-            icon: 'bg-emerald-500/20 text-emerald-400',
+            border: 'border-l-emerald-400',
+            bg: 'bg-emerald-50/50',
+            badge: 'bg-emerald-100 border-emerald-200 text-emerald-700',
+            icon: 'bg-emerald-50 text-emerald-600 border border-emerald-100',
             label: 'AN TOÀN',
-            text: 'text-emerald-300',
+            text: 'text-emerald-800',
         },
         warning: {
-            border: 'border-l-amber-500',
-            bg: 'bg-amber-500/8',
-            badge: 'bg-amber-500/20 border-amber-500/30 text-amber-300',
-            icon: 'bg-amber-500/20 text-amber-400',
+            border: 'border-l-amber-400',
+            bg: 'bg-amber-50/50',
+            badge: 'bg-amber-100 border-amber-200 text-amber-700',
+            icon: 'bg-amber-50 text-amber-600 border border-amber-100',
             label: 'CHÚ Ý',
-            text: 'text-amber-300',
+            text: 'text-amber-800',
         },
         fail: {
-            border: 'border-l-rose-500',
-            bg: 'bg-rose-500/8',
-            badge: 'bg-rose-500/20 border-rose-500/30 text-rose-300',
-            icon: 'bg-rose-500/20 text-rose-400',
+            border: 'border-l-rose-400',
+            bg: 'bg-rose-50/50',
+            badge: 'bg-rose-100 border-rose-200 text-rose-700',
+            icon: 'bg-rose-50 text-rose-600 border border-rose-100',
             label: 'RỦI RO',
-            text: 'text-rose-300',
+            text: 'text-rose-800',
         },
     }
 
     const passCount = results.filter(r => r.status === 'pass').length
 
     return (
-        <div className="rounded-2xl bg-white/5 border border-white/10 backdrop-blur h-full flex flex-col">
+        <div className="glass-card rounded-2xl p-2 border border-white/60 h-full flex flex-col hover:-translate-y-1 transition-all duration-300">
             {/* Header */}
-            <div className="flex items-center justify-between p-5 border-b border-white/10">
+            <div className="flex items-center justify-between p-4 border-b border-slate-100/50">
                 <div>
-                    <p className="text-sm font-black text-white">Kiểm Tra Sức Chịu Đựng</p>
-                    <p className="text-xs text-white/40 mt-0.5">Tài chính của bạn có thể chống chịu cú sốc?</p>
+                    <p className="text-sm font-black text-slate-800">Kiểm Tra Sức Chịu Đựng</p>
+                    <p className="text-xs text-slate-500 mt-0.5 font-medium">Tài chính của bạn có thể chống chịu cú sốc?</p>
                 </div>
                 <div className="text-right">
-                    <p className="text-2xl font-black text-white">{passCount}<span className="text-sm font-normal text-white/30">/4</span></p>
-                    <p className="text-[10px] text-white/30 font-bold uppercase tracking-wider">kịch bản vượt qua</p>
+                    <p className="text-2xl font-black text-slate-800">{passCount}<span className="text-sm font-medium text-slate-400">/4</span></p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">kịch bản vượt qua</p>
                 </div>
             </div>
 
@@ -132,9 +132,9 @@ export function StressTestPanel({
                                     <p className={`text-sm font-bold ${cfg.text}`}>{r.title}</p>
                                     <span className={`shrink-0 text-[10px] font-black px-2 py-0.5 rounded-full border ${cfg.badge}`}>{cfg.label}</span>
                                 </div>
-                                <p className="text-[11px] text-white/30 mb-1">{r.scenario}</p>
-                                <p className="text-xs font-semibold text-white/70">{r.result}</p>
-                                <p className="text-[11px] text-white/40 mt-0.5 leading-relaxed">{r.detail}</p>
+                                <p className="text-[11px] text-slate-500 mb-1">{r.scenario}</p>
+                                <p className="text-xs font-semibold text-slate-700">{r.result}</p>
+                                <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">{r.detail}</p>
                             </div>
                         </div>
                     )
