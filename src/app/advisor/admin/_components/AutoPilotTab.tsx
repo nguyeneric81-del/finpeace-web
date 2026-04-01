@@ -1,14 +1,15 @@
 'use client'
 import { useState, useCallback, useEffect } from 'react'
-import { Loader2, ArrowRight, CheckCircle2, Clock, AlertTriangle, RefreshCw, DollarSign } from 'lucide-react'
+import { Loader2, ArrowRight, CheckCircle2, Clock, AlertTriangle, RefreshCw, DollarSign, TrendingUp, TrendingDown, Target } from 'lucide-react'
 
-type Plan = { id: string; ticker: string; company_name: string; strategy_name: string; entry_zone: string; stop_loss: string; take_profit: string; risk_reward: string; is_confirmed?: boolean; status: string }
+type Plan = { id: string; ticker: string; company_name: string; strategy_name: string; entry_zone: string; stop_loss: string; take_profit: string; risk_reward: string; is_confirmed?: boolean; status: string; stockspick_trading_plan_id?: string; }
 type Pending = { id: string; ticker: string; requested_count: number; status: string; created_at: string }
 
 export default function AutoPilotTab() {
   const [plans, setPlans] = useState<Plan[]>([])
   const [pending, setPending] = useState<Pending[]>([])
   const [loading, setLoading] = useState(true)
+  const [actionLoading, setActionLoading] = useState<Record<string, boolean>>({})
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -38,6 +39,54 @@ export default function AutoPilotTab() {
       body: JSON.stringify({ action: 'upsert_plan', ...plan, is_confirmed })
     })
     loadData()
+  }
+
+  // --- 2-Phase Execution Logic ---
+  async function handleSyncStockspick(plan: Plan) {
+    if (!confirm(`Đẩy bản kế hoạch ${plan.ticker} qua Stockspick Backoffice?\n(Sẽ tự động chạy 3 bước PTCB -> PTKT -> Trading Plan)`)) return
+    setActionLoading(prev => ({ ...prev, [plan.id]: true }))
+    try {
+      const res = await fetch('/api/admin/stockspick/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'sync_trading_plan', plan_id: plan.id, ticker: plan.ticker })
+      })
+      const data = await res.json()
+      if (data.success) {
+        alert(`🎉 Đồng bộ ${plan.ticker} lên Stockspick thành công!\nID: ${data.stockspickIds?.tradingPlanId}`)
+      } else {
+        alert(`❌ Lỗi đồng bộ: ${data.error}`)
+      }
+    } catch (err: any) {
+      alert(`❌ Lỗi kết nối: ${err.message}`)
+    }
+    setActionLoading(prev => ({ ...prev, [plan.id]: false }))
+    loadData()
+  }
+
+  async function handleRecommendation(plan: Plan, recAction: 'BUY'|'SELL'|'HOLD'|'CUT_LOSS') {
+    if (!confirm(`XÁC NHẬN PHÁT LỆNH [${recAction}] CHO MÃ ${plan.ticker}?\nCảnh báo: Lệnh sẽ bắn Stockspick Notification tới tất cả Khách hàng ngay lập tức!`)) return
+    setActionLoading(prev => ({ ...prev, [`rec_${plan.id}`]: true }))
+    try {
+      const res = await fetch('/api/admin/stockspick/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          action: 'recommend', 
+          recommendation_action: recAction, 
+          stockspick_trading_plan_id: plan.stockspick_trading_plan_id 
+        })
+      })
+      const data = await res.json()
+      if (data.success) {
+        alert(`🚀 Phím lệnh ${recAction} thành công!\nRecommendation ID: ${data.recommendationId}`)
+      } else {
+        alert(`❌ Lỗi phím hàng: ${data.error || JSON.stringify(data)}`)
+      }
+    } catch (err: any) {
+      alert(`❌ Lỗi kết nối: ${err.message}`)
+    }
+    setActionLoading(prev => ({ ...prev, [`rec_${plan.id}`]: false }))
   }
 
   if (loading) return <div className="h-40 flex items-center justify-center"><Loader2 className="animate-spin text-emerald-500 w-6 h-6"/></div>
@@ -117,28 +166,71 @@ export default function AutoPilotTab() {
             <span className="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full">{colReady.length} mã LIVE</span>
           </div>
           <div className="p-4 overflow-y-auto flex-1 space-y-3 z-10">
-            {colReady.map(p => (
-              <div key={p.id} className="bg-emerald-900/10 border border-emerald-500/30 rounded-xl p-3 hover:border-emerald-500/60 transition-colors shadow-[0_0_15px_rgba(16,185,129,0.05)]">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-black text-emerald-400 text-2xl tracking-tight">{p.ticker}</span>
-                  <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/30 animate-pulse">Auto Ready</span>
+            {colReady.map(p => {
+              const hasBO = !!p.stockspick_trading_plan_id
+              const isSyncing = actionLoading[p.id]
+              const isRecommending = actionLoading[`rec_${p.id}`]
+              
+              return (
+              <div key={p.id} className={`bg-[#0a0f1c] border ${hasBO ? 'border-sky-500/40 shadow-sky-500/10' : 'border-[#1e2535]'} rounded-xl p-3 relative overflow-hidden transition-all shadow-[0_0_15px_rgba(16,185,129,0.05)]`}>
+                {hasBO && <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/10 blur-xl"></div>}
+                
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-black text-white text-2xl tracking-tight">{p.ticker}</span>
+                  <div className="flex flex-col items-end gap-1">
+                    {hasBO ? (
+                      <span className="text-[10px] bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded-full border border-sky-500/30 flex items-center gap-1"><CheckCircle2 className="w-3 h-3"/> Đã Đồng Bộ SP</span>
+                    ) : (
+                      <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full border border-slate-700 font-bold">Chờ Đồng bộ (GĐ1)</span>
+                    )}
+                  </div>
                 </div>
-                <p className="text-xs text-slate-300 font-medium mb-3 truncate" title={p.strategy_name}>{p.strategy_name}</p>
+                
                 <div className="grid grid-cols-2 gap-2 text-[11px] mb-3">
-                  <div className="bg-[#0d1119]/50 p-2 rounded-lg border border-white/5">
-                    <span className="text-slate-500 block mb-0.5">Entry</span>
+                  <div className="bg-white/5 p-2 rounded-lg border border-white/5">
+                    <span className="text-slate-500 block mb-0.5">Vùng Mua</span>
                     <span className="text-white font-medium">{p.entry_zone || '-'}</span>
                   </div>
-                  <div className="bg-[#0d1119]/50 p-2 rounded-lg border border-white/5">
-                    <span className="text-slate-500 block mb-0.5">Target</span>
-                    <span className="text-emerald-400 font-bold">{p.take_profit || '-'}</span>
+                  <div className="bg-white/5 p-2 rounded-lg border border-white/5">
+                    <span className="text-slate-500 block mb-0.5">Chốt / Cắt</span>
+                    <span className="text-emerald-400 font-bold">{p.take_profit || '-'}</span> <span className="text-slate-600 mx-0.5">/</span> <span className="text-rose-400">{p.stop_loss || '-'}</span>
                   </div>
                 </div>
-                <button onClick={() => toggleConfirm(p, false)} className="w-full py-1 text-slate-500 text-xs font-medium rounded-lg hover:bg-rose-500/10 hover:text-rose-400 transition-colors">
-                  Huỷ duyệt lệnh
-                </button>
+
+                {/* 2-Phase Execution Actions */}
+                <div className="p-2.5 bg-[#111827] rounded-xl border border-[#1e2535] mt-2 mb-3">
+                  {!hasBO ? (
+                    <div className="space-y-1.5">
+                      <button 
+                        onClick={() => handleSyncStockspick(p)} 
+                        disabled={isSyncing}
+                        className="w-full py-2 bg-blue-600/20 text-blue-400 text-xs font-bold rounded-lg border border-blue-500/30 hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                      >
+                        {isSyncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />} 
+                        {isSyncing ? 'Đang đẩy lên CSDL...' : 'GĐ1: Đồng bộ Stockspick'}
+                      </button>
+                      <p className="text-[9px] text-slate-500 text-center leading-tight">Hoàn thành GĐ1 (Trình duyệt) trước khi Phím Hàng ở GĐ2.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-[10px] text-slate-500 text-center font-bold uppercase tracking-wider">GĐ2: LỆNH PHÍM HÀNG (LIVE)</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button disabled={isRecommending} onClick={() => handleRecommendation(p, 'BUY')} className="py-2 bg-emerald-600/20 text-emerald-400 text-xs font-black tracking-wide rounded-lg border border-emerald-500/30 hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center gap-1.5"><TrendingUp className="w-4 h-4"/> MUA</button>
+                        <button disabled={isRecommending} onClick={() => handleRecommendation(p, 'SELL')} className="py-2 bg-amber-600/20 text-amber-500 text-xs font-black tracking-wide rounded-lg border border-amber-500/30 hover:bg-amber-600 hover:text-white transition-all flex items-center justify-center gap-1.5"><Target className="w-4 h-4"/> CHỐT LỜI</button>
+                      </div>
+                      <button disabled={isRecommending} onClick={() => handleRecommendation(p, 'CUT_LOSS')} className="w-full py-1.5 bg-rose-600/10 text-rose-500 text-[11px] font-bold rounded-lg border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center gap-1"><TrendingDown className="w-3.5 h-3.5"/> CẮT LỖ KHẨN CẤP</button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="border-t border-[#1e2535] pt-2 mt-2">
+                  <button onClick={() => toggleConfirm(p, false)} className="w-full py-1 text-slate-500 text-[10px] font-medium rounded-lg hover:bg-rose-500/10 hover:text-rose-400 transition-colors uppercase">
+                    Huỷ quay lại Draft
+                  </button>
+                </div>
               </div>
-            ))}
+              )
+            })}
             {colReady.length === 0 && <p className="text-center text-slate-500 text-sm mt-10">Chưa có mã nào đủ chỉ tiêu xuất kích.</p>}
           </div>
         </div>
