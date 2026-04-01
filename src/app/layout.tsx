@@ -1,13 +1,38 @@
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro } from "next/font/google";
+import localFont from "next/font/local";
 import { Suspense } from "react";
 import { SalesRefCapture } from "@/components/SalesRefCapture";
 import "./globals.css";
 
-const beVietnamPro = Be_Vietnam_Pro({
-  variable: "--font-be-vietnam",
-  subsets: ["latin", "vietnamese"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+const svnPoppins = localFont({
+  src: [
+    {
+      path: "../../public/fonts/svn-poppins/Poppins VH/SVN-Poppins-Light.ttf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/svn-poppins/Poppins VH/SVN-Poppins-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/svn-poppins/Poppins VH/SVN-Poppins-Medium.ttf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/svn-poppins/Poppins VH/SVN-Poppins-SemiBold.ttf",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/svn-poppins/Poppins VH/SVN-Poppins-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-svn-poppins",
   display: "swap",
 });
 
@@ -23,7 +48,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
-      <body className={`${beVietnamPro.variable} font-sans antialiased`}>
+      <body className={`${svnPoppins.variable} font-sans antialiased`}>
         <Suspense fallback={null}><SalesRefCapture /></Suspense>
         {children}
       </body>

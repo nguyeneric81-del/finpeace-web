@@ -1,0 +1,494 @@
+[dotenv@17.3.1] injecting env (14) from .env.local -- tip: 🛡️ auth for agents: https://vestauth.com
+[06:00:02 1/4/2026] 🚀 ===== BẮT ĐẦU MACRO PIPELINE =====
+[06:00:02 1/4/2026] 📅 Thời gian chạy: 2026-03-31T23:00:02.671Z
+[06:00:02 1/4/2026] 📡 Bước 1/1: Cào báo cáo Vĩ mô từ VietStock...
+🚀 Bắt đầu quét Báo cáo Vĩ mô & Ngành (3 tháng gần đây)...
+
+--- Đang quét Trang 1 ---
+[06:00:02 1/4/2026] ✅ Pipeline hoàn tất thành công!
+[06:00:02 1/4/2026] 🏁 ===== KẾT THÚC MACRO PIPELINE =====
+
+-> Tìm thấy: [SSI]_30-3-2026 - Phân tích Ngành_Báo cáo ngành xuất khẩu Thủy sản _ Dệt may_ Tái cấu trúc dòng chảy thương mại trước.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [MBS]_30-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Dự báo lợi nhuận Q1_2026 _ Tăng trưởng cao nhưng phân hóa.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [MBS]_30-3-2026 - Phân tích Ngành_Báo cáo ngành Thép_ Giá thép phục hồi trở thành động lực tăng trưởng.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [MBS]_30-3-2026 - Phân tích Ngành_Báo cáo ngành Ngân hàng_  Lợi nhuận toàn ngành trong Q1_26 dự báo tăng trưởng 20_ sv.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [Vietcap]_30-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Diễn biến phân hóa của các nhóm ngành trong bối cảnh xu.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [Vietcap]_30-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Gián đoạn tại eo biển Hormuz và tác động đến CPI.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 2 ---
+-> Tìm thấy: [VDS]_27-3-2026 - Phân tích Ngành_Báo cáo ngành Thủy sản_ Phân hóa giữa các doanh nghiệp.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [Vietstock]_27-3-2026 - Vietstock_ Nghiên cứu _ Phân tích_Vietstock Weekly_ Tuần 30_03_03_04_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [Vietstock]_27-3-2026 - Vietstock_ Nghiên cứu _ Phân tích_Technical View_ Tuần 30_03_03_04_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [BSC]_26-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 03_2026 _ Thị trường trong bối cảnh căng thẳng le.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [BSC]_26-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ T3_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [VCBS]_26-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Tổng hợp dự báo KQKD Q1_2026 và cả năm 2026.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 3 ---
+-> File đã có sẵn, bỏ qua: [BSC]_26-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 03_2026 _ Thị trường trong bối cảnh căng thẳng le.pdf
+-> File đã có sẵn, bỏ qua: [BSC]_26-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ T3_2026.pdf
+-> Tìm thấy: [KBSV]_25-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Update diễn biến xung đột Iran.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [MAS]_25-3-2026 - Phân tích Ngành_Báo cáo ngành Xây lắp _ Đầu tư công_ Ổn định song hành tăng trưởng.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 4 ---
+-> File đã có sẵn, bỏ qua: [MAS]_25-3-2026 - Phân tích Ngành_Báo cáo ngành Xây lắp _ Đầu tư công_ Ổn định song hành tăng trưởng.pdf
+-> Tìm thấy: [SSV]_24-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Danh mục đầu tư tăng trưởng Q1_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [SHS]_24-3-2026 - Phân tích Ngành_Báo cáo ngành Dầu khí_ Tháng 03_2026.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 5 ---
+-> Tìm thấy: [SSI]_23-3-2026 - Phân tích Ngành_Báo cáo ngành Điện_ Bước ngoặt chu kỳ 5 năm.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [SHS]_23-3-2026 - Phân tích Ngành_Báo cáo ngành Phân bón_ Tháng 03_2026.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 6 ---
+-> File đã có sẵn, bỏ qua: [SSI]_23-3-2026 - Phân tích Ngành_Báo cáo ngành Điện_ Bước ngoặt chu kỳ 5 năm.pdf
+-> Tìm thấy: [Vietstock]_20-3-2026 - Vietstock_ Nghiên cứu _ Phân tích_Vietstock Weekly_ Tuần 23_27_03_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [Vietstock]_20-3-2026 - Vietstock_ Nghiên cứu _ Phân tích_Technical View_ Tuần 23_27_03_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [MAS]_20-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Đánh giá tác động sơ bộ các thay đổi tại thời điểm chuyển đổi V.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 7 ---
+-> Tìm thấy: [TPS]_20-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 3_2026.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [Vietstock]_20-3-2026 - Vietstock_ Nghiên cứu _ Phân tích_Vietstock Weekly_ Tuần 23_27_03_2026.pdf
+-> File đã có sẵn, bỏ qua: [Vietstock]_20-3-2026 - Vietstock_ Nghiên cứu _ Phân tích_Technical View_ Tuần 23_27_03_2026.pdf
+-> Tìm thấy: [SSV]_18-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Lãi suất và Lạm phát có xu hướng tăng.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 8 ---
+-> Tìm thấy: [MBS]_18-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 3_2026 _ Thách thức từ bất ổn khu vực Trung Đông.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [YSVN]_18-3-2026 - Phân tích Ngành_Báo cáo ngành Năng lượng_ Nhiệt điện gặp thách thức _ Thời điểm để chuyển sang năng.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [ACBS]_18-3-2026 - Phân tích Ngành_Báo cáo ngành Phân bón _ Hóa chất_ Chiến sự Trung Đông đẩy mạnh giá phân bón.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [SSV]_18-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Lãi suất và Lạm phát có xu hướng tăng.pdf
+
+--- Đang quét Trang 9 ---
+-> Tìm thấy: [MBS]_17-3-2026 - Phân tích Ngành_Báo cáo ngành Xây dựng_ Đi_nh gia_ hâ_p dâ_n cho mô_t năm đâ_u tư công bư_t tô_c.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [Techcombank]_17-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Rủi ro tăng cao _ Chậm lại để nhìn rõ hơn.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [MAS]_17-3-2026 - Phân tích Ngành_Báo cáo ngành Thủy sản _ Cá tra_ Bước ngoặt mới của ngành.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [ACBS]_17-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Tháng 03_2026 _ Kiên định với mục tiêu tăng trưởng.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [VNDS]_17-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 3_2026 _ Rủi ro lạm phát leo thang trước xung đột.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 10 ---
+-> Tìm thấy: [OCBS]_13-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 03_2026.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 11 ---
+-> Tìm thấy: [SSV]_13-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Danh mục cổ phiếu tỷ suất cổ tức cao Q1_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [MAS]_13-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Đánh giá tác động sơ bộ các thay đổi tại thời điểm chuyển đổi V.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [CSI]_13-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Những điểm nhấn Kinh tế Vĩ mô trong tháng 2_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [YSVN]_13-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Xu hướng kinh tế ổn định dù còn nhiều áp lực từ biến độ.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [BSC]_13-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Căng thẳng Hoa Kỳ_ Israel _ Iran.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [Vietcap]_13-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 02_2026 _ Tết Nguyên đán thúc đẩy lạm phát tăng t.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [VDS]_13-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 02_2026 _ Thừa thuận khai lực_ ứng biến cầu tân.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [Vietstock]_13-3-2026 - Vietstock_ Nghiên cứu _ Phân tích_Vietstock Weekly_ Tuần 16_20_03_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [Vietstock]_13-3-2026 - Vietstock_ Nghiên cứu _ Phân tích_Technical View_ Tuần 16_20_03_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [VNDS]_13-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Trái phiếu_ Rủi ro tỷ giá tăng trước xung đột Mỹ _.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 12 ---
+-> Tìm thấy: [PHS]_12-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Tháng 03_2026 _ Giữa tâm bão địa chính trị.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [BVS]_12-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 02_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [Vietinbank Securities]_12-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 03_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KAFI]_12-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 2_2026 _ _Vết nứt_ nếu chiến sự kéo dài.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KAFI]_12-3-2026 - Phân tích Ngành_Báo cáo ngành Thép_ Mỹ áp thuế chống bán phá giá sơ bộ hơn 130_ với thép cốt bê tông.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KAFI]_12-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Tháng 3_2026 _ Chiến sự Trung Đông.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [ASEAN SECURITIES]_12-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Tháng 3_2026 _ Cơ hội tích lũy danh mục dài hạn.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [BSC]_11-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Căng thẳng Hoa Kỳ _ Israel và Iran.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 13 ---
+-> Tìm thấy: [MAS]_11-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Cập nhật tiến độ nâng hạng Thị trường Chứng khoán.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [MAS]_11-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Kiến tạo động lực tăng trưởng trong bối cảnh rủi ro bên.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [MAS]_11-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Điều hướng trong vùng nhiễu động.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [MAS]_11-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Danh mục cổ phiếu tỷ suất cổ tức cao.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [BSC]_11-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Căng thẳng Hoa Kỳ _ Israel và Iran.pdf
+-> Tìm thấy: [KIS]_11-3-2026 - Phân tích Ngành_Báo cáo ngành Điện_ Nhiệt điện bước vào chu kỳ.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 14 ---
+-> File đã có sẵn, bỏ qua: [AGRISECO]_10-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Cập nhật Kinh tế Vĩ mô 2 tháng đầu năm 2026.pdf
+-> File đã có sẵn, bỏ qua: [VDS]_10-3-2026 - Phân tích Ngành_Báo cáo ngành Phân bón_ Biến động bất ngờ trong ngắn hạn.pdf
+-> Tìm thấy: [Vietcap]_10-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Trái phiếu tiền tệ_ Lãi suất liên ngân hàng tăng mạnh trước kỳ.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [NSI]_10-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 02_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [VPX]_10-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Báo cáo Đầu tư đa kênh Tài sản _ Tháng 2_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [ABS]_10-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Tháng 3_2026 _ Kiên nhẫn chờ đợi.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 15 ---
+-> File đã có sẵn, bỏ qua: [VDS]_10-3-2026 - Phân tích Ngành_Báo cáo ngành Phân bón_ Biến động bất ngờ trong ngắn hạn.pdf
+-> File đã có sẵn, bỏ qua: [Vietcap]_10-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Trái phiếu tiền tệ_ Lãi suất liên ngân hàng tăng mạnh trước kỳ.pdf
+-> Tìm thấy: [KBSV]_9-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Kịch bản cuộc chiến Mỹ_ Israel _ Iran và diễn biến VNINDEX.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [VBMA]_9-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Trái phiếu_ Tháng 02_2026.pdf
+-> File đã có sẵn, bỏ qua: [VIS Rating]_9-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Các cuộc tấn công của Mỹ và Israel vào Iran gia tăng áp lực đối.pdf
+-> Tìm thấy: [NSI]_9-3-2026 - Phân tích Ngành_Báo cáo ngành Dầu khí_ Quý 4_2025.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [PHS]_9-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Chiến sự Trung Đông dưới góc nhìn từ _Lý thuyết trò chơi_.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 16 ---
+-> File đã có sẵn, bỏ qua: [KBSV]_9-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Kịch bản cuộc chiến Mỹ_ Israel _ Iran và diễn biến VNINDEX.pdf
+-> File đã có sẵn, bỏ qua: [DSC]_9-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 2_2026 _ Phòng bị trước ảnh hưởng của xung đột.pdf
+-> File đã có sẵn, bỏ qua: [ACBS]_9-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 02_2026 _ Tiêu dùng giảm tốc_ sản xuất thăng hoa.pdf
+-> File đã có sẵn, bỏ qua: [SHS]_6-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Tháng 03_2026.pdf
+-> File đã có sẵn, bỏ qua: [SSV]_6-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Tác động của chiến sự Mỹ_Israel và Iran.pdf
+-> File đã có sẵn, bỏ qua: [Vietstock]_6-3-2026 - Vietstock_ Nghiên cứu _ Phân tích_Vietstock Weekly_ Tuần 09_13_03_2026.pdf
+-> File đã có sẵn, bỏ qua: [Vietstock]_6-3-2026 - Vietstock_ Nghiên cứu _ Phân tích_Technical View_ Tuần 09_13_03_2026.pdf
+-> File đã có sẵn, bỏ qua: [TPS]_6-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Khi con sóng lớn chưa đến_ dòng chảy vẫn âm thầm.pdf
+-> File đã có sẵn, bỏ qua: [VNDS]_6-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ La bàn đầu tư Tháng 3_2026 _ Giằng co giữa rủi ro.pdf
+-> File đã có sẵn, bỏ qua: [SHS]_5-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Tiền tệ_ Tháng 03_26.pdf
+
+--- Đang quét Trang 17 ---
+-> File đã có sẵn, bỏ qua: [SHS]_5-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Tiền tệ_ Tháng 03_26.pdf
+-> File đã có sẵn, bỏ qua: [Vietcap]_4-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Nhà đầu tư phòng thủ trước bất ổn địa chính trị.pdf
+
+--- Đang quét Trang 18 ---
+-> File đã có sẵn, bỏ qua: [Vietcap]_4-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Nhà đầu tư phòng thủ trước bất ổn địa chính trị.pdf
+-> File đã có sẵn, bỏ qua: [VCBS]_3-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Đánh giá sự kiện xung đột Mỹ _ Israel và Iran.pdf
+-> File đã có sẵn, bỏ qua: [Vietcap]_3-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường_ Tháng 2_2026 _ VNIndex tăng điểm trong tháng thứ 4.pdf
+-> File đã có sẵn, bỏ qua: [Vietcap]_3-3-2026 - Phân tích Ngành_Báo cáo ngành Cảng biển_ Bối cảnh ngành cảng nội địa hỗ trợ triển vọng tích cực cho.pdf
+
+--- Đang quét Trang 19 ---
+-> File đã có sẵn, bỏ qua: [ACBS]_3-3-2026 - Báo cáo Chuyên đề_Báo cáo ETF_ Dự báo danh mục quỹ VanEck Vietnam _ Xtrackers Vietnam Swap.pdf
+-> File đã có sẵn, bỏ qua: [OCBS]_3-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Tác động của xung đột Mỹ _ Israel _ Iran.pdf
+-> Tìm thấy: [NSI]_3-3-2026 - Phân tích Ngành_Báo cáo ngành BĐS Khu công nghiệp_ Quý 4_2025.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [KAFI]_3-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Tổng quan KQKD Q4_2025 _ Bứt tốc về đích.pdf
+-> Tìm thấy: [KBSV]_2-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Quy định mới của EU đối với các sản phẩm nhập khẩu.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KBSV]_2-3-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Tóm tắt nhanh và đánh giá Xung đột Iran_Mỹ.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [MBS]_2-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Trái phiếu_ Thị trường TPDN trầm lắng trong tháng đ.pdf
+
+--- Đang quét Trang 20 ---
+-> File đã có sẵn, bỏ qua: [VNDS]_2-3-2026 - Báo cáo Chuyên đề_Báo cáo Sự kiện_ Xung đột Mỹ _ Iran.pdf
+-> File đã có sẵn, bỏ qua: [MBS]_2-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Trái phiếu_ Thị trường TPDN trầm lắng trong tháng đ.pdf
+-> File đã có sẵn, bỏ qua: [Vietcap]_2-3-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Thị trường lao động khởi sắc khi tăng trưởng kinh tế tă.pdf
+-> File đã có sẵn, bỏ qua: [Vietcap]_28-2-2026 - Phân tích Ngành_Báo cáo ngành Sản xuất Phân bón_ Chi phí khí thấp hơn thúc đẩy tăng trưởng năm 2026.pdf
+
+--- Đang quét Trang 21 ---
+-> File đã có sẵn, bỏ qua: [Vietstock]_27-2-2026 - Vietstock_ Nghiên cứu _ Phân tích_Vietstock Weekly_ Tuần 02_06_03_2026.pdf
+-> File đã có sẵn, bỏ qua: [Vietstock]_27-2-2026 - Vietstock_ Nghiên cứu _ Phân tích_Technical View_ Tuần 02_06_03_2026.pdf
+-> File đã có sẵn, bỏ qua: [VNDS]_27-2-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Mô hình khu thương mại tự do.pdf
+
+--- Đang quét Trang 22 ---
+-> File đã có sẵn, bỏ qua: [MAS]_26-2-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Danh mục chọn lọc cổ phiếu theo KQKD Q4_2025.pdf
+-> File đã có sẵn, bỏ qua: [VNDS]_26-2-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Đánh giá KQKD Quý 4_2025.pdf
+-> Tìm thấy: [NSI]_25-2-2026 - Phân tích Ngành_Báo cáo ngành Chứng khoán_ Quý 4_2025.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [AGRISECO]_25-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Cập nhật Tháng 1_2026.pdf
+
+--- Đang quét Trang 23 ---
+-> File đã có sẵn, bỏ qua: [AGRISECO]_25-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Cập nhật Tháng 1_2026.pdf
+-> File đã có sẵn, bỏ qua: [NSI]_25-2-2026 - Phân tích Ngành_Báo cáo ngành Chứng khoán_ Quý 4_2025.pdf
+-> File đã có sẵn, bỏ qua: [VNDS]_24-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Sản xuất và đầu tư đầu năm giữ vững đà tăng.pdf
+
+--- Đang quét Trang 24 ---
+-> Tìm thấy: [KBSV]_23-2-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Tòa án Tối cao Mỹ bác bỏ Thuế đối ứng.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [ACBS]_23-2-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Thuế đối ứng của chính quyền Trump bị phán quyết vô hiệu.pdf
+-> File đã có sẵn, bỏ qua: [Techcombank]_14-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Bất định kéo dài _ Tăng trưởng thích nghi.pdf
+-> File đã có sẵn, bỏ qua: [CSI]_13-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 1_2026.pdf
+-> Tìm thấy: [YSVN]_13-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 1 khả quan nhưng còn nhiều áp lực.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KIS]_13-2-2026 - Phân tích Ngành_Báo cáo ngành Ngân hàng_ Đạt kế hoạch.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 25 ---
+-> Tìm thấy: [FPTS]_13-2-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Ý tưởng và Rủi ro Đầu tư năm 2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [FPTS]_13-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Đầu tư dựa trên yếu tố Động lượng ngành.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [BSC]_13-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Thí điểm sàn giao dịch carbon.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [Vietcap]_13-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Dữ liệu khởi sắc trong tháng đầu năm.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [Vietstock]_13-2-2026 - Vietstock_ Nghiên cứu _ Phân tích_Vietstock Weekly_ Tuần 23_27_02_2026.pdf
+-> File đã có sẵn, bỏ qua: [Vietstock]_13-2-2026 - Vietstock_ Nghiên cứu _ Phân tích_Technical View_ Tuần 23_27_02_2026.pdf
+-> File đã có sẵn, bỏ qua: [CSI]_13-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 1_2026.pdf
+-> File đã có sẵn, bỏ qua: [YSVN]_13-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 1 khả quan nhưng còn nhiều áp lực.pdf
+
+--- Đang quét Trang 26 ---
+-> Tìm thấy: [VCBS]_12-2-2026 - Phân tích Ngành_Báo cáo ngành Bất động sản Nhà ở_ Sàng lọc trong chu kỳ mới.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [SSI]_12-2-2026 - Phân tích Ngành_Báo cáo ngành Ngân hàng_ Khép lại một năm nhiều dấu ấn.pdf
+-> File đã có sẵn, bỏ qua: [VDS]_12-2-2026 - Phân tích Ngành_Báo cáo ngành Logistics_ Mở rộng công suất _  Đón đầu tăng trưởng.pdf
+
+--- Đang quét Trang 27 ---
+-> File đã có sẵn, bỏ qua: [VDS]_12-2-2026 - Phân tích Ngành_Báo cáo ngành Logistics_ Mở rộng công suất _  Đón đầu tăng trưởng.pdf
+-> File đã có sẵn, bỏ qua: [VNDS]_12-2-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Các ETF Việt Nam hút ròng trong T1_2026.pdf
+-> File đã có sẵn, bỏ qua: [KAFI]_12-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Bứt phá vì yếu tố mùa vụ Tết.pdf
+-> File đã có sẵn, bỏ qua: [VCBS]_11-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 01_2026.pdf
+-> File đã có sẵn, bỏ qua: [VDS]_11-2-2026 - Phân tích Ngành_Báo cáo ngành Điện _ Tiện ích công cộng_ Từ lời nói đến hành động.pdf
+-> File đã có sẵn, bỏ qua: [VDS]_11-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Đà phục hồi vượt hiệu ứng mùa vụ.pdf
+
+--- Đang quét Trang 28 ---
+-> File đã có sẵn, bỏ qua: [ACBS]_11-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Từng bước tạo đà trước thềm năm mới.pdf
+-> Tìm thấy: [VPX]_11-2-2026 - Báo cáo Chuyên đề_Báo cáo Đầu tư đa kênh Tài sản_ Tháng 1_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [SSV]_11-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Chuẩn bị đón Tết Nguyên Đán.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 29 ---
+-> File đã có sẵn, bỏ qua: [ABS]_10-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Tết đến xuân về.pdf
+-> File đã có sẵn, bỏ qua: [VNDS]_10-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Trái phiếu _ Tiền tệ_ Lãi suất tăng mạnh_ NHNN bơm ròng kỷ lục.pdf
+-> File đã có sẵn, bỏ qua: [NSI]_10-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 1_2026.pdf
+-> File đã có sẵn, bỏ qua: [MBS]_9-2-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Nghị định 20 _ Nghị quyết về kinh tế vốn đầu tư nước ngoài.pdf
+-> File đã có sẵn, bỏ qua: [Vietcap]_9-2-2026 - Phân tích Ngành_Báo cáo ngành Bất động sản Nhà ở_ Triển vọng tăng trưởng giao dịch BĐS sơ cấp duy tr.pdf
+
+--- Đang quét Trang 30 ---
+-> File đã có sẵn, bỏ qua: [MBS]_9-2-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Nghị định 20 _ Nghị quyết về kinh tế vốn đầu tư nước ngoài.pdf
+-> File đã có sẵn, bỏ qua: [Vietcap]_9-2-2026 - Phân tích Ngành_Báo cáo ngành Bất động sản Nhà ở_ Triển vọng tăng trưởng giao dịch BĐS sơ cấp duy tr.pdf
+-> File đã có sẵn, bỏ qua: [VBMA]_9-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Trái phiếu_ Tháng 1_2026.pdf
+
+--- Đang quét Trang 31 ---
+-> File đã có sẵn, bỏ qua: [ACBS]_6-2-2026 - Phân tích Ngành_Báo cáo ngành Bán lẻ_ Điểm sáng Bán lẻ hiện đại trong bối cảnh tiêu dùng thận trọng.pdf
+-> File đã có sẵn, bỏ qua: [Vietstock]_6-2-2026 - Vietstock_ Nghiên cứu _ Phân tích_Vietstock Weekly_ Tuần 09_13_02_2026.pdf
+-> File đã có sẵn, bỏ qua: [Vietstock]_6-2-2026 - Vietstock_ Nghiên cứu _ Phân tích_Technical View_ Tuần 09_13_02_2026.pdf
+
+--- Đang quét Trang 32 ---
+-> File đã có sẵn, bỏ qua: [SHS]_6-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Tháng 02_2026.pdf
+-> File đã có sẵn, bỏ qua: [SHS]_6-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Tiền tệ _ Trái phiếu_ Tháng 02_2026.pdf
+-> File đã có sẵn, bỏ qua: [VDS]_6-2-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Chọn cổ phiếu từ chu kỳ _ Theo dấu Tăng trưởng và Lợi nhuận.pdf
+-> File đã có sẵn, bỏ qua: [ACBS]_6-2-2026 - Phân tích Ngành_Báo cáo ngành Bán lẻ_ Điểm sáng Bán lẻ hiện đại trong bối cảnh tiêu dùng thận trọng.pdf
+-> File đã có sẵn, bỏ qua: [Vietcap]_5-2-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Tháng 2_2026 _ Hồi phục sau nhịp điều chỉnh ở nửa.pdf
+
+--- Đang quét Trang 33 ---
+-> Tìm thấy: [Bộ Tài chính]_5-2-2026 - Tài liệu tham khảo_Bản tin nợ công_ Số 21.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 34 ---
+-> File đã có sẵn, bỏ qua: [Bộ Tài chính]_5-2-2026 - Tài liệu tham khảo_Bản tin nợ công_ Số 21.pdf
+
+--- Đang quét Trang 35 ---
+-> Tìm thấy: [Vietcap]_4-2-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Tháng 1_2026 _ VNIndex tăng điểm trong tháng thứ 3 liên tiếp.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KBSV]_4-2-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Thông tư 08_2026_TT_BTC _ Tóm tắt nhanh và đánh giá.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KBSV]_4-2-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Lãi suất liên ngân hàng tăng mạnh.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 36 ---
+-> File đã có sẵn, bỏ qua: [VDS]_3-2-2026 - Phân tích Ngành_Báo cáo ngành BĐS Khu công nghiệp_ Vững vàng trước những cơn gió.pdf
+
+--- Đang quét Trang 37 ---
+
+--- Đang quét Trang 38 ---
+
+--- Đang quét Trang 39 ---
+
+--- Đang quét Trang 40 ---
+-> Tìm thấy: [Vietstock]_30-1-2026 - Vietstock_ Nghiên cứu _ Phân tích_Vietstock Weekly_ Tuần 02_06_02_2026.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [Vietstock]_30-1-2026 - Vietstock_ Nghiên cứu _ Phân tích_Technical View_ Tuần 02_06_02_2026.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 41 ---
+-> File đã có sẵn, bỏ qua: [GTJA (Vietnam) ]_29-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Catching The Big Current.pdf
+-> File đã có sẵn, bỏ qua: [PHS]_29-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Định vị chiến mã trong kỷ nguyên mới.pdf
+-> File đã có sẵn, bỏ qua: [VCBS]_29-1-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Hàng hóa Quý 1_2026.pdf
+-> File đã có sẵn, bỏ qua: [MAS]_29-1-2026 - Phân tích Ngành_Báo cáo ngành BĐS Khu công nghiệp_ Sau cơn mưa_ trời lại rạng.pdf
+
+--- Đang quét Trang 42 ---
+-> Tìm thấy: [ASEAN SECURITIES]_28-1-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Triển vọng Đầu tư vàng 2026 _ Thức thời.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [SHS]_28-1-2026 - Báo cáo Chuyên đề_Báo cáo Lao Động _ Giáo Dục_ Thế Hệ Chờ Được Hiểu.pdf
+
+--- Đang quét Trang 43 ---
+-> File đã có sẵn, bỏ qua: [VCBS]_27-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Trái phiếu_ Cập nhật 2025 _ Triển vọng 2026.pdf
+-> File đã có sẵn, bỏ qua: [VDS]_27-1-2026 - Phân tích Ngành_Báo cáo ngành Bất động sản dân dụng_ Tái cân bằng sau giai đoạn tăng trưởng lệch pha.pdf
+-> File đã có sẵn, bỏ qua: [VDS]_27-1-2026 - Phân tích Ngành_Báo cáo ngành Vật liệu xây dựng khác_ Triển vọng phân hóa giữa các nguồn nguyên liệu.pdf
+-> File đã có sẵn, bỏ qua: [VIS Rating]_26-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Triển vọng Tín nhiệm 2026.pdf
+-> File đã có sẵn, bỏ qua: [VBMA]_26-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Trái phiếu_ Quý IV_2025.pdf
+-> File đã có sẵn, bỏ qua: [MAS]_26-1-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Danh mục cơ cấu ETF kỳ Q1_2026.pdf
+
+--- Đang quét Trang 44 ---
+-> File đã có sẵn, bỏ qua: [MAS]_26-1-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Danh mục cơ cấu ETF kỳ Q1_2026.pdf
+-> File đã có sẵn, bỏ qua: [VIS Rating]_26-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Triển vọng Tín nhiệm 2026.pdf
+-> File đã có sẵn, bỏ qua: [VBMA]_26-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Trái phiếu_ Quý IV_2025.pdf
+-> File đã có sẵn, bỏ qua: [FPTS]_23-1-2026 - Phân tích Ngành_Báo cáo ngành Nhựa_ Triển vọng phân hóa giữa các mảng sản phẩm.pdf
+-> File đã có sẵn, bỏ qua: [Vietstock]_23-1-2026 - Vietstock_ Nghiên cứu _ Phân tích_Vietstock Weekly_ Tuần 26_30_01_2026.pdf
+-> File đã có sẵn, bỏ qua: [Vietstock]_23-1-2026 - Vietstock_ Nghiên cứu _ Phân tích_Technical View_ Tuần 26_30_01_2026.pdf
+-> File đã có sẵn, bỏ qua: [MBS]_23-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Trái phiếu_ Thị trường TPDN khép lại năm 2025 với d.pdf
+-> File đã có sẵn, bỏ qua: [KAFI]_23-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Kinh tế về đích _sát nút_.pdf
+
+--- Đang quét Trang 45 ---
+-> Tìm thấy: [VikkiBankS]_22-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 12_2025.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [KAFI]_21-1-2026 - Phân tích Ngành_Báo cáo ngành Ngân hàng_ Vững đà tăng trưởng.pdf
+
+--- Đang quét Trang 46 ---
+-> File đã có sẵn, bỏ qua: [KAFI]_21-1-2026 - Phân tích Ngành_Báo cáo ngành Ngân hàng_ Vững đà tăng trưởng.pdf
+-> File đã có sẵn, bỏ qua: [VPX]_21-1-2026 - Phân tích Ngành_Báo cáo ngành Dầu khí_ Cập nhật Thị trường kinh doanh xăng dầu năm 2026.pdf
+-> File đã có sẵn, bỏ qua: [SSV]_21-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Quyết tâm và thành tựu.pdf
+-> File đã có sẵn, bỏ qua: [MAS]_21-1-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Kinh Tế Nhà Nước _ Cơ Hội Chọn Lọc Trên Thị Trường Chứng Khoán.pdf
+-> Tìm thấy: [KBSV]_20-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Triển vọng kinh tế 2026 _ Kích hoạt nội lực.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [ACBS]_19-1-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Cập nhật nhanh Nghị định 20_2026_NĐ_CP.pdf
+-> File đã có sẵn, bỏ qua: [MBS]_19-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Tiền tệ_ Diễn biến tỷ giá sẽ ổn định hơn trong năm.pdf
+-> File đã có sẵn, bỏ qua: [VDS]_19-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Trái phiếu _ Tiền tệ_ Trật tự mới của thị trường vố.pdf
+
+--- Đang quét Trang 47 ---
+-> File đã có sẵn, bỏ qua: [VPX]_19-1-2026 - Báo cáo Chuyên đề_Báo cáo Đầu tư_ Tháng 12_2025.pdf
+-> File đã có sẵn, bỏ qua: [FPTS]_16-1-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Dự báo thay đổi thành phần chỉ số VN30 _ VNFINLEAD.pdf
+-> Tìm thấy: [VDS]_16-1-2026 - Phân tích Ngành_Báo cáo ngành Công nghệ _ Viễn thông_ Thuyền to nỗ lực vượt sóng lớn.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [Vietcap]_16-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tăng trưởng GDP đạt 8_ trong năm 2025.pdf
+-> File đã có sẵn, bỏ qua: [Vietstock]_16-1-2026 - Vietstock_ Nghiên cứu _ Phân tích_Vietstock Weekly_ Tuần 19_23_01_2026.pdf
+-> File đã có sẵn, bỏ qua: [Vietstock]_16-1-2026 - Vietstock_ Nghiên cứu _ Phân tích_Technical View_ Tuần 19_23_01_2026.pdf
+-> File đã có sẵn, bỏ qua: [MBS]_16-1-2026 - Phân tích Ngành_Báo cáo ngành Xây dựng và VLXD_ Bước vào chu kì tăng trưởng.pdf
+-> File đã có sẵn, bỏ qua: [AGRISECO]_16-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Bứt phá trong kỷ nguyên mới.pdf
+-> File đã có sẵn, bỏ qua: [MAS]_16-1-2026 - Phân tích Ngành_Báo cáo ngành Phân bón_ Biến động chính sách và địa chính trị chi phối triển vọng.pdf
+-> File đã có sẵn, bỏ qua: [OCBS]_16-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Xây dựng nền tảng vững vàng.pdf
+-> File đã có sẵn, bỏ qua: [VIS Rating]_16-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Trái phiếu_ Tổng quan Thị trường Trái phiếu Doanh n.pdf
+-> File đã có sẵn, bỏ qua: [GTJA (Vietnam) ]_16-1-2026 - Phân tích Ngành_Báo cáo ngành ICT_ Ride the AI Wave.pdf
+
+--- Đang quét Trang 48 ---
+-> File đã có sẵn, bỏ qua: [OCBS]_16-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Xây dựng nền tảng vững vàng.pdf
+-> File đã có sẵn, bỏ qua: [Vietinbank Securities]_15-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 12_2025.pdf
+-> File đã có sẵn, bỏ qua: [VCBS]_15-1-2026 - Phân tích Ngành_Báo cáo ngành BĐS Khu công nghiệp_ Sau phép thử_ chu kỳ mới bắt đầu.pdf
+-> File đã có sẵn, bỏ qua: [NSI]_15-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Tháng 12_2025.pdf
+-> File đã có sẵn, bỏ qua: [VDS]_15-1-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ NGHỊ QUYẾT 79_NQ_TW Về phát triển kinh tế nhà nước.pdf
+-> File đã có sẵn, bỏ qua: [MAS]_15-1-2026 - Phân tích Ngành_Báo cáo ngành Điện tử tiêu dùng_ Nâng cấp công nghệ trở thành động lực tăng trưởng.pdf
+-> File đã có sẵn, bỏ qua: [MAS]_15-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Đầu tư công _ Động lực then chốt cho tăng trưởng h.pdf
+-> File đã có sẵn, bỏ qua: [AGRISECO]_15-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Cập nhật Quý IV và năm 2025.pdf
+-> File đã có sẵn, bỏ qua: [BVS]_14-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Vĩ mô và TTCK tháng 12_2025.pdf
+-> File đã có sẵn, bỏ qua: [PHS]_14-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Vững bước trước giông bão.pdf
+
+--- Đang quét Trang 49 ---
+-> File đã có sẵn, bỏ qua: [MAS]_14-1-2026 - Phân tích Ngành_Báo cáo ngành Cảng biển_ Ổn định trong vùng biến động.pdf
+-> File đã có sẵn, bỏ qua: [VCBS]_13-1-2026 - Phân tích Ngành_Báo cáo ngành Thép_ Triển vọng 2026.pdf
+-> File đã có sẵn, bỏ qua: [Vietcap]_13-1-2026 - Phân tích Ngành_Báo cáo ngành Nhiệt điện_ Giá công suất thị trường năm 2026 thấp hơn kỳ vọng.pdf
+-> File đã có sẵn, bỏ qua: [VDS]_13-1-2026 - Phân tích Ngành_Báo cáo ngành Tiêu dùng_ Hổ mọc thêm cánh.pdf
+-> File đã có sẵn, bỏ qua: [MAS]_13-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Vai trò dẫn dắt của Nhà nước và động lực từ kinh tế tư.pdf
+-> File đã có sẵn, bỏ qua: [KAFI]_12-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Chiến mã tháo cương.pdf
+-> Tìm thấy: [KBSV]_12-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Thị trường chứng khoán Việt Nam trước vận hội lớn.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KBSV]_12-1-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Tóm tắt NQ79_NQ_TW.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 50 ---
+-> File đã có sẵn, bỏ qua: [SSI]_12-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Vững tay cương.pdf
+-> File đã có sẵn, bỏ qua: [PSI]_12-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Q4_2025.pdf
+-> File đã có sẵn, bỏ qua: [PSI]_12-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Tháng 01_2026.pdf
+-> File đã có sẵn, bỏ qua: [ABS]_12-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Đón lộc đầu năm.pdf
+-> File đã có sẵn, bỏ qua: [Vietcap]_12-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Trái phiếu _ Tiền tệ_ Số dư trên OMO đạt mức cao kỷ lục.pdf
+-> File đã có sẵn, bỏ qua: [MAS]_12-1-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Top cổ phiếu dẫn đầu Sharpe Ratio Q3_2025.pdf
+-> Tìm thấy: [YSVN]_12-1-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Tăng trưởng tín dụng ưu tiên kiểm soát rủi ro.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [YSVN]_12-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Tháng 01 là tháng tăng điểm.pdf
+-> Tìm thấy: [YSVN]_12-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ GDP Việt Nam bước vào pha tăng trưởng chất lượng cao.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [MAS]_11-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Nền tảng vững chắc _ Duy trì tăng trưởng.pdf
+-> File đã có sẵn, bỏ qua: [NSI]_9-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Vị thế mới _ Cơ hội mới trong thị trường phân hóa.pdf
+-> File đã có sẵn, bỏ qua: [VCBS]_9-1-2026 - Phân tích Ngành_Báo cáo ngành Ngân hàng_ Vững nhịp tăng trưởng.pdf
+-> File đã có sẵn, bỏ qua: [Vietstock]_9-1-2026 - Vietstock_ Nghiên cứu _ Phân tích_Vietstock Weekly_ Tuần 12_16_01_2026.pdf
+-> File đã có sẵn, bỏ qua: [Vietstock]_9-1-2026 - Vietstock_ Nghiên cứu _ Phân tích_Technical View_ Tuần 12_16_01_2026.pdf
+-> File đã có sẵn, bỏ qua: [MAS]_9-1-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Dự báo cổ phiếu thành phần chỉ số Q1_2026.pdf
+-> File đã có sẵn, bỏ qua: [AGRISECO]_9-1-2026 - Phân tích Ngành_Báo cáo ngành Dầu khí_ Dòng chảy tăng trưởng_ đón sóng bứt phá.pdf
+-> File đã có sẵn, bỏ qua: [YSVN]_9-1-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Nghị quyết 79 nâng tầm kinh tế nhà nước.pdf
+
+--- Đang quét Trang 51 ---
+-> File đã có sẵn, bỏ qua: [VBMA]_8-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Trái phiếu_ Tháng 12_2025.pdf
+-> File đã có sẵn, bỏ qua: [VCBS]_8-1-2026 - Phân tích Ngành_Báo cáo ngành Điện_ Tăng tốc triển khai dự án mới.pdf
+-> File đã có sẵn, bỏ qua: [VCBS]_8-1-2026 - Phân tích Ngành_Báo cáo ngành Nước_ 1H2026.pdf
+-> File đã có sẵn, bỏ qua: [VCBS]_8-1-2026 - Phân tích Ngành_Báo cáo ngành Dầu khí_ Triển vọng Dầu khí _ LNG _ Năng lượng tái tạo.pdf
+-> File đã có sẵn, bỏ qua: [VCBS]_8-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Đột phá hành động _ Kiến tạo thịnh vượng.pdf
+-> File đã có sẵn, bỏ qua: [ACBS]_8-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Thị trường Trái phiếu 2025_ Phục hồi có chọn lọc.pdf
+-> File đã có sẵn, bỏ qua: [ACBS]_8-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Khởi sắc sau cơn mưa.pdf
+-> File đã có sẵn, bỏ qua: [MAS]_8-1-2026 - Phân tích Ngành_Báo cáo ngành Dệt may_ Phân hóa giữa biến động địa chính trị.pdf
+-> File đã có sẵn, bỏ qua: [GTJA (Vietnam) ]_7-1-2026 - Phân tích Ngành_Báo cáo ngành Điện_ Tái định hình _ Triển vọng Khả quan.pdf
+-> File đã có sẵn, bỏ qua: [GTJA (Vietnam) ]_7-1-2026 - Báo cáo Chuyên đề_Flash Note_ Cập nhật nhanh về Sự kiện Mỹ và Venezuela tháng 1_2026.pdf
+-> Tìm thấy: [KBSV]_7-1-2026 - Phân tích Ngành_Báo cáo ngành Chứng khoán_ Động lực từ tăng trưởng kinh tế cao và dòng tiền ngoại qu.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KBSV]_7-1-2026 - Phân tích Ngành_Báo cáo ngành Ngân hàng_ Đẩy mạnh tăng trưởng tín dụng.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KBSV]_7-1-2026 - Phân tích Ngành_Báo cáo ngành Tiêu dùng_ Triển vọng tích cực và định giá hấp dẫn.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KBSV]_7-1-2026 - Phân tích Ngành_Báo cáo ngành Bất động sản dân cư_ Hưởng lợi từ đẩy mạnh hạ tầng và tháo gỡ pháp lý.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KBSV]_7-1-2026 - Phân tích Ngành_Báo cáo ngành Vật liệu xây dựng_ Nhu cầu trong nước là động lực chính.pdf
+   ✅ Tải thành công!
+
+--- Đang quét Trang 52 ---
+-> File đã có sẵn, bỏ qua: [TPS]_7-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Khi cơ hội song hành thách thức.pdf
+-> File đã có sẵn, bỏ qua: [YSVN]_7-1-2026 - Báo cáo Chuyên đề_Báo cáo Chuyên đề_ Dự phóng tái cơ cấu VN30.pdf
+-> File đã có sẵn, bỏ qua: [ACBS]_6-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Kiến tạo vị thế.pdf
+-> File đã có sẵn, bỏ qua: [SHS]_6-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Cân bằng rủi ro _ lợi nhuận.pdf
+-> Tìm thấy: [KBSV]_6-1-2026 - Phân tích Ngành_Báo cáo ngành Điện_ Tăng trưởng trên cơ sở cân bằng cung cầu.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KBSV]_6-1-2026 - Phân tích Ngành_Báo cáo ngành Công nghệ_ Hồi phục sau khó khăn ngắn hạn.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [OCBS]_6-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Vĩ mô_ Hướng đến mục tiêu tăng trưởng mạnh mẽ.pdf
+-> File đã có sẵn, bỏ qua: [ASEAN SECURITIES]_6-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Nâng hạn thị trường mở khóa định giá.pdf
+-> File đã có sẵn, bỏ qua: [GTJA (Vietnam) ]_5-1-2026 - Phân tích Ngành_Báo cáo ngành Cảng _ Vận tải biển_ Triển vọng Khả quan.pdf
+-> File đã có sẵn, bỏ qua: [KAFI]_5-1-2026 - Phân tích Ngành_Báo cáo ngành Bảo hiểm_ Bước vào pha tăng trưởng mới.pdf
+-> Tìm thấy: [KBSV]_5-1-2026 - Phân tích Ngành_Báo cáo ngành Logistics_ Câu chuyện thương mại phục hồi và mở rộng công suất.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KBSV]_5-1-2026 - Phân tích Ngành_Báo cáo ngành Dầu khí_ Điều chỉnh chính sách tích cực.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KBSV]_5-1-2026 - Phân tích Ngành_Báo cáo ngành Xây dựng_ Nguồn cung công việc tích cực.pdf
+   ✅ Tải thành công!
+-> Tìm thấy: [KBSV]_5-1-2026 - Phân tích Ngành_Báo cáo ngành BĐS Khu công nghiệp_ Thách thức ngắn hạn mở ra dư địa trong dài hạn.pdf
+   ✅ Tải thành công!
+-> File đã có sẵn, bỏ qua: [SHS]_5-1-2026 - Phân tích Ngành_Báo cáo ngành BĐS Khu công nghiệp_ Tiếp đà tăng trưởng.pdf
+
+--- Đang quét Trang 53 ---
+-> File đã có sẵn, bỏ qua: [SSI]_5-1-2026 - Báo cáo Chuyên đề_Báo cáo ETF_ Dự báo thay đổi danh mục chỉ số VN30 và VNFIN Lead kỳ Q1_2026.pdf
+-> File đã có sẵn, bỏ qua: [TPS]_5-1-2026 - Phân tích Ngành_Báo cáo ngành Điện_ Triển vọng dài hạn vẫn duy trì.pdf
+-> File đã có sẵn, bỏ qua: [BMSC]_5-1-2026 - Vĩ mô _ Chiến lược thị trường_Báo cáo Chiến lược_ Năm 2026.pdf
+
+--- Đang quét Trang 54 ---
+
+🛑 Đã chạm đến mốc thời gian cũ hơn 3 tháng. Ngưng quét.
+
+🎉 HOÀN TẤT CHIẾN DỊCH! Tổng cộng đã bế về: 101 báo cáo Vĩ mô & Ngành.
