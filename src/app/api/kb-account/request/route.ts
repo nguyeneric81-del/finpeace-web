@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
+import { syncLeadToGoogleSheet } from '@/utils/googleSheetsSync'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -70,6 +71,15 @@ export async function POST(req: Request) {
         </div>
       `,
     })
+
+    // Sync as a new lead
+    syncLeadToGoogleSheet({
+      email: user_email,
+      phone: user_phone || '',
+      name: user_name || '',
+      agent: 'FinPeace (Account Request)',
+      source: `KB Account Request: ${content_title || content_slug}`
+    });
 
     return NextResponse.json({ ok: true, request_id: request.id, expires_at: request.expires_at })
   } catch (err) {

@@ -88,7 +88,7 @@ export default function TrainingDeckWeek2Client() {
               <p className="text-lg text-slate-400 mb-4 font-light italic">"Say máu với những con sóng"</p>
               <ul className="space-y-3 text-slate-300">
                 <li>• Thích lướt sóng, giao dịch liên tục (Overtrading).</li>
-                <li>• Đang vướng vào vòng lặp: Kiếm được -> Thua lại -> Căng thẳng tột độ.</li>
+                <li>• Đang vướng vào vòng lặp: Kiếm được -&gt; Thua lại -&gt; Căng thẳng tột độ.</li>
                 <li>• <strong>Giải pháp:</strong> Kỷ luật bằng Trading Plan (AutoPilot) và cơ chế cắt lỗ vô cảm.</li>
               </ul>
             </div>

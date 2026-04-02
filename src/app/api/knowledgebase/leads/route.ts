@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { syncLeadToGoogleSheet } from '@/utils/googleSheetsSync'
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -33,6 +34,15 @@ export async function POST(req: NextRequest) {
             console.error('kb_leads insert error:', error)
             return NextResponse.json({ error: 'Lỗi lưu dữ liệu' }, { status: 500 })
         }
+
+        // Bắn webhook Google Sheets
+        syncLeadToGoogleSheet({
+            email,
+            phone: phone || '',
+            name: name || '',
+            agent: sales_code || 'Org (KB)',
+            source: `KB: ${article_slug || pillar || source}`
+        });
 
         return NextResponse.json({ success: true })
     } catch (err) {

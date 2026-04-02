@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { Resend } from 'resend'
 import { SALES_CONFIG, GLOBAL_CC_EMAILS } from '@/lib/salesConfig'
+import { syncLeadToGoogleSheet } from '@/utils/googleSheetsSync'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -157,6 +158,15 @@ export async function POST(request: Request) {
             console.error('[Visitor Welcome Email]', err)
         }
     }
+
+    // ── 4. Sync lead to Google Sheet (async hook) ────────────
+    syncLeadToGoogleSheet({
+        email: email || '',
+        phone: phone || '',
+        name: full_name || '',
+        agent: `${agentCode} (LP)`,
+        source: `Landing Page: ${lpName}`
+    });
 
     return NextResponse.json({ success: true, contentUrl, contentTitle: lpName })
 }
