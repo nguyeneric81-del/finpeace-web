@@ -149,7 +149,40 @@ export async function updateSession(request: NextRequest) {
         data: { user },
     } = await supabase.auth.getUser()
 
-    // Danh sách các route public (không yêu cầu đăng nhập)
+    // CEO OS — chỉ cho phép whitelist email truy cập
+    const CEO_OS_WHITELIST = ['yenle@finpeace.vn', 'nguyeneric81@gmail.com']
+    if (effectivePath.startsWith('/ceo-os')) {
+        const supabaseCeo = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            {
+                cookieOptions: isProd ? { name: 'finpeace-auth', domain: '.finpeace.cloud' } : { name: 'finpeace-auth' },
+                cookies: {
+                    getAll() { return request.cookies.getAll() },
+                    setAll(cookiesToSet) {
+                        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+                        supabaseResponse = NextResponse.next({ request })
+                        cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options))
+                    },
+                },
+            }
+        )
+        const { data: { user: ceoUser } } = await supabaseCeo.auth.getUser()
+        if (!ceoUser) {
+            const loginUrl = request.nextUrl.clone()
+            loginUrl.pathname = '/login'
+            loginUrl.searchParams.set('next', effectivePath)
+            return NextResponse.redirect(loginUrl)
+        }
+        if (!CEO_OS_WHITELIST.includes(ceoUser.email || '')) {
+            const forbiddenUrl = request.nextUrl.clone()
+            forbiddenUrl.pathname = '/'
+            forbiddenUrl.searchParams.set('error', 'unauthorized')
+            return NextResponse.redirect(forbiddenUrl)
+        }
+        return supabaseResponse
+    }
+
     const isPublicRoute =
         effectivePath.startsWith('/login') ||
         effectivePath.startsWith('/auth') ||
