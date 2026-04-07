@@ -94,7 +94,7 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xl font-bold font-mono tracking-tight text-[#00D16E]">
-                {plan.ticker} : VN
+                {plan.ticker}
               </span>
               <div className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider"
                 style={{ background: 'rgba(0,209,110,0.1)', border: '1px solid rgba(0,209,110,0.2)', color: '#00D16E' }}>
