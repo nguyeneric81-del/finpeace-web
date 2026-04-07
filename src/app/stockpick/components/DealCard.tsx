@@ -4,7 +4,8 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   TrendingUp, TrendingDown, Target, Shield, Clock,
-  ChevronDown, ChevronUp, Bell, CheckCircle, AlertCircle, Timer, Lock
+  ChevronDown, ChevronUp, Bell, CheckCircle, AlertCircle, Timer, Lock,
+  Radar
 } from 'lucide-react'
 
 export interface TradingPlan {
@@ -74,24 +75,16 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
       onClick={() => onTap?.(plan)}
       className="rounded-2xl overflow-hidden"
       style={{
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.07)',
-        boxShadow: plan.is_confirmed ? '0 0 24px rgba(245,158,11,0.06)' : 'none',
+        background: 'rgba(30,30,30,0.6)',
+        backdropFilter: 'blur(16px)',
+        border: plan.is_confirmed ? '1px solid rgba(0,209,110,0.2)' : '1px solid rgba(255,255,255,0.07)',
+        boxShadow: plan.is_confirmed ? '0 0 40px -10px rgba(0,209,110,0.1)' : 'none',
         cursor: onTap ? 'pointer' : 'default',
       }}
     >
-      {/* Confirmed ribbon */}
+      {/* Active Signal Glow / Confirmed Top line indicator */}
       {plan.is_confirmed && (
-        <div className="px-4 py-1.5 flex items-center gap-1.5 text-xs font-semibold"
-          style={{
-            background: 'linear-gradient(90deg, rgba(245,158,11,0.15), rgba(245,158,11,0.04))',
-            borderBottom: '1px solid rgba(245,158,11,0.15)',
-            color: '#f59e0b',
-          }}
-        >
-          <CheckCircle className="w-3 h-3" />
-          FinPeace đã xác nhận deal này
-        </div>
+        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#00D16E] to-transparent" />
       )}
 
       {/* Main card content */}
@@ -100,26 +93,29 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
         <div className="flex items-start justify-between mb-3">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xl font-black text-white tracking-tight">{plan.ticker}</span>
-              <span className="text-xs px-2 py-0.5 rounded-full font-medium"
-                style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.45)' }}>
-                {plan.sector?.split(' ')[0] || 'Cổ phiếu'}
+              <span className="text-xl font-bold font-mono tracking-tight text-[#00D16E]">
+                {plan.ticker} : VN
               </span>
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider"
+                style={{ background: 'rgba(0,209,110,0.1)', border: '1px solid rgba(0,209,110,0.2)', color: '#00D16E' }}>
+                <Radar className="w-2.5 h-2.5" />
+                98% MATCH
+              </div>
             </div>
-            <p className="text-xs leading-relaxed truncate max-w-[150px]" style={{ color: 'rgba(255,255,255,0.35)' }}>
-              {plan.company_name}
+            <p className="text-xs leading-relaxed truncate max-w-[200px]" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              {plan.company_name} • {plan.sector?.split(' ')[0] || 'Cổ phiếu'}
             </p>
           </div>
 
           {/* Current signal badge */}
           {plan.is_locked ? (
             <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium ml-2 shrink-0"
-              style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', color: '#f59e0b' }}>
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}>
               <Lock className="w-3 h-3" />
-              <span>Đang khóa</span>
+              <span>LOCKED</span>
             </div>
           ) : signal && sigConfig && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium ml-2 shrink-0"
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium ml-2 shrink-0 font-mono"
               style={{ background: sigConfig.bg, border: `1px solid ${sigConfig.color}30`, color: sigConfig.color }}>
               <SigIcon className="w-3 h-3" />
               <span>{signal.current_price}</span>
@@ -134,8 +130,16 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
           </div>
         )}
 
+        {/* Human Advisory Verification */}
+        {plan.is_confirmed && !plan.is_locked && (
+           <div className="flex items-center gap-1.5 mb-4 text-[10px] font-bold uppercase tracking-wider text-[#00D16E]/70 border-b border-[#00D16E]/10 pb-2">
+             <CheckCircle className="w-3 h-3 fill-[#00D16E]/20" />
+             VERIFIED BY HUMAN ADVISOR
+           </div>
+        )}
+
         {/* Key metrics grid */}
-        <div className="grid grid-cols-3 gap-2 mb-3 relative">
+        <div className="grid grid-cols-3 gap-2 mb-4 relative">
           {plan.is_locked && (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-xl"
               style={{ background: 'rgba(6,11,20,0.6)', backdropFilter: 'blur(3px)' }}>
@@ -145,25 +149,24 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
             </div>
           )}
           {[
-            { label: 'Vùng mua', value: plan.entry_zone?.split(' ')[0] || '—', color: '#34d399', icon: TrendingUp },
-            { label: 'Cắt lỗ', value: plan.stop_loss?.split(' ')[0] || '—', color: '#f87171', icon: TrendingDown },
-            { label: 'Chốt lời', value: plan.take_profit?.split(' ')[0] || '—', color: '#818cf8', icon: Target },
-          ].map(({ label, value, color, icon: Icon }) => (
-            <div key={label} className="rounded-xl p-2.5 text-center"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <Icon className="w-3 h-3 mx-auto mb-1" style={{ color }} />
-              <p className="text-[10px] mb-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{label}</p>
-              <p className="text-xs font-bold" style={{ color }}>{value}</p>
+            { label: 'ENTRY', value: plan.entry_zone?.split(' ')[0] || '—', color: '#00D16E' },
+            { label: 'SAFE EXIT', value: plan.stop_loss?.split(' ')[0] || '—', color: '#ff4d4d' },
+            { label: 'OBJECTIVE', value: plan.take_profit?.split(' ')[0] || '—', color: '#f87171' },
+          ].map(({ label, value, color }) => (
+            <div key={label} className="rounded-xl p-3 text-center"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <p className="text-[9px] font-semibold mb-1 uppercase tracking-widest text-white/50">{label}</p>
+              <p className="text-sm font-medium font-mono" style={{ color }}>{value}</p>
             </div>
           ))}
         </div>
 
         {/* R:R + Timeframe row */}
         <div className={`flex items-center gap-2 mb-3 ${plan.is_locked ? 'opacity-20' : ''}`}>
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold"
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold font-mono"
             style={{
-              background: rrNum >= 2 ? 'rgba(52,211,153,0.1)' : 'rgba(245,158,11,0.08)',
-              color: rrNum >= 2 ? '#34d399' : '#f59e0b',
+              background: rrNum >= 2 ? 'rgba(0,209,110,0.1)' : 'rgba(245,158,11,0.08)',
+              color: rrNum >= 2 ? '#00D16E' : '#f59e0b',
             }}>
             <Shield className="w-3 h-3" />
             R:R {plan.risk_reward}
@@ -184,16 +187,13 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
           </div>
         </div>
 
-        {/* Catalyst note */}
-        {plan.catalyst_note && (
-          <div className="rounded-xl px-3 py-2.5 mb-3 text-xs leading-relaxed"
+        {/* Catalyst Note (Insight text) */}
+        {plan.catalyst_note && !plan.is_locked && (
+          <div className="relative mb-3 pl-3 py-1 text-xs italic leading-relaxed"
             style={{
-              background: 'rgba(245,158,11,0.06)',
-              border: '1px solid rgba(245,158,11,0.12)',
-              color: 'rgba(255,255,255,0.55)',
+              color: '#00D16E', borderLeft: '2px solid rgba(0,209,110,0.5)', background: 'linear-gradient(90deg, rgba(0,209,110,0.05), transparent)'
             }}>
-            <span className="text-amber-400/60 font-semibold">💡 Catalyst: </span>
-            {plan.catalyst_note}
+            "{plan.catalyst_note}"
           </div>
         )}
 

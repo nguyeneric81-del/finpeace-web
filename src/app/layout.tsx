@@ -1,8 +1,23 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Suspense } from "react";
+import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import { SalesRefCapture } from "@/components/SalesRefCapture";
 import "./globals.css";
+
+const beVietnamPro = Be_Vietnam_Pro({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin', 'vietnamese'],
+  variable: '--font-be-vietnam-pro',
+  display: 'swap',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  weight: ['400', '500', '700'],
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
+});
 
 const svnPoppins = localFont({
   src: [
@@ -48,7 +63,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
-      <body className={`${svnPoppins.variable} font-sans antialiased`}>
+      <body className={`${svnPoppins.variable} ${beVietnamPro.variable} ${jetbrainsMono.variable} font-sans antialiased text-[#1A1A1A]`}>
         <Suspense fallback={null}><SalesRefCapture /></Suspense>
         {children}
       </body>

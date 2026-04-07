@@ -64,12 +64,26 @@ export default function DealListSection({ deals, totalDeals, lockedCount, tier, 
           ))}
 
           {/* Additional text for large locked counts */}
+          {/* Additional text for large locked counts with heavy curiosity blur */}
           {!isBronze && lockedCount > 5 && (
-            <div className="rounded-2xl p-4 text-center"
-              style={{ background: 'rgba(245,158,11,0.05)', border: '1px dashed rgba(245,158,11,0.2)' }}>
-              <p className="text-sm font-semibold text-amber-400/70">
-                +{lockedCount - 5} deals khác đang chờ bạn
-              </p>
+            <div className="relative rounded-2xl h-32 overflow-hidden flex flex-col items-center justify-center border border-white/5 bg-[#1A1A1A]/30">
+               {/* Base fake UI (blurred heavily) */}
+               <div className="absolute inset-0 opacity-20 blur-md pointer-events-none p-4 flex flex-col gap-2">
+                 <div className="h-4 bg-white/20 w-1/3 rounded"></div>
+                 <div className="h-10 bg-white/10 w-full rounded"></div>
+                 <div className="flex gap-2"><div className="h-4 w-1/4 bg-white/10"></div><div className="h-4 w-1/4 bg-white/10"></div></div>
+               </div>
+
+               {/* Lock message overlay */}
+               <div className="relative z-10 flex flex-col items-center gap-2">
+                 <div className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-lg">
+                   <Lock className="w-5 h-5 text-white/70" />
+                 </div>
+                 <div className="text-center">
+                   <p className="text-sm font-bold text-white tracking-wide">+{lockedCount - 5} DEALS ĐANG CHỜ</p>
+                   <p className="text-[10px] text-white/50 mt-0.5 uppercase tracking-widest">Nâng cấp để mở rộng quỹ đạo thấu thị</p>
+                 </div>
+               </div>
             </div>
           )}
         </div>

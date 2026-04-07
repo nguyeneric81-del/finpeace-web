@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { TrendingUp, Bell, Crown, Zap } from 'lucide-react'
+import { TrendingUp, Bell, Crown, Zap, Radar } from 'lucide-react'
 
 interface StockPickHeaderProps {
   user: { name: string; tier: 'FREE' | 'BRONZE'; email: string }
@@ -34,25 +34,30 @@ export default function StockPickHeader({ user, totalDeals, lockedCount, credits
   return (
     <div className="sticky top-0 z-40 px-4 pt-safe-top"
       style={{
-        background: 'rgba(6,11,20,0.85)',
+        background: 'rgba(18,18,18,0.85)',
         backdropFilter: 'blur(20px)',
         borderBottom: '1px solid rgba(255,255,255,0.06)',
       }}
     >
+      {/* Bioluminescent Pulse (Radar Sweep) */}
+      <div className="absolute top-0 left-0 w-full h-[1px] overflow-hidden">
+        <div className="w-1/2 h-full bg-gradient-to-r from-transparent via-[#00D16E] to-transparent animate-pulse" 
+             style={{ animationDuration: '3s' }} />
+      </div>
       <div className="max-w-lg mx-auto flex items-center justify-between py-3.5">
         {/* Logo */}
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl flex items-center justify-center"
+          <div className="relative w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden"
             style={{
-              background: 'linear-gradient(135deg, rgba(245,158,11,0.25), rgba(245,158,11,0.08))',
-              border: '1px solid rgba(245,158,11,0.3)',
+              background: 'linear-gradient(135deg, rgba(0,209,110,0.2), rgba(0,209,110,0.05))',
+              border: '1px solid rgba(0,209,110,0.3)',
             }}
           >
-            <TrendingUp className="w-4 h-4 text-amber-400" />
+            <Radar className="w-4 h-4 text-[#00D16E] animate-[spin_4s_linear_infinite]" />
           </div>
           <div>
-            <p className="text-sm font-bold text-white leading-none">StockPick</p>
-            <p className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>by FinPeace</p>
+            <p className="text-sm font-bold text-white tracking-tight">Orbital Navigator 2.0</p>
+            <p className="text-[10px] mt-0.5 tracking-widest uppercase font-bold" style={{ color: '#00D16E' }}>by FinPeace</p>
           </div>
         </div>
 
@@ -88,12 +93,12 @@ export default function StockPickHeader({ user, totalDeals, lockedCount, credits
           {user.tier === 'BRONZE' && (
             <div className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold"
               style={{
-                background: 'rgba(255,255,255,0.08)',
-                border: '1px solid rgba(255,255,255,0.15)',
-                color: 'white',
+                background: 'rgba(0,209,110,0.08)',
+                border: '1px solid rgba(0,209,110,0.2)',
+                color: '#00D16E',
               }}
             >
-              <Zap className="w-3 h-3 text-amber-400" />
+              <Zap className="w-3 h-3 text-[#00D16E]" />
               {credits} CR
             </div>
           )}

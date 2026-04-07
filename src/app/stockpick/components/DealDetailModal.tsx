@@ -21,7 +21,7 @@ interface DealDetailModalProps {
 
 // ── Signal Badge ──
 const SIGNAL_CONFIG: Record<string, { color: string; bg: string; label: string; icon: React.ElementType }> = {
-  entry_now:     { color: '#34d399', bg: 'rgba(52,211,153,0.12)',  label: '✅ Có thể cân nhắc mua', icon: CheckCircle },
+  entry_now:     { color: '#00D16E', bg: 'rgba(0,209,110,0.12)',  label: '✅ Có thể cân nhắc mua', icon: CheckCircle },
   wait_pullback: { color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', label: '⏳ Chờ pullback về vùng entry', icon: AlertTriangle },
   above_entry:   { color: '#f87171', bg: 'rgba(248,113,113,0.12)', label: '⚠️ Giá trên vùng mua — Không đuổi', icon: TrendingDown },
   take_profit:   { color: '#818cf8', bg: 'rgba(129,140,248,0.12)', label: '🎯 Đang ở vùng chốt lời', icon: Target },
@@ -178,14 +178,14 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
 
   const convictionBg =
     plan.conviction_level?.toLowerCase().includes('cao') || plan.conviction_level?.toLowerCase() === 'high'
-      ? { color: '#34d399', bg: 'rgba(52,211,153,0.12)', border: 'rgba(52,211,153,0.2)' }
+      ? { color: '#00D16E', bg: 'rgba(0,209,110,0.12)', border: 'rgba(0,209,110,0.2)' }
       : plan.conviction_level?.toLowerCase().includes('trung bình')
         ? { color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.18)' }
         : { color: '#94a3b8', bg: 'rgba(148,163,184,0.07)', border: 'rgba(148,163,184,0.12)' }
 
   // Matrix state color
   const matrixColor = scores.matrix?.toLowerCase().includes('pass') || scores.matrix?.toLowerCase().includes('buy')
-    ? '#34d399'
+    ? '#00D16E'
     : scores.matrix?.toLowerCase().includes('hold')
       ? '#f59e0b' : '#f87171'
 
@@ -220,11 +220,11 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
               <div className="flex-1 min-w-0">
                 {/* Ticker + confirmed */}
                 <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                  <span className="text-3xl font-black text-white tracking-tight">{plan.ticker}</span>
+                  <span className="text-3xl font-bold font-mono text-[#00D16E] tracking-tight">{plan.ticker}</span>
                   {plan.is_confirmed && (
                     <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full shrink-0"
-                      style={{ background: 'rgba(245,158,11,0.12)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.25)' }}>
-                      <CheckCircle className="w-2.5 h-2.5" /> FinPeace Confirmed
+                      style={{ background: 'rgba(0,209,110,0.1)', color: '#00D16E', border: '1px solid rgba(0,209,110,0.2)' }}>
+                      <CheckCircle className="w-2.5 h-2.5" /> VERIFIED
                     </span>
                   )}
                 </div>
@@ -255,7 +255,7 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
                 </button>
                 {signal && (
                   <div className="text-right">
-                    <p className="text-lg font-black text-white">{signal.current_price}</p>
+                    <p className="text-lg font-bold font-mono text-white">{signal.current_price}</p>
                     <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.3)' }}>Hiện tại</p>
                   </div>
                 )}
@@ -341,7 +341,7 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
               <div className="py-3">
                 {[
                   { label: 'Chốt lời (TP)', value: plan.take_profit, color: '#818cf8', icon: Target, bar: 'linear-gradient(180deg,#818cf8,#818cf808)' },
-                  { label: 'Vùng mua (Entry)', value: plan.entry_zone, color: '#34d399', icon: TrendingUp, bar: 'linear-gradient(180deg,#34d399,#34d39908)' },
+                  { label: 'Vùng mua (Entry)', value: plan.entry_zone, color: '#00D16E', icon: TrendingUp, bar: 'linear-gradient(180deg,#00D16E,#00D16E08)' },
                   { label: 'Cắt lỗ (SL)', value: plan.stop_loss, color: '#f87171', icon: Shield, bar: 'linear-gradient(180deg,#f8717108,#f87171)' },
                 ].map(({ label, value, color, icon: Icon, bar }, idx) => (
                   <div key={label} className={`flex items-center gap-3 ${idx < 2 ? 'mb-3' : ''}`}>
@@ -351,7 +351,7 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
                         <Icon className="w-3 h-3" style={{ color }} />
                         <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: `${color}80` }}>{label}</span>
                       </div>
-                      <p className="text-xl font-black leading-none" style={{ color }}>{value || '—'}</p>
+                      <p className="text-xl font-bold font-mono leading-none" style={{ color }}>{value || '—'}</p>
                     </div>
                   </div>
                 ))}
@@ -360,7 +360,7 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
               {/* Stats grid */}
               <div className="grid grid-cols-4 gap-2 pb-3">
                 {[
-                  { label: 'R:R', value: plan.risk_reward, color: rrNum >= 2 ? '#34d399' : '#f59e0b' },
+                  { label: 'R:R', value: plan.risk_reward, color: rrNum >= 2 ? '#00D16E' : '#f59e0b' },
                   { label: 'Holding', value: plan.expected_holding_days ? `${plan.expected_holding_days}N` : '—', color: 'white' },
                   { label: 'Rủi ro', value: plan.risk_level?.replace('Trung bình', 'TB') || '—', color: 'white' },
                   { label: '% NAV', value: plan.capital_allocation_pct ? `${plan.capital_allocation_pct}%` : '10%', color: '#f59e0b' },
@@ -368,7 +368,7 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
                   <div key={label} className="rounded-xl p-2 text-center"
                     style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
                     <p className="text-[9px] mb-1 uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>{label}</p>
-                    <p className="text-xs font-black" style={{ color }}>{value}</p>
+                    <p className="text-xs font-bold font-mono" style={{ color }}>{value}</p>
                   </div>
                 ))}
               </div>
@@ -466,7 +466,7 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
                   {
                     n: '01', title: 'Chờ giá về vùng mua',
                     desc: `Đặt alert khi ${plan.ticker} giao dịch trong vùng ${plan.entry_zone || '—'}. Tuyệt đối không đuổi giá ngoài vùng entry.`,
-                    color: '#34d399',
+                    color: '#00D16E',
                   },
                   {
                     n: '02', title: 'Giải ngân 10% NAV',
