@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   TrendingUp, TrendingDown, Target, Shield, Clock,
-  ChevronDown, ChevronUp, Bell, CheckCircle, AlertCircle, Timer
+  ChevronDown, ChevronUp, Bell, CheckCircle, AlertCircle, Timer, Lock
 } from 'lucide-react'
 
 export interface TradingPlan {
@@ -32,6 +32,7 @@ export interface TradingPlan {
     signal_label: string
     signal_detail: string
   } | null
+  is_locked?: boolean
 }
 
 interface DealCardProps {
@@ -105,13 +106,19 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
                 {plan.sector?.split(' ')[0] || 'Cổ phiếu'}
               </span>
             </div>
-            <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.35)' }}>
+            <p className="text-xs leading-relaxed truncate max-w-[150px]" style={{ color: 'rgba(255,255,255,0.35)' }}>
               {plan.company_name}
             </p>
           </div>
 
           {/* Current signal badge */}
-          {signal && sigConfig && (
+          {plan.is_locked ? (
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium ml-2 shrink-0"
+              style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', color: '#f59e0b' }}>
+              <Lock className="w-3 h-3" />
+              <span>Đang khóa</span>
+            </div>
+          ) : signal && sigConfig && (
             <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium ml-2 shrink-0"
               style={{ background: sigConfig.bg, border: `1px solid ${sigConfig.color}30`, color: sigConfig.color }}>
               <SigIcon className="w-3 h-3" />
@@ -128,7 +135,15 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
         )}
 
         {/* Key metrics grid */}
-        <div className="grid grid-cols-3 gap-2 mb-3">
+        <div className="grid grid-cols-3 gap-2 mb-3 relative">
+          {plan.is_locked && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-xl"
+              style={{ background: 'rgba(6,11,20,0.6)', backdropFilter: 'blur(3px)' }}>
+              <p className="text-xs font-bold text-amber-400">
+                {isBronze ? 'Dùng 1 Credit để xem' : 'BRONZE để xem'}
+              </p>
+            </div>
+          )}
           {[
             { label: 'Vùng mua', value: plan.entry_zone?.split(' ')[0] || '—', color: '#34d399', icon: TrendingUp },
             { label: 'Cắt lỗ', value: plan.stop_loss?.split(' ')[0] || '—', color: '#f87171', icon: TrendingDown },
@@ -144,7 +159,7 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
         </div>
 
         {/* R:R + Timeframe row */}
-        <div className="flex items-center gap-2 mb-3">
+        <div className={`flex items-center gap-2 mb-3 ${plan.is_locked ? 'opacity-20' : ''}`}>
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold"
             style={{
               background: rrNum >= 2 ? 'rgba(52,211,153,0.1)' : 'rgba(245,158,11,0.08)',
@@ -270,11 +285,11 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
         {onTap && (
           <div className="mt-3 flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>
-              {!isBronze && <><Shield className="w-3 h-3" /><span>Tap để xem chi tiết deal</span></>}
+              {!isBronze && <><Shield className="w-3 h-3" /><span>Tap để {plan.is_locked ? 'mở khoá' : 'xem chi tiết'} deal</span></>}
             </div>
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1"
               style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.2)' }}>
-              Xem chi tiết →
+              {plan.is_locked ? <><Lock className="w-2.5 h-2.5"/> Mở khoá</> : 'Xem chi tiết →'}
             </span>
           </div>
         )}

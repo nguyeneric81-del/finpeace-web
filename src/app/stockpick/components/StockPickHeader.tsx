@@ -7,6 +7,7 @@ interface StockPickHeaderProps {
   user: { name: string; tier: 'FREE' | 'BRONZE'; email: string }
   totalDeals: number
   lockedCount: number
+  credits: number
 }
 
 const TIER_CONFIG = {
@@ -26,7 +27,7 @@ const TIER_CONFIG = {
   },
 }
 
-export default function StockPickHeader({ user, totalDeals, lockedCount }: StockPickHeaderProps) {
+export default function StockPickHeader({ user, totalDeals, lockedCount, credits }: StockPickHeaderProps) {
   const tier = TIER_CONFIG[user.tier]
   const TierIcon = tier.icon
 
@@ -82,6 +83,20 @@ export default function StockPickHeader({ user, totalDeals, lockedCount }: Stock
             <TierIcon className="w-3 h-3" />
             {tier.label}
           </div>
+
+          {/* Credits remaining (BRONZE only) */}
+          {user.tier === 'BRONZE' && (
+            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold"
+              style={{
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                color: 'white',
+              }}
+            >
+              <Zap className="w-3 h-3 text-amber-400" />
+              {credits} CR
+            </div>
+          )}
         </div>
       </div>
 

@@ -13,6 +13,9 @@ import { TradingPlan } from './DealCard'
 interface DealDetailModalProps {
   plan: TradingPlan | null
   isBronze: boolean
+  user?: any
+  credits?: number
+  onUnlockSuccess?: (dealId: string, newCredits: number) => void
   onClose: () => void
 }
 
@@ -125,14 +128,41 @@ function AnalystNote({ note, isBronze }: { note: string; isBronze: boolean }) {
 }
 
 // ── Main Modal ──
-export default function DealDetailModal({ plan, isBronze, onClose }: DealDetailModalProps) {
+export default function DealDetailModal({ plan, isBronze, user, credits = 0, onUnlockSuccess, onClose }: DealDetailModalProps) {
   const [mounted, setMounted] = useState(false)
+  const [unlocking, setUnlocking] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
 
   useEffect(() => {
     setMounted(true)
     if (plan) document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = '' }
   }, [plan])
+
+  const handleUnlock = async () => {
+    if (!plan || !user?.id) return
+    setUnlocking(true)
+    setErrorMsg('')
+    try {
+      const res = await fetch('/api/stockpick/unlock-deal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, dealId: plan.id }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        if (onUnlockSuccess) {
+          onUnlockSuccess(plan.id, data.newCredits)
+        }
+      } else {
+        setErrorMsg(data.error || 'Lỗi khi mở khoá.')
+      }
+    } catch (e) {
+      setErrorMsg('Đã có lỗi xảy ra.')
+    } finally {
+      setUnlocking(false)
+    }
+  }
 
   const scores = useMemo(() =>
     plan?.analyst_note ? parseTrendScores(plan.analyst_note) : { trend: null, sideway: null, matrix: null },
@@ -235,8 +265,50 @@ export default function DealDetailModal({ plan, isBronze, onClose }: DealDetailM
 
           {/* ── CONTENT ── */}
           <div className="px-4 pt-4 pb-14 space-y-0">
-
-            {/* 1. SIGNAL REALTIME */}
+            {plan.is_locked ? (
+              <div className="py-12 flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+                  style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)' }}>
+                  <Lock className="w-8 h-8 text-amber-400" />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Deal đang khoá</h3>
+                <p className="text-sm px-4 mb-6" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  Mở khoá để xem điểm mua/bán, báo cáo phân tích và cấu trúc sóng.
+                </p>
+                {user?.tier === 'BRONZE' ? (
+                  <div className="w-full max-w-sm px-4">
+                    <button
+                      onClick={handleUnlock}
+                      disabled={unlocking || credits <= 0}
+                      className="w-full py-3.5 rounded-2xl font-bold flex flex-col items-center transition-all disabled:opacity-50"
+                      style={{ background: 'linear-gradient(135deg, #f59e0b, #b45309)', color: 'white' }}
+                    >
+                      <span>{unlocking ? 'Đang mở khoá...' : 'Mở khoá deal này'}</span>
+                      <span className="text-[10px] opacity-80 mt-1 font-medium">
+                        (Mất 1 Credit - Bạn đang có {credits})
+                      </span>
+                    </button>
+                    {errorMsg && <p className="text-red-400 text-xs mt-3">{errorMsg}</p>}
+                    {credits <= 0 && !errorMsg && (
+                      <p className="text-amber-400/80 text-xs mt-3">Bạn đã hết Credit. Vui lòng nâng cấp gói.</p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="w-full max-w-sm px-4">
+                    <a href="https://finpeace.cloud/stockpick-bronze" target="_blank" rel="noopener noreferrer"
+                      className="block w-full py-3.5 rounded-2xl font-bold transition-all"
+                      style={{ background: 'linear-gradient(135deg, #f59e0b, #b45309)', color: 'white' }}>
+                      Nâng cấp BRONZE
+                    </a>
+                    <p className="text-amber-400/80 text-xs mt-3 font-medium">
+                      Để xem 5 deals tiềm năng ngay hôm nay.
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                {/* 1. SIGNAL REALTIME */}
             {signal && sigConfig && (
               <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.04 }}
                 className="rounded-2xl px-4 py-3 mb-3 flex items-start gap-3"
@@ -432,6 +504,8 @@ export default function DealDetailModal({ plan, isBronze, onClose }: DealDetailM
               ⚠️ Nội dung mang tính tham khảo từ hệ thống AI Vietnam Trend Analyzer của FinPeace.
               Không phải khuyến nghị đầu tư. Kết quả giao dịch phụ thuộc vào quyết định của nhà đầu tư.
             </p>
+              </>
+            )}
           </div>
         </motion.div>
       </div>

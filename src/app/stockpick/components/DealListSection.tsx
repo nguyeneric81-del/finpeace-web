@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Lock, TrendingUp } from 'lucide-react'
 import DealCard, { TradingPlan } from './DealCard'
@@ -11,51 +11,23 @@ interface DealListSectionProps {
   totalDeals: number
   lockedCount: number
   tier: 'FREE' | 'BRONZE'
+  user: any
+  credits: number
+  onUnlockSuccess: (dealId: string, newCredits: number) => void
 }
 
-function LockedDealCard({ index }: { index: number }) {
-  const tickers = ['VCB', 'FPT', 'MWG', 'SSI', 'HPG', 'MSN', 'VHM', 'ACB', 'STB', 'VNM']
-  const fakeTicker = tickers[index % tickers.length]
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.04 }}
-      className="rounded-2xl p-4 relative overflow-hidden"
-      style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
-    >
-      <div className="absolute inset-0 backdrop-blur-[2px]" style={{ background: 'rgba(6,11,20,0.5)' }} />
-      <div className="opacity-20 pointer-events-none select-none">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-xl font-black text-white">{fakeTicker}</span>
-          <div className="h-5 w-16 rounded-full bg-white/20" />
-        </div>
-        <div className="grid grid-cols-3 gap-2 mb-3">
-          {[0, 1, 2].map(i => (
-            <div key={i} className="rounded-xl p-2.5 h-14" style={{ background: 'rgba(255,255,255,0.05)' }} />
-          ))}
-        </div>
-        <div className="h-4 w-3/4 rounded bg-white/10 mb-2" />
-        <div className="h-3 w-1/2 rounded bg-white/10" />
-      </div>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="w-10 h-10 rounded-2xl flex items-center justify-center mb-2"
-          style={{
-            background: 'linear-gradient(135deg, rgba(245,158,11,0.2), rgba(180,83,9,0.1))',
-            border: '1px solid rgba(245,158,11,0.25)',
-          }}>
-          <Lock className="w-4 h-4 text-amber-400" />
-        </div>
-        <p className="text-xs font-semibold text-amber-400/70">BRONZE để mở</p>
-      </div>
-    </motion.div>
-  )
-}
-
-export default function DealListSection({ deals, totalDeals, lockedCount, tier }: DealListSectionProps) {
+export default function DealListSection({ deals, totalDeals, lockedCount, tier, user, credits, onUnlockSuccess }: DealListSectionProps) {
   const isBronze = tier === 'BRONZE'
   const [selectedPlan, setSelectedPlan] = useState<TradingPlan | null>(null)
+
+  useEffect(() => {
+    if (selectedPlan) {
+      const updatedPlan = deals.find(d => d.id === selectedPlan.id)
+      if (updatedPlan && updatedPlan !== selectedPlan) {
+        setSelectedPlan(updatedPlan)
+      }
+    }
+  }, [deals, selectedPlan])
 
   return (
     <>
@@ -91,29 +63,26 @@ export default function DealListSection({ deals, totalDeals, lockedCount, tier }
             />
           ))}
 
-          {/* Locked placeholders for FREE */}
-          {!isBronze && lockedCount > 0 && (
-            <>
-              {Array.from({ length: Math.min(lockedCount, 3) }).map((_, i) => (
-                <LockedDealCard key={`locked-${i}`} index={deals.length + i} />
-              ))}
-              {lockedCount > 3 && (
-                <div className="rounded-2xl p-4 text-center"
-                  style={{ background: 'rgba(245,158,11,0.05)', border: '1px dashed rgba(245,158,11,0.2)' }}>
-                  <p className="text-sm font-semibold text-amber-400/70">
-                    +{lockedCount - 3} deals khác đang chờ bạn
-                  </p>
-                </div>
-              )}
-            </>
+          {/* Additional text for large locked counts */}
+          {!isBronze && lockedCount > 5 && (
+            <div className="rounded-2xl p-4 text-center"
+              style={{ background: 'rgba(245,158,11,0.05)', border: '1px dashed rgba(245,158,11,0.2)' }}>
+              <p className="text-sm font-semibold text-amber-400/70">
+                +{lockedCount - 5} deals khác đang chờ bạn
+              </p>
+            </div>
           )}
         </div>
+
       </section>
 
       {/* Deal Detail Modal */}
       <DealDetailModal
         plan={selectedPlan}
-        isBronze={true} // Unlocks the analyst note for any deal that can be opened
+        isBronze={true} 
+        user={user}
+        credits={credits}
+        onUnlockSuccess={onUnlockSuccess}
         onClose={() => setSelectedPlan(null)}
       />
     </>

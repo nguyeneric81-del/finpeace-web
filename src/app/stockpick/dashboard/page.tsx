@@ -27,6 +27,7 @@ export default function StockPickDashboard() {
   const [deals, setDeals] = useState<TradingPlan[]>([])
   const [totalDeals, setTotalDeals] = useState(0)
   const [lockedCount, setLockedCount] = useState(0)
+  const [credits, setCredits] = useState(0)
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('deals')
@@ -48,12 +49,13 @@ export default function StockPickDashboard() {
   // Fetch deals
   const fetchDeals = useCallback(async (tier: 'FREE' | 'BRONZE') => {
     try {
-      const res = await fetch(`/api/stockpick/deals?tier=${tier}`)
+      const res = await fetch(`/api/stockpick/deals?tier=${tier}&userId=${user?.id || ''}`)
       if (res.ok) {
         const data = await res.json()
         setDeals(data.deals || [])
         setTotalDeals(data.totalDeals || 0)
         setLockedCount(data.lockedCount || 0)
+        if (data.credits !== undefined) setCredits(data.credits)
       }
     } catch (e) {
       console.error('Failed to fetch deals', e)
@@ -109,6 +111,7 @@ export default function StockPickDashboard() {
         user={user}
         totalDeals={totalDeals}
         lockedCount={lockedCount}
+        credits={credits}
       />
 
       {/* Tab bar */}
@@ -196,6 +199,12 @@ export default function StockPickDashboard() {
                   totalDeals={totalDeals}
                   lockedCount={lockedCount}
                   tier={user.tier}
+                  user={user}
+                  credits={credits}
+                  onUnlockSuccess={(dealId, newCredits) => {
+                    setCredits(newCredits);
+                    fetchDeals(user.tier);
+                  }}
                 />
               )}
 
