@@ -375,7 +375,7 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
 
               {/* Conviction */}
               <div className="flex items-center justify-between pb-3">
-                <span className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>Conviction Level (Độ tin cậy AI)</span>
+                <span className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>Conviction Level (Độ tin cậy)</span>
                 <span className="text-xs font-bold px-2.5 py-1 rounded-full"
                   style={{ background: convictionBg.bg, color: convictionBg.color, border: `1px solid ${convictionBg.border}` }}>
                   {plan.conviction_level || '—'}
@@ -501,7 +501,7 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
             {/* Disclaimer */}
             <p className="text-center text-[10px] leading-relaxed pt-1 pb-2"
               style={{ color: 'rgba(255,255,255,0.12)' }}>
-              ⚠️ Nội dung mang tính tham khảo từ hệ thống AI Vietnam Trend Analyzer của FinPeace.
+              ⚠️ Nội dung mang tính tham khảo từ hệ thống phân tích Vietnam Trend Analyzer của FinPeace.
               Không phải khuyến nghị đầu tư. Kết quả giao dịch phụ thuộc vào quyết định của nhà đầu tư.
             </p>
               </>

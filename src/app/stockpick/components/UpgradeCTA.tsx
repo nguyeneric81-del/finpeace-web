@@ -12,8 +12,8 @@ interface UpgradeCTAProps {
 const BRONZE_FEATURES = [
   { icon: TrendingUp, text: '10 trading plans mỗi tháng' },
   { icon: Bell, text: 'Alert realtime entry/exit qua Zalo' },
-  { icon: Sparkles, text: 'Phân tích AI chi tiết cho từng deal' },
-  { icon: Zap, text: 'Daily Market Pulse AI hàng ngày' },
+  { icon: Sparkles, text: 'Phân tích chi tiết cho từng deal' },
+  { icon: Zap, text: 'Daily Market Pulse hàng ngày' },
 ]
 
 export default function UpgradeCTA({ currentTier, lockedCount }: UpgradeCTAProps) {

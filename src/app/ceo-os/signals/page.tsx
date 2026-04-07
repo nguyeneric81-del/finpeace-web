@@ -149,7 +149,7 @@ export default function SignalsPage() {
             {analyzing ? (
               <span className="animate-pulse">⏳</span>
             ) : '🤖'}
-            {analyzing ? 'Groq đang phân tích...' : 'Phân tích AI'}
+            {analyzing ? 'Groq đang phân tích...' : 'Tiến hành phân tích'}
           </button>
         </div>
       </div>

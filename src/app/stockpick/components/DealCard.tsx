@@ -96,11 +96,6 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
               <span className="text-xl font-bold font-mono tracking-tight text-[#00D16E]">
                 {plan.ticker}
               </span>
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider"
-                style={{ background: 'rgba(0,209,110,0.1)', border: '1px solid rgba(0,209,110,0.2)', color: '#00D16E' }}>
-                <Radar className="w-2.5 h-2.5" />
-                98% MATCH
-              </div>
             </div>
             <p className="text-xs leading-relaxed truncate max-w-[200px]" style={{ color: 'rgba(255,255,255,0.45)' }}>
               {plan.company_name} • {plan.sector?.split(' ')[0] || 'Cổ phiếu'}
@@ -150,8 +145,8 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
           )}
           {[
             { label: 'ENTRY', value: plan.entry_zone?.split(' ')[0] || '—', color: '#00D16E' },
-            { label: 'SAFE EXIT', value: plan.stop_loss?.split(' ')[0] || '—', color: '#ff4d4d' },
-            { label: 'OBJECTIVE', value: plan.take_profit?.split(' ')[0] || '—', color: '#f87171' },
+            { label: 'STOP LOSS', value: plan.stop_loss?.split(' ')[0] || '—', color: '#ff4d4d' },
+            { label: 'TAKE PROFIT', value: plan.take_profit?.split(' ')[0] || '—', color: '#f87171' },
           ].map(({ label, value, color }) => (
             <div key={label} className="rounded-xl p-3 text-center"
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
@@ -271,7 +266,6 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
                       border: '1px solid rgba(255,255,255,0.06)',
                       color: 'rgba(255,255,255,0.5)',
                     }}>
-                    <p className="text-white/40 font-semibold mb-1.5 text-[10px] uppercase tracking-widest">Phân tích AI</p>
                     {plan.analyst_note.replace(/\*\*/g, '').slice(0, 400)}
                     {plan.analyst_note.length > 400 && '...'}
                   </div>
