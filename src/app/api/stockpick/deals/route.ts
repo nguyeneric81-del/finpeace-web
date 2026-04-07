@@ -64,12 +64,14 @@ export async function GET(req: NextRequest) {
 
   // Fetch credits and unlocked deals for Bronze
   if (userId && tier === 'BRONZE') {
-    const { data: profile } = await supabase
+    const { data: profile, error: profileErr } = await supabase
       .from('advisor_users')
       .select('stockspick_credits')
       .eq('id', userId)
       .single()
     
+    console.log(`[Deals API] userId=${userId}, tier=${tier}, profile found:`, profile, `profileErr:`, profileErr)
+
     if (profile) stockspick_credits = profile.stockspick_credits || 0
 
     const { data: unlockedData } = await supabase
