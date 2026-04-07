@@ -31,9 +31,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Không tìm thấy user' }, { status: 404 })
     }
 
-    // Lấy số dư hiện tại trong profiles
     const { data: profile, error: profileErr } = await supabase
-      .from('profiles')
+      .from('advisor_users')
       .select('stockspick_credits')
       .eq('id', uid)
       .single()
@@ -47,7 +46,7 @@ export async function POST(req: NextRequest) {
 
     // Cập nhật số dư credits
     const { error: updateError } = await supabase
-      .from('profiles')
+      .from('advisor_users')
       .update({ stockspick_credits: newCredit })
       .eq('id', uid)
 

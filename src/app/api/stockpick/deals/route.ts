@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
   // Fetch credits and unlocked deals for Bronze
   if (userId && tier === 'BRONZE') {
     const { data: profile } = await supabase
-      .from('profiles')
+      .from('advisor_users')
       .select('stockspick_credits')
       .eq('id', userId)
       .single()

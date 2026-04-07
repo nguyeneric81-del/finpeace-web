@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
     // Lấy số dư hiện tại
     const { data: profile, error: profileErr } = await supabase
-      .from('profiles')
+      .from('advisor_users')
       .select('stockspick_credits')
       .eq('id', userId)
       .single()
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
 
     // Trừ 1 credit
     const { error: updateError } = await supabase
-      .from('profiles')
+      .from('advisor_users')
       .update({ stockspick_credits: credits - 1 })
       .eq('id', userId)
 
