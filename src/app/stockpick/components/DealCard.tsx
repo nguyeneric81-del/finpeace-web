@@ -24,6 +24,7 @@ export interface TradingPlan {
   catalyst_note: string
   is_confirmed: boolean
   expected_holding_days: number
+  capital_allocation_pct: number
   chart_image_url: string
   signal?: {
     current_price: string
@@ -37,6 +38,7 @@ interface DealCardProps {
   plan: TradingPlan
   isBronze: boolean
   index: number
+  onTap?: (plan: TradingPlan) => void
 }
 
 const SIGNAL_CONFIG: Record<string, { color: string; bg: string; icon: React.ElementType }> = {
@@ -51,7 +53,7 @@ function extractRRNumber(rr: string): number {
   return match ? parseFloat(match[0]) : 0
 }
 
-export default function DealCard({ plan, isBronze, index }: DealCardProps) {
+export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps) {
   const [expanded, setExpanded] = useState(false)
   const rrNum = extractRRNumber(plan.risk_reward || '0')
   const signal = plan.signal
@@ -68,11 +70,13 @@ export default function DealCard({ plan, isBronze, index }: DealCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.4 }}
+      onClick={() => onTap?.(plan)}
       className="rounded-2xl overflow-hidden"
       style={{
         background: 'rgba(255,255,255,0.03)',
         border: '1px solid rgba(255,255,255,0.07)',
         boxShadow: plan.is_confirmed ? '0 0 24px rgba(245,158,11,0.06)' : 'none',
+        cursor: onTap ? 'pointer' : 'default',
       }}
     >
       {/* Confirmed ribbon */}
@@ -182,7 +186,7 @@ export default function DealCard({ plan, isBronze, index }: DealCardProps) {
         <div className="flex items-center gap-2">
           {isBronze && (
             <button
-              onClick={() => setExpanded(e => !e)}
+              onClick={(e) => { e.stopPropagation(); setExpanded(v => !v) }}
               className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium transition-all"
               style={{
                 background: expanded ? 'rgba(245,158,11,0.1)' : 'rgba(255,255,255,0.04)',
@@ -197,6 +201,7 @@ export default function DealCard({ plan, isBronze, index }: DealCardProps) {
 
           {isBronze && (
             <button
+              onClick={(e) => e.stopPropagation()}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all"
               style={{
                 background: 'linear-gradient(135deg, rgba(245,158,11,0.2), rgba(180,83,9,0.15))',
@@ -261,12 +266,16 @@ export default function DealCard({ plan, isBronze, index }: DealCardProps) {
           )}
         </AnimatePresence>
 
-        {/* FREE locked detail hint */}
-        {!isBronze && (
-          <div className="mt-3 flex items-center gap-2 text-xs"
-            style={{ color: 'rgba(255,255,255,0.2)' }}>
-            <Shield className="w-3 h-3" />
-            Nâng lên BRONZE để xem phân tích chi tiết + follow deal
+        {/* Tap hint */}
+        {onTap && (
+          <div className="mt-3 flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>
+              {!isBronze && <><Shield className="w-3 h-3" /><span>Tap để xem chi tiết deal</span></>}
+            </div>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+              style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.2)' }}>
+              Xem chi tiết →
+            </span>
           </div>
         )}
       </div>

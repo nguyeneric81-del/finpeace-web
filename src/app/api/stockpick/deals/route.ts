@@ -13,8 +13,8 @@ export async function GET(req: NextRequest) {
       entry_zone, stop_loss, take_profit, risk_reward,
       sector, risk_level, conviction_level,
       analyst_note, catalyst_note, is_confirmed,
-      expected_holding_days, chart_image_url, status,
-      created_at
+      expected_holding_days, capital_allocation_pct,
+      chart_image_url, status, created_at
     `)
     .eq('status', 'active')
     .order('is_confirmed', { ascending: false })

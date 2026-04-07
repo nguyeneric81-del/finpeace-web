@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   X, TrendingUp, TrendingDown, Target, Shield,
@@ -125,7 +126,10 @@ function AnalystNote({ note, isBronze }: { note: string; isBronze: boolean }) {
 
 // ── Main Modal ──
 export default function DealDetailModal({ plan, isBronze, onClose }: DealDetailModalProps) {
+  const [mounted, setMounted] = useState(false)
+
   useEffect(() => {
+    setMounted(true)
     if (plan) document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = '' }
   }, [plan])
@@ -135,7 +139,7 @@ export default function DealDetailModal({ plan, isBronze, onClose }: DealDetailM
     [plan?.analyst_note]
   )
 
-  if (!plan) return null
+  if (!plan || !mounted) return null
 
   const signal = plan.signal
   const sigConfig = signal ? (SIGNAL_CONFIG[signal.signal_type] || SIGNAL_CONFIG['wait_pullback']) : null
@@ -155,9 +159,9 @@ export default function DealDetailModal({ plan, isBronze, onClose }: DealDetailM
     : scores.matrix?.toLowerCase().includes('hold')
       ? '#f59e0b' : '#f87171'
 
-  return (
+  return createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex flex-col justify-end md:justify-center items-center px-0 md:px-4" onClick={onClose}>
+      <div className="fixed inset-0 z-[9999] flex flex-col justify-end md:justify-center items-center px-0 md:px-4" onClick={onClose}>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           className="absolute inset-0"
           style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)' }} />
@@ -431,6 +435,7 @@ export default function DealDetailModal({ plan, isBronze, onClose }: DealDetailM
           </div>
         </motion.div>
       </div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }
