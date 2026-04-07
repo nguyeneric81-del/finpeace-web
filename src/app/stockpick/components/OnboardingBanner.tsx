@@ -27,9 +27,10 @@ const LESSONS = [
 
 interface OnboardingBannerProps {
   completedCount?: number
+  onLessonClick?: (index: number) => void
 }
 
-export default function OnboardingBanner({ completedCount = 0 }: OnboardingBannerProps) {
+export default function OnboardingBanner({ completedCount = 0, onLessonClick }: OnboardingBannerProps) {
   const allDone = completedCount >= LESSONS.length
 
   if (allDone) return null
@@ -68,7 +69,8 @@ export default function OnboardingBanner({ completedCount = 0 }: OnboardingBanne
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="rounded-2xl p-3.5 flex items-start gap-3"
+              onClick={() => onLessonClick && onLessonClick(i)}
+              className="rounded-2xl p-3.5 flex items-start gap-3 cursor-pointer"
               style={{
                 background: isDone ? 'rgba(52,211,153,0.05)' : 'rgba(255,255,255,0.03)',
                 border: `1px solid ${isDone ? 'rgba(52,211,153,0.15)' : 'rgba(255,255,255,0.06)'}`,

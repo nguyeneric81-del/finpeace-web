@@ -10,6 +10,7 @@ import MarketPulse from '../components/MarketPulse'
 import OnboardingBanner from '../components/OnboardingBanner'
 import UpgradeCTA from '../components/UpgradeCTA'
 import { TradingPlan } from '../components/DealCard'
+import TikTokVideoModal from '../components/TikTokVideoModal'
 
 type StockPickUser = {
   id: string
@@ -32,6 +33,7 @@ export default function StockPickDashboard() {
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('deals')
+  const [selectedVideoIndex, setSelectedVideoIndex] = useState<number | null>(null)
 
   // Auth guard
   useEffect(() => {
@@ -230,7 +232,10 @@ export default function StockPickDashboard() {
               exit={{ opacity: 0, x: 10 }}
               transition={{ duration: 0.25 }}
             >
-              <OnboardingBanner completedCount={0} />
+              <OnboardingBanner 
+                completedCount={0} 
+                onLessonClick={(idx) => setSelectedVideoIndex(idx)} 
+              />
             </motion.div>
           )}
 
@@ -295,6 +300,14 @@ export default function StockPickDashboard() {
           </div>
         </div>
       </div>
+
+      {/* TIKTOK VIDEO MODAL */}
+      {selectedVideoIndex !== null && (
+        <TikTokVideoModal
+          initialIndex={selectedVideoIndex}
+          onClose={() => setSelectedVideoIndex(null)}
+        />
+      )}
     </div>
   )
 }
