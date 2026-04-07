@@ -52,10 +52,10 @@ export default function StockPickDashboard() {
   }, [router])
 
   // Fetch deals
-  const fetchDeals = useCallback(async (tier: 'FREE' | 'BRONZE') => {
+  const fetchDeals = useCallback(async (tier: 'FREE' | 'BRONZE', userId: string) => {
     try {
       const timestamp = new Date().getTime()
-      const res = await fetch(`/api/stockpick/deals?tier=${tier}&userId=${user?.id || ''}&ts=${timestamp}`, { cache: 'no-store' })
+      const res = await fetch(`/api/stockpick/deals?tier=${tier}&userId=${userId}&ts=${timestamp}`, { cache: 'no-store' })
       if (res.ok) {
         const data = await res.json()
         setDeals(data.deals || [])
@@ -73,14 +73,14 @@ export default function StockPickDashboard() {
 
   useEffect(() => {
     if (user) {
-      fetchDeals(user.tier)
+      fetchDeals(user.tier, user.id)
     }
   }, [user, fetchDeals])
 
   const handleRefresh = () => {
     if (!user || refreshing) return
     setRefreshing(true)
-    fetchDeals(user.tier)
+    fetchDeals(user.tier, user.id)
   }
 
   const handleLogout = () => {
@@ -209,7 +209,7 @@ export default function StockPickDashboard() {
                   credits={credits}
                   onUnlockSuccess={(dealId, newCredits) => {
                     setCredits(newCredits);
-                    fetchDeals(user.tier);
+                    fetchDeals(user.tier, user.id);
                   }}
                 />
               )}
