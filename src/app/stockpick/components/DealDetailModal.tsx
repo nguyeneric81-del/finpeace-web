@@ -200,11 +200,11 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
           initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
           transition={{ type: 'spring', damping: 32, stiffness: 280 }}
           onClick={e => e.stopPropagation()}
-          className="relative z-10 w-full md:max-w-2xl max-h-[94vh] md:max-h-[85vh] overflow-y-auto mt-auto md:mt-0 rounded-t-3xl md:rounded-b-3xl"
+          className="relative z-10 w-full md:max-w-2xl max-h-[94vh] md:max-h-[85vh] overflow-y-auto mt-auto md:mt-0 rounded-t-[24px] md:rounded-b-[24px]"
           style={{
             background: 'linear-gradient(180deg, #0f1929 0%, #0b1220 100%)',
             border: '1px solid rgba(255,255,255,0.09)',
-            boxShadow: '0 -24px 80px rgba(0,0,0,0.7)',
+            boxShadow: '0 -24px 80px rgba(0,209,110,0.15)',
           }}
         >
           {/* Handle */}
@@ -267,8 +267,8 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
           <div className="px-4 pt-4 pb-14 space-y-0">
             {plan.is_locked ? (
               <div className="py-12 flex flex-col items-center justify-center text-center">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
-                  style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)' }}>
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 shadow-[0_0_24px_rgba(245,158,11,0.2)]"
+                  style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)', backdropFilter: 'blur(20px)' }}>
                   <Lock className="w-8 h-8 text-amber-400" />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">Deal đang khoá</h3>
@@ -340,9 +340,9 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
               {/* Price ladder */}
               <div className="py-3">
                 {[
-                  { label: 'Chốt lời (TP)', value: plan.take_profit, color: '#818cf8', icon: Target, bar: 'linear-gradient(180deg,#818cf8,#818cf808)' },
-                  { label: 'Vùng mua (Entry)', value: plan.entry_zone, color: '#00D16E', icon: TrendingUp, bar: 'linear-gradient(180deg,#00D16E,#00D16E08)' },
-                  { label: 'Cắt lỗ (SL)', value: plan.stop_loss, color: '#f87171', icon: Shield, bar: 'linear-gradient(180deg,#f8717108,#f87171)' },
+                  { label: 'Chốt lời (TP)', value: plan.take_profit, color: '#00D16E', icon: Target, bar: 'linear-gradient(180deg,#00D16E,#00D16E08)' },
+                  { label: 'Vùng mua (Entry)', value: plan.entry_zone, color: '#34d399', icon: TrendingUp, bar: 'linear-gradient(180deg,#34d399,#34d39908)' },
+                  { label: 'Cắt lỗ (SL)', value: plan.stop_loss, color: '#ef444490', icon: Shield, bar: 'linear-gradient(180deg,#ef444410,#ef444480)' },
                 ].map(({ label, value, color, icon: Icon, bar }, idx) => (
                   <div key={label} className={`flex items-center gap-3 ${idx < 2 ? 'mb-3' : ''}`}>
                     <div className="w-[3px] h-12 rounded-full shrink-0" style={{ background: bar }} />

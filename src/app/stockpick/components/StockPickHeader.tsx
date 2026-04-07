@@ -56,7 +56,7 @@ export default function StockPickHeader({ user, totalDeals, lockedCount, credits
             <Radar className="w-4 h-4 text-[#00D16E] animate-[spin_4s_linear_infinite]" />
           </div>
           <div>
-            <p className="text-sm font-bold text-white tracking-tight">Orbital Navigator 2.0</p>
+            <p className="text-sm font-bold text-white tracking-tight">StockPicks 2.0</p>
             <p className="text-[10px] mt-0.5 tracking-widest uppercase font-bold" style={{ color: '#00D16E' }}>by FinPeace</p>
           </div>
         </div>

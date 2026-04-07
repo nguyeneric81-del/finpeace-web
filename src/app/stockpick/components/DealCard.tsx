@@ -73,12 +73,12 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.4 }}
       onClick={() => onTap?.(plan)}
-      className="rounded-2xl overflow-hidden"
+      className="rounded-[24px] overflow-hidden"
       style={{
         background: 'rgba(30,30,30,0.6)',
         backdropFilter: 'blur(16px)',
         border: plan.is_confirmed ? '1px solid rgba(0,209,110,0.2)' : '1px solid rgba(255,255,255,0.07)',
-        boxShadow: plan.is_confirmed ? '0 0 40px -10px rgba(0,209,110,0.1)' : 'none',
+        boxShadow: plan.is_confirmed ? '0 0 40px rgba(5,255,150,0.2)' : 'none',
         cursor: onTap ? 'pointer' : 'default',
       }}
     >
