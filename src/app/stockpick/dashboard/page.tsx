@@ -16,6 +16,7 @@ type StockPickUser = {
   name: string
   email: string
   tier: 'FREE' | 'BRONZE'
+  credits?: number
   role: string
 }
 
@@ -40,7 +41,11 @@ export default function StockPickDashboard() {
       return
     }
     try {
-      setUser(JSON.parse(stored))
+      const parsedUser = JSON.parse(stored)
+      setUser(parsedUser)
+      if (parsedUser.credits !== undefined) {
+        setCredits(parsedUser.credits)
+      }
     } catch {
       router.replace('/stockpick/login')
     }
