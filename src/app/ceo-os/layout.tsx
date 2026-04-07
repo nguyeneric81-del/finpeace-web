@@ -5,11 +5,11 @@ import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
 
 const NAV_ITEMS = [
-  { href: '/ceo-os', label: 'Tổng quan', icon: '⚡' },
+  { href: '/ceo-os', label: 'Tổng quan', icon: '⚡', exact: true },
   { href: '/ceo-os/signals', label: 'Tín hiệu thị trường', icon: '📡' },
   { href: '/ceo-os/personas', label: 'Chân dung KH', icon: '🎯' },
-  { href: '/ceo-os/content-frameworks', label: 'Khung nội dung', icon: '✍️', disabled: true },
-  { href: '/ceo-os/performance', label: 'Hiệu suất', icon: '📊', disabled: true },
+  { href: '/ceo-os/content-frameworks', label: 'Khung nội dung', icon: '✍️' },
+  { href: '/ceo-os/performance', label: 'Hiệu suất', icon: '📊' },
 ]
 
 export default function CeoOsLayout({ children }: { children: ReactNode }) {
@@ -35,14 +35,15 @@ export default function CeoOsLayout({ children }: { children: ReactNode }) {
         {/* Nav */}
         <nav className="flex-1 p-4 space-y-1">
           {NAV_ITEMS.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/ceo-os' && pathname.startsWith(item.href))
+            const isActive = item.exact
+              ? pathname === item.href
+              : pathname === item.href || pathname.startsWith(item.href + '/')
             return (
               <Link
                 key={item.href}
-                href={item.disabled ? '#' : item.href}
+                href={item.href}
                 className={`
                   flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
-                  ${item.disabled ? 'opacity-30 cursor-not-allowed pointer-events-none' : ''}
                   ${isActive
                     ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-lg shadow-amber-500/10'
                     : 'text-white/50 hover:bg-white/5 hover:text-white/80'
@@ -51,11 +52,6 @@ export default function CeoOsLayout({ children }: { children: ReactNode }) {
               >
                 <span className="text-base">{item.icon}</span>
                 <span>{item.label}</span>
-                {item.disabled && (
-                  <span className="ml-auto text-[9px] font-black uppercase tracking-widest bg-white/10 text-white/30 px-1.5 py-0.5 rounded">
-                    Soon
-                  </span>
-                )}
               </Link>
             )
           })}

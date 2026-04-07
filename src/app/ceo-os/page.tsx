@@ -24,11 +24,11 @@ export default function CeoOsHomePage() {
       icon: '✍️',
       title: 'Khung nội dung',
       subtitle: 'M3 — Content Frameworks',
-      desc: 'Quản lý các cấu trúc viết bài AIDA, Pain-Lesson-Gift, hook templates cho Agents sử dụng.',
-      href: '#',
+      desc: 'Quản lý các cấu trúc viết bài AIDA, Pain-Lesson-Gift, Hook templates cho 100 Agents sử dụng.',
+      href: '/ceo-os/content-frameworks',
       color: 'from-purple-500/20 to-pink-500/10 border-purple-500/30',
       badge: 'bg-purple-500/20 text-purple-300',
-      status: 'Coming Soon',
+      status: 'Live',
     },
     {
       icon: '📊',
@@ -63,7 +63,7 @@ export default function CeoOsHomePage() {
           { label: 'Sales Agents', value: '1', sub: 'Đang hoạt động', icon: '🤖' },
           { label: 'Tin tức hôm nay', value: '336', sub: 'Trong hệ thống', icon: '📰' },
           { label: 'Khách hàng tiềm năng', value: '38', sub: 'Agent leads', icon: '👥' },
-          { label: 'Modules đang Live', value: '2', sub: 'Trên 7 modules', icon: '⚡' },
+          { label: 'Modules đang Live', value: '3', sub: 'Trên 7 modules', icon: '⚡' },
         ].map((stat) => (
           <div
             key={stat.label}
@@ -77,6 +77,15 @@ export default function CeoOsHomePage() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Cron status badge */}
+      <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-5 py-3">
+        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
+        <div>
+          <p className="text-xs font-bold text-emerald-300">🤖 Cron Job đang hoạt động</p>
+          <p className="text-[11px] text-white/40 mt-0.5">Tự động crawl + phân tích AI lúc <strong className="text-white/60">6:00 · 12:00 · 18:00</strong> (GMT+7) hàng ngày</p>
+        </div>
       </div>
 
       {/* Modules grid */}

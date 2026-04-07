@@ -188,6 +188,7 @@ export async function updateSession(request: NextRequest) {
         effectivePath.startsWith('/auth') ||
         effectivePath.startsWith('/api/agent') ||
         (effectivePath.startsWith('/advisor') && !effectivePath.startsWith('/advisor/admin')) || // admin cần auth
+        effectivePath.startsWith('/stockpick') || // StockPick — tự quản lý auth bằng sessionStorage
         effectivePath.startsWith('/knowledgebase') || // KB là public content
         effectivePath.startsWith('/training') || // Training Deck là public content
         effectivePath.startsWith('/lp') || // Sales landing pages - public
