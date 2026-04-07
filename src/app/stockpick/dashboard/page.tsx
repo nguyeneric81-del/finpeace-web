@@ -49,7 +49,8 @@ export default function StockPickDashboard() {
   // Fetch deals
   const fetchDeals = useCallback(async (tier: 'FREE' | 'BRONZE') => {
     try {
-      const res = await fetch(`/api/stockpick/deals?tier=${tier}&userId=${user?.id || ''}`)
+      const timestamp = new Date().getTime()
+      const res = await fetch(`/api/stockpick/deals?tier=${tier}&userId=${user?.id || ''}&ts=${timestamp}`, { cache: 'no-store' })
       if (res.ok) {
         const data = await res.json()
         setDeals(data.deals || [])
