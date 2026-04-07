@@ -224,7 +224,7 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
                   {plan.is_confirmed && (
                     <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full shrink-0"
                       style={{ background: 'rgba(0,209,110,0.1)', color: '#00D16E', border: '1px solid rgba(0,209,110,0.2)' }}>
-                      <CheckCircle className="w-2.5 h-2.5" /> VERIFIED
+                      <CheckCircle className="w-2.5 h-2.5" /> XÁC NHẬN BỞI FINPEACE
                     </span>
                   )}
                 </div>

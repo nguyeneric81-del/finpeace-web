@@ -134,7 +134,7 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
         {plan.is_confirmed && !plan.is_locked && (
            <div className="flex items-center gap-1.5 mb-4 text-[10px] font-bold uppercase tracking-wider text-[#00D16E]/70 border-b border-[#00D16E]/10 pb-2">
              <CheckCircle className="w-3 h-3 fill-[#00D16E]/20" />
-             VERIFIED BY HUMAN ADVISOR
+             XÁC NHẬN BỞI FINPEACE
            </div>
         )}
 
