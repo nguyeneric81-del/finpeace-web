@@ -67,13 +67,8 @@ export default function DealListSection({ deals, totalDeals, lockedCount, tier, 
   }, [deals, selectedPlan])
 
   // Count per status tab (on full unfiltered deals)
-  const tabCounts: Record<StatusFilter, number> = {
-    all:          deals.length,
-    waiting_buy:  deals.filter(d => d.exec_status === 'waiting_buy' || !d.exec_status).length,
-    active:       deals.filter(d => ['bought', 'holding'].includes(d.exec_status || '')).length,
-    partial_sold: deals.filter(d => d.exec_status === 'partial_sold').length,
-    closed:       deals.filter(d => d.exec_status === 'closed').length,
-  }
+
+
 
   // Apply status filter
   const tab = STATUS_TABS.find(t => t.key === activeFilter)!
@@ -98,50 +93,45 @@ export default function DealListSection({ deals, totalDeals, lockedCount, tier, 
 
         {/* ── STATUS FILTER TABS ── */}
         <div className="mb-4">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>
-              Lọc theo trạng thái
-            </span>
-            <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
-              {totalDeals} deals active
-            </span>
-          </div>
-          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+          <div className="grid grid-cols-5 gap-1">
             {STATUS_TABS.map(t => {
               const isActive = activeFilter === t.key
-              const count = tabCounts[t.key]
+              // Count only unlocked deals per status
+              const count = t.key === 'all'
+                ? deals.filter(d => !d.is_locked).length
+                : deals.filter(d => !d.is_locked && t.statuses.includes(d.exec_status || 'waiting_buy')).length
               return (
                 <button
                   key={t.key}
                   onClick={() => setActiveFilter(t.key)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full whitespace-nowrap text-xs font-semibold transition-all shrink-0"
+                  className="flex flex-col items-center justify-center gap-0.5 py-2 px-1 rounded-xl transition-all"
                   style={{
                     background: isActive ? `${t.color}18` : 'rgba(255,255,255,0.04)',
                     border: isActive ? `1px solid ${t.color}45` : '1px solid rgba(255,255,255,0.07)',
-                    color: isActive ? t.color : 'rgba(255,255,255,0.35)',
                   }}
                 >
                   {t.dot && isActive && (
-                    <span className="relative flex h-1.5 w-1.5 shrink-0">
+                    <span className="relative flex h-1.5 w-1.5 mb-0.5">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
                         style={{ background: t.color }} />
                       <span className="relative inline-flex rounded-full h-1.5 w-1.5"
                         style={{ background: t.color }} />
                     </span>
                   )}
-                  {t.label}
-                  <span className="text-[10px] font-bold px-1 py-0.5 rounded-full min-w-[18px] text-center"
-                    style={{
-                      background: isActive ? `${t.color}25` : 'rgba(255,255,255,0.06)',
-                      color: isActive ? t.color : 'rgba(255,255,255,0.3)',
-                    }}>
+                  <span className="text-[11px] font-bold leading-none"
+                    style={{ color: isActive ? t.color : 'rgba(255,255,255,0.35)' }}>
                     {count}
+                  </span>
+                  <span className="text-[9px] leading-tight text-center font-medium"
+                    style={{ color: isActive ? t.color : 'rgba(255,255,255,0.25)' }}>
+                    {t.label}
                   </span>
                 </button>
               )
             })}
           </div>
         </div>
+
 
         {/* ── SEARCH BAR ── */}
         <div className="relative mb-4">
