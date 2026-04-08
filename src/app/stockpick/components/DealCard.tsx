@@ -79,6 +79,16 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
     : null
   const pnlColor = pnlPct === null ? '#94a3b8' : pnlPct >= 0 ? '#34d399' : '#f87171'
 
+  // Exec status human label (replaces signal_label)
+  const EXEC_LABEL: Record<string, string> = {
+    waiting_buy:  '⏳ Chờ vào lệnh',
+    bought:       '🔵 Đang chạy',
+    holding:      '📦 Đang giữ — chờ TP',
+    partial_sold: '📤 Đã bán 1/2',
+    closed:       '✅ Đã đóng lệnh',
+  }
+  const execLabel = plan.exec_status ? EXEC_LABEL[plan.exec_status] : null
+
   const convictionColor =
     plan.conviction_level?.includes('Cao') ? '#34d399' :
     plan.conviction_level?.includes('Trung bình - Khá') ? '#f59e0b' :
@@ -92,27 +102,21 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
       onClick={() => onTap?.(plan)}
       className="rounded-[24px] overflow-hidden"
       style={{
-        background: isLive ? 'rgba(30,20,20,0.75)' : 'rgba(30,30,30,0.6)',
+        background: isLive ? 'rgba(10,28,20,0.8)' : 'rgba(30,30,30,0.6)',
         backdropFilter: 'blur(16px)',
         border: isLive
-          ? '1px solid rgba(248,113,113,0.35)'
-          : plan.is_confirmed
-            ? '1px solid rgba(0,209,110,0.2)'
-            : '1px solid rgba(255,255,255,0.07)',
+          ? '1px solid rgba(52,211,153,0.45)'
+          : '1px solid rgba(255,255,255,0.07)',
         boxShadow: isLive
-          ? '0 0 32px rgba(248,113,113,0.12), inset 0 1px 0 rgba(248,113,113,0.08)'
-          : plan.is_confirmed
-            ? '0 0 40px rgba(5,255,150,0.2)'
-            : 'none',
+          ? '0 0 32px rgba(52,211,153,0.15), inset 0 1px 0 rgba(52,211,153,0.1)'
+          : 'none',
         cursor: onTap ? 'pointer' : 'default',
       }}
     >
       {/* Top accent line */}
-      {isLive ? (
-        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#f87171] to-transparent" />
-      ) : plan.is_confirmed ? (
-        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#00D16E] to-transparent" />
-      ) : null}
+      {isLive && (
+        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#34d399] to-transparent" />
+      )}
 
       {/* Main card content */}
       <div className="p-4">
@@ -164,10 +168,12 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
           )}
         </div>
 
-        {/* Signal label */}
-        {signal && (
-          <div className="mb-3 text-xs font-medium" style={{ color: sigConfig?.color || '#94a3b8' }}>
-            {signal.signal_label}
+        {/* Exec status / signal label */}
+        {!plan.is_locked && (
+          <div className="mb-3 text-xs font-medium" style={{
+            color: isLive ? '#34d399' : (sigConfig?.color || '#94a3b8')
+          }}>
+            {execLabel || signal?.signal_label}
           </div>
         )}
 
@@ -183,21 +189,14 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
           </div>
         )}
 
-        {/* Human Advisory Verification */}
-        {plan.is_confirmed && !plan.is_locked && (
-           <div className="flex items-center gap-1.5 mb-4 text-[10px] font-bold uppercase tracking-wider text-[#00D16E]/70 border-b border-[#00D16E]/10 pb-2">
-             <CheckCircle className="w-3 h-3 fill-[#00D16E]/20" />
-             XÁC NHẬN BỞI FINPEACE
-           </div>
-        )}
 
         {/* Live trade P&L banner */}
         {isLive && (
           <div className="flex items-center justify-between mb-3 px-3 py-2 rounded-xl"
-            style={{ background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.12)' }}>
+            style={{ background: 'rgba(52,211,153,0.06)', border: '1px solid rgba(52,211,153,0.15)' }}>
             <div className="flex items-center gap-1.5">
-              <Activity className="w-3 h-3" style={{ color: '#f87171' }} />
-              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#f87171' }}>Đang chạy</span>
+              <Activity className="w-3 h-3" style={{ color: '#34d399' }} />
+              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#34d399' }}>Live</span>
               {boughtPrice && (
                 <span className="text-[10px] font-mono" style={{ color: 'rgba(255,255,255,0.4)' }}>
                   @ {boughtPrice.toLocaleString('vi-VN')}

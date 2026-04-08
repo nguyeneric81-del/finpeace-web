@@ -180,7 +180,7 @@ export default function DealListSection({ deals, totalDeals, lockedCount, tier, 
               icon={Flame}
               label="Đang Chạy"
               count={liveDeals.length}
-              accentColor="#f87171"
+              accentColor="#34d399"
               pulse
             />
             <DealGroup deals={liveDeals} isBronze={isBronze} onTap={setSelectedPlan} />
