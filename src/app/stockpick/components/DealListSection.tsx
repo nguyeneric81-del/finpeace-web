@@ -20,9 +20,9 @@ type StatusFilter = 'all' | 'waiting_buy' | 'active' | 'partial_sold' | 'closed'
 
 const STATUS_TABS: { key: StatusFilter; label: string; statuses: string[]; color: string; dot?: boolean }[] = [
   { key: 'all',          label: 'Tất cả',       statuses: [],                                    color: '#e2e8f0' },
-  { key: 'waiting_buy',  label: 'Chờ mua',       statuses: ['waiting_buy'],                       color: '#f59e0b' },
+  { key: 'waiting_buy',  label: 'Chờ vào lệnh', statuses: ['waiting_buy'],                       color: '#f59e0b' },
   { key: 'active',       label: 'Đang chạy',     statuses: ['bought', 'holding'],                 color: '#34d399', dot: true },
-  { key: 'partial_sold', label: 'Bán 1/2',        statuses: ['partial_sold'],                      color: '#818cf8' },
+  { key: 'partial_sold', label: 'Đã bán 1/2',     statuses: ['partial_sold'],                      color: '#818cf8' },
   { key: 'closed',       label: 'Đã bán hết',    statuses: ['closed'],                            color: '#94a3b8' },
 ]
 

@@ -81,11 +81,11 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
 
   // Exec status human label (replaces signal_label)
   const EXEC_LABEL: Record<string, string> = {
-    waiting_buy:  '⏳ Chờ vào lệnh',
-    bought:       '🔵 Đang chạy',
-    holding:      '📦 Đang giữ — chờ TP',
-    partial_sold: '📤 Đã bán 1/2',
-    closed:       '✅ Đã đóng lệnh',
+    waiting_buy:  'Chờ vào lệnh',
+    bought:       'Đang chạy',
+    holding:      'Đang chạy',
+    partial_sold: 'Đã bán 1/2',
+    closed:       'Đã bán hết',
   }
   const execLabel = plan.exec_status ? EXEC_LABEL[plan.exec_status] : null
 
@@ -136,20 +136,17 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
               {plan.exec_status && plan.exec_status !== 'waiting_buy' && (
                 <span className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider" style={{
                   background:
-                    plan.exec_status === 'bought'       ? 'rgba(96,165,250,0.15)' :
-                    plan.exec_status === 'holding'      ? 'rgba(167,139,250,0.15)' :
-                    plan.exec_status === 'partial_sold' ? 'rgba(52,211,153,0.15)' :
+                    ['bought','holding'].includes(plan.exec_status) ? 'rgba(52,211,153,0.15)' :
+                    plan.exec_status === 'partial_sold'             ? 'rgba(129,140,248,0.15)' :
                     'rgba(107,114,128,0.15)',
                   color:
-                    plan.exec_status === 'bought'       ? '#60a5fa' :
-                    plan.exec_status === 'holding'      ? '#a78bfa' :
-                    plan.exec_status === 'partial_sold' ? '#34d399' :
+                    ['bought','holding'].includes(plan.exec_status) ? '#34d399' :
+                    plan.exec_status === 'partial_sold'             ? '#818cf8' :
                     '#9ca3af',
                 }}>
-                  {plan.exec_status === 'bought'       ? '🔵 Đã vào lệnh' :
-                   plan.exec_status === 'holding'      ? '📦 Chờ bán' :
-                   plan.exec_status === 'partial_sold' ? '📤 Đã bán 1/2' :
-                   '✅ Đóng lệnh'}
+                  {['bought','holding'].includes(plan.exec_status) ? 'Đang chạy' :
+                   plan.exec_status === 'partial_sold'             ? 'Đã bán 1/2' :
+                   'Đã bán hết'}
                 </span>
               )}
             </div>
