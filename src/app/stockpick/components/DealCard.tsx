@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   TrendingUp, TrendingDown, Target, Shield, Clock,
   ChevronDown, ChevronUp, Bell, CheckCircle, AlertCircle, Timer, Lock,
-  Radar
+  Radar, KeyRound
 } from 'lucide-react'
 
 export interface TradingPlan {
@@ -34,6 +34,7 @@ export interface TradingPlan {
     signal_detail: string
   } | null
   is_locked?: boolean
+  is_unlocked_by_credit?: boolean
   // Execution lifecycle
   exec_status?: 'waiting_buy' | 'bought' | 'holding' | 'partial_sold' | 'closed'
   bought_price?: number | null
@@ -147,6 +148,18 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
         {signal && (
           <div className="mb-3 text-xs font-medium" style={{ color: sigConfig?.color || '#94a3b8' }}>
             {signal.signal_label}
+          </div>
+        )}
+
+        {/* Unlocked by credit badge */}
+        {plan.is_unlocked_by_credit && (
+          <div className="flex items-center gap-1.5 mb-3 px-2.5 py-1 rounded-lg w-fit"
+            style={{
+              background: 'rgba(245,158,11,0.08)',
+              border: '1px solid rgba(245,158,11,0.2)',
+            }}>
+            <KeyRound className="w-3 h-3" style={{ color: '#f59e0b' }} />
+            <span className="text-[10px] font-bold tracking-wider" style={{ color: '#f59e0b' }}>ĐÃ MỞ KHOÁ</span>
           </div>
         )}
 

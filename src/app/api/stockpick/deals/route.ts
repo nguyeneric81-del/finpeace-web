@@ -142,7 +142,8 @@ export async function GET(req: NextRequest) {
         }
       }
 
-      return { ...d, is_locked: false }
+      // Đánh dấu deals đã unlock bằng credit (không phải free pool)
+      return { ...d, is_locked: false, is_unlocked_by_credit: !isFreePool && isUnlockedByUser }
     })
     lockedCount = visibleDeals.filter(d => d.is_locked).length
   }
