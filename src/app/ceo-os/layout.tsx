@@ -6,6 +6,7 @@ import { ReactNode } from 'react'
 
 const NAV_ITEMS = [
   { href: '/ceo-os', label: 'Tổng quan', icon: '⚡', exact: true },
+  { href: '/ceo-os/trading-plans', label: 'Quản lý Lệnh', icon: '📊' },
   { href: '/ceo-os/signals', label: 'Tín hiệu thị trường', icon: '📡' },
   { href: '/ceo-os/personas', label: 'Chân dung KH', icon: '🎯' },
   { href: '/ceo-os/content-frameworks', label: 'Khung nội dung', icon: '✍️' },

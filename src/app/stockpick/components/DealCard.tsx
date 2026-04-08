@@ -34,6 +34,12 @@ export interface TradingPlan {
     signal_detail: string
   } | null
   is_locked?: boolean
+  // Execution lifecycle
+  exec_status?: 'waiting_buy' | 'bought' | 'holding' | 'partial_sold' | 'closed'
+  bought_price?: number | null
+  holding_since?: string | null
+  sold_half_price?: number | null
+  sold_all_price?: number | null
 }
 
 interface DealCardProps {
@@ -92,10 +98,29 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
         {/* Top row: Ticker + Signal */}
         <div className="flex items-start justify-between mb-3">
           <div>
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span className="text-xl font-bold font-mono tracking-tight text-[#00D16E]">
                 {plan.ticker}
               </span>
+              {plan.exec_status && plan.exec_status !== 'waiting_buy' && (
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider" style={{
+                  background:
+                    plan.exec_status === 'bought'       ? 'rgba(96,165,250,0.15)' :
+                    plan.exec_status === 'holding'      ? 'rgba(167,139,250,0.15)' :
+                    plan.exec_status === 'partial_sold' ? 'rgba(52,211,153,0.15)' :
+                    'rgba(107,114,128,0.15)',
+                  color:
+                    plan.exec_status === 'bought'       ? '#60a5fa' :
+                    plan.exec_status === 'holding'      ? '#a78bfa' :
+                    plan.exec_status === 'partial_sold' ? '#34d399' :
+                    '#9ca3af',
+                }}>
+                  {plan.exec_status === 'bought'       ? '🔵 Đã vào lệnh' :
+                   plan.exec_status === 'holding'      ? '📦 Chờ bán' :
+                   plan.exec_status === 'partial_sold' ? '📤 Đã bán 1/2' :
+                   '✅ Đóng lệnh'}
+                </span>
+              )}
             </div>
             <p className="text-xs leading-relaxed truncate max-w-[200px]" style={{ color: 'rgba(255,255,255,0.45)' }}>
               {plan.company_name} • {plan.sector?.split(' ')[0] || 'Cổ phiếu'}

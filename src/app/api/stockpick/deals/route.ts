@@ -22,7 +22,9 @@ export async function GET(req: NextRequest) {
       sector, risk_level, conviction_level,
       analyst_note, catalyst_note, is_confirmed,
       expected_holding_days, capital_allocation_pct,
-      chart_image_url, status, created_at
+      chart_image_url, status, created_at,
+      exec_status, bought_price, holding_since,
+      sold_half_price, sold_all_price
     `)
     .eq('status', 'active')
     .order('is_confirmed', { ascending: false })
@@ -101,12 +103,14 @@ export async function GET(req: NextRequest) {
       sector: d.sector,
       created_at: d.created_at,
       status: d.status,
+      exec_status: d.exec_status || 'waiting_buy',
       is_confirmed: d.is_confirmed,
       is_locked: true,
       strategy_name: d.strategy_name,
       // hide details
       entry_zone: null, stop_loss: null, take_profit: null, risk_reward: '0', risk_level: null, timeframe: null,
-      analyst_note: null, catalyst_note: null, chart_image_url: null, signal: null
+      analyst_note: null, catalyst_note: null, chart_image_url: null, signal: null,
+      bought_price: null, holding_since: null, sold_half_price: null, sold_all_price: null
     }))
     
     visibleDeals = [...freeFull, ...freeBlurred]
@@ -127,12 +131,14 @@ export async function GET(req: NextRequest) {
           sector: d.sector,
           created_at: d.created_at,
           status: d.status,
+          exec_status: d.exec_status || 'waiting_buy',
           is_confirmed: d.is_confirmed,
           is_locked: true,
           strategy_name: d.strategy_name,
           // Hide details
           entry_zone: null, stop_loss: null, take_profit: null, risk_reward: '0', risk_level: null, timeframe: null,
-          analyst_note: null, catalyst_note: null, chart_image_url: null, signal: null
+          analyst_note: null, catalyst_note: null, chart_image_url: null, signal: null,
+          bought_price: null, holding_since: null, sold_half_price: null, sold_all_price: null
         }
       }
 

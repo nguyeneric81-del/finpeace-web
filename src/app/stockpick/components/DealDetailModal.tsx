@@ -383,7 +383,78 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
               </div>
             </Section>
 
-            {/* 3. TREND/SIDEWAY MATRIX — Vietnam Trend Analyzer */}
+            {/* 3. TRẠNG THÁI THỰC THI — shown when plan has been acted on */}
+            {plan.exec_status && plan.exec_status !== 'waiting_buy' && (
+              <div className="rounded-2xl overflow-hidden mb-3"
+                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                <div className="px-4 py-2.5 flex items-center justify-between"
+                  style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)' }}>
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-3.5 h-3.5 text-amber-400" />
+                    <h3 className="text-xs font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                      Trạng thái thực thi
+                    </h3>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{
+                    background:
+                      plan.exec_status === 'bought'       ? 'rgba(96,165,250,0.15)' :
+                      plan.exec_status === 'holding'      ? 'rgba(167,139,250,0.15)' :
+                      plan.exec_status === 'partial_sold' ? 'rgba(52,211,153,0.15)' :
+                      'rgba(107,114,128,0.15)',
+                    color:
+                      plan.exec_status === 'bought'       ? '#60a5fa' :
+                      plan.exec_status === 'holding'      ? '#a78bfa' :
+                      plan.exec_status === 'partial_sold' ? '#34d399' :
+                      '#9ca3af',
+                  }}>
+                    {plan.exec_status === 'bought'       ? '🔵 Đã vào lệnh' :
+                     plan.exec_status === 'holding'      ? '📦 Chờ bán (T+2)' :
+                     plan.exec_status === 'partial_sold' ? '📤 Đã bán 1/2' :
+                     '✅ Đóng lệnh'}
+                  </span>
+                </div>
+                <div className="px-4 py-3 grid grid-cols-2 gap-3">
+                  {plan.bought_price && (
+                    <div className="rounded-xl p-2.5 text-center"
+                      style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                      <p className="text-[9px] mb-1 uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Giá mua</p>
+                      <p className="text-sm font-bold font-mono text-blue-300">{plan.bought_price}</p>
+                    </div>
+                  )}
+                  {plan.holding_since && (
+                    <div className="rounded-xl p-2.5 text-center"
+                      style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                      <p className="text-[9px] mb-1 uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Về tài khoản (T+2)</p>
+                      <p className="text-sm font-bold text-purple-300">
+                        {new Date(plan.holding_since).toLocaleDateString('vi-VN')}
+                      </p>
+                    </div>
+                  )}
+                  {plan.sold_half_price && plan.bought_price && (
+                    <div className="rounded-xl p-2.5 text-center"
+                      style={{ background: 'rgba(52,211,153,0.06)', border: '1px solid rgba(52,211,153,0.15)' }}>
+                      <p className="text-[9px] mb-1 uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Bán 1/2</p>
+                      <p className="text-sm font-bold font-mono text-teal-300">{plan.sold_half_price}</p>
+                      <p className="text-[9px] text-teal-400/60">
+                        {(((plan.sold_half_price - plan.bought_price) / plan.bought_price) * 100).toFixed(1)}%
+                      </p>
+                    </div>
+                  )}
+                  {plan.sold_all_price && plan.bought_price && (
+                    <div className="rounded-xl p-2.5 text-center"
+                      style={{ background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.15)' }}>
+                      <p className="text-[9px] mb-1 uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Bán all</p>
+                      <p className="text-sm font-bold font-mono text-rose-300">{plan.sold_all_price}</p>
+                      <p className="text-[9px] text-rose-400/60">
+                        {(((plan.sold_all_price - plan.bought_price) / plan.bought_price) * 100).toFixed(1)}%
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* 4. TREND/SIDEWAY MATRIX — Vietnam Trend Analyzer */}
             {(scores.trend !== null || scores.sideway !== null) && (
               <Section title="Trend Analyzer Matrix" icon={Waves}
                 bg="rgba(245,158,11,0.04)"
