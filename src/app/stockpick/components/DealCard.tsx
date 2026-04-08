@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   TrendingUp, TrendingDown, Target, Shield, Clock,
   ChevronDown, ChevronUp, Bell, CheckCircle, AlertCircle, Timer, Lock,
-  Radar, KeyRound
+  Radar, KeyRound, Activity
 } from 'lucide-react'
 
 export interface TradingPlan {
@@ -69,6 +69,16 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
   const sigConfig = signal ? (SIGNAL_CONFIG[signal.signal_type] || SIGNAL_CONFIG['wait_pullback']) : null
   const SigIcon = sigConfig?.icon || Timer
 
+  const isLive = ['bought', 'holding', 'partial_sold'].includes(plan.exec_status || '')
+
+  // P&L calculation for live trades
+  const currentPrice = signal ? parseFloat(signal.current_price) * 1000 : null
+  const boughtPrice = plan.bought_price ?? null
+  const pnlPct = (isLive && currentPrice && boughtPrice)
+    ? ((currentPrice - boughtPrice) / boughtPrice * 100)
+    : null
+  const pnlColor = pnlPct === null ? '#94a3b8' : pnlPct >= 0 ? '#34d399' : '#f87171'
+
   const convictionColor =
     plan.conviction_level?.includes('Cao') ? '#34d399' :
     plan.conviction_level?.includes('Trung bình - Khá') ? '#f59e0b' :
@@ -82,17 +92,27 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
       onClick={() => onTap?.(plan)}
       className="rounded-[24px] overflow-hidden"
       style={{
-        background: 'rgba(30,30,30,0.6)',
+        background: isLive ? 'rgba(30,20,20,0.75)' : 'rgba(30,30,30,0.6)',
         backdropFilter: 'blur(16px)',
-        border: plan.is_confirmed ? '1px solid rgba(0,209,110,0.2)' : '1px solid rgba(255,255,255,0.07)',
-        boxShadow: plan.is_confirmed ? '0 0 40px rgba(5,255,150,0.2)' : 'none',
+        border: isLive
+          ? '1px solid rgba(248,113,113,0.35)'
+          : plan.is_confirmed
+            ? '1px solid rgba(0,209,110,0.2)'
+            : '1px solid rgba(255,255,255,0.07)',
+        boxShadow: isLive
+          ? '0 0 32px rgba(248,113,113,0.12), inset 0 1px 0 rgba(248,113,113,0.08)'
+          : plan.is_confirmed
+            ? '0 0 40px rgba(5,255,150,0.2)'
+            : 'none',
         cursor: onTap ? 'pointer' : 'default',
       }}
     >
-      {/* Active Signal Glow / Confirmed Top line indicator */}
-      {plan.is_confirmed && (
+      {/* Top accent line */}
+      {isLive ? (
+        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#f87171] to-transparent" />
+      ) : plan.is_confirmed ? (
         <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#00D16E] to-transparent" />
-      )}
+      ) : null}
 
       {/* Main card content */}
       <div className="p-4">
@@ -169,6 +189,27 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
              <CheckCircle className="w-3 h-3 fill-[#00D16E]/20" />
              XÁC NHẬN BỞI FINPEACE
            </div>
+        )}
+
+        {/* Live trade P&L banner */}
+        {isLive && (
+          <div className="flex items-center justify-between mb-3 px-3 py-2 rounded-xl"
+            style={{ background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.12)' }}>
+            <div className="flex items-center gap-1.5">
+              <Activity className="w-3 h-3" style={{ color: '#f87171' }} />
+              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#f87171' }}>Đang chạy</span>
+              {boughtPrice && (
+                <span className="text-[10px] font-mono" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  @ {boughtPrice.toLocaleString('vi-VN')}
+                </span>
+              )}
+            </div>
+            {pnlPct !== null && (
+              <span className="text-sm font-bold font-mono" style={{ color: pnlColor }}>
+                {pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(1)}%
+              </span>
+            )}
+          </div>
         )}
 
         {/* Key metrics grid */}

@@ -60,6 +60,13 @@ export async function GET(req: NextRequest) {
       ...p,
       signal: signalMap[p.ticker] || null,
     }))
+    // Live trades (bought/holding/partial_sold) float to absolute top
+    .sort((a, b) => {
+      const LIVE = ['bought', 'holding', 'partial_sold']
+      const aLive = LIVE.includes(a.exec_status || '') ? 0 : 1
+      const bLive = LIVE.includes(b.exec_status || '') ? 0 : 1
+      return aLive - bLive
+    })
 
   let stockspick_credits = 0
   let unlockedDealIds = new Set<string>()
