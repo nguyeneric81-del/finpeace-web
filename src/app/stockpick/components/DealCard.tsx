@@ -57,10 +57,22 @@ const SIGNAL_CONFIG: Record<string, { color: string; bg: string; icon: React.Ele
   take_profit:    { color: '#818cf8', bg: 'rgba(129,140,248,0.1)', icon: Target },
 }
 
+// Convert raw price string → thousands-VND display (e.g. "12,200" → "12.2", "35.60" → "35.6")
+function normalizePrice(raw: string | null | undefined): string {
+  if (!raw) return '—'
+  const cleaned = raw.replace(/,/g, '').replace(/[–—]/g, '-')
+  const match = cleaned.match(/\d+(\.\d+)?/)
+  if (!match) return '—'
+  let num = parseFloat(match[0])
+  if (num > 500) num = num / 1000   // full VND → thousands VND
+  return String(parseFloat(num.toFixed(2)))
+}
+
 function extractRRNumber(rr: string): number {
   const match = rr.match(/[\d.]+/)
   return match ? parseFloat(match[0]) : 0
 }
+
 
 export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps) {
   const [expanded, setExpanded] = useState(false)
@@ -225,9 +237,9 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
             </div>
           )}
           {[
-            { label: 'ENTRY', value: plan.entry_zone?.split(' ')[0] || '—', color: '#00D16E' },
-            { label: 'STOP LOSS', value: plan.stop_loss?.split(' ')[0] || '—', color: '#ff4d4d' },
-            { label: 'TAKE PROFIT', value: plan.take_profit?.split(' ')[0] || '—', color: '#f87171' },
+          { label: 'ENTRY',       value: normalizePrice(plan.entry_zone),  color: '#00D16E' },
+            { label: 'STOP LOSS',   value: normalizePrice(plan.stop_loss),   color: '#ff4d4d' },
+            { label: 'TAKE PROFIT', value: normalizePrice(plan.take_profit), color: '#f87171' },
           ].map(({ label, value, color }) => (
             <div key={label} className="rounded-xl p-3 text-center"
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>

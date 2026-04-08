@@ -11,12 +11,15 @@ const PRICE_UPDATE_SECRET = process.env.PRICE_UPDATE_SECRET || 'finpeace-price-s
 // ── Helpers: parse TEXT → số ──
 function parsePrice(text: string | null): number | null {
     if (!text) return null
-    // Xóa ký tự ngoại trừ số, dấu chấm, dấu phẩy, dấu trừ
     const cleaned = text.replace(/[^0-9.,\-]/g, '')
-    // Lấy số đầu tiên (hỗ trợ định dạng 55,000 hoặc 55.0)
     const match = cleaned.replace(/,/g, '').match(/[\d.]+/)
-    return match ? parseFloat(match[0]) : null
+    if (!match) return null
+    let val = parseFloat(match[0])
+    // If > 500, it's stored as full VND (e.g. 12200) → convert to thousands VND (12.2)
+    if (val > 500) val = val / 1000
+    return val
 }
+
 
 function parseRange(text: string | null): [number | null, number | null] {
     if (!text) return [null, null]
@@ -176,10 +179,8 @@ export async function POST(req: NextRequest) {
             const plan = planMap.get(ticker)
             if (!plan) continue
 
-            // Chuẩn hóa giá về đơn vị nghìn đồng để khớp với Trading Plan (đầu vào: 95900 -> 95.9)
-            const normalizedPrice = price > 1000 ? price / 1000 : price;
-
-            const sig = generateSignal(ticker, normalizedPrice, plan)
+            // VPS returns price in thousands VND (12.6 = 12,600đ) — parsePrice normalizes the plan's entry/sl/tp to same unit
+            const sig = generateSignal(ticker, price, plan)
             if (sig.signal_type === 'unknown') continue
 
             signalRows.push({
