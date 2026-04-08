@@ -106,17 +106,23 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
         backdropFilter: 'blur(16px)',
         border: isLive
           ? '1px solid rgba(52,211,153,0.45)'
-          : '1px solid rgba(255,255,255,0.07)',
+          : plan.is_confirmed
+            ? '1px solid rgba(0,209,110,0.2)'
+            : '1px solid rgba(255,255,255,0.07)',
         boxShadow: isLive
           ? '0 0 32px rgba(52,211,153,0.15), inset 0 1px 0 rgba(52,211,153,0.1)'
-          : 'none',
+          : plan.is_confirmed
+            ? '0 0 40px rgba(5,255,150,0.2)'
+            : 'none',
         cursor: onTap ? 'pointer' : 'default',
       }}
     >
       {/* Top accent line */}
-      {isLive && (
+      {isLive ? (
         <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#34d399] to-transparent" />
-      )}
+      ) : plan.is_confirmed ? (
+        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#00D16E] to-transparent" />
+      ) : null}
 
       {/* Main card content */}
       <div className="p-4">
