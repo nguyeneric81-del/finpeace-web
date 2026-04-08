@@ -116,36 +116,40 @@ export async function GET(req: NextRequest) {
     visibleDeals = [...freeFull, ...freeBlurred]
     lockedCount = Math.max(0, totalDeals - FREE_DEALS_COUNT) // All others are technically locked
   } else {
-    // BRONZE
-    visibleDeals = merged.map((d, index) => {
-      // Đầu tiên 3 deal luôn free
+    // BRONZE — Build 3 buckets, sort, limit locked
+    const MAX_LOCKED_SHOWN = 5
+
+    const unlockedByCredit: any[] = []
+    const freePool: any[] = []
+    const locked: any[] = []
+
+    merged.forEach((d, index) => {
       const isFreePool = index < FREE_DEALS_COUNT
       const isUnlockedByUser = unlockedDealIds.has(d.id)
-      const isLocked = !isFreePool && !isUnlockedByUser
 
-      if (isLocked) {
-        return {
-          id: d.id,
-          ticker: d.ticker,
-          company_name: d.company_name,
-          sector: d.sector,
-          created_at: d.created_at,
-          status: d.status,
-          exec_status: d.exec_status || 'waiting_buy',
-          is_confirmed: d.is_confirmed,
-          is_locked: true,
-          strategy_name: d.strategy_name,
-          // Hide details
-          entry_zone: null, stop_loss: null, take_profit: null, risk_reward: '0', risk_level: null, timeframe: null,
-          analyst_note: null, catalyst_note: null, chart_image_url: null, signal: null,
-          bought_price: null, holding_since: null, sold_half_price: null, sold_all_price: null
-        }
+      if (!isFreePool && isUnlockedByUser) {
+        // Bucket 1: Đã unlock bằng credit — ưu tiên hiển thị đầu tiên
+        unlockedByCredit.push({ ...d, is_locked: false, is_unlocked_by_credit: true })
+      } else if (isFreePool) {
+        // Bucket 2: Free pool
+        freePool.push({ ...d, is_locked: false, is_unlocked_by_credit: false })
+      } else {
+        // Bucket 3: Locked — chỉ lấy MAX_LOCKED_SHOWN
+        locked.push({
+          id: d.id, ticker: d.ticker, company_name: d.company_name, sector: d.sector,
+          created_at: d.created_at, status: d.status, exec_status: d.exec_status || 'waiting_buy',
+          is_confirmed: d.is_confirmed, is_locked: true, strategy_name: d.strategy_name,
+          entry_zone: null, stop_loss: null, take_profit: null, risk_reward: '0',
+          risk_level: null, timeframe: null, analyst_note: null, catalyst_note: null,
+          chart_image_url: null, signal: null, bought_price: null, holding_since: null,
+          sold_half_price: null, sold_all_price: null
+        })
       }
-
-      // Đánh dấu deals đã unlock bằng credit (không phải free pool)
-      return { ...d, is_locked: false, is_unlocked_by_credit: !isFreePool && isUnlockedByUser }
     })
-    lockedCount = visibleDeals.filter(d => d.is_locked).length
+
+    // Thứ tự: unlocked-by-credit → free pool → tối đa 5 locked
+    visibleDeals = [...unlockedByCredit, ...freePool, ...locked.slice(0, MAX_LOCKED_SHOWN)]
+    lockedCount = merged.length - FREE_DEALS_COUNT - unlockedByCredit.length // Tổng thực tế chưa unlock
   }
 
   return NextResponse.json({
