@@ -38,7 +38,7 @@ export default function StockPickLoginPage() {
       {/* Ambient glows */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] rounded-full opacity-20 blur-[120px]"
-          style={{ background: 'radial-gradient(ellipse, #f59e0b, transparent)' }} />
+          style={{ background: 'radial-gradient(ellipse, #10B981, transparent)' }} />
         <div className="absolute bottom-0 right-0 w-[300px] h-[300px] rounded-full opacity-10 blur-[100px]"
           style={{ background: 'radial-gradient(ellipse, #10B981, transparent)' }} />
       </div>
@@ -57,16 +57,16 @@ export default function StockPickLoginPage() {
             transition={{ delay: 0.1, duration: 0.5 }}
             className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 relative"
             style={{
-              background: 'linear-gradient(135deg, rgba(245,158,11,0.2), rgba(245,158,11,0.05))',
-              border: '1px solid rgba(245,158,11,0.3)',
-              boxShadow: '0 0 40px rgba(245,158,11,0.15)',
+              background: 'linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.05))',
+              border: '1px solid rgba(16,185,129,0.3)',
+              boxShadow: '0 0 40px rgba(16,185,129,0.15)',
             }}
           >
-            <TrendingUp className="w-8 h-8 text-amber-400" />
-            <Sparkles className="absolute -top-1 -right-1 w-4 h-4 text-amber-300" />
+            <TrendingUp className="w-8 h-8 text-emerald-400" />
+            <Sparkles className="absolute -top-1 -right-1 w-4 h-4 text-emerald-300" />
           </motion.div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">StockPick 2.0</h1>
-          <p className="text-sm mt-1.5 font-medium" style={{ color: 'rgba(245,158,11,0.7)' }}>
+          <h1 className="text-2xl font-bold text-white tracking-tight">StockPicks 2.0</h1>
+          <p className="text-sm mt-1.5 font-medium" style={{ color: 'rgba(16,185,129,0.8)' }}>
             AI-Powered Trading Tool
           </p>
           <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.3)' }}>
@@ -110,7 +110,7 @@ export default function StockPickLoginPage() {
                 value={form.email}
                 onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                 placeholder="email@gmail.com"
-                className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
                 style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
               />
             </div>
@@ -128,7 +128,7 @@ export default function StockPickLoginPage() {
                 value={form.password}
                 onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                 placeholder="••••••••"
-                className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition-all"
+                className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
                 style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
               />
             </div>
@@ -142,14 +142,14 @@ export default function StockPickLoginPage() {
               className="w-full py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all mt-1 cursor-pointer"
               style={{
                 background: loading
-                  ? 'rgba(245,158,11,0.4)'
-                  : 'linear-gradient(135deg, #f59e0b, #d97706)',
+                  ? 'rgba(16,185,129,0.4)'
+                  : 'linear-gradient(135deg, #10B981, #059669)',
                 color: 'white',
-                boxShadow: loading ? 'none' : '0 8px 24px rgba(245,158,11,0.3)',
+                boxShadow: loading ? 'none' : '0 8px 24px rgba(16,185,129,0.3)',
               }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
-              {loading ? 'Đang đăng nhập...' : 'Vào StockPick'}
+              {loading ? 'Đang đăng nhập...' : 'Vào StockPicks'}
             </motion.button>
           </form>
         </div>
@@ -158,7 +158,7 @@ export default function StockPickLoginPage() {
         <div className="mt-6 grid grid-cols-2 gap-3">
           {[
             { tier: 'FREE', desc: '3 deals/tháng', color: 'rgba(255,255,255,0.06)', border: 'rgba(255,255,255,0.08)', text: 'rgba(255,255,255,0.4)' },
-            { tier: 'BRONZE', desc: '10 deals + alerts', color: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.2)', text: 'rgba(245,158,11,0.7)' },
+            { tier: 'BRONZE', desc: '10 deals + alerts', color: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.2)', text: 'rgba(16,185,129,0.8)' },
           ].map(item => (
             <div key={item.tier} className="rounded-2xl p-3 text-center"
               style={{ background: item.color, border: `1px solid ${item.border}` }}>
