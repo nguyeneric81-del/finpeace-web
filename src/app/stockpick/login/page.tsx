@@ -6,7 +6,7 @@ import { Mail, Lock, ArrowRight, Loader2, TrendingUp, Sparkles } from 'lucide-re
 import { useRouter } from 'next/navigation'
 
 export default function StockPickLoginPage() {
-  const [isLogin, setIsLogin] = useState(true)
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login')
   const [form, setForm] = useState({ email: '', password: '', fullName: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -17,8 +17,28 @@ export default function StockPickLoginPage() {
     setLoading(true)
     setError('')
 
-    const apiEndpoint = isLogin ? '/api/stockpick/login' : '/api/stockpick/register'
-    const bodyPayload = isLogin 
+    // Handle Forgot Password
+    if (mode === 'forgot') {
+      const res = await fetch('/api/stockpick/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email }),
+      })
+      const data = await res.json()
+      setLoading(false)
+      
+      if (!res.ok) {
+        setError(data.error || 'Lỗi khi gửi yêu cầu')
+      } else {
+        alert(data.message || 'Đã gửi mật khẩu mới vào Email của bạn!')
+        setMode('login')
+      }
+      return
+    }
+
+    // Handle Login or Register
+    const apiEndpoint = mode === 'login' ? '/api/stockpick/login' : '/api/stockpick/register'
+    const bodyPayload = mode === 'login' 
       ? { email: form.email, password: form.password }
       : { email: form.email, password: form.password, full_name: form.fullName }
 
@@ -32,7 +52,7 @@ export default function StockPickLoginPage() {
     setLoading(false)
 
     if (!res.ok) {
-      setError(data.error || (isLogin ? 'Đăng nhập thất bại' : 'Đăng ký thất bại'))
+      setError(data.error || (mode === 'login' ? 'Đăng nhập thất bại' : 'Đăng ký thất bại'))
     } else {
       sessionStorage.setItem('stockpick_user', JSON.stringify(data.user))
       router.push('/stockpick/dashboard')
@@ -90,7 +110,9 @@ export default function StockPickLoginPage() {
           }}
         >
           <h2 className="text-base font-semibold text-white">
-            {isLogin ? 'Đăng nhập' : 'Tạo tài khoản mới'}
+            {mode === 'login' && 'Đăng nhập'}
+            {mode === 'register' && 'Tạo tài khoản mới'}
+            {mode === 'forgot' && 'Khôi phục mật khẩu'}
           </h2>
 
           {error && (
@@ -105,7 +127,7 @@ export default function StockPickLoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
+            {mode === 'register' && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
@@ -117,7 +139,7 @@ export default function StockPickLoginPage() {
                 </label>
                 <input
                   type="text"
-                  required={!isLogin}
+                  required={mode === 'register'}
                   value={form.fullName}
                   onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))}
                   placeholder="Tên của bạn"
@@ -145,23 +167,32 @@ export default function StockPickLoginPage() {
               />
             </div>
 
-            <div>
-              <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest mb-2"
-                style={{ color: 'rgba(255,255,255,0.35)' }}>
-                <Lock className="w-3 h-3" /> Mật khẩu
-              </label>
-              <input
-                id="stockpick-password"
-                type="password"
-                required
-                autoComplete="current-password"
-                value={form.password}
-                onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                placeholder="••••••••"
-                className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
-              />
-            </div>
+            {mode !== 'forgot' && (
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest"
+                    style={{ color: 'rgba(255,255,255,0.35)' }}>
+                    <Lock className="w-3 h-3" /> Mật khẩu
+                  </label>
+                  {mode === 'login' && (
+                    <button type="button" onClick={() => { setMode('forgot'); setError(''); }} className="text-[10px] text-emerald-400 hover:underline">
+                      Quên mật khẩu?
+                    </button>
+                  )}
+                </div>
+                <input
+                  id="stockpick-password"
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  value={form.password}
+                  onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                  placeholder="••••••••"
+                  className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
+                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                />
+              </div>
+            )}
 
             <motion.button
               type="submit"
@@ -178,20 +209,24 @@ export default function StockPickLoginPage() {
                 boxShadow: loading ? 'none' : '0 8px 24px rgba(16,185,129,0.3)',
               }}
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
-              {loading ? (isLogin ? 'Đang đăng nhập...' : 'Đang đăng ký...') : (isLogin ? 'Vào StockPicks' : 'Tạo tài khoản')}
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+              {!loading && <ArrowRight className="w-4 h-4" />}
+              
+              {loading && (mode === 'login' ? 'Đang đăng nhập...' : mode === 'register' ? 'Đang đăng ký...' : 'Đang gửi...')}
+              {!loading && (mode === 'login' ? 'Vào StockPicks' : mode === 'register' ? 'Tạo tài khoản' : 'Nhận pass mới')}
             </motion.button>
           </form>
 
           <div className="text-center mt-4">
             <button
               onClick={() => {
-                setIsLogin(!isLogin)
+                if (mode === 'forgot') setMode('login')
+                else setMode(mode === 'login' ? 'register' : 'login')
                 setError('')
               }}
               className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
             >
-              {isLogin ? 'Chưa có tài khoản? Đăng ký ngay' : 'Đã có tài khoản? Đăng nhập'}
+              {mode === 'forgot' ? 'Quay lại đăng nhập' : mode === 'login' ? 'Chưa có tài khoản? Đăng ký ngay' : 'Đã có tài khoản? Đăng nhập'}
             </button>
           </div>
         </div>
