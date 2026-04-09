@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
         email: normalizedEmail,
         password_hash: hashedPassword,
         full_name: defaultName,
-        role: 'user', // Basic user role
+        role: 'customer', // Phải dùng 'customer' theo DB Schema 
         stockpick_plan: 'free',
         stockspick_credits: 3 // Default free credits
       })
