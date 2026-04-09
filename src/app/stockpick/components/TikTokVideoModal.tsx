@@ -5,9 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Play } from 'lucide-react'
 
 export const LEARNING_VIDEOS = [
-  { id: 1, url: '/videos/entry_zone.mp4', title: 'Entry Zone là gì?', desc: 'Tại sao lại là Vùng Mua mà không phải Giá Mua?' },
-  { id: 2, url: '/videos/stop_loss.mp4', title: 'Stop Loss & R:R', desc: 'Bảo hiểm cháy tài khoản và bài toán Xác Suất' },
-  { id: 3, url: '/videos/entry_zone.mp4', title: 'Follow deal đúng cách', desc: 'Sự kiên nhẫn làm nên Kỷ luật (Sắp ra mắt)' },
+  { id: 1, url: '/videos/trading_plan.mp4', title: 'Tại sao cần Kế hoạch giao dịch?', desc: 'Tầm quan trọng của việc viết ra Kế hoạch, loại bỏ cảm xúc và bảo vệ tài sản khởi nghiệp.' },
+  { id: 2, url: '/videos/entry_zone.mp4', title: 'Entry Zone là gì?', desc: 'Tại sao lại là Vùng Mua mà không phải Giá Mua?' },
+  { id: 3, url: '/videos/stop_loss.mp4', title: 'Stop Loss & R:R', desc: 'Bảo hiểm cháy tài khoản và bài toán Xác Suất' },
+  { id: 4, url: '/videos/entry_zone.mp4', title: 'Follow deal đúng cách', desc: 'Sự kiên nhẫn làm nên Kỷ luật (Sắp ra mắt)' },
 ]
 
 interface TikTokVideoModalProps {

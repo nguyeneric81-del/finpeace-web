@@ -7,18 +7,24 @@ import { BookOpen, Play, CheckCircle } from 'lucide-react'
 const LESSONS = [
   {
     id: 1,
+    title: 'Tại sao cần Kế hoạch giao dịch?',
+    desc: 'Tầm quan trọng của việc viết ra Kế hoạch, loại bỏ cảm xúc và bảo vệ tài sản khởi nghiệp.',
+    duration: '2 phút',
+  },
+  {
+    id: 2,
     title: 'Entry Zone là gì?',
     desc: 'Vùng giá AI xác định an toàn để vào lệnh theo xác suất cao nhất.',
     duration: '2 phút',
   },
   {
-    id: 2,
+    id: 3,
     title: 'Stop Loss & R:R',
     desc: 'Cách đặt cắt lỗ để bảo vệ danh mục, tỷ lệ Rủi ro:Lợi nhuận tối thiểu.',
     duration: '3 phút',
   },
   {
-    id: 3,
+    id: 4,
     title: 'Follow deal đúng cách',
     desc: 'Khi nào nên follow, khi nào chờ pullback, khi nào bỏ qua deal.',
     duration: '2 phút',
