@@ -6,7 +6,8 @@ import { Mail, Lock, ArrowRight, Loader2, TrendingUp, Sparkles } from 'lucide-re
 import { useRouter } from 'next/navigation'
 
 export default function StockPickLoginPage() {
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [isLogin, setIsLogin] = useState(true)
+  const [form, setForm] = useState({ email: '', password: '', fullName: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
@@ -16,17 +17,22 @@ export default function StockPickLoginPage() {
     setLoading(true)
     setError('')
 
-    const res = await fetch('/api/stockpick/login', {
+    const apiEndpoint = isLogin ? '/api/stockpick/login' : '/api/stockpick/register'
+    const bodyPayload = isLogin 
+      ? { email: form.email, password: form.password }
+      : { email: form.email, password: form.password, full_name: form.fullName }
+
+    const res = await fetch(apiEndpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
+      body: JSON.stringify(bodyPayload),
     })
 
     const data = await res.json()
     setLoading(false)
 
     if (!res.ok) {
-      setError(data.error || 'Đăng nhập thất bại')
+      setError(data.error || (isLogin ? 'Đăng nhập thất bại' : 'Đăng ký thất bại'))
     } else {
       sessionStorage.setItem('stockpick_user', JSON.stringify(data.user))
       router.push('/stockpick/dashboard')
@@ -83,7 +89,9 @@ export default function StockPickLoginPage() {
             boxShadow: '0 24px 64px rgba(0,0,0,0.4)',
           }}
         >
-          <h2 className="text-base font-semibold text-white">Đăng nhập</h2>
+          <h2 className="text-base font-semibold text-white">
+            {isLogin ? 'Đăng nhập' : 'Tạo tài khoản mới'}
+          </h2>
 
           {error && (
             <motion.div
@@ -97,6 +105,28 @@ export default function StockPickLoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="overflow-hidden"
+              >
+                <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest mb-2 mt-1"
+                  style={{ color: 'rgba(255,255,255,0.35)' }}>
+                  Họ và tên
+                </label>
+                <input
+                  type="text"
+                  required={!isLogin}
+                  value={form.fullName}
+                  onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))}
+                  placeholder="Tên của bạn"
+                  className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
+                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                />
+              </motion.div>
+            )}
+
             <div>
               <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest mb-2"
                 style={{ color: 'rgba(255,255,255,0.35)' }}>
@@ -149,9 +179,21 @@ export default function StockPickLoginPage() {
               }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
-              {loading ? 'Đang đăng nhập...' : 'Vào StockPicks'}
+              {loading ? (isLogin ? 'Đang đăng nhập...' : 'Đang đăng ký...') : (isLogin ? 'Vào StockPicks' : 'Tạo tài khoản')}
             </motion.button>
           </form>
+
+          <div className="text-center mt-4">
+            <button
+              onClick={() => {
+                setIsLogin(!isLogin)
+                setError('')
+              }}
+              className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
+            >
+              {isLogin ? 'Chưa có tài khoản? Đăng ký ngay' : 'Đã có tài khoản? Đăng nhập'}
+            </button>
+          </div>
         </div>
 
         {/* Info tiers */}
