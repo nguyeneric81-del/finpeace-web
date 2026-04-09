@@ -53,11 +53,24 @@ export async function POST(req: NextRequest) {
 
     // 5. Instantly upgrade the User's tier in advisor_users table
     // Convert 'BRONZE' to 'bronze' mapping
+    const targetTier = matchedOrder.tier_to_upgrade.toLowerCase()
+    
+    // Fetch current profile to get credits
+    const { data: userProfile } = await supabase
+      .from('advisor_users')
+      .select('stockspick_credits')
+      .eq('id', matchedOrder.user_id)
+      .single()
+      
+    const currentCredits = userProfile?.stockspick_credits || 0
+    const newCredits = targetTier === 'bronze' ? currentCredits + 10 : currentCredits
+
     await supabase.from('advisor_users').update({
-      stockpick_plan: matchedOrder.tier_to_upgrade.toLowerCase(),
+      stockpick_plan: targetTier,
+      stockspick_credits: newCredits
     }).eq('id', matchedOrder.user_id)
 
-    return NextResponse.json({ success: true, message: 'Order Paid and User Upgraded', orderId: matchedOrder.id })
+    return NextResponse.json({ success: true, message: 'Order Paid, User Upgraded & Received 10 Credits', orderId: matchedOrder.id })
 
   } catch (err: any) {
     console.error('SePay Webhook Error:', err)
