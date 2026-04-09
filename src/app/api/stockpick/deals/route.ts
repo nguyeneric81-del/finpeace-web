@@ -103,7 +103,7 @@ export async function GET(req: NextRequest) {
   if (tier === 'FREE') {
     // 3 deals unlock mồi, 5 deals mờ
     const freeFull = merged.slice(0, FREE_DEALS_COUNT).map(d => ({ ...d, is_locked: false }))
-    const freeBlurred = merged.slice(FREE_DEALS_COUNT, FREE_DEALS_COUNT + MAX_FREE_BLURRED).map(d => ({
+    const freeBlurred = merged.slice(FREE_DEALS_COUNT).map(d => ({
       id: d.id,
       ticker: d.ticker,
       company_name: d.company_name,
@@ -121,11 +121,8 @@ export async function GET(req: NextRequest) {
     }))
     
     visibleDeals = [...freeFull, ...freeBlurred]
-    lockedCount = Math.max(0, totalDeals - FREE_DEALS_COUNT) // All others are technically locked
   } else {
-    // BRONZE — Build 3 buckets, sort, limit locked
-    const MAX_LOCKED_SHOWN = 5
-
+    // Cấp Bronze — Build 3 buckets
     const unlockedByCredit: any[] = []
     const freePool: any[] = []
     const locked: any[] = []
@@ -141,7 +138,7 @@ export async function GET(req: NextRequest) {
         // Bucket 2: Free pool
         freePool.push({ ...d, is_locked: false, is_unlocked_by_credit: false })
       } else {
-        // Bucket 3: Locked — chỉ lấy MAX_LOCKED_SHOWN
+        // Bucket 3: Locked
         locked.push({
           id: d.id, ticker: d.ticker, company_name: d.company_name, sector: d.sector,
           created_at: d.created_at, status: d.status, exec_status: d.exec_status || 'waiting_buy',
@@ -154,9 +151,8 @@ export async function GET(req: NextRequest) {
       }
     })
 
-    // Thứ tự: unlocked-by-credit → free pool → tối đa 5 locked
-    visibleDeals = [...unlockedByCredit, ...freePool, ...locked.slice(0, MAX_LOCKED_SHOWN)]
-    lockedCount = merged.length - FREE_DEALS_COUNT - unlockedByCredit.length // Tổng thực tế chưa unlock
+    visibleDeals = [...unlockedByCredit, ...freePool, ...locked]
+    lockedCount = locked.length // Tổng thực tế chưa unlock
   }
 
   return NextResponse.json({

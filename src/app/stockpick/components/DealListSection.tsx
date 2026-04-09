@@ -83,7 +83,13 @@ export default function DealListSection({ deals, totalDeals, lockedCount, tier, 
 
   // Section grouping only for "Tất cả"
   const liveDeals = filteredDeals.filter(d => LIVE_STATUSES.includes(d.exec_status || ''))
-  const planDeals = filteredDeals.filter(d => !LIVE_STATUSES.includes(d.exec_status || ''))
+  let planDeals = filteredDeals.filter(d => !LIVE_STATUSES.includes(d.exec_status || ''))
+
+  if (!searchQuery && activeFilter === 'all') {
+    const unlockedPlans = planDeals.filter(d => !d.is_locked)
+    const lockedPlans = planDeals.filter(d => d.is_locked)
+    planDeals = [...unlockedPlans, ...lockedPlans.slice(0, 5)]
+  }
 
   const isEmpty = filteredDeals.length === 0
 
@@ -225,7 +231,7 @@ export default function DealListSection({ deals, totalDeals, lockedCount, tier, 
                     <DealGroup deals={planDeals} isBronze={isBronze} onTap={setSelectedPlan} />
 
                     {/* Locked overflow */}
-                    {!searchQuery && !isBronze && lockedCount > 5 && (
+                    {!searchQuery && lockedCount > 5 && (
                       <div className="mt-3 relative rounded-[24px] h-32 overflow-hidden flex flex-col items-center justify-center border border-white/5 bg-[#1A1A1A]/30">
                         <div className="absolute inset-0 opacity-20 pointer-events-none p-4 flex flex-col gap-2" style={{ filter: 'blur(20px)' }}>
                           <div className="h-4 bg-white/20 w-1/3 rounded"></div>
@@ -238,7 +244,9 @@ export default function DealListSection({ deals, totalDeals, lockedCount, tier, 
                           </div>
                           <div className="text-center">
                             <p className="text-sm font-bold text-white">+{lockedCount - 5} DEALS ĐANG CHỜ</p>
-                            <p className="text-[10px] text-white/50 mt-0.5 uppercase tracking-widest">Nâng cấp để mở khoá</p>
+                            <p className="text-[10px] text-white/50 mt-0.5 uppercase tracking-widest">
+                              {isBronze ? 'Tìm kiếm mã để xem thêm' : 'Nâng cấp để mở khoá'}
+                            </p>
                           </div>
                         </div>
                       </div>
