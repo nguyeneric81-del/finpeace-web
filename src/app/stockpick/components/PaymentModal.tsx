@@ -82,7 +82,7 @@ export default function PaymentModal({ isOpen, onClose, user, onSuccess }: Payme
         body: JSON.stringify({
           userId: user.id,
           tierToUpgrade: 'BRONZE',
-          amount: 500000 
+          amount: 295000 
         })
       })
       const data = await res.json()
@@ -179,7 +179,7 @@ export default function PaymentModal({ isOpen, onClose, user, onSuccess }: Payme
                     style={{ background: 'linear-gradient(135deg, #10B981, #059669)', boxShadow: '0 8px 20px rgba(16,185,129,0.25)' }}
                   >
                     {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <QrCode className="w-5 h-5" />}
-                    {loading ? 'Đang tạo giao dịch...' : 'Thanh toán 500,000 VND'}
+                    {loading ? 'Đang tạo giao dịch...' : 'Thanh toán 295,000 VND'}
                   </motion.button>
                   <p className="text-xs text-slate-400 mt-4 flex items-center justify-center gap-1">
                     <ShieldCheck className="w-4 h-4" /> Thanh toán an toàn, mở khoá tự động 24/7
@@ -201,7 +201,7 @@ export default function PaymentModal({ isOpen, onClose, user, onSuccess }: Payme
                 </div>
 
                 <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 text-sm">
-                  <p className="text-slate-300 mb-1">Số tiền: <strong className="text-emerald-400 font-bold text-base">500.000 VNĐ</strong></p>
+                  <p className="text-slate-300 mb-1">Số tiền: <strong className="text-emerald-400 font-bold text-base">295.000 VNĐ</strong></p>
                   <p className="text-slate-300">Nội dung: <strong className="text-white bg-white/10 px-2 py-0.5 rounded ml-1 tracking-wider">{qrInfo.transferCode}</strong></p>
                 </div>
 

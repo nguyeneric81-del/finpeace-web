@@ -48,7 +48,7 @@ export default function UpgradeCTA({ currentTier, lockedCount, onUpgradeClick }:
           </div>
           <div>
             <p className="text-sm font-bold text-white">Nâng lên BRONZE</p>
-            <p className="text-xs" style={{ color: 'rgba(16,185,129,0.8)' }}>500,000đ / tháng</p>
+            <p className="text-xs" style={{ color: 'rgba(16,185,129,0.8)' }}>295,000đ / tháng</p>
           </div>
         </div>
 
