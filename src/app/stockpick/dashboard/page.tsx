@@ -11,6 +11,7 @@ import OnboardingBanner from '../components/OnboardingBanner'
 import UpgradeCTA from '../components/UpgradeCTA'
 import { TradingPlan } from '../components/DealCard'
 import TikTokVideoModal from '../components/TikTokVideoModal'
+import PaymentModal from '../components/PaymentModal'
 
 type StockPickUser = {
   id: string
@@ -34,6 +35,7 @@ export default function StockPickDashboard() {
   const [refreshing, setRefreshing] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('deals')
   const [selectedVideoIndex, setSelectedVideoIndex] = useState<number | null>(null)
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
 
   // Auth guard
   useEffect(() => {
@@ -190,7 +192,7 @@ export default function StockPickDashboard() {
             >
               {/* Upgrade CTA for FREE */}
               {user.tier === 'FREE' && lockedCount > 0 && (
-                <UpgradeCTA currentTier={user.tier} lockedCount={lockedCount} />
+                <UpgradeCTA currentTier={user.tier} lockedCount={lockedCount} onUpgradeClick={() => setIsPaymentModalOpen(true)} />
               )}
 
               {/* Deal list */}
@@ -218,7 +220,7 @@ export default function StockPickDashboard() {
 
               {/* Bronze upgrade CTA shown below for FREE (if many locked) */}
               {user.tier === 'FREE' && (
-                <UpgradeCTA currentTier={user.tier} lockedCount={lockedCount} />
+                <UpgradeCTA currentTier={user.tier} lockedCount={lockedCount} onUpgradeClick={() => setIsPaymentModalOpen(true)} />
               )}
             </motion.div>
           )}
@@ -308,6 +310,25 @@ export default function StockPickDashboard() {
           onClose={() => setSelectedVideoIndex(null)}
         />
       )}
+
+      {/* PAYMENT MODAL */}
+      <PaymentModal 
+        isOpen={isPaymentModalOpen} 
+        onClose={() => setIsPaymentModalOpen(false)} 
+        user={{
+          id: user.id,
+          name: user.name,
+          email: user.email
+        }}
+        onSuccess={() => {
+          if (user) {
+            const updatedUser = { ...user, tier: 'BRONZE' as const }
+            sessionStorage.setItem('stockpick_user', JSON.stringify(updatedUser))
+            setUser(updatedUser)
+          }
+          // The fetchDeals will automatically fire because `user` state changed!
+        }} 
+      />
     </div>
   )
 }
