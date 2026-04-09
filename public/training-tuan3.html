@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tuần 3: Xây Offer Có Thể Bán Được - FinPeace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090e17; 
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #10b981; 
+      --primary-dim: rgba(16, 185, 129, 0.2);
+      --danger: #ef4444;
+      --surface: rgba(30, 41, 59, 0.4);
+      --border: rgba(255, 255, 255, 0.1);
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      background-image: radial-gradient(circle at top right, var(--primary-dim) 0%, transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.1) 0%, transparent 40%);
+    }
+
+    h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+    
+    .presentation {
+      height: 100dvh;
+      width: 100vw;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(2rem, 8vw, 6rem);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateY(20px) scale(0.98);
+      z-index: 1;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+      z-index: 10;
+    }
+
+    .center { text-align: center; align-items: center; }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    
+    h1 { font-size: clamp(3rem, 6vw, 6rem); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 1rem; }
+    h2 { font-size: clamp(2.5rem, 4vw, 4.5rem); margin-bottom: 1.5rem; line-height: 1.2; }
+    h3 { font-size: clamp(1.5rem, 2.5vw, 2.5rem); margin-bottom: 1rem; color: var(--primary); }
+    p { font-size: clamp(1.2rem, 1.8vw, 1.8rem); line-height: 1.6; color: var(--text-muted); margin-bottom: 2rem; max-width: 900px; }
+    
+    .highlight { color: var(--primary); }
+    .danger { color: var(--danger); }
+    .quote { font-style: italic; font-size: clamp(1.5rem, 2vw, 2rem); border-left: 4px solid var(--primary); padding-left: 2rem; }
+    
+    .glass-card {
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: clamp(2rem, 4vw, 4rem);
+    }
+    
+    .tag {
+      display: inline-block;
+      padding: 0.5rem 1.2rem;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .tag.green { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .tag.red { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+    
+    .list { list-style: none; display: flex; flex-direction: column; gap: 1.5rem; }
+    .list li {
+      display: flex; align-items: flex-start; gap: 1rem;
+      font-size: clamp(1.2rem, 1.6vw, 1.6rem); color: var(--text);
+    }
+    .list li::before {
+      content: '✦';
+      color: var(--primary);
+      font-size: 1.5em;
+      line-height: 1;
+    }
+
+    .progress-bar {
+      position: fixed; bottom: 0; left: 0; height: 4px; background: rgba(255,255,255,0.1); width: 100%; z-index: 100;
+    }
+    .progress-fill {
+      height: 100%; background: var(--primary); width: 0%; transition: width 0.3s ease;
+    }
+    .controls-hint {
+      position: fixed; bottom: 2rem; left: 2rem; font-size: 0.9rem; color: rgba(255,255,255,0.4); z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="presentation" id="presentation">
+    
+    <!-- Slide 1 -->
+    <div class="slide center">
+      <div class="tag green">GIÁO ÁN ĐÀO TẠO AGENT</div>
+      <h1>Xây dựng Offer<br>có thể <span class="highlight">bán được</span></h1>
+      <p class="quote">"Người ta không trả tiền cho bản tin thị trường.<br>Người ta trả tiền để mua lại sự bình yên."</p>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide split">
+      <div>
+        <div class="tag red">SAI LẦM CHÍT TỬ</div>
+        <h2>Chỉ đi bán<br><span class="danger">"Giao dịch cổ phiếu"</span></h2>
+        <p>Nếu bạn vẫn chào hàng: "Bên em phí rẻ, mai múc mã gì". Chúc mừng, bạn đang bán một loại hàng hóa bực dọc, rẻ tiền dễ dàng thay thế.</p>
+      </div>
+      <div class="glass-card">
+        <ul class="list">
+          <li>Cạnh tranh bằng phí = Cái chết từ từ</li>
+          <li>Định giá 3 chữ cái = Zero</li>
+          <li>Khách hàng coi bạn là cò mồi, không phải chuyên gia</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide split">
+      <div>
+        <div class="tag green">TƯ DUY ĐÚNG</div>
+        <h2>Bán sự đồng hành &<br><span class="highlight">Một hệ thống</span></h2>
+        <p>Đỉnh cao của Wealth Advisor là không phụ thuộc vào bảng điện xanh đỏ. Bạn bán "Liệu trình điều trị" cho căn bệnh ung thư tài khoản.</p>
+      </div>
+      <div class="glass-card">
+        <ul class="list">
+          <li>Tự hào vì mình là Bác Sĩ Tài Chính</li>
+          <li>Đặc quyền tiếp cập Trading Plan không cảm xúc</li>
+          <li>Ngủ ngon, phó mặc nhịp đập thị trường cho Hệ thống</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide center">
+      <div class="tag green">FRAMEWORK VÀNG</div>
+      <h2>Tam Giác "Chốt Sale"</h2>
+      <p>Khách hàng sẽ ngoan ngoãn rút thẻ thanh toán khi bạn thỏa mãn trọn vẹn 3 yếu tố khát khao này.</p>
+      <div style="display: flex; gap: 2rem; justify-content: center; margin-top: 2rem;">
+        <div class="glass-card" style="flex:1; padding: 2rem;">
+          <h3 style="font-size: 1.5rem">1. Rõ Ràng</h3>
+          <p style="font-size: 1rem; margin-bottom: 0">Chẩn đúng bệnh<br>Cắt đúng tật</p>
+        </div>
+        <div class="glass-card" style="flex:1; padding: 2rem;">
+          <h3 style="font-size: 1.5rem">2. Dễ Dàng</h3>
+          <p style="font-size: 1rem; margin-bottom: 0">Không bắt tôi<br>phải nghĩ nhiều</p>
+        </div>
+        <div class="glass-card" style="flex:1; padding: 2rem;">
+          <h3 style="font-size: 1.5rem">3. Cảm Xúc</h3>
+          <p style="font-size: 1rem; margin-bottom: 0">Đồng hành tại<br>Đích đến cuộc đời</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide">
+      <div class="tag green">YẾU TỐ 1</div>
+      <h2>"Chẩn đúng bệnh — Cắt đúng tật"</h2>
+      <h3>Khách không mua khóa học. Khách mua kết quả LỖ ÍT ĐI.</h3>
+      <div class="glass-card" style="margin-top: 2rem;">
+        <p>"Em không hứa anh x3 tài khoản rủi ro trong một tháng, nhưng em cam kết anh sẽ không bao giờ cắt lỗ quá 7%/năm một cách ngu ngốc nữa nhờ Hệ thống FinPeace AutoPilot chặn dòng."</p>
+      </div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="slide">
+      <div class="tag green">YẾU TỐ 2</div>
+      <h2>"Không bắt tôi phải mất công"</h2>
+      <h3>Sự lười biếng sẽ sinh ra tiền tệ.</h3>
+      <div class="glass-card" style="margin-top: 2rem;">
+        <p>Bỏ ngay bản PDF báo cáo 100 trang. Hãy để khách rảnh tay với UX The Scrollytelling.</p>
+        <p class="highlight">"Chỉ cần 3 click. Việc mua bán hệ thống lo, anh chỉ việc bấm Duyệt."</p>
+      </div>
+    </div>
+
+    <!-- Slide 7 -->
+    <div class="slide">
+      <div class="tag green">YẾU TỐ 3</div>
+      <h2>"Cắm cờ tại đích đến cuộc đời"</h2>
+      <h3>Chúng ta hoàn thành "Nhiệm vụ Tài Chính Cá Nhân"</h3>
+      <div class="glass-card" style="margin-top: 2rem;">
+        <ul class="list">
+          <li>Không đo đếm chiến thắng bằng việc chốt lãi 10%.</li>
+          <li>Thứ họ khao khát sâu thẳm nhất là sự trút bỏ gánh nặng hiện tại.</li>
+          <li>Khách mua sự tự hào khi quỹ hưu trí dần hình thành, khóa chặt tiền học cho con.</li>
+          <li>Bạn không phím lệnh hộ họ, bạn đứng cùng chiến hào gia sản đời thực với họ.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 8 -->
+    <div class="slide center">
+      <div class="tag green">BÀI TẬP THỰC CHIẾN</div>
+      <h2>Hoàn thành Offer của riêng bạn<br>Ngay tại bàn làm việc này!</h2>
+      <div class="glass-card" style="text-align: left; margin: 0 auto; display: inline-block;">
+        <p style="color: var(--text); font-size: 1.5rem; margin-bottom: 0;">
+          "Tôi giúp <span class="highlight">[Nhóm khách hàng]</span> giải quyết <span class="highlight">[Nỗi đau]</span><br>
+          bằng <span class="highlight">[Hệ thống FinPeace]</span> để họ đạt được <span class="highlight">[Bình yên tài chính]</span><br>
+          mà không cần <span class="highlight">[Mất công sức/Cảm xúc]</span>."
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+  <div class="controls-hint">⌨️ Mũi tên trái/phải hoặc Space để chuyển | Click trái/phải màn hình</div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progress = document.getElementById('progress');
+    let current = 0;
+
+    function goTo(index) {
+      if (index < 0) index = 0;
+      if (index >= slides.length) index = slides.length - 1;
+      
+      slides[current].classList.remove('active');
+      current = index;
+      slides[current].classList.add('active', 'visited');
+      
+      const pct = ((current + 1) / slides.length) * 100;
+      progress.style.width = pct + '%';
+    }
+
+    // Init
+    goTo(0);
+
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') goTo(current + 1);
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current - 1);
+    });
+
+    // Touch
+    let startY = 0, startX = 0;
+    document.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    });
+    document.addEventListener('touchend', e => {
+      const diffX = startX - e.changedTouches[0].clientX;
+      const diffY = startY - e.changedTouches[0].clientY;
+      if (Math.abs(diffX) > 50) {
+        if (diffX > 50) goTo(current + 1);
+        if (diffX < -50) goTo(current - 1);
+      }
+    });
+    
+    // Click navigation
+    document.addEventListener('click', e => {
+       if(e.clientX > window.innerWidth / 2) {
+           goTo(current + 1);
+       } else {
+           goTo(current - 1);
+       }
+    });
+  </script>
+</body>
+</html>
