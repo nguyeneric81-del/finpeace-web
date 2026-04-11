@@ -26,7 +26,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 )
 
-const PRICE_UPDATE_URL = process.env.PRICE_UPDATE_URL || 'https://finpeace.vn/api/advisor/update-prices'
+const PRICE_UPDATE_URL = process.env.PRICE_UPDATE_URL || 'https://finpeace.cloud/api/advisor/update-prices'
 const PRICE_UPDATE_SECRET = process.env.PRICE_UPDATE_SECRET || 'finpeace-price-secret-2026'
 const VPS_BASE = 'https://histdatafeed.vps.com.vn/tradingview/history'
 
