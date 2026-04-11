@@ -116,29 +116,42 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.4 }}
       onClick={() => onTap?.(plan)}
-      className="rounded-[24px] overflow-hidden"
+      className="rounded-[24px] overflow-hidden relative"
       style={{
-        background: isLive ? 'rgba(10,28,20,0.8)' : 'rgba(30,30,30,0.6)',
+        background: !plan.is_locked ? 'rgba(10,28,24,0.7)' : 'rgba(30,30,30,0.6)',
         backdropFilter: 'blur(16px)',
-        border: isLive
-          ? '1px solid rgba(52,211,153,0.45)'
+        border: !plan.is_locked
+          ? '1px solid rgba(0,209,110,0.25)'
           : plan.is_confirmed
-            ? '1px solid rgba(0,209,110,0.2)'
+            ? '1px solid rgba(0,209,110,0.1)'
             : '1px solid rgba(255,255,255,0.07)',
-        boxShadow: isLive
-          ? '0 0 32px rgba(52,211,153,0.15), inset 0 1px 0 rgba(52,211,153,0.1)'
+        boxShadow: !plan.is_locked
+          ? '0 8px 32px rgba(0,209,110,0.08), inset 0 1px 0 rgba(0,209,110,0.15)'
           : plan.is_confirmed
-            ? '0 0 40px rgba(5,255,150,0.2)'
+            ? '0 0 40px rgba(5,255,150,0.1)'
             : 'none',
         cursor: onTap ? 'pointer' : 'default',
       }}
     >
       {/* Top accent line */}
       {isLive ? (
-        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#34d399] to-transparent" />
+        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#34d399] to-transparent absolute top-0" />
       ) : plan.is_confirmed ? (
-        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#00D16E] to-transparent" />
+        <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#00D16E] to-transparent absolute top-0" />
       ) : null}
+
+      {/* Bottom animated running gradient for UNLOCKED deals */}
+      {!plan.is_locked && (
+        <motion.div
+          animate={{ backgroundPosition: ['200% 0', '-200% 0'] }}
+          transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
+          className="absolute bottom-0 left-0 w-full h-[2px]"
+          style={{
+            background: 'linear-gradient(90deg, transparent, rgba(0,209,110,0.8), #34d399, rgba(0,209,110,0.8), transparent)',
+            backgroundSize: '200% 100%'
+          }}
+        />
+      )}
 
       {/* Main card content */}
       <div className="p-4">
