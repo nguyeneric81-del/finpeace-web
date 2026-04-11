@@ -29,14 +29,14 @@ const SIGNAL_CONFIG: Record<string, { color: string; bg: string; label: string; 
 
 // ── Parse Trend/Sideway scores from analyst_note ──
 function parseTrendScores(note: string): { trend: number | null; sideway: number | null; matrix: string | null } {
-  const trendMatch = note.match(/Trend Score\s*\[?(\d)\/5\]?/i) || note.match(/Trend\s*\[(\d)\/5\]/i) || note.match(/Trục Xu hướng[^:]*:\s*(\d)\/5/i)
-  const sidewayMatch = note.match(/Sideway Score\s*\[?(\d)\/5\]?/i) || note.match(/Sideway\s*\[(\d)\/5\]/i) || note.match(/Trục Dao động[^:]*:\s*(\d)\/5/i)
-  const matrixMatch = note.match(/Matrix Evaluation[:\s]+(.+?)(?:\*\*)?(?:\n|$)/i) || note.match(/TỌA ĐỘ[^:]*:[^\n]+\n([^\n]+)/i)
+  const trendMatch = note.match(/Trục Xu hướng[^:]*:\s*\[?(\d)\/5\]?/i) || note.match(/Trend Score[^:]*:\s*\[?(\d)\/5\]?/i) || note.match(/Trend Score\s*\[?(\d)\/5\]?/i) || note.match(/Trend\s*\[?(\d)\/5\]?/i) 
+  const sidewayMatch = note.match(/Trục Dao động[^:]*:\s*\[?(\d)\/5\]?/i) || note.match(/Sideway Score[^:]*:\s*\[?(\d)\/5\]?/i) || note.match(/Sideway Score\s*\[?(\d)\/5\]?/i) || note.match(/Sideway\s*\[?(\d)\/5\]?/i)
+  const matrixMatch = note.match(/Matrix Evaluation[:\s]+(.+?)(?:\*\*)?(?:\n|$)/i) || note.match(/Kết luận Tọa Độ\s*:\s*(.+?)(?:\*\*)?(?:\n|$)/i) || note.match(/TỌA ĐỘ[^:]*:[^\n]+\n([^\n]+)/i)
 
   return {
     trend: trendMatch ? parseInt(trendMatch[1]) : null,
     sideway: sidewayMatch ? parseInt(sidewayMatch[1]) : null,
-    matrix: matrixMatch ? matrixMatch[1].replace(/\*/g, '').trim() : null,
+    matrix: matrixMatch ? matrixMatch[1].replace(/\*/g, '').replace(/```/g, '').trim() : null,
   }
 }
 
