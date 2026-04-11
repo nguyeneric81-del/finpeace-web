@@ -88,7 +88,7 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
   const isLive = ['bought', 'holding', 'partial_sold'].includes(plan.exec_status || '')
 
   // P&L calculation for live trades — both in same unit (ngàn VND)
-  const currentPrice = signal ? parseFloat(signal.current_price) : null
+  const currentPrice = (signal && typeof signal.current_price === 'string') ? parseFloat(signal.current_price.replace(/,/g, '')) : null
   const boughtPrice = plan.bought_price ?? null
   const pnlPct = (isLive && currentPrice && boughtPrice)
     ? ((currentPrice - boughtPrice) / boughtPrice * 100)

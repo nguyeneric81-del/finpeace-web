@@ -359,7 +359,7 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
                   const tpNum = plan.take_profit ? parseFloat(plan.take_profit.match(/[\d.]+/)?.[0] || '0') : 0;
                   const expectedProfitPct = (entryAvg > 0 && tpNum > 0) ? ((tpNum - entryAvg) / entryAvg * 100).toFixed(1) : '—';
                   
-                  const currentPriceNum = signal ? parseFloat(signal.current_price.replace(/,/g, '')) : 0;
+                  const currentPriceNum = (signal && typeof signal.current_price === 'string') ? parseFloat(signal.current_price.replace(/,/g, '')) : 0;
                   const boughtPriceNum = plan.bought_price || 0;
                   
                   let actualProfitPct = '—';
