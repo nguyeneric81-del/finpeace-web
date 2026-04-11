@@ -283,20 +283,6 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
             <Shield className="w-3 h-3" />
             R:R {plan.risk_reward}
           </div>
-
-          <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs"
-            style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.4)' }}>
-            <Clock className="w-3 h-3" />
-            {plan.expected_holding_days}N
-          </div>
-
-          <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium"
-            style={{
-              background: 'rgba(255,255,255,0.04)',
-              color: convictionColor,
-            }}>
-            {plan.conviction_level?.split(' - ')[0] || 'Trung bình'}
-          </div>
         </div>
 
         {/* Catalyst Note (Insight text) */}

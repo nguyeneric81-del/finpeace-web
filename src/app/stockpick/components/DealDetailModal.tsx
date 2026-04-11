@@ -401,14 +401,7 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
                 })()}
               </div>
 
-              {/* Conviction */}
-              <div className="flex items-center justify-between pb-3">
-                <span className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>Conviction Level (Độ tin cậy)</span>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full"
-                  style={{ background: convictionBg.bg, color: convictionBg.color, border: `1px solid ${convictionBg.border}` }}>
-                  {plan.conviction_level || '—'}
-                </span>
-              </div>
+
             </Section>
 
             {/* 3. TRẠNG THÁI THỰC THI — shown when plan has been acted on */}
