@@ -219,19 +219,25 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0">
                 {/* Ticker + confirmed */}
-                <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <span className="text-3xl font-bold font-mono text-[#00D16E] tracking-tight">{plan.ticker}</span>
+                  {plan.exchange && (
+                    <span className="text-xs font-bold text-white/60 bg-white/10 px-2 py-0.5 rounded">{plan.exchange}</span>
+                  )}
                   {plan.is_confirmed && (
-                    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full shrink-0"
-                      style={{ background: 'rgba(0,209,110,0.1)', color: '#00D16E', border: '1px solid rgba(0,209,110,0.2)' }}>
-                      <CheckCircle className="w-2.5 h-2.5" /> XÁC NHẬN BỞI FINPEACE
-                    </span>
+                    <CheckCircle className="w-5 h-5 text-[#00D16E] shrink-0 drop-shadow-[0_0_8px_rgba(0,209,110,0.5)]" />
                   )}
                 </div>
-                {plan.company_name && (
-                  <p className="text-sm truncate" style={{ color: 'rgba(255,255,255,0.45)' }}>{plan.company_name}</p>
-                )}
-                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                {/* Company Name + Logo */}
+                <div className="flex items-center gap-2 mt-1">
+                  {plan.logo_url && (
+                    <img src={plan.logo_url} alt="Logo" className="w-6 h-6 rounded-full object-cover shrink-0" />
+                  )}
+                  {plan.company_name && (
+                    <p className="text-sm truncate font-medium text-white/80">{plan.company_name}</p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 mt-2 flex-wrap">
                   {plan.sector && (
                     <span className="text-[10px] px-2 py-0.5 rounded-full"
                       style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.4)' }}>
@@ -249,14 +255,23 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
               {/* Close + price */}
               <div className="flex flex-col items-end gap-1.5 ml-3">
                 <button onClick={onClose}
-                  className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                  className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mb-1"
                   style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.09)' }}>
                   <X className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.4)' }} />
                 </button>
                 {signal && (
-                  <div className="text-right">
-                    <p className="text-lg font-bold font-mono text-white">{signal.current_price}</p>
-                    <p className="text-[10px]" style={{ color: 'rgba(255,255,255,0.3)' }}>Hiện tại</p>
+                  <div className="text-right flex flex-col items-end">
+                    <p className="text-xl font-bold font-mono text-white leading-none">{signal.current_price}</p>
+                    {signal.current_change !== undefined && signal.current_change !== null && (
+                      <p className={`text-xs font-semibold font-mono mt-1 ${signal.current_change >= 0 ? 'text-[#00D16E]' : 'text-red-500'}`}>
+                        {signal.current_change >= 0 ? '+' : ''}{signal.current_change}%
+                      </p>
+                    )}
+                    {signal.current_volume !== undefined && signal.current_volume !== null && (
+                      <p className="text-[10px] text-white/40 font-mono mt-1 whitespace-nowrap">
+                        KL: {signal.current_volume.toLocaleString('vi-VN')}
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
@@ -337,40 +352,53 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
                   </span>
                 ) : undefined
               }>
-              {/* Price ladder */}
+              {/* Stats grid redefined */}
               <div className="py-3">
-                {[
-                  { label: 'Chốt lời (TP)', value: plan.take_profit, color: '#00D16E', icon: Target, bar: 'linear-gradient(180deg,#00D16E,#00D16E08)' },
-                  { label: 'Vùng mua (Entry)', value: plan.entry_zone, color: '#34d399', icon: TrendingUp, bar: 'linear-gradient(180deg,#34d399,#34d39908)' },
-                  { label: 'Cắt lỗ (SL)', value: plan.stop_loss, color: '#ef444490', icon: Shield, bar: 'linear-gradient(180deg,#ef444410,#ef444480)' },
-                ].map(({ label, value, color, icon: Icon, bar }, idx) => (
-                  <div key={label} className={`flex items-center gap-3 ${idx < 2 ? 'mb-3' : ''}`}>
-                    <div className="w-[3px] h-12 rounded-full shrink-0" style={{ background: bar }} />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-1.5 mb-0.5">
-                        <Icon className="w-3 h-3" style={{ color }} />
-                        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: `${color}80` }}>{label}</span>
-                      </div>
-                      <p className="text-xl font-bold font-mono leading-none" style={{ color }}>{value || '—'}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                {(() => {
+                  const entryAvg = plan.entry_zone ? parseFloat(plan.entry_zone.match(/[\d.]+/)?.[0] || '0') : 0;
+                  const tpNum = plan.take_profit ? parseFloat(plan.take_profit.match(/[\d.]+/)?.[0] || '0') : 0;
+                  const expectedProfitPct = (entryAvg > 0 && tpNum > 0) ? ((tpNum - entryAvg) / entryAvg * 100).toFixed(1) : '—';
+                  
+                  const currentPriceNum = signal ? parseFloat(signal.current_price.replace(/,/g, '')) : 0;
+                  const boughtPriceNum = plan.bought_price || 0;
+                  
+                  let actualProfitPct = '—';
+                  let actualProfitColor = 'white';
+                  if (plan.exec_status && ['bought', 'holding'].includes(plan.exec_status) && boughtPriceNum > 0 && currentPriceNum > 0) {
+                    const pnl = ((currentPriceNum - boughtPriceNum) / boughtPriceNum * 100);
+                    actualProfitPct = `${pnl >= 0 ? '+' : ''}${pnl.toFixed(1)}%`;
+                    actualProfitColor = pnl >= 0 ? '#00D16E' : '#ef4444';
+                  } else if (plan.exec_status === 'partial_sold' && plan.sold_half_price && boughtPriceNum > 0) {
+                    const pnl = ((plan.sold_half_price - boughtPriceNum) / boughtPriceNum * 100);
+                    actualProfitPct = `${pnl >= 0 ? '+' : ''}${pnl.toFixed(1)}% (1/2)`;
+                    actualProfitColor = pnl >= 0 ? '#00D16E' : '#ef4444';
+                  } else if (plan.exec_status === 'closed' && plan.sold_all_price && boughtPriceNum > 0) {
+                    const pnl = ((plan.sold_all_price - boughtPriceNum) / boughtPriceNum * 100);
+                    actualProfitPct = `${pnl >= 0 ? '+' : ''}${pnl.toFixed(1)}% (Đóng)`;
+                    actualProfitColor = pnl >= 0 ? '#00D16E' : '#ef4444';
+                  }
 
-              {/* Stats grid */}
-              <div className="grid grid-cols-4 gap-2 pb-3">
-                {[
-                  { label: 'R:R', value: plan.risk_reward, color: rrNum >= 2 ? '#00D16E' : '#f59e0b' },
-                  { label: 'Holding', value: plan.expected_holding_days ? `${plan.expected_holding_days}N` : '—', color: 'white' },
-                  { label: 'Rủi ro', value: plan.risk_level?.replace('Trung bình', 'TB') || '—', color: 'white' },
-                  { label: '% NAV', value: plan.capital_allocation_pct ? `${plan.capital_allocation_pct}%` : '10%', color: '#f59e0b' },
-                ].map(({ label, value, color }) => (
-                  <div key={label} className="rounded-xl p-2 text-center"
-                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                    <p className="text-[9px] mb-1 uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>{label}</p>
-                    <p className="text-xs font-bold font-mono" style={{ color }}>{value}</p>
-                  </div>
-                ))}
+                  return (
+                    <div className="grid grid-cols-2 gap-3 mb-2">
+                      <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        <p className="text-[10px] uppercase text-white/40 mb-1">Lãi dự kiến</p>
+                        <p className="text-lg font-bold font-mono text-[#34d399]">{expectedProfitPct !== '—' ? `${expectedProfitPct}%` : '—'}</p>
+                      </div>
+                      <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        <p className="text-[10px] uppercase text-white/40 mb-1">Lãi lỗ thực</p>
+                        <p className="text-lg font-bold font-mono" style={{ color: actualProfitColor }}>{actualProfitPct}</p>
+                      </div>
+                      <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        <p className="text-[10px] uppercase text-white/40 mb-1">Giá mục tiêu (TP)</p>
+                        <p className="text-lg font-bold font-mono text-white">{plan.take_profit || '—'}</p>
+                      </div>
+                      <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        <p className="text-[10px] uppercase text-white/40 mb-1">Thưởng / Rủi ro</p>
+                        <p className="text-lg font-bold font-mono" style={{ color: rrNum >= 2 ? '#34d399' : '#f59e0b' }}>{plan.risk_reward || '—'}</p>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Conviction */}
@@ -570,11 +598,50 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
             </Section>
 
             {/* Disclaimer */}
-            <p className="text-center text-[10px] leading-relaxed pt-1 pb-2"
+            <p className="text-center text-[10px] leading-relaxed pt-1 pb-4"
               style={{ color: 'rgba(255,255,255,0.12)' }}>
               ⚠️ Nội dung mang tính tham khảo từ hệ thống phân tích Vietnam Trend Analyzer của FinPeace.
               Không phải khuyến nghị đầu tư. Kết quả giao dịch phụ thuộc vào quyết định của nhà đầu tư.
             </p>
+
+            {/* Khuyến nghị CTA Action */}
+            {(() => {
+              let khuyenNghiAction = 'Chờ tín hiệu';
+              let btnColor = 'linear-gradient(135deg, #64748b, #475569)';
+              
+              if (plan.exec_status === 'bought' || plan.exec_status === 'holding') {
+                khuyenNghiAction = 'Đang nắm giữ (Theo dõi chặt)';
+                btnColor = 'linear-gradient(135deg, #3b82f6, #2563eb)';
+              } else if (plan.exec_status === 'partial_sold') {
+                khuyenNghiAction = 'Bán nốt 1/2';
+                btnColor = 'linear-gradient(135deg, #f59e0b, #d97706)';
+              } else if (plan.exec_status === 'closed') {
+                khuyenNghiAction = 'Đã bán hết (Theo dõi)';
+                btnColor = 'linear-gradient(135deg, #64748b, #475569)';
+              } else if (signal && signal.signal_type === 'entry_now') {
+                khuyenNghiAction = 'Mua';
+                btnColor = 'linear-gradient(135deg, #00D16E, #048c4d)';
+              } else if (signal && signal.signal_type === 'wait_pullback') {
+                khuyenNghiAction = 'Chờ tín hiệu (Theo dõi)';
+                btnColor = 'linear-gradient(135deg, #f59e0b, #d97706)';
+              }
+
+              return (
+                <div className="fixed bottom-0 left-0 right-0 p-4 md:px-0 md:relative z-20"
+                  style={{
+                    background: 'linear-gradient(to top, rgba(15,25,41,1) 50%, rgba(15,25,41,0) 100%)'
+                  }}>
+                  <div className="max-w-2xl mx-auto w-full">
+                    <button
+                      className="w-full py-4 rounded-xl font-bold flex flex-col items-center justify-center transition-all shadow-[0_4px_24px_rgba(0,0,0,0.25)]"
+                      style={{ background: btnColor, color: 'white' }}
+                    >
+                      <span className="text-base tracking-wide uppercase">Hành động: {khuyenNghiAction}</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
               </>
             )}
           </div>

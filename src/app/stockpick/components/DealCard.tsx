@@ -24,6 +24,8 @@ export interface TradingPlan {
   analyst_note: string
   catalyst_note: string
   is_confirmed: boolean
+  exchange?: string | null
+  logo_url?: string | null
   expected_holding_days: number
   capital_allocation_pct: number
   chart_image_url: string
@@ -32,6 +34,8 @@ export interface TradingPlan {
     signal_type: string
     signal_label: string
     signal_detail: string
+    current_change?: number | null
+    current_volume?: number | null
   } | null
   is_locked?: boolean
   is_unlocked_by_credit?: boolean
@@ -145,8 +149,16 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
               <span className="text-xl font-bold font-mono tracking-tight text-[#00D16E]">
                 {plan.ticker}
               </span>
+              {plan.exchange && (
+                <span className="text-[10px] font-bold text-white/50 bg-white/10 px-1.5 py-0.5 rounded">
+                  {plan.exchange}
+                </span>
+              )}
+              {plan.is_confirmed && (
+                <CheckCircle className="w-4 h-4 text-[#00D16E] shrink-0" />
+              )}
               {plan.exec_status && plan.exec_status !== 'waiting_buy' && (
-                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider" style={{
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ml-auto" style={{
                   background:
                     ['bought','holding'].includes(plan.exec_status) ? 'rgba(52,211,153,0.15)' :
                     plan.exec_status === 'partial_sold'             ? 'rgba(129,140,248,0.15)' :
@@ -162,9 +174,21 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
                 </span>
               )}
             </div>
-            <p className="text-xs leading-relaxed truncate max-w-[200px]" style={{ color: 'rgba(255,255,255,0.45)' }}>
-              {plan.company_name} • {plan.sector?.split(' ')[0] || 'Cổ phiếu'}
-            </p>
+            
+            {/* Company Name + Logo */}
+            <div className="flex items-center gap-1.5 mt-1">
+              {plan.logo_url && (
+                <img src={plan.logo_url} alt="Logo" className="w-4 h-4 rounded-full object-cover shrink-0" />
+              )}
+              <p className="text-xs leading-relaxed truncate max-w-[180px]" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                {plan.company_name}
+              </p>
+            </div>
+            {plan.sector && (
+              <p className="text-[10px] leading-relaxed truncate max-w-[200px] mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                {plan.sector}
+              </p>
+            )}
           </div>
 
           {/* Current signal badge */}

@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
       expected_holding_days, capital_allocation_pct,
       chart_image_url, status, created_at,
       exec_status, bought_price, holding_since,
-      sold_half_price, sold_all_price
+      sold_half_price, sold_all_price, exchange, logo_url
     `)
     .eq('status', 'active')
     .order('is_confirmed', { ascending: false })
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
   const tickers = [...new Set(plans.map(p => p.ticker))]
   const { data: signals } = await supabase
     .from('price_signals')
-    .select('ticker, current_price, signal_type, signal_label, signal_detail, generated_at')
+    .select('ticker, current_price, signal_type, signal_label, signal_detail, generated_at, current_change, current_volume')
     .in('ticker', tickers)
     .order('generated_at', { ascending: false })
 
