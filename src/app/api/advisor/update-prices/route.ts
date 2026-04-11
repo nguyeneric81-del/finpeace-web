@@ -151,8 +151,18 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Thiếu dữ liệu prices' }, { status: 400 })
         }
 
+        const normalizedPrices = prices.map((p: any) => {
+            let num = typeof p.price === 'string' ? parseFloat(p.price.replace(/,/g, '')) : Number(p.price)
+            if (isNaN(num)) num = 0
+            if (num > 500) num = num / 1000
+            return {
+                ...p,
+                price: parseFloat(num.toFixed(2))
+            }
+        })
+
         const today = new Date().toISOString().split('T')[0]
-        const tickers = prices.map((p: any) => p.ticker)
+        const tickers = normalizedPrices.map((p: any) => p.ticker)
 
         // Lấy trading plans của các tickers này
         const { data: plans } = await supabase
@@ -164,7 +174,7 @@ export async function POST(req: NextRequest) {
         const planMap = new Map((plans || []).map(p => [p.ticker, p]))
 
         // Upsert giá vào stock_prices
-        const priceRows = prices.map((p: any) => ({
+        const priceRows = normalizedPrices.map((p: any) => ({
             ticker: p.ticker,
             price: p.price,
             date: today,
@@ -175,7 +185,7 @@ export async function POST(req: NextRequest) {
 
         // Generate & upsert signals
         const signalRows: any[] = []
-        for (const { ticker, price } of prices) {
+        for (const { ticker, price } of normalizedPrices) {
             const plan = planMap.get(ticker)
             if (!plan) continue
 
