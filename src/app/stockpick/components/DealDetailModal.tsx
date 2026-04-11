@@ -8,7 +8,7 @@ import {
   CheckCircle, AlertTriangle, Zap, BarChart2, Lock,
   ChevronRight, Lightbulb, Activity, Waves, ArrowUpRight
 } from 'lucide-react'
-import { TradingPlan } from './DealCard'
+import { TradingPlan, normalizePrice } from './DealCard'
 
 interface DealDetailModalProps {
   plan: TradingPlan | null
@@ -261,7 +261,7 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
                 </button>
                 {signal && (
                   <div className="text-right flex flex-col items-end">
-                    <p className="text-xl font-bold font-mono text-white leading-none">{signal.current_price}</p>
+                    <p className="text-xl font-bold font-mono text-white leading-none">{normalizePrice(signal.current_price?.toString())}</p>
                     {signal.current_change !== undefined && signal.current_change !== null && (
                       <p className={`text-xs font-semibold font-mono mt-1 ${signal.current_change >= 0 ? 'text-[#00D16E]' : 'text-red-500'}`}>
                         {signal.current_change >= 0 ? '+' : ''}{signal.current_change}%
@@ -359,7 +359,7 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
                   const tpNum = plan.take_profit ? parseFloat(plan.take_profit.match(/[\d.]+/)?.[0] || '0') : 0;
                   const expectedProfitPct = (entryAvg > 0 && tpNum > 0) ? ((tpNum - entryAvg) / entryAvg * 100).toFixed(1) : '—';
                   
-                  const currentPriceNum = (signal && typeof signal.current_price === 'string') ? parseFloat(signal.current_price.replace(/,/g, '')) : 0;
+                  const currentPriceNum = (signal && typeof signal.current_price !== 'undefined') ? parseFloat(normalizePrice(signal.current_price.toString())) : 0;
                   const boughtPriceNum = plan.bought_price || 0;
                   
                   let actualProfitPct = '—';

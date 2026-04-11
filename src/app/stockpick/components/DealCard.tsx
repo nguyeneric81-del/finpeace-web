@@ -62,7 +62,7 @@ const SIGNAL_CONFIG: Record<string, { color: string; bg: string; icon: React.Ele
 }
 
 // Convert raw price string → thousands-VND display (e.g. "12,200" → "12.2", "35.60" → "35.6")
-function normalizePrice(raw: string | null | undefined): string {
+export function normalizePrice(raw: string | null | undefined): string {
   if (!raw) return '—'
   const cleaned = raw.replace(/,/g, '').replace(/[–—]/g, '-')
   const match = cleaned.match(/\d+(\.\d+)?/)
@@ -202,7 +202,7 @@ export default function DealCard({ plan, isBronze, index, onTap }: DealCardProps
             <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium ml-2 shrink-0 font-mono"
               style={{ background: sigConfig.bg, border: `1px solid ${sigConfig.color}30`, color: sigConfig.color }}>
               <SigIcon className="w-3 h-3" />
-              <span>{signal.current_price}</span>
+              <span>{normalizePrice(signal.current_price?.toString())}</span>
             </div>
           )}
         </div>
