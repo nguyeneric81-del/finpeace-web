@@ -6,7 +6,7 @@ import { Mail, Lock, ArrowRight, Loader2, TrendingUp, Sparkles } from 'lucide-re
 import { useRouter } from 'next/navigation'
 
 export default function StockPickLoginPage() {
-  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login')
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot' | 'enable-push'>('login')
   const [form, setForm] = useState({ email: '', password: '', fullName: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -55,7 +55,71 @@ export default function StockPickLoginPage() {
       setError(data.error || (mode === 'login' ? 'Đăng nhập thất bại' : 'Đăng ký thất bại'))
     } else {
       sessionStorage.setItem('stockpick_user', JSON.stringify(data.user))
-      router.push('/stockpick/dashboard')
+      
+      if (mode === 'register') {
+        // Nếu vừa đăng ký xong -> Bước 2: xin quyền Push
+        setMode('enable-push')
+      } else {
+        router.push('/stockpick/dashboard')
+      }
+    }
+  }
+
+  const urlBase64ToUint8Array = (base64String: string) => {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  };
+
+  async function handleEnablePush() {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        // Khách không cho phép -> Đẩy vào web luôn
+        router.push('/stockpick/dashboard');
+        return;
+      }
+
+      await navigator.serviceWorker.register('/sw.js');
+      const reg = await navigator.serviceWorker.ready;
+      
+      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+      if (!vapidKey) throw new Error('Missing VAPID');
+
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidKey),
+      });
+
+      const user = JSON.parse(sessionStorage.getItem('stockpick_user') || '{}');
+
+      // Bắn lên server để Lưu DB + Gửi push notification chứa link đổi pass
+      await fetch('/api/stockpick/push-subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subscription: sub,
+          userId: user?.id,
+          type: 'welcome'
+        }),
+      });
+
+      // Mở xong rồi thì cho phép vào web
+      router.push('/stockpick/dashboard');
+    } catch (e: any) {
+      console.error(e);
+      // Nếu lỗi Noti, cứ cho vào app bình thường tránh kẹt khách
+      router.push('/stockpick/dashboard');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -113,6 +177,7 @@ export default function StockPickLoginPage() {
             {mode === 'login' && 'Đăng nhập'}
             {mode === 'register' && 'Tạo tài khoản mới'}
             {mode === 'forgot' && 'Khôi phục mật khẩu'}
+            {mode === 'enable-push' && 'Thiết lập Thông báo!'}
           </h2>
 
           {error && (
@@ -126,109 +191,143 @@ export default function StockPickLoginPage() {
             </motion.div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {mode === 'register' && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                className="overflow-hidden"
-              >
-                <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest mb-2 mt-1"
-                  style={{ color: 'rgba(255,255,255,0.35)' }}>
-                  Họ và tên
-                </label>
-                <input
-                  type="text"
-                  required={mode === 'register'}
-                  value={form.fullName}
-                  onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))}
-                  placeholder="Tên của bạn"
-                  className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
-                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
-                />
-              </motion.div>
-            )}
-
-            <div>
-              <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest mb-2"
-                style={{ color: 'rgba(255,255,255,0.35)' }}>
-                <Mail className="w-3 h-3" /> Email
-              </label>
-              <input
-                id="stockpick-email"
-                type="email"
-                required
-                autoComplete="email"
-                value={form.email}
-                onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                placeholder="email@gmail.com"
-                className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
-              />
-            </div>
-
-            {mode !== 'forgot' && (
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest"
-                    style={{ color: 'rgba(255,255,255,0.35)' }}>
-                    <Lock className="w-3 h-3" /> Mật khẩu
-                  </label>
-                  {mode === 'login' && (
-                    <button type="button" onClick={() => { setMode('forgot'); setError(''); }} className="text-[10px] text-emerald-400 hover:underline">
-                      Quên mật khẩu?
-                    </button>
-                  )}
+            {mode === 'enable-push' ? (
+              <div className="space-y-4">
+                <div className="text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                  <p className="mb-2">Tài khoản của bạn đã được đăng ký thành công!</p>
+                  <p>Hãy bật thông báo để FinPeace gửi ngay Kế hoạch đầu tư và link hướng dẫn bảo mật nhé.</p>
                 </div>
-                <input
-                  id="stockpick-password"
-                  type="password"
-                  required
-                  autoComplete="current-password"
-                  value={form.password}
-                  onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                  placeholder="••••••••"
-                  className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
-                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
-                />
+                
+                <motion.button
+                  type="button"
+                  onClick={handleEnablePush}
+                  disabled={loading}
+                  whileHover={{ scale: loading ? 1 : 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                    color: 'white',
+                    boxShadow: '0 8px 24px rgba(59,130,246,0.3)',
+                  }}
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                  {loading ? 'Đang kích hoạt...' : 'Cho phép nhận thông báo'}
+                </motion.button>
+                
+                <div className="text-center">
+                  <button type="button" onClick={() => router.push('/stockpick/dashboard')} className="text-xs text-gray-400 hover:text-white underline">
+                    Bỏ qua (không nhận cảnh báo từ AI)
+                  </button>
+                </div>
               </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {mode === 'register' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="overflow-hidden"
+                  >
+                    <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest mb-2 mt-1"
+                      style={{ color: 'rgba(255,255,255,0.35)' }}>
+                      Họ và tên
+                    </label>
+                    <input
+                      type="text"
+                      required={mode === 'register'}
+                      value={form.fullName}
+                      onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))}
+                      placeholder="Tên của bạn"
+                      className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
+                      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                    />
+                  </motion.div>
+                )}
+
+                <div>
+                  <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest mb-2"
+                    style={{ color: 'rgba(255,255,255,0.35)' }}>
+                    <Mail className="w-3 h-3" /> Email
+                  </label>
+                  <input
+                    id="stockpick-email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    value={form.email}
+                    onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                    placeholder="email@gmail.com"
+                    className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
+                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                  />
+                </div>
+
+                {mode !== 'forgot' && (
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest"
+                        style={{ color: 'rgba(255,255,255,0.35)' }}>
+                        <Lock className="w-3 h-3" /> Mật khẩu
+                      </label>
+                      {mode === 'login' && (
+                        <button type="button" onClick={() => { setMode('forgot'); setError(''); }} className="text-[10px] text-emerald-400 hover:underline">
+                          Quên mật khẩu?
+                        </button>
+                      )}
+                    </div>
+                    <input
+                      id="stockpick-password"
+                      type="password"
+                      required
+                      autoComplete="current-password"
+                      value={form.password}
+                      onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                      placeholder="••••••••"
+                      className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
+                      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                    />
+                  </div>
+                )}
+
+                <motion.button
+                  type="submit"
+                  disabled={loading}
+                  whileHover={{ scale: loading ? 1 : 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  id="stockpick-login-btn"
+                  className="w-full py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all mt-1 cursor-pointer"
+                  style={{
+                    background: loading
+                      ? 'rgba(16,185,129,0.4)'
+                      : 'linear-gradient(135deg, #10B981, #059669)',
+                    color: 'white',
+                    boxShadow: loading ? 'none' : '0 8px 24px rgba(16,185,129,0.3)',
+                  }}
+                >
+                  {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {!loading && <ArrowRight className="w-4 h-4" />}
+                  
+                  {loading && (mode === 'login' ? 'Đang đăng nhập...' : mode === 'register' ? 'Đang đăng ký...' : 'Đang gửi...')}
+                  {!loading && (mode === 'login' ? 'Vào StockPicks' : mode === 'register' ? 'Tạo tài khoản' : 'Nhận pass mới')}
+                </motion.button>
+              </form>
             )}
 
-            <motion.button
-              type="submit"
-              disabled={loading}
-              whileHover={{ scale: loading ? 1 : 1.02 }}
-              whileTap={{ scale: 0.97 }}
-              id="stockpick-login-btn"
-              className="w-full py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all mt-1 cursor-pointer"
-              style={{
-                background: loading
-                  ? 'rgba(16,185,129,0.4)'
-                  : 'linear-gradient(135deg, #10B981, #059669)',
-                color: 'white',
-                boxShadow: loading ? 'none' : '0 8px 24px rgba(16,185,129,0.3)',
-              }}
-            >
-              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              {!loading && <ArrowRight className="w-4 h-4" />}
-              
-              {loading && (mode === 'login' ? 'Đang đăng nhập...' : mode === 'register' ? 'Đang đăng ký...' : 'Đang gửi...')}
-              {!loading && (mode === 'login' ? 'Vào StockPicks' : mode === 'register' ? 'Tạo tài khoản' : 'Nhận pass mới')}
-            </motion.button>
-          </form>
-
-          <div className="text-center mt-4">
-            <button
-              onClick={() => {
-                if (mode === 'forgot') setMode('login')
-                else setMode(mode === 'login' ? 'register' : 'login')
-                setError('')
-              }}
-              className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
-            >
-              {mode === 'forgot' ? 'Quay lại đăng nhập' : mode === 'login' ? 'Chưa có tài khoản? Đăng ký ngay' : 'Đã có tài khoản? Đăng nhập'}
-            </button>
-          </div>
+          {mode !== 'enable-push' && (
+            <div className="text-center mt-4">
+              <button
+                onClick={() => {
+                  if (mode === 'forgot') setMode('login')
+                  else setMode(mode === 'login' ? 'register' : 'login')
+                  setError('')
+                }}
+                className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
+              >
+                {mode === 'forgot' ? 'Quay lại đăng nhập' : mode === 'login' ? 'Chưa có tài khoản? Đăng ký ngay' : 'Đã có tài khoản? Đăng nhập'}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Info tiers */}

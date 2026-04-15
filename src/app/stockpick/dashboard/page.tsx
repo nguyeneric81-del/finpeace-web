@@ -3,12 +3,13 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LogOut, RefreshCw, LayoutGrid, BookOpen, Zap } from 'lucide-react'
+import { LogOut, RefreshCw, LayoutGrid, BookOpen, Zap, Home } from 'lucide-react'
 import StockPickHeader from '../components/StockPickHeader'
 import DealListSection from '../components/DealListSection'
 import MarketPulse from '../components/MarketPulse'
 import OnboardingBanner from '../components/OnboardingBanner'
 import UpgradeCTA from '../components/UpgradeCTA'
+import HomeTab from '../components/HomeTab'
 import { TradingPlan } from '../components/DealCard'
 import TikTokVideoModal from '../components/TikTokVideoModal'
 import PaymentModal from '../components/PaymentModal'
@@ -22,7 +23,7 @@ type StockPickUser = {
   role: string
 }
 
-type Tab = 'deals' | 'learn' | 'pulse'
+type Tab = 'home' | 'deals' | 'learn' | 'pulse'
 
 export default function StockPickDashboard() {
   const router = useRouter()
@@ -33,7 +34,7 @@ export default function StockPickDashboard() {
   const [credits, setCredits] = useState(0)
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
-  const [activeTab, setActiveTab] = useState<Tab>('deals')
+  const [activeTab, setActiveTab] = useState<Tab>('home')
   const [selectedVideoIndex, setSelectedVideoIndex] = useState<number | null>(null)
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
 
@@ -101,6 +102,7 @@ export default function StockPickDashboard() {
   }
 
   const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
+    { id: 'home', label: 'Trang chủ', icon: Home },
     { id: 'deals', label: 'Deals', icon: LayoutGrid },
     { id: 'learn', label: 'Học', icon: BookOpen },
     { id: 'pulse', label: 'Pulse', icon: Zap },
@@ -180,6 +182,22 @@ export default function StockPickDashboard() {
         </div>
 
         <AnimatePresence mode="wait">
+          {/* HOME TAB */}
+          {activeTab === 'home' && (
+            <motion.div
+              key="home"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              transition={{ duration: 0.25 }}
+            >
+              <HomeTab
+                tier={user.tier}
+                onNavigateToTab={(tab) => setActiveTab(tab as Tab)}
+              />
+            </motion.div>
+          )}
+
           {/* DEALS TAB */}
           {activeTab === 'deals' && (
             <motion.div
