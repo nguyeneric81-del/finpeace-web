@@ -84,7 +84,7 @@ export function AccumulationTracker({
             <p className="text-[11px] text-slate-400">Đang tích {totalStocks} mã cổ phiếu cùng FinPeace</p>
           </div>
         </div>
-        <Link href="/dashboard/wealth-planning"
+        <Link href="/dashboard/sip-portfolio"
           className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-1.5 rounded-xl transition-colors">
           Xem chi tiết →
         </Link>
@@ -232,7 +232,7 @@ export function AccumulationTracker({
 
         {/* CTA row */}
         <div className="grid grid-cols-2 gap-3">
-          <Link href="/dashboard/wealth-planning">
+          <Link href="/dashboard/sip-portfolio">
             <div className="group bg-emerald-600 hover:bg-emerald-700 transition-colors cursor-pointer text-white rounded-2xl px-4 py-3 flex items-center justify-between shadow-sm shadow-emerald-600/20">
               <div className="flex items-center gap-2.5">
                 <BarChart3 className="w-4 h-4 opacity-80" />
