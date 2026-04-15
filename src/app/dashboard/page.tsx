@@ -37,7 +37,7 @@ export default async function DashboardPage() {
         .select('stock_code, start_date, end_date, monthly_cashflow')
         .eq('user_id', user.id)
 
-    const hasSIPData = (sipTransactions?.length ?? 0) > 0
+    const hasSIPData = (sipPlans?.length ?? 0) > 0
 
     // SIP calculations
     const totalInvested = sipTransactions?.reduce((s, t) => s + Number(t.total_value || 0), 0) ?? 0
