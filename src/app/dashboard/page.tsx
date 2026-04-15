@@ -20,6 +20,68 @@ export default async function DashboardPage() {
     const { data: cashflow } = await supabase
         .from('client_cashflow').select('*').eq('user_id', user.id).single()
 
+    // SIP data
+    const { data: sipTransactions } = await supabase
+        .from('sip_transactions')
+        .select('stock_code, order_date, total_value')
+        .eq('user_id', user.id)
+
+    const { data: sipSnapshots } = await supabase
+        .from('sip_performance_snapshots')
+        .select('stock_code, month, cumulative_nav, sip_return_pct, vnindex_return_pct')
+        .eq('user_id', user.id)
+        .order('month', { ascending: false })
+
+    const { data: sipPlans } = await supabase
+        .from('sip_service_plans')
+        .select('stock_code, start_date, end_date, monthly_cashflow')
+        .eq('user_id', user.id)
+
+    const hasSIPData = (sipTransactions?.length ?? 0) > 0
+
+    // SIP calculations
+    const totalInvested = sipTransactions?.reduce((s, t) => s + Number(t.total_value || 0), 0) ?? 0
+
+    const now = new Date()
+    const currentYM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    const txThisMonth = sipTransactions?.filter(t => t.order_date?.startsWith(currentYM)) ?? []
+    const amountThisMonth = txThisMonth.reduce((s, t) => s + Number(t.total_value || 0), 0)
+    const transactionsThisMonth = txThisMonth.length
+    const totalStocks = new Set(sipTransactions?.map(t => t.stock_code)).size
+
+    // Latest NAV per stock
+    const latestNAVByStock: Record<string, number> = {}
+    sipSnapshots?.forEach(s => {
+        if (!latestNAVByStock[s.stock_code]) latestNAVByStock[s.stock_code] = Number(s.cumulative_nav || 0)
+    })
+    const currentNAV = Object.values(latestNAVByStock).reduce((s, v) => s + v, 0)
+
+    // Streak: count consecutive months with at least 1 transaction going back from current month
+    const txMonthSet = new Set(sipTransactions?.map(t => t.order_date?.slice(0, 7)) ?? [])
+    let streak = 0
+    let checkYM = currentYM
+    // Also count last month if current month has no tx yet (still in progress)
+    const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    const prevYM = `${prevMonth.getFullYear()}-${String(prevMonth.getMonth() + 1).padStart(2, '0')}`
+    const startCheck = transactionsThisMonth > 0 ? currentYM : prevYM
+    checkYM = startCheck
+    for (let i = 0; i < 24; i++) {
+        if (!txMonthSet.has(checkYM)) break
+        streak++
+        const [y, m] = checkYM.split('-').map(Number)
+        const p = m === 1 ? new Date(y - 1, 11, 1) : new Date(y, m - 2, 1)
+        checkYM = `${p.getFullYear()}-${String(p.getMonth() + 1).padStart(2, '0')}`
+    }
+
+    // Latest monthly performance (most recent non-zero snapshot)
+    const latestSnap = sipSnapshots?.find(s => Number(s.sip_return_pct) !== -1)
+    const latestSIPReturn = latestSnap ? Number(latestSnap.sip_return_pct) : null
+    const latestVNIReturn = latestSnap ? Number(latestSnap.vnindex_return_pct) : null
+
+    // Earliest start date across all plans
+    const earliestStart = sipPlans?.reduce((min, p) => (!min || p.start_date < min) ? p.start_date : min, '')
+    const latestEnd = sipPlans?.reduce((max, p) => (!max || (p.end_date ?? '') > max) ? (p.end_date ?? max) : max, '')
+
     let totalAssets = 0
     let totalLiabilities = 0
     let liquidAssets = 0
@@ -112,16 +174,23 @@ export default async function DashboardPage() {
             </section>
 
             {/* VÙNG 3: Hành Trình Tích Sản */}
-            <section>
-                <AccumulationTracker 
-                    monthlyTarget={monthlySaving}
-                    monthlyInvested={monthlySaving * 0.4} // Giả lập data demo
-                    totalAccumulated={investmentAssets}
-                    totalPrincipal={investmentAssets * 0.9} // Giả lập vốn gốc
-                    nextMilestone="Đạt 1 tỷ đầu tiên"
-                    milestoneProgress={65} // Khuyến nghị: Tính logic thật dựa trên Tích sản DB
-                />
-            </section>
+            {hasSIPData && (
+                <section>
+                    <AccumulationTracker
+                        totalInvested={totalInvested}
+                        currentNAV={currentNAV}
+                        transactionsThisMonth={transactionsThisMonth}
+                        amountThisMonth={amountThisMonth}
+                        totalStocks={totalStocks}
+                        hasSIPData={hasSIPData}
+                        streak={streak}
+                        latestSIPReturn={latestSIPReturn}
+                        latestVNIReturn={latestVNIReturn}
+                        earliestStart={earliestStart ?? ''}
+                        latestEnd={latestEnd ?? ''}
+                    />
+                </section>
+            )}
         </div>
     )
 }
