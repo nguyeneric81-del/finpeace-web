@@ -303,24 +303,41 @@ export default function StockPickDashboard() {
               </div>
             </div>
 
-            {/* Agent Referral Button */}
-            {['advisor', 'admin'].includes(user.role || '') && (
-              <button
-                onClick={() => {
-                  const code = user.email.split('@')[0]
-                  navigator.clipboard.writeText(`https://finpeace.cloud/stockpick/login?ref=${code}`)
-                  alert(`Đã copy link: https://finpeace.cloud/stockpick/login?ref=${code}`);
-                }}
-                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl transition-all ml-auto mr-2"
-                style={{
-                  background: 'rgba(16,185,129,0.1)',
-                  border: '1px solid rgba(16,185,129,0.3)',
-                  color: '#10B981',
-                }}
-              >
-                🔗 Copy Link Mời Khách
-              </button>
-            )}
+            {/* Agent Referral Button & QR */}
+            {['advisor', 'admin'].includes(user.role || '') && (() => {
+              const code = user.email.split('@')[0];
+              const link = `https://finpeace.cloud/stockpick/login?ref=${code}`;
+              const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(link)}`;
+
+              return (
+                <div className="flex items-center gap-2 ml-auto mr-2">
+                  <a 
+                    href={qrUrl} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    title="Click để tải mã QR to"
+                    className="w-9 h-9 rounded-lg overflow-hidden border border-emerald-500/30 bg-white flex-shrink-0 hover:scale-105 transition-transform p-0.5"
+                  >
+                    <img src={qrUrl} alt="QR" className="w-full h-full object-contain" />
+                  </a>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(link);
+                      alert(`Đã copy link mời khách: ${link}`);
+                    }}
+                    className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl transition-all font-medium"
+                    style={{
+                      background: 'rgba(16,185,129,0.1)',
+                      border: '1px solid rgba(16,185,129,0.3)',
+                      color: '#10B981',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    🔗 Copy Link
+                  </button>
+                </div>
+              );
+            })()}
 
             {/* Logout */}
             <button
