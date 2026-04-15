@@ -34,7 +34,7 @@ export default async function DashboardPage() {
 
     const { data: sipPlans } = await supabase
         .from('sip_service_plans')
-        .select('stock_code, start_date, end_date, monthly_cashflow')
+        .select('stock_code, start_date, end_date')
         .eq('user_id', user.id)
 
     const hasSIPData = (sipPlans?.length ?? 0) > 0
