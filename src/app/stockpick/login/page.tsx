@@ -108,6 +108,7 @@ export default function StockPickLoginPage() {
         body: JSON.stringify({
           subscription: sub,
           userId: user?.id,
+          userName: user?.full_name,
           type: 'welcome'
         }),
       });
