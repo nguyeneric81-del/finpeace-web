@@ -15,27 +15,27 @@ export default function StockPickLoginPage() {
 
   const ONBOARDING_SLIDES = [
     {
-      headline: "Chào mừng bạn dùng StockPicks 2.0",
+      headline: "Chào mừng đến với StockPicks 2.0",
       icon: <Sparkles className="w-16 h-16 text-emerald-400" />,
-      body: "Một hệ thống hỗ trợ ra quyết định thông minh.",
+      body: "Trợ lý giao dịch đắc lực, chắt lọc tinh hoa từ hàng ngàn giờ thực chiến của đội ngũ chuyên gia FinPeace.",
       button: "Tiếp theo"
     },
     {
-      headline: "Trí tuệ AI hỗ trợ – Trải nghiệm Con người dẫn dắt",
+      headline: "Định Vị Cơ Hội – Rõ Ràng & Hiệu Quả",
       icon: <Users className="w-16 h-16 text-emerald-400" />,
-      body: "Chuyên gia giám sát phương pháp luận. AI thực thi quét cổ phiếu từ chân sóng 24/7.",
+      body: "Công nghệ tiên tiến theo dõi dòng tiền 24/7, kết hợp cùng góc nhìn chuyên môn sâu sắc giúp bạn nắm bắt cơ hội ngay từ chân sóng.",
       button: "Tiếp theo"
     },
     {
-      headline: "Hiểu rõ lý do đằng sau mọi Kế hoạch",
+      headline: "Chủ Động & Tự Tin Trong Mọi Quyết Định",
       icon: <Search className="w-16 h-16 text-emerald-400" />,
-      body: "Không chỉ là Mua/Bán. AI giải thích luận điểm để bạn tự tin đi lệnh.",
+      body: "Không chỉ là điểm Mua/Bán. Mỗi Kế hoạch giao dịch luôn đi kèm bối cảnh thị trường và luận điểm chiến lược sắc bén.",
       button: "Tiếp theo"
     },
     {
-      headline: "Bạn đã sẵn sàng? Dùng Thử Miễn Phí Ngay.",
+      headline: "Sẵn Sàng Bứt Phá? Trải Nghiệm Ngay!",
       icon: <Rocket className="w-16 h-16 text-emerald-400" />,
-      body: "Nhận ngay 3 Trading Plan miễn phí. Chủ động giao dịch.",
+      body: "Nhận ngay 3 Kế hoạch giao dịch (Trading Plan) miễn phí để bắt đầu làm chủ danh mục của bạn.",
       button: "Bắt đầu"
     }
   ]
@@ -201,7 +201,7 @@ export default function StockPickLoginPage() {
           </motion.div>
           <h1 className="text-2xl font-bold text-white tracking-tight">StockPicks 2.0</h1>
           <p className="text-sm mt-1.5 font-medium" style={{ color: 'rgba(16,185,129,0.8)' }}>
-            AI-Powered Trading Tool
+            Expert-Driven Trading Platform
           </p>
           <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.3)' }}>
             by FinPeace
