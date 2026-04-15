@@ -248,6 +248,7 @@ export default function FinanceTab() {
               <div className="bg-[#111827] rounded-2xl border border-[#1e2535] p-2 md:p-6 shadow-2xl">
                  <SipPortfolioClient 
                     plans={selectedProfileData.plans} 
+                    transactions={selectedProfileData.transactions || []}
                     performanceData={selectedProfileData.performanceData} 
                     insights={selectedProfileData.insights} 
                  />
