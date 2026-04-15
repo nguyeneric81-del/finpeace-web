@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { OverviewCards } from '@/components/dashboard/OverviewCards'
 import { InvestmentGarden } from '@/components/dashboard/InvestmentGarden'
 import { StressTestPanel } from '@/components/dashboard/StressTestPanel'
+import { AccumulationTracker } from '@/components/dashboard/AccumulationTracker'
 
 export default async function DashboardPage() {
     const supabase = await createClient()
@@ -108,6 +109,18 @@ export default async function DashboardPage() {
                         />
                     </div>
                 </div>
+            </section>
+
+            {/* VÙNG 3: Hành Trình Tích Sản */}
+            <section>
+                <AccumulationTracker 
+                    monthlyTarget={monthlySaving}
+                    monthlyInvested={monthlySaving * 0.4} // Giả lập data demo
+                    totalAccumulated={investmentAssets}
+                    totalPrincipal={investmentAssets * 0.9} // Giả lập vốn gốc
+                    nextMilestone="Đạt 1 tỷ đầu tiên"
+                    milestoneProgress={65} // Khuyến nghị: Tính logic thật dựa trên Tích sản DB
+                />
             </section>
         </div>
     )
