@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Mail, Lock, ArrowRight, Loader2, TrendingUp, Sparkles } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -11,6 +11,16 @@ export default function StockPickLoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const refCode = urlParams.get('ref');
+      if (refCode) {
+        localStorage.setItem('fp_referral_code', refCode);
+      }
+    }
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -40,7 +50,12 @@ export default function StockPickLoginPage() {
     const apiEndpoint = mode === 'login' ? '/api/stockpick/login' : '/api/stockpick/register'
     const bodyPayload = mode === 'login' 
       ? { email: form.email, password: form.password }
-      : { email: form.email, password: form.password, full_name: form.fullName }
+      : { 
+          email: form.email, 
+          password: form.password, 
+          full_name: form.fullName,
+          agent_code: localStorage.getItem('fp_referral_code') 
+        }
 
     const res = await fetch(apiEndpoint, {
       method: 'POST',

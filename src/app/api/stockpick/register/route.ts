@@ -16,7 +16,7 @@ async function hashPassword(password: string): Promise<string> {
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, full_name } = await req.json()
+    const { email, password, full_name, agent_code } = await req.json()
     const normalizedEmail = email?.toLowerCase().trim()
 
     if (!normalizedEmail || !password) {
@@ -53,9 +53,10 @@ export async function POST(req: NextRequest) {
         full_name: defaultName,
         role: 'customer', // Phải dùng 'customer' theo DB Schema 
         stockpick_plan: 'free',
-        stockspick_credits: 3 // Default free credits
+        stockspick_credits: 3, // Default free credits
+        agent_code: agent_code || null
       })
-      .select('id, email, full_name, role, stockpick_plan, stockspick_credits, kyc_completed')
+      .select('id, email, full_name, role, stockpick_plan, stockspick_credits, kyc_completed, agent_code')
       .single()
 
     if (insertError) {

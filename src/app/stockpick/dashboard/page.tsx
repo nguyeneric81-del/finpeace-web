@@ -303,6 +303,25 @@ export default function StockPickDashboard() {
               </div>
             </div>
 
+            {/* Agent Referral Button */}
+            {['advisor', 'admin'].includes(user.role || '') && (
+              <button
+                onClick={() => {
+                  const code = user.email.split('@')[0]
+                  navigator.clipboard.writeText(`https://finpeace.cloud/stockpick/login?ref=${code}`)
+                  alert(`Đã copy link: https://finpeace.cloud/stockpick/login?ref=${code}`);
+                }}
+                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl transition-all ml-auto mr-2"
+                style={{
+                  background: 'rgba(16,185,129,0.1)',
+                  border: '1px solid rgba(16,185,129,0.3)',
+                  color: '#10B981',
+                }}
+              >
+                🔗 Copy Link Mời Khách
+              </button>
+            )}
+
             {/* Logout */}
             <button
               id="stockpick-logout"
