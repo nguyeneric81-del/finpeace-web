@@ -6,6 +6,7 @@ import { createClient } from '@/utils/supabase/client'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Target, TrendingUp, AlertCircle, CheckCircle2, Compass, ShieldAlert, Wallet, Percent, PiggyBank, Maximize2, CircleDot, Zap, ArrowRight } from 'lucide-react'
+import { SIPJourneyTracker } from '@/components/wealth-planning/SIPJourneyTracker'
 import type { FinancialPlan } from '@/app/dashboard/wealth-planning/WealthPlanningClient'
 
 type ActionPlan = { id: string; category: string; task_name: string; amount_required: number; status: string }
@@ -185,6 +186,9 @@ export function ActionPlanManager({ userId, financialPlan }: { userId: string; f
                     </p>
                 </div>
             </div>
+
+            {/* SIP JOURNEY TRACKER */}
+            <SIPJourneyTracker userId={userId} />
 
             {/* TRADING PLANS */}
             {tradingPlans.length > 0 && (
