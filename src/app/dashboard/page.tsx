@@ -125,6 +125,11 @@ export default async function DashboardPage() {
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
+                    <a href="/dashboard/sip-portfolio">
+                        <button className="flex items-center gap-2 text-xs font-bold text-amber-700 border border-amber-200 bg-amber-50 hover:bg-amber-100 px-4 py-2 rounded-xl transition-all shadow-sm">
+                            Hành Trình Tích Sản
+                        </button>
+                    </a>
                     <a href="/dashboard/wealth-planning">
                         <button className="flex items-center gap-2 text-xs font-bold text-emerald-700 border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 px-4 py-2 rounded-xl transition-all shadow-sm">
                             ✧ Lập Kế Hoạch Tài Chính
@@ -173,24 +178,6 @@ export default async function DashboardPage() {
                 </div>
             </section>
 
-            {/* VÙNG 3: Hành Trình Tích Sản */}
-            {hasSIPData && (
-                <section>
-                    <AccumulationTracker
-                        totalInvested={totalInvested}
-                        currentNAV={currentNAV}
-                        transactionsThisMonth={transactionsThisMonth}
-                        amountThisMonth={amountThisMonth}
-                        totalStocks={totalStocks}
-                        hasSIPData={hasSIPData}
-                        streak={streak}
-                        latestSIPReturn={latestSIPReturn}
-                        latestVNIReturn={latestVNIReturn}
-                        earliestStart={earliestStart ?? ''}
-                        latestEnd={latestEnd ?? ''}
-                    />
-                </section>
-            )}
         </div>
     )
 }
