@@ -1,16 +1,44 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Mail, Lock, ArrowRight, Loader2, TrendingUp, Sparkles } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Mail, Lock, ArrowRight, Loader2, TrendingUp, Sparkles, Users, Search, Rocket } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 export default function StockPickLoginPage() {
-  const [mode, setMode] = useState<'login' | 'register' | 'forgot' | 'enable-push'>('login')
+  const [mode, setMode] = useState<'onboarding' | 'login' | 'register' | 'forgot' | 'enable-push'>('onboarding')
+  const [onboardingIndex, setOnboardingIndex] = useState(0)
   const [form, setForm] = useState({ email: '', password: '', fullName: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
+
+  const ONBOARDING_SLIDES = [
+    {
+      headline: "Chào mừng bạn dùng StockPicks 2.0",
+      icon: <Sparkles className="w-16 h-16 text-emerald-400" />,
+      body: "Một hệ thống hỗ trợ ra quyết định thông minh.",
+      button: "Tiếp theo"
+    },
+    {
+      headline: "Trí tuệ AI hỗ trợ – Trải nghiệm Con người dẫn dắt",
+      icon: <Users className="w-16 h-16 text-emerald-400" />,
+      body: "Chuyên gia giám sát phương pháp luận. AI thực thi quét cổ phiếu từ chân sóng 24/7.",
+      button: "Tiếp theo"
+    },
+    {
+      headline: "Hiểu rõ lý do đằng sau mọi Kế hoạch",
+      icon: <Search className="w-16 h-16 text-emerald-400" />,
+      body: "Không chỉ là Mua/Bán. AI giải thích luận điểm để bạn tự tin đi lệnh.",
+      button: "Tiếp theo"
+    },
+    {
+      headline: "Bạn đã sẵn sàng? Dùng Thử Miễn Phí Ngay.",
+      icon: <Rocket className="w-16 h-16 text-emerald-400" />,
+      body: "Nhận ngay 3 Trading Plan miễn phí. Chủ động giao dịch.",
+      button: "Bắt đầu"
+    }
+  ]
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -180,15 +208,90 @@ export default function StockPickLoginPage() {
           </p>
         </div>
 
-        {/* Card */}
-        <div className="rounded-3xl p-6 space-y-5"
-          style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.07)',
-            backdropFilter: 'blur(20px)',
-            boxShadow: '0 24px 64px rgba(0,0,0,0.4)',
-          }}
-        >
+        {mode === 'onboarding' ? (
+          <div className="rounded-3xl p-6 text-center shadow-2xl relative overflow-hidden"
+            style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.07)',
+              backdropFilter: 'blur(20px)',
+              boxShadow: '0 24px 64px rgba(0,0,0,0.4)',
+            }}
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-[0.05] blur-[40px]"
+              style={{ background: 'radial-gradient(circle, #10B981, transparent)' }} />
+            
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={onboardingIndex}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="flex flex-col items-center justify-center min-h-[220px]"
+              >
+                <div className="mb-6 p-4 rounded-full" style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.1)' }}>
+                  {ONBOARDING_SLIDES[onboardingIndex].icon}
+                </div>
+                <h2 className="text-lg font-bold text-white leading-tight mb-3">
+                  {ONBOARDING_SLIDES[onboardingIndex].headline}
+                </h2>
+                <p className="text-sm text-balance text-gray-400">
+                  {ONBOARDING_SLIDES[onboardingIndex].body}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Dots */}
+            <div className="flex justify-center gap-1.5 my-6">
+              {ONBOARDING_SLIDES.map((_, idx) => (
+                <div key={idx} className="h-1.5 rounded-full transition-all"
+                  style={{
+                    width: idx === onboardingIndex ? 16 : 6,
+                    background: idx === onboardingIndex ? '#10B981' : 'rgba(255,255,255,0.1)'
+                  }}
+                />
+              ))}
+            </div>
+
+            <motion.button
+              onClick={() => {
+                if (onboardingIndex < ONBOARDING_SLIDES.length - 1) {
+                  setOnboardingIndex(prev => prev + 1)
+                } else {
+                  setMode('register') // Automatically navigate to register after finishing
+                }
+              }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              className="w-full py-3.5 rounded-xl font-semibold text-sm transition-all shadow-lg"
+              style={{
+                background: 'linear-gradient(135deg, #10B981, #059669)',
+                color: 'white',
+              }}
+            >
+              {ONBOARDING_SLIDES[onboardingIndex].button}
+            </motion.button>
+            
+            <div className="mt-4">
+              <button 
+                onClick={() => setMode('login')}
+                className="text-xs font-semibold text-gray-400 hover:text-white transition-colors"
+              >
+                Tôi đã có tài khoản? Đăng nhập ngay
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Card */}
+            <div className="rounded-3xl p-6 space-y-5"
+              style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.07)',
+                backdropFilter: 'blur(20px)',
+                boxShadow: '0 24px 64px rgba(0,0,0,0.4)',
+              }}
+            >
           <h2 className="text-base font-semibold text-white">
             {mode === 'login' && 'Đăng nhập'}
             {mode === 'register' && 'Tạo tài khoản mới'}
@@ -359,6 +462,8 @@ export default function StockPickLoginPage() {
             </div>
           ))}
         </div>
+          </>
+        )}
       </motion.div>
     </div>
   )
