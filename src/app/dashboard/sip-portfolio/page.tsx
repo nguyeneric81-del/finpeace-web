@@ -25,7 +25,7 @@ export default async function SipPortfolioPage() {
     .from('sip_asset_valuations')
     .select('*')
     .in('stock_code', userStocks.length > 0 ? userStocks : ['__none__'])
-    .eq('status', 'Published')
+    .in('status', ['Published', 'PUBLISHED'])
     .order('update_date', { ascending: false });
 
   return (
