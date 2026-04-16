@@ -428,6 +428,70 @@ export default function StockPickDashboard() {
           // The fetchDeals will automatically fire because `user` state changed!
         }} 
       />
+
+      {/* PASSWORD MODAL */}
+      <AnimatePresence>
+        {isPasswordModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="w-full max-w-sm rounded-[24px] p-6 shadow-2xl relative"
+              style={{
+                background: 'linear-gradient(to bottom, #111827, #030712)',
+                border: '1px solid rgba(16,185,129,0.2)',
+              }}
+            >
+              <button 
+                onClick={() => setIsPasswordModalOpen(false)}
+                className="absolute top-4 right-4 p-2 rounded-full cursor-pointer hover:bg-white/5 transition-colors text-gray-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                  <Lock className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Đổi Mật Khẩu</h3>
+                  <p className="text-xs text-gray-400">Thiết lập mật khẩu bảo mật mới</p>
+                </div>
+              </div>
+
+              <form onSubmit={handlePasswordChange} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-400 mb-1.5 ml-1">Mật khẩu mới</label>
+                  <input
+                    type="password"
+                    required
+                    autoFocus
+                    placeholder="Nhập 6+ ký tự"
+                    value={pwdForm.newPassword}
+                    onChange={(e) => setPwdForm({ newPassword: e.target.value })}
+                    className="w-full rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all font-medium"
+                    style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={pwdLoading}
+                  className="w-full py-3.5 rounded-xl font-bold text-sm text-white transition-all shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:hover:scale-100 flex items-center justify-center"
+                  style={{ background: 'linear-gradient(135deg, #10B981, #059669)' }}
+                >
+                  {pwdLoading ? 'Đang cập nhật...' : 'Xác Nhận Đổi'}
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
