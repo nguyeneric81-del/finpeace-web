@@ -184,7 +184,7 @@ export default function SipPortfolioClient({ plans, transactions, performanceDat
                                 )}
                                 {ins.expected_growth && (
                                   <span className="text-[10px] px-2 py-0.5 bg-emerald-100/50 rounded-lg border border-emerald-200 text-emerald-700 font-bold">
-                                    Mục tiêu TT: {(Number(ins.expected_growth) * 100).toFixed(0)}%/năm
+                                    Mục tiêu TT: {(typeof ins.expected_growth === 'string' && ins.expected_growth.includes('%')) ? ins.expected_growth : `${(Number(ins.expected_growth) * 100).toFixed(0)}%`}/năm
                                   </span>
                                 )}
                               </div>

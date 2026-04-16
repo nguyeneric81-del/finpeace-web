@@ -66,26 +66,15 @@ async function main() {
 ### Tầng 4: Modern Quant (Biotroski F-Score)
 - **Chỉ số dòng tiền:** Dòng tiền HĐKD (CFO) duy trì mức dương. Tăng trưởng EPS dài hạn dự phóng đạt mốc ${expected_growth * 100}%/năm. Không có dấu hiệu xào nấu thủ thuật lợi nhuận quá mức trên phải thu/tồn kho.
 
----
-
-## 2. Nghệ Thuật Thuyết Phục (Storytelling)
-> **Câu chuyện gắn kết: ${p.story}**
-
-Chính những DN như ${ticker} mới làm nên sức mạnh cốt lõi của danh mục Tích sản. Đầu tư Giá trị vào ${ticker} không phải là lướt biểu đồ, mà là việc mua và nắm giữ vị thế chủ nhà tóm trọn một dòng chảy kinh tế bền vững. Khi thời gian trôi qua, lợi nhuận và cổ tức sinh ra sẽ lấp đầy vòng quay lãi kép.
-
----
-
-## 3. Kỷ Luật Thực Chiến & Kiểm Định (Stress Test)
+## 2. Kỷ Luật Thực Chiến & Kiểm Định (Stress Test)
 - **Kịch bản Xấu nhất:** Chi phí vốn tăng cao đột biến làm ăn mòn biên lợi nhuận, hoặc các thay đổi về chu kỳ ngành khiến tăng trưởng suy giảm dưới mốc ${expected_growth * 100}%. Khoản đệm (Buffer) duy nhất đối phó điều này là chốt hạ một Max Buy Price cực kì nghiêm ngặt.
 
 ---
 
-## 4. Tổng Kết SIP (Hành Động)
-- **Sip Outlook:** Cổ phiếu đạt chuẩn VVIA, hội tụ đủ Con hào kinh tế sâu và Sức khoẻ tài chính vững chãi.
-- **CTA (Hành động gọi vốn):** DUY TRÌ TÍCH SẢN Ở NHỮNG VÙNG GIÁ THẤP THOẢ MÃN KHUNG BIÊN AN TOÀN. 
-- **Max Buy Price Khuyến nghị:** ${max_buy_price.toLocaleString('vi-VN')} VNĐ (Áp dụng kỷ luật thép: MA200 + Kỳ vọng tăng trưởng ${expected_growth * 100}%/năm). Dừng gom tích sản nếu thị giá vượt mốc này.
-
-\`💡 { status: 'AWAITING_APPROVAL', quarter_update: 'Q1/2026' }\`
+## 3. Tổng Kết SIP (Hành Động)
+- Cổ phiếu đạt chuẩn VVIA, hội tụ đủ Con hào kinh tế sâu và Sức khoẻ tài chính vững chãi.
+- Duy trì tích sản ở những vùng giá thấp thoả mãn khung biên an toàn. 
+- Giá tối đa tích sản ${max_buy_price.toLocaleString('vi-VN')} đ (Áp dụng kỷ luật thép: MA200 + Kỳ vọng tăng trưởng ${expected_growth * 100}%/năm). Dừng gom tích sản nếu vượt giá này.
 `;
 
         // 1. Write MD to Local Artifacts
@@ -98,10 +87,10 @@ Chính những DN như ${ticker} mới làm nên sức mạnh cốt lõi của d
             quarter_update: 'Q1/2026',
             business_outlook: mdContent,
             sip_outlook: 'Cổ phiếu đạt chuẩn VVIA, hội tụ đủ Con hào kinh tế sâu và Sức khoẻ tài chính vững chãi.',
-            cta: 'DUY TRÌ TÍCH SẢN TỶ TRỌNG CŨ. Vẫn là cổ phiếu trụ cột phòng thủ tốt, chỉ gom mua khi thỏa mãn luật Max Buy Price.',
-            expected_growth: `${expected_growth * 100}%`,
+            cta: 'Duy trì tích sản',
+            expected_growth: expected_growth,
             max_buy_price: max_buy_price, 
-            status: 'PUBLISHED',
+            status: 'Published',
             update_date: new Date().toISOString()
         };
 
