@@ -10,6 +10,8 @@ import {
   TrendingUp, TrendingDown, ChevronDown, ChevronUp,
   Shield, BarChart3, Clock, CheckCircle2, AlertTriangle, Zap
 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Props {
   plans: any[];
@@ -171,22 +173,32 @@ export default function SipPortfolioClient({ plans, transactions, performanceDat
                         {/* Research insight */}
                         {ins && (
                           <div className={`rounded-xl p-4 ${isDung ? 'bg-amber-50 border border-amber-100' : 'bg-emerald-50 border border-emerald-100'}`}>
-                            <div className="flex justify-between items-center mb-2">
+                            <div className="flex justify-between items-center mb-3 pb-3 border-b border-emerald-100/50">
                               <p className="text-xs font-bold text-slate-600">Nhận Định FinPeace · {ins.quarter_update}</p>
                               <div className="flex gap-2">
-                                {ins.new_intrinsic_value && (
-                                  <span className="text-[10px] px-2 py-0.5 bg-white rounded-lg border border-slate-200 text-slate-600 font-semibold">
-                                    Nội tại: {Number(ins.new_intrinsic_value).toLocaleString('vi-VN')}đ
+                                {ins.max_buy_price && (
+                                  <span className="text-[10px] px-2 py-0.5 bg-white rounded-lg border border-red-200 text-red-600 font-bold flex items-center gap-1 shadow-sm">
+                                    <Shield className="w-3 h-3" />
+                                    Max Buy: {Number(ins.max_buy_price).toLocaleString('vi-VN')}đ
                                   </span>
                                 )}
                                 {ins.expected_growth && (
-                                  <span className="text-[10px] px-2 py-0.5 bg-white rounded-lg border border-slate-200 text-slate-600 font-semibold">
-                                    Tăng trưởng: +{(ins.expected_growth * 100).toFixed(0)}%/năm
+                                  <span className="text-[10px] px-2 py-0.5 bg-emerald-100/50 rounded-lg border border-emerald-200 text-emerald-700 font-bold">
+                                    Mục tiêu TT: {(Number(ins.expected_growth) * 100).toFixed(0)}%/năm
                                   </span>
                                 )}
                               </div>
                             </div>
-                            <p className="text-xs text-slate-600 leading-relaxed">{ins.sip_outlook}</p>
+                            
+                            {ins.business_outlook ? (
+                              <article className="prose prose-sm prose-slate max-w-none prose-headings:text-emerald-800 prose-headings:font-bold prose-h1:text-lg prose-h2:text-base prose-p:text-slate-700 prose-li:text-slate-700 marker:text-emerald-500 prose-blockquote:border-emerald-400 prose-blockquote:bg-emerald-50 prose-blockquote:px-3 prose-blockquote:py-1 prose-blockquote:rounded-r-lg prose-blockquote:not-italic prose-blockquote:text-emerald-800">
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                  {ins.business_outlook}
+                                </ReactMarkdown>
+                              </article>
+                            ) : (
+                              <p className="text-sm text-slate-700 leading-relaxed">{ins.sip_outlook}</p>
+                            )}
                           </div>
                         )}
 
