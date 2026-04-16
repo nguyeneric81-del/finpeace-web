@@ -4,8 +4,10 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   TrendingUp, TrendingDown, Target, Calendar, Shield, LogOut,
-  ChevronRight, Star, Flame, Award, Lock, Eye, EyeOff, RefreshCw
+  ChevronRight, Star, Flame, Award, Lock, Eye, EyeOff, RefreshCw, BookOpen, ChevronDown, CheckCircle
 } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 interface Customer {
   id: string; email: string; full_name: string;
@@ -17,6 +19,11 @@ interface Customer {
 interface Deal {
   id: string; order_date: string; ticker: string;
   action: string; target_amount: number; actual_quantity: number; actual_amount: number; note: string;
+}
+
+interface Valuation {
+  id: string; stock_code: string; quarter_update: string; max_buy_price: number;
+  expected_growth: string; cta: string; business_outlook: string; sip_outlook: string;
 }
 
 const fmt = (n: number) => new Intl.NumberFormat('vi-VN').format(n)
@@ -151,8 +158,10 @@ function LoginScreen({ onLogin }: { onLogin: (c: Customer) => void }) {
 
 function SIPDashboard({ customer, onLogout }: { customer: Customer; onLogout: () => void }) {
   const [deals, setDeals] = useState<Deal[]>([])
+  const [valuations, setValuations] = useState<Valuation[]>([])
   const [loading, setLoading] = useState(true)
-  const [tab, setTab] = useState<'overview' | 'history' | 'goal'>('overview')
+  const [tab, setTab] = useState<'status' | 'assets'>('status')
+  const [expandedAsset, setExpandedAsset] = useState<string | null>(null)
   const [showChangePw, setShowChangePw] = useState(false)
   const [newPw, setNewPw] = useState('')
   const [pwMsg, setPwMsg] = useState('')
@@ -161,7 +170,20 @@ function SIPDashboard({ customer, onLogout }: { customer: Customer; onLogout: ()
     setLoading(true)
     const res = await fetch(`/api/sip/deals?customerId=${customer.id}`)
     const data = await res.json()
-    setDeals(data.deals || [])
+    const userDeals = data.deals || []
+    setDeals(userDeals)
+
+    // Extract unique tickers and fetch valuations
+    const map: any = {}
+    userDeals.forEach((d: Deal) => { map[d.ticker] = true })
+    const userTickers = Object.keys(map)
+    
+    if (userTickers.length > 0) {
+      const vRes = await fetch(`/api/sip/valuations?tickers=${userTickers.join(',')}`)
+      const vData = await vRes.json()
+      setValuations(vData.valuations || [])
+    }
+    
     setLoading(false)
   }, [customer.id])
 
@@ -303,9 +325,8 @@ function SIPDashboard({ customer, onLogout }: { customer: Customer; onLogout: ()
         {/* Tab bar */}
         <div className="flex gap-2 p-1 rounded-2xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
           {[
-            { key: 'overview', label: 'Tổng quan' },
-            { key: 'history', label: 'Lịch sử' },
-            { key: 'goal', label: 'Mục tiêu' },
+            { key: 'status', label: 'Trạng Thái Tích Sản' },
+            { key: 'assets', label: 'Tài Sản Tích Sản' }
           ].map(t => (
             <button key={t.key} onClick={() => setTab(t.key as typeof tab)}
               className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${tab === t.key ? 'text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
@@ -315,26 +336,14 @@ function SIPDashboard({ customer, onLogout }: { customer: Customer; onLogout: ()
           ))}
         </div>
 
-        {/* Overview tab */}
+        {/* Status tab */}
         <AnimatePresence mode="wait">
-          {tab === 'overview' && (
-            <motion.div key="overview" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-3">
-              {/* Encouragement message */}
-              <div className="rounded-2xl p-4" style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)' }}>
-                <p className="text-sm font-bold text-emerald-300 mb-1">💬 Nhắn nhủ từ FinPeace</p>
-                {streak >= 6 ? (
-                  <p className="text-sm text-slate-300">Bạn đang trên con đường xuất sắc! <span className="text-emerald-400 font-bold">{streak} tháng</span> không gián đoạn là minh chứng cho sức mạnh kỷ luật. Thị trường lên hay xuống — bạn vẫn kiên định. Đây chính là bí quyết của những nhà đầu tư thành công.</p>
-                ) : streak >= 3 ? (
-                  <p className="text-sm text-slate-300">Mỗi tháng nộp tiền đều đặn là một bước đi vững chắc. <span className="text-emerald-400 font-bold">{streak} tháng</span> liên tiếp thể hiện bạn đang xây dựng thói quen tài chính mạnh mẽ. Hãy duy trì!</p>
-                ) : (
-                  <p className="text-sm text-slate-300">Hành trình tích sản bắt đầu từ kỳ đầu tiên. Mỗi lần giải ngân là bạn đang đầu tư vào tương lai của chính mình. Đừng để một tháng nào trôi qua mà không để lại dấu ấn trên danh mục!</p>
-                )}
-              </div>
-
-              {/* Ticker portfolio */}
+          {tab === 'status' && (
+            <motion.div key="status" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-4">
+              {/* Ticker portfolio summary */}
               {tickers.length > 0 && (
                 <div className="rounded-2xl p-4 space-y-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                  <p className="text-xs font-black uppercase tracking-wider text-slate-400">Danh Mục Cổ Phiếu</p>
+                  <p className="text-xs font-black uppercase tracking-wider text-slate-400">Danh Mục Nắm Giữ Cốt Lõi</p>
                   {tickers.map((tk, i) => {
                     const info = tickerMap[tk]
                     const pct = totalSpent > 0 ? (info.spent / totalSpent) * 100 : 0
@@ -353,7 +362,6 @@ function SIPDashboard({ customer, onLogout }: { customer: Customer; onLogout: ()
                             <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ delay: i * 0.05, duration: 0.6 }}
                               className="h-full rounded-full" style={{ background: 'linear-gradient(90deg, #10B981, #34d399)' }} />
                           </div>
-                          <p className="text-[10px] text-slate-500 mt-0.5">{pct.toFixed(0)}% tổng danh mục</p>
                         </div>
                       </div>
                     )
@@ -361,113 +369,140 @@ function SIPDashboard({ customer, onLogout }: { customer: Customer; onLogout: ()
                 </div>
               )}
 
-              {/* Monthly target info */}
-              <div className="rounded-2xl p-4 flex items-center gap-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)' }}>
-                  <Shield className="w-5 h-5 text-indigo-400" />
+              {/* Goal Progress if present */}
+              {customer.target1_name && (
+                <div className="rounded-2xl p-5" style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)' }}>
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs font-black uppercase tracking-wider text-indigo-300">Tiến Độ Mục Tiêu</p>
+                    <Target className="w-4 h-4 text-indigo-400" />
+                  </div>
+                  <p className="text-xl font-black text-white mb-1">{customer.target1_name}</p>
+                  <p className="text-2xl font-black text-indigo-300 mb-3">{fmtBig(customer.target1_value)}</p>
+                  
+                  <div className="flex justify-between text-xs mb-1.5">
+                    <span className="text-slate-400">Đã tích: {fmtBig(totalSpent)}</span>
+                    <span className="font-bold text-white">{Math.min(Math.round((totalSpent / customer.target1_value) * 100), 100)}%</span>
+                  </div>
+                  <div className="h-2.5 bg-white/10 rounded-full overflow-hidden">
+                    <motion.div initial={{ width: 0 }}
+                      animate={{ width: `${Math.min((totalSpent / customer.target1_value) * 100, 100)}%` }}
+                      transition={{ duration: 1 }}
+                      className="h-full rounded-full"
+                      style={{ background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' }} />
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs text-slate-400 mb-0.5">Cam kết giải ngân hằng tháng</p>
-                  <p className="text-xl font-black text-white">{fmtBig(customer.monthly_target)}</p>
-                  {customer.broker_company && <p className="text-xs text-slate-500 mt-0.5">Tài khoản: {customer.broker_company} · {customer.broker_account}</p>}
+              )}
+
+              {/* History block */}
+              <div className="space-y-2 mt-4">
+                <div className="flex items-center justify-between mb-2 px-1">
+                  <p className="text-xs font-black uppercase tracking-wider text-slate-400">Quá trình giải ngân</p>
+                  <button onClick={fetchDeals} className="text-slate-500 hover:text-emerald-400 transition">
+                    <RefreshCw className="w-3.5 h-3.5" />
+                  </button>
                 </div>
+                {loading && <p className="text-center text-sm text-slate-500 py-4">Đang tải...</p>}
+                {[...deals].reverse().map((d, i) => (
+                  <div key={d.id} className="rounded-2xl p-3 flex items-center gap-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs text-white flex-shrink-0"
+                      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                      {d.ticker}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-center">
+                        <p className="text-sm font-bold text-white uppercase">{d.action}</p>
+                        <p className="text-xs font-semibold text-emerald-400">{fmtBig(d.actual_amount || d.target_amount || 0)}</p>
+                      </div>
+                      <div className="flex gap-3 mt-0.5">
+                        <p className="text-[10px] text-slate-500">{new Date(d.order_date).toLocaleDateString('vi-VN')}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </motion.div>
           )}
 
-          {/* History tab */}
-          {tab === 'history' && (
-            <motion.div key="history" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-2">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-black uppercase tracking-wider text-slate-400">Lịch Sử Giải Ngân ({deals.length} lần)</p>
-                <button onClick={fetchDeals} className="text-slate-500 hover:text-emerald-400 transition">
-                  <RefreshCw className="w-3.5 h-3.5" />
-                </button>
+          {/* Assets tab (NEW!) */}
+          {tab === 'assets' && (
+            <motion.div key="assets" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-4">
+              <div className="rounded-2xl p-4" style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)' }}>
+                <p className="text-sm font-bold text-emerald-300 mb-1">🏦 Báo Cáo Định Giá Cập Nhật</p>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  FinPeace cung cấp phân tích định kỳ và Cảnh báo Max Buy Price đối với các Cổ phiếu bạn đang Tích sản. Hãy đọc kỹ trước mỗi lệnh mua hàng tháng.
+                </p>
               </div>
-              {loading && <p className="text-center text-sm text-slate-500 py-8">Đang tải...</p>}
-              {[...deals].reverse().map((d, i) => (
-                <motion.div key={d.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: Math.min(i * 0.03, 0.5) }}
-                  className="rounded-2xl p-3 flex items-center gap-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs text-emerald-400 flex-shrink-0"
-                    style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.15)' }}>
-                    {d.ticker}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-center">
-                      <p className="text-sm font-bold text-white">{d.ticker} · {d.action}</p>
-                      <p className="text-xs font-semibold text-emerald-400">{fmtBig(d.actual_amount || d.target_amount || 0)}</p>
-                    </div>
-                    <div className="flex gap-3 mt-0.5">
-                      <p className="text-[10px] text-slate-500">{new Date(d.order_date).toLocaleDateString('vi-VN')}</p>
-                      {d.actual_quantity && <p className="text-[10px] text-slate-500">{fmt(d.actual_quantity)} CP</p>}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
 
-          {/* Goal tab */}
-          {tab === 'goal' && (
-            <motion.div key="goal" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-3">
-              {customer.target1_name ? (
-                <>
-                  <div className="rounded-2xl p-5" style={{ background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)' }}>
-                    <div className="flex items-center gap-2 mb-3">
-                      <Target className="w-5 h-5 text-indigo-400" />
-                      <p className="text-xs font-black uppercase tracking-wider text-indigo-300">Mục Tiêu Chính</p>
-                    </div>
-                    <p className="text-xl font-black text-white mb-1">{customer.target1_name}</p>
-                    <p className="text-3xl font-black text-indigo-300">{fmtBig(customer.target1_value)}</p>
-                    {customer.target1_months && <p className="text-xs text-slate-500 mt-1">Lộ trình dự kiến: {customer.target1_months} tháng ({Math.round(customer.target1_months / 12)} năm)</p>}
-                  </div>
-
-                  <div className="rounded-2xl p-4 space-y-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                    <p className="text-xs font-black uppercase tracking-wider text-slate-400">Tiến Độ Vốn Gốc Tích Lũy</p>
-                    <div>
-                      <div className="flex justify-between text-xs mb-1.5">
-                        <span className="text-slate-400">Đã tích: {fmtBig(totalSpent)}</span>
-                        <span className="font-bold text-white">{Math.min(Math.round((totalSpent / customer.target1_value) * 100), 100)}%</span>
+              {tickers.map(tk => {
+                const valuation = valuations.find(v => v.stock_code === tk);
+                const isExpanded = expandedAsset === tk;
+                
+                return (
+                  <div key={tk} className="rounded-2xl overflow-hidden transition-all duration-300"
+                    style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    
+                    {/* Accordion Header */}
+                    <button onClick={() => setExpandedAsset(isExpanded ? null : tk)}
+                      className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 transition">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm text-emerald-400 shadow-lg"
+                          style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.1))', border: '1px solid rgba(16,185,129,0.3)' }}>
+                          {tk}
+                        </div>
+                        <div className="text-left">
+                          <p className="text-sm font-black text-white">{tk}</p>
+                          <p className="text-[10px] text-slate-400 uppercase tracking-wider">{valuation ? `Cập nhật ${valuation.quarter_update}` : 'Đang xử lý dữ liệu...'}</p>
+                        </div>
                       </div>
-                      <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-                        <motion.div initial={{ width: 0 }}
-                          animate={{ width: `${Math.min((totalSpent / customer.target1_value) * 100, 100)}%` }}
-                          transition={{ duration: 1.2, ease: 'easeOut' }}
-                          className="h-full rounded-full"
-                          style={{ background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' }} />
-                      </div>
-                      <p className="text-xs text-slate-500 mt-1">Còn cần: {fmtBig(Math.max(customer.target1_value - totalSpent, 0))}</p>
-                    </div>
+                      <ChevronDown className={`w-5 h-5 text-slate-500 transition-transform duration-300 ${isExpanded ? 'rotate-180 text-emerald-400' : ''}`} />
+                    </button>
 
-                    <div className="pt-2 border-t border-white/5">
-                      <p className="text-xs text-slate-400 mb-2">📈 Ước tính với lãi suất tích lũy 12%/năm</p>
-                      <p className="text-lg font-black text-emerald-300">{fmtBig(projectedValue)}</p>
-                      <p className="text-xs text-slate-500">Giá trị ước tính danh mục sau {monthsElapsed} tháng tích sản</p>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className="rounded-2xl p-8 text-center" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                  <Target className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                  <p className="text-sm text-slate-400">Chưa có mục tiêu cụ thể được thiết lập.</p>
-                  <p className="text-xs text-slate-600 mt-1">Liên hệ chuyên viên FinPeace để cập nhật mục tiêu của bạn.</p>
-                </div>
-              )}
+                    {/* Accordion Body */}
+                    <AnimatePresence>
+                      {isExpanded && valuation && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden">
+                          <div className="p-4 border-t border-white/10 space-y-4">
+                            
+                            {/* Max Buy Price Alert */}
+                            {valuation.max_buy_price && (
+                              <div className="rounded-xl p-3 flex items-start gap-3" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                                <Shield className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                                <div>
+                                  <p className="text-xs font-bold text-red-400 mb-0.5">Kỷ Luật Chặn Mua (Max Buy Price)</p>
+                                  <p className="text-sm font-black text-white">{fmt(valuation.max_buy_price)} VNĐ</p>
+                                  <p className="text-xs text-slate-400 mt-1 leading-snug">Tuyệt đối không mua mới nều thi giá vượt mốc này. (Áp dụng tiêu chuẩn MA200 + Kỳ vọng EPS {valuation.expected_growth}).</p>
+                                </div>
+                              </div>
+                            )}
 
-              {/* Dealer info */}
-              {customer.dealer_name && (
-                <div className="rounded-2xl p-4 flex items-center gap-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black text-white"
-                    style={{ background: 'linear-gradient(135deg, #10B981, #059669)' }}>
-                    {customer.dealer_name[0]}
+                            {/* CTA / Quick Outlook */}
+                            <div className="rounded-xl p-3" style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)' }}>
+                              <p className="text-xs font-black text-blue-400 mb-2 uppercase tracking-wider flex items-center gap-1.5"><BookOpen className="w-3.5 h-3.5"/> Khuyến Nghị Giao Dịch</p>
+                              <p className="text-sm text-slate-200 leading-relaxed"><span className="text-white font-bold">{valuation.cta}</span></p>
+                            </div>
+
+                            {/* Deep Markdown Analysis */}
+                            {valuation.business_outlook && (
+                              <div className="mt-4">
+                                <div className="prose prose-invert prose-emerald max-w-none text-sm
+                                  prose-headings:font-black prose-headings:mb-2 prose-headings:mt-4 
+                                  prose-h1:text-base prose-h2:text-[15px] prose-h3:text-sm prose-p:text-slate-300 prose-p:leading-relaxed prose-li:text-slate-300">
+                                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                    {valuation.business_outlook.replace(/\`💡.*?\}\`/g, '')}
+                                  </ReactMarkdown>
+                                </div>
+                              </div>
+                            )}
+                            
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
-                  <div>
-                    <p className="text-xs text-slate-400">Chuyên viên phụ trách</p>
-                    <p className="text-sm font-bold text-white">{customer.dealer_name}</p>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-600 ml-auto" />
-                </div>
-              )}
+                )
+              })}
+
             </motion.div>
           )}
         </AnimatePresence>
