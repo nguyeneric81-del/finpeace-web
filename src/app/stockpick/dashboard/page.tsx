@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LogOut, RefreshCw, LayoutGrid, BookOpen, Zap, Home } from 'lucide-react'
+import { LogOut, RefreshCw, LayoutGrid, BookOpen, Zap, Home, Lock, X } from 'lucide-react'
 import StockPickHeader from '../components/StockPickHeader'
 import DealListSection from '../components/DealListSection'
 import MarketPulse from '../components/MarketPulse'
@@ -37,6 +37,9 @@ export default function StockPickDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('home')
   const [selectedVideoIndex, setSelectedVideoIndex] = useState<number | null>(null)
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
+  const [pwdForm, setPwdForm] = useState({ newPassword: '' })
+  const [pwdLoading, setPwdLoading] = useState(false)
 
   // Auth guard
   useEffect(() => {
@@ -91,6 +94,35 @@ export default function StockPickDashboard() {
   const handleLogout = () => {
     sessionStorage.removeItem('stockpick_user')
     router.push('/stockpick/login')
+  }
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    if (pwdForm.newPassword.length < 6) {
+        alert('Mật khẩu mới phải có ít nhất 6 ký tự.');
+        return;
+    }
+    setPwdLoading(true);
+    try {
+        const res = await fetch('/api/stockpick/change-password', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ userId: user.id, newPassword: pwdForm.newPassword })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            alert('Đổi mật khẩu thành công!');
+            setIsPasswordModalOpen(false);
+            setPwdForm({newPassword: ''});
+        } else {
+            alert(data.error || 'Đổi mật khẩu thất bại.');
+        }
+    } catch(err) {
+        alert('Lỗi kết nối tới máy chủ.');
+    } finally {
+        setPwdLoading(false);
+    }
   }
 
   if (!user) {
@@ -338,6 +370,19 @@ export default function StockPickDashboard() {
                 </div>
               );
             })()}
+            {/* Password Change Modal Trigger */}
+            <button
+              onClick={() => setIsPasswordModalOpen(true)}
+              className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl transition-all"
+              style={{
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.07)',
+                color: 'rgba(255,255,255,0.8)',
+              }}
+            >
+              <Lock className="w-3.5 h-3.5" />
+              Đổi Mật Khẩu
+            </button>
 
             {/* Logout */}
             <button
