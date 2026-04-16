@@ -6,7 +6,7 @@ import { Mail, Lock, ArrowRight, Loader2, TrendingUp, Sparkles, Users, Search, R
 import { useRouter } from 'next/navigation'
 
 export default function StockPickLoginPage() {
-  const [mode, setMode] = useState<'onboarding' | 'login' | 'register' | 'forgot' | 'enable-push'>('onboarding')
+  const [mode, setMode] = useState<'onboarding' | 'login' | 'register' | 'forgot' | 'enable-push' | 'force-password-change'>('onboarding')
   const [onboardingIndex, setOnboardingIndex] = useState(0)
   const [form, setForm] = useState({ email: '', password: '', fullName: '' })
   const [loading, setLoading] = useState(false)
@@ -74,6 +74,41 @@ export default function StockPickLoginPage() {
       return
     }
 
+    // Handle Force Password Change
+    if (mode === 'force-password-change') {
+      const tempUserStr = sessionStorage.getItem('stockpick_temp_user')
+      if (!tempUserStr) {
+        setMode('login')
+        return
+      }
+      const tempUser = JSON.parse(tempUserStr)
+      
+      const res = await fetch('/api/stockpick/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: tempUser.id, newPassword: form.password }),
+      })
+      const data = await res.json()
+      setLoading(false)
+      
+      if (!res.ok) {
+        setError(data.error || 'Lỗi khi đặt lại mật khẩu')
+      } else {
+        // Successful reset, now fully log them in
+        const trueUser = { ...tempUser, requires_password_change: false }
+        sessionStorage.setItem('stockpick_user', JSON.stringify(trueUser))
+        sessionStorage.removeItem('stockpick_temp_user')
+        
+        // Push notification logic
+        if (Notification.permission === 'default' || Notification.permission === 'denied') {
+          setMode('enable-push')
+        } else {
+          router.push('/stockpick/dashboard')
+        }
+      }
+      return
+    }
+
     // Handle Login or Register
     const apiEndpoint = mode === 'login' ? '/api/stockpick/login' : '/api/stockpick/register'
     const bodyPayload = mode === 'login' 
@@ -97,6 +132,13 @@ export default function StockPickLoginPage() {
     if (!res.ok) {
       setError(data.error || (mode === 'login' ? 'Đăng nhập thất bại' : 'Đăng ký thất bại'))
     } else {
+      if (mode === 'login' && data.user.requires_password_change) {
+        sessionStorage.setItem('stockpick_temp_user', JSON.stringify(data.user))
+        setForm({ ...form, password: '' })
+        setMode('force-password-change')
+        return
+      }
+
       sessionStorage.setItem('stockpick_user', JSON.stringify(data.user))
       
       if (mode === 'register') {
@@ -297,6 +339,7 @@ export default function StockPickLoginPage() {
             {mode === 'register' && 'Tạo tài khoản mới'}
             {mode === 'forgot' && 'Khôi phục mật khẩu'}
             {mode === 'enable-push' && 'Thiết lập Thông báo!'}
+            {mode === 'force-password-change' && 'Bảo Mật Tài Khoản'}
           </h2>
 
           {error && (
@@ -364,25 +407,27 @@ export default function StockPickLoginPage() {
                   </motion.div>
                 )}
 
-                <div>
-                  <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest mb-2"
-                    style={{ color: 'rgba(255,255,255,0.35)' }}>
-                    <Mail className="w-3 h-3" /> Email
-                  </label>
-                  <input
-                    id="stockpick-email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                    value={form.email}
-                    onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                    placeholder="email@gmail.com"
-                    className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
-                  />
-                </div>
+                {mode !== 'force-password-change' && (
+                  <div>
+                    <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest mb-2"
+                      style={{ color: 'rgba(255,255,255,0.35)' }}>
+                      <Mail className="w-3 h-3" /> Email
+                    </label>
+                    <input
+                      id="stockpick-email"
+                      type="email"
+                      required
+                      autoComplete="email"
+                      value={form.email}
+                      onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                      placeholder="email@gmail.com"
+                      className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
+                      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                    />
+                  </div>
+                )}
 
-                {mode !== 'forgot' && (
+                {mode !== 'forgot' && mode !== 'force-password-change' && (
                   <div>
                     <div className="flex justify-between items-center mb-2">
                       <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest"
@@ -409,6 +454,35 @@ export default function StockPickLoginPage() {
                   </div>
                 )}
 
+                {mode === 'force-password-change' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="overflow-hidden space-y-4"
+                  >
+                    <div className="text-[13px] text-emerald-100/90 leading-relaxed bg-emerald-500/10 p-3 rounded-lg border border-emerald-500/20 mb-2">
+                      Bạn đang sử dụng mật khẩu ngẫu nhiên của hệ thống.<br/>Vui lòng <b>đặt lại mật khẩu mới dễ nhớ</b> để tiếp tục. 
+                    </div>
+                    <div>
+                      <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest mb-2"
+                        style={{ color: 'rgba(255,255,255,0.35)' }}>
+                        <Lock className="w-3 h-3" /> Mật khẩu mới
+                      </label>
+                      <input
+                        id="stockpick-new-password"
+                        type="password"
+                        required={mode === 'force-password-change'}
+                        autoComplete="new-password"
+                        value={form.password}
+                        onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                        placeholder="••••••••"
+                        className="w-full rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
+                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+
                 <motion.button
                   type="submit"
                   disabled={loading}
@@ -427,13 +501,13 @@ export default function StockPickLoginPage() {
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                   {!loading && <ArrowRight className="w-4 h-4" />}
                   
-                  {loading && (mode === 'login' ? 'Đang đăng nhập...' : mode === 'register' ? 'Đang đăng ký...' : 'Đang gửi...')}
-                  {!loading && (mode === 'login' ? 'Vào StockPicks' : mode === 'register' ? 'Tạo tài khoản' : 'Nhận pass mới')}
+                  {loading && (mode === 'login' ? 'Đang đăng nhập...' : mode === 'register' ? 'Đang đăng ký...' : mode === 'force-password-change' ? 'Đang đổi mật khẩu...' : 'Đang gửi...')}
+                  {!loading && (mode === 'login' ? 'Vào StockPicks' : mode === 'register' ? 'Tạo tài khoản' : mode === 'force-password-change' ? 'Xác nhận đổi' : 'Nhận pass mới')}
                 </motion.button>
               </form>
             )}
 
-          {mode !== 'enable-push' && (
+          {mode !== 'enable-push' && mode !== 'force-password-change' && (
             <div className="text-center mt-4">
               <button
                 onClick={() => {

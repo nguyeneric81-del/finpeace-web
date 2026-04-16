@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     // Check advisor_users table (same auth system as advisor)
     const { data: user, error } = await supabase
       .from('advisor_users')
-      .select('id, email, full_name, role, password_hash, kyc_completed, stockpick_plan, stockspick_credits')
+      .select('id, email, full_name, role, password_hash, kyc_completed, stockpick_plan, stockspick_credits, force_password_change')
       .eq('email', normalizedEmail)
       .single()
 
@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
         tier,
         credits: user.stockspick_credits || 0,
         kyc_completed: user.kyc_completed,
+        requires_password_change: user.force_password_change || false,
       }
     })
   } catch (err) {

@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     // Update the DB
     const { error: updateError } = await supabase
       .from('advisor_users')
-      .update({ password_hash: hashedPassword })
+      .update({ password_hash: hashedPassword, force_password_change: true })
       .eq('id', existingUser.id)
 
     if (updateError) {
