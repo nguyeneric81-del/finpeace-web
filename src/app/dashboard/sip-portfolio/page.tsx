@@ -28,8 +28,9 @@ export default async function SipPortfolioPage() {
     .from('sip_asset_valuations')
     .select('*')
     .in('stock_code', userStocks.length > 0 ? userStocks : ['__none__'])
-    .in('status', ['Published', 'PUBLISHED'])
+    .ilike('status', '%ublished%')
     .order('update_date', { ascending: false });
+  console.log('INSIGHTS FETCHED LENGTH:', insights?.length, 'VNM:', insights?.find(i => i.stock_code === 'VNM'));
 
   return (
     <div className="min-h-screen bg-slate-50">
