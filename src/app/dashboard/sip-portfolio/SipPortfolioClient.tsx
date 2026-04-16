@@ -59,10 +59,13 @@ export default function SipPortfolioClient({ plans, transactions, performanceDat
     }
   });
 
-  // Insights by stock
+  // Insights by stock (kept latest because it's ordered DESC)
   const insightsByStock: Record<string, any> = {};
-  insights.forEach(ins => { insightsByStock[ins.stock_code] = ins; });
-
+  insights.forEach(ins => { 
+    if (!insightsByStock[ins.stock_code]) {
+      insightsByStock[ins.stock_code] = ins; 
+    }
+  });
   if (plans.length === 0) {
     return (
       <div className="bg-white rounded-3xl p-12 text-center border border-slate-100 shadow-sm">
