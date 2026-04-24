@@ -18,6 +18,7 @@ interface Props {
   transactions: any[];
   performanceData: any[];
   insights: any[];
+  latestPrices?: Record<string, number>;
 }
 
 const fmt = (n: number) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Math.round(n));
@@ -29,7 +30,7 @@ const fmtBig = (n: number) => {
 
 const COLORS = ['#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#f43f5e'];
 
-export default function SipPortfolioClient({ plans, transactions, performanceData, insights }: Props) {
+export default function SipPortfolioClient({ plans, transactions, performanceData, insights, latestPrices }: Props) {
   const [expandedTx, setExpandedTx] = useState<string | null>(null);
 
   const uniqueStocks = [...new Set(plans.map(p => p.stock_code))];
@@ -46,20 +47,36 @@ export default function SipPortfolioClient({ plans, transactions, performanceDat
   const chartData = Object.values(groupedByMonth).sort((a: any, b: any) => a.name.localeCompare(b.name));
   const latestData: any = chartData[chartData.length - 1];
 
-  // Total invested per stock
+  // Real invested & Real Cost Basis logic
   const investedByStock: Record<string, number> = {};
+  const unitsByStock: Record<string, number> = {};
   transactions.forEach(t => {
     investedByStock[t.stock_code] = (investedByStock[t.stock_code] || 0) + Number(t.total_value || 0);
+    unitsByStock[t.stock_code] = (unitsByStock[t.stock_code] || 0) + Number(t.unit || 0);
   });
   const totalInvested = Object.values(investedByStock).reduce((s, v) => s + v, 0);
 
-  // Latest return per stock
-  const latestReturnByStock: Record<string, number> = {};
-  cleanPerf.slice().reverse().forEach(s => {
-    if (latestReturnByStock[s.stock_code] === undefined) {
-      latestReturnByStock[s.stock_code] = Number(s.sip_return_pct || 0) * 100;
-    }
+  // Real return per stock & Portfolio return
+  const realReturnByStock: Record<string, number | null> = {};
+  let totalMarketValue = 0;
+  
+  uniqueStocks.forEach(stock => {
+     const invested = investedByStock[stock] || 0;
+     const units = unitsByStock[stock] || 0;
+     const currentPrice = latestPrices?.[stock];
+     
+     if (currentPrice !== undefined && invested > 0) {
+        // API returns price in multiple of 1,000 VND (e.g. 62.7 = 62,700 VND)
+        const currentVal = units * currentPrice * 1000;
+        totalMarketValue += currentVal;
+        realReturnByStock[stock] = ((currentVal - invested) / invested) * 100;
+     } else {
+        totalMarketValue += invested; // Fallback, assume 0 change if price missing
+        realReturnByStock[stock] = null;
+     }
   });
+
+  const portfolioAvgReturn = totalInvested > 0 ? ((totalMarketValue - totalInvested) / totalInvested) * 100 : 0;
 
   // Insights by stock (kept latest because it's ordered DESC)
   const insightsByStock: Record<string, any> = {};
@@ -93,19 +110,15 @@ export default function SipPortfolioClient({ plans, transactions, performanceDat
           <p className="text-xs text-slate-400 mt-1">{transactions.length} giao dịch</p>
         </div>
         <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Avg Return</p>
-          {latestData ? (() => {
-            const vals = uniqueStocks.map(s => latestData[s]).filter(v => v !== undefined);
-            const avg = vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
-            return (
-              <>
-                <p className={`text-2xl font-black ${avg >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
-                  {avg >= 0 ? '+' : ''}{avg.toFixed(1)}%
-                </p>
-                <p className="text-xs text-slate-400 mt-1">so với vốn gốc ban đầu</p>
-              </>
-            );
-          })() : <p className="text-2xl font-black text-slate-300">—</p>}
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Return Thực tế</p>
+          {totalInvested > 0 ? (
+             <>
+               <p className={`text-2xl font-black ${portfolioAvgReturn >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                  {portfolioAvgReturn >= 0 ? '+' : ''}{portfolioAvgReturn.toFixed(2)}%
+               </p>
+               <p className="text-xs text-slate-400 mt-1">trên vốn {fmtBig(totalInvested)}</p>
+             </>
+          ) : <p className="text-2xl font-black text-slate-300">—</p>}
         </div>
       </div>
 
@@ -116,7 +129,7 @@ export default function SipPortfolioClient({ plans, transactions, performanceDat
           {uniqueStocks.map((stock, i) => {
             const txList = transactions.filter(t => t.stock_code === stock);
             const invested = investedByStock[stock] || 0;
-            const ret = latestReturnByStock[stock];
+            const ret = realReturnByStock[stock];
             const ins = insightsByStock[stock];
             const isExpanded = expandedTx === stock;
             const isDung = ins?.cta?.toLowerCase().includes('dừng');
@@ -142,7 +155,7 @@ export default function SipPortfolioClient({ plans, transactions, performanceDat
                   </div>
                   <div className="flex items-center gap-3">
                     {/* Return badge */}
-                    {ret !== undefined && (
+                    {ret !== undefined && ret !== null && (
                       <div className={`flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-xl ${ret >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'}`}>
                         {ret >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                         {ret >= 0 ? '+' : ''}{ret.toFixed(1)}%
@@ -235,7 +248,10 @@ export default function SipPortfolioClient({ plans, transactions, performanceDat
         <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
           <div className="flex items-center gap-2 mb-5">
             <BarChart3 className="w-5 h-5 text-emerald-600" />
-            <h2 className="font-bold text-slate-800">Hiệu Suất so với VN-Index</h2>
+            <div>
+              <h2 className="font-bold text-slate-800">Hành Trình Tích Sản (Minh họa Lịch sử)</h2>
+              <p className="text-[10px] font-medium text-slate-500 mt-0.5">Biểu đồ so sánh chiến lược Tích sản định kỳ hàng tháng với VN-Index</p>
+            </div>
           </div>
           <ResponsiveContainer width="100%" height={280}>
             <LineChart data={chartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
