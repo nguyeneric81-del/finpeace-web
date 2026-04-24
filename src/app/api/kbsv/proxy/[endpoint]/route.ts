@@ -22,10 +22,11 @@ const ENDPOINT_MAP: Record<string, { service: 'profile' | 'order', path: string,
   'order-match':       { service: 'profile', path: '/api/v1/order-match',         method: 'GET' },
   'cash-statement-his':{ service: 'profile', path: '/api/v1/cash-statement-his',  method: 'GET' },
   'get-account-trans': { service: 'profile', path: '/api/v1/get-account-trans',   method: 'GET' },
+  'encrypt':           { service: 'order',   path: '/api/v1/encrypt',             method: 'POST' },
+  'otp-send':          { service: 'order',   path: '/api/v1/otp/send',            method: 'POST' },
   'place-order':       { service: 'order',   path: '/api/v1/place-order',         method: 'POST' },
   'cancel-order':      { service: 'order',   path: '/api/v1/cancel-order',        method: 'POST' },
   'update-order':      { service: 'order',   path: '/api/v1/update-order',        method: 'POST' },
-  'otp-send':          { service: 'order',   path: '/api/v1/otp/send',            method: 'POST' },
 }
 
 async function refreshTokenIfNeeded(userId: string, tokenRow: Record<string, string>) {
