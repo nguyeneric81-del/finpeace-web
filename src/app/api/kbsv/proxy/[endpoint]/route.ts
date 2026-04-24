@@ -178,7 +178,7 @@ async function handleRequest(req: Request, { params }: { params: Promise<{ endpo
           return NextResponse.json({ ok: false, error: 'Encrypt step failed. KBSV /api/v1/encrypt returned no data.' }, { status: 502 })
         }
         kbsvBody = encrypted
-        kbsvContentType = 'text/plain'  // KBSV expects encrypted body as text/plain
+        kbsvContentType = 'application/json'  // KBSV JWE JSON format → send as JSON
       } else {
         // Regular JSON body (e.g., encrypt endpoint itself)
         kbsvBody = JSON.stringify(reqBody)
