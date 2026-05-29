@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { Crown, Check, ArrowRight, Zap, Bell, TrendingUp, Sparkles } from 'lucide-react'
 
 interface UpgradeCTAProps {
-  currentTier: 'FREE' | 'BRONZE'
+  currentTier: 'FREE' | 'BRONZE' | 'SILVER'
   lockedCount: number
   onUpgradeClick?: () => void
 }

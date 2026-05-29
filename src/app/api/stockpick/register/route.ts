@@ -52,8 +52,8 @@ export async function POST(req: NextRequest) {
         password_hash: hashedPassword,
         full_name: defaultName,
         role: 'customer', // Phải dùng 'customer' theo DB Schema 
-        stockpick_plan: 'free',
-        stockspick_credits: 3, // Default free credits
+        stockpick_plan: 'bronze', // New accounts start at Bronze tier
+        stockspick_credits: 0, // Bronze accounts start with 0 credits (will be granted on KBSV connection)
         agent_code: agent_code || null
       })
       .select('id, email, full_name, role, stockpick_plan, stockspick_credits, kyc_completed, agent_code')
@@ -70,8 +70,8 @@ export async function POST(req: NextRequest) {
         email: newUser.email,
         name: newUser.full_name,
         role: newUser.role,
-        tier: 'FREE',
-        credits: newUser.stockspick_credits || 3,
+        tier: 'BRONZE', // Reflect Bronze tier for new accounts
+        credits: newUser.stockspick_credits || 0,
         kyc_completed: newUser.kyc_completed || false,
       }
     })

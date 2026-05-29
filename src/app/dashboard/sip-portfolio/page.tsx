@@ -30,7 +30,22 @@ export default async function SipPortfolioPage() {
     .in('stock_code', userStocks.length > 0 ? userStocks : ['__none__'])
     .ilike('status', '%ublished%')
     .order('update_date', { ascending: false });
-  console.log('INSIGHTS FETCHED LENGTH:', insights?.length, 'VNM:', insights?.find(i => i.stock_code === 'VNM'));
+
+  // Fetch latest stock prices for accurate valuation calculation
+  const { data: stockPricesData } = await supabase
+    .from('stock_prices')
+    .select('ticker, price, date')
+    .in('ticker', userStocks.length > 0 ? userStocks : ['__none__'])
+    .order('date', { ascending: false });
+    
+  const latestPrices: Record<string, number> = {};
+  if (stockPricesData) {
+    stockPricesData.forEach(row => {
+      if (!latestPrices[row.ticker]) {
+        latestPrices[row.ticker] = row.price;
+      }
+    });
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -55,6 +70,7 @@ export default async function SipPortfolioPage() {
           transactions={transactions || []}
           performanceData={performance || []}
           insights={insights || []}
+          latestPrices={latestPrices}
         />
       </div>
     </div>

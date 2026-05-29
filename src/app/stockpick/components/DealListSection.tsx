@@ -10,7 +10,7 @@ interface DealListSectionProps {
   deals: TradingPlan[]
   totalDeals: number
   lockedCount: number
-  tier: 'FREE' | 'BRONZE'
+  tier: 'FREE' | 'BRONZE' | 'SILVER'
   user: any
   credits: number
   onUnlockSuccess: (dealId: string, newCredits: number) => void

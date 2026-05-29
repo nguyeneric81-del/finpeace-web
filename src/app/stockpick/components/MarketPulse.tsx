@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { Lock, Newspaper, TrendingUp, TrendingDown, Minus, Bell } from 'lucide-react'
 
 interface MarketPulseProps {
-  tier: 'FREE' | 'BRONZE'
+  tier: 'FREE' | 'BRONZE' | 'SILVER'
 }
 
 // Mock market pulse data - in production, pull from macro_insights table

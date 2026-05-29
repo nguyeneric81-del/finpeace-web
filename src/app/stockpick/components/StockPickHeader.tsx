@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react'
-import { TrendingUp, Bell, Crown, Zap, Radar } from 'lucide-react'
+import { TrendingUp, Bell, Crown, Zap, Radar, Shield } from 'lucide-react'
 
 interface StockPickHeaderProps {
-  user: { name: string; tier: 'FREE' | 'BRONZE'; email: string }
+  user: { name: string; tier: 'FREE' | 'BRONZE' | 'SILVER'; email: string }
   totalDeals: number
   lockedCount: number
   credits: number
@@ -24,6 +24,13 @@ const TIER_CONFIG = {
     border: 'rgba(245,158,11,0.35)',
     text: '#f59e0b',
     icon: Crown,
+  },
+  SILVER: {
+    label: 'SILVER',
+    bg: 'linear-gradient(135deg, rgba(161,161,170,0.2), rgba(113,113,122,0.15))',
+    border: 'rgba(161,161,170,0.35)',
+    text: '#d4d4d8',
+    icon: Shield,
   },
 }
 
@@ -89,8 +96,8 @@ export default function StockPickHeader({ user, totalDeals, lockedCount, credits
             {tier.label}
           </div>
 
-          {/* Credits remaining (BRONZE only) */}
-          {user.tier === 'BRONZE' && (
+          {/* Credits remaining (BRONZE & SILVER only) */}
+          {(user.tier === 'BRONZE' || user.tier === 'SILVER') && (
             <div className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold"
               style={{
                 background: 'rgba(0,209,110,0.08)',

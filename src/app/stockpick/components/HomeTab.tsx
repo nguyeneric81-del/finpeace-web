@@ -268,7 +268,7 @@ function StatsBar({ stats }: { stats: TradeStats }) {
 
 // ===== MAIN HOME TAB =====
 type Props = {
-  tier: 'FREE' | 'BRONZE'
+  tier: 'FREE' | 'BRONZE' | 'SILVER'
   onNavigateToTab?: (tab: string) => void
 }
 

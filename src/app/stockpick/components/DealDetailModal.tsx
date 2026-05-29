@@ -9,6 +9,8 @@ import {
   ChevronRight, Lightbulb, Activity, Waves, ArrowUpRight
 } from 'lucide-react'
 import { TradingPlan, normalizePrice } from './DealCard'
+import KbsvExecutionPanel from './KbsvExecutionPanel'
+
 
 interface DealDetailModalProps {
   plan: TradingPlan | null
@@ -132,6 +134,41 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
   const [mounted, setMounted] = useState(false)
   const [unlocking, setUnlocking] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
+  const [showExecutionPanel, setShowExecutionPanel] = useState(false)
+
+  const handleKillSwitch = async () => {
+    if (!plan || !user?.id) return
+    if (!confirm('Xác nhận hủy 3 lệnh điều kiện đang pending? Bạn sẽ tự quản lý vị thế này.')) return
+    
+    try {
+      // Call mock cancel endpoint via proxy for UAT
+      await fetch(`/api/kbsv/proxy/cancel-order?advisor_user_id=${user.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: 'KBSV-PENDING-ALL',
+          accountId: '0001006669'
+        })
+      })
+
+      // Reset the plan back to waiting_buy
+      const res = await fetch(`/api/admin/trading-plans/${plan.id}/action`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'cancel' })
+      })
+
+      if (res.ok) {
+        alert('Đã hủy toàn bộ lệnh tự động thành công. Vị thế do bạn tự quản lý.')
+        onClose() // Close modal to refresh list
+      } else {
+        alert('Lỗi hủy lệnh trên hệ thống.')
+      }
+    } catch (err) {
+      console.error(err)
+      alert('Lỗi kết nối.')
+    }
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -323,7 +360,21 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
               </div>
             ) : (
               <>
-                {/* 1. SIGNAL REALTIME */}
+                {showExecutionPanel ? (
+                  <div className="pt-2">
+                    <KbsvExecutionPanel
+                      plan={plan}
+                      user={user}
+                      onClose={() => setShowExecutionPanel(false)}
+                      onSuccess={(boughtPrice) => {
+                        setShowExecutionPanel(false)
+                        onClose()
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    {/* 1. SIGNAL REALTIME */}
             {signal && sigConfig && (
               <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.04 }}
                 className="rounded-2xl px-4 py-3 mb-3 flex items-start gap-3"
@@ -619,14 +670,31 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
                 btnColor = 'linear-gradient(135deg, #f59e0b, #d97706)';
               }
 
+              const isBuyAction = signal && signal.signal_type === 'entry_now' && plan.exec_status === 'waiting_buy';
+              const isLive = ['bought', 'holding', 'partial_sold'].includes(plan.exec_status || '');
+
               return (
                 <div className="fixed bottom-0 left-0 right-0 p-4 md:px-0 md:relative z-20"
                   style={{
                     background: 'linear-gradient(to top, rgba(15,25,41,1) 50%, rgba(15,25,41,0) 100%)'
                   }}>
-                  <div className="max-w-2xl mx-auto w-full">
+                  <div className="max-w-2xl mx-auto w-full space-y-2">
+                    {isLive && (
+                      <button
+                        onClick={handleKillSwitch}
+                        className="w-full py-3.5 rounded-xl font-extrabold flex items-center justify-center gap-1.5 transition-all text-rose-400 bg-rose-500/10 border border-rose-500/25 hover:bg-rose-500/20 active:scale-[0.98] shadow-lg text-xs uppercase tracking-wider"
+                      >
+                        <X className="w-4 h-4 text-rose-400 animate-pulse" />
+                        Hủy toàn bộ lệnh tự động (Kill Switch)
+                      </button>
+                    )}
                     <button
-                      className="w-full py-4 rounded-xl font-bold flex flex-col items-center justify-center transition-all shadow-[0_4px_24px_rgba(0,0,0,0.25)]"
+                      onClick={() => {
+                        if (isBuyAction) {
+                          setShowExecutionPanel(true)
+                        }
+                      }}
+                      className="w-full py-4 rounded-xl font-bold flex flex-col items-center justify-center transition-all shadow-[0_4px_24px_rgba(0,0,0,0.25)] hover:scale-[1.01] active:scale-[0.99]"
                       style={{ background: btnColor, color: 'white' }}
                     >
                       <span className="text-base tracking-wide uppercase">Hành động: {khuyenNghiAction}</span>
@@ -635,6 +703,8 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
                 </div>
               );
             })()}
+                  </>
+                )}
               </>
             )}
           </div>

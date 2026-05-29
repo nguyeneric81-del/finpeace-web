@@ -82,6 +82,18 @@ export async function PATCH(
       sold_all_at: now.toISOString(),
       exec_note: note || null,
     }
+  } else if (action === 'cancel') {
+    updatePayload = {
+      exec_status: 'waiting_buy',
+      bought_price: null,
+      bought_at: null,
+      holding_since: null,
+      sold_half_price: null,
+      sold_half_at: null,
+      sold_all_price: null,
+      sold_all_at: null,
+      exec_note: note || 'Đã hủy bộ lệnh điều kiện tự động',
+    }
   } else {
     return NextResponse.json({ error: `Action không hợp lệ: ${action}` }, { status: 400 })
   }

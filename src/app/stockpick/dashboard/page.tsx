@@ -3,13 +3,15 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LogOut, RefreshCw, LayoutGrid, BookOpen, Zap, Home, Lock, X } from 'lucide-react'
+import { LogOut, RefreshCw, LayoutGrid, BookOpen, Zap, Home, Lock, X, PieChart } from 'lucide-react'
 import StockPickHeader from '../components/StockPickHeader'
+import UpgradeSilverCTA from '../components/UpgradeSilverCTA'
 import DealListSection from '../components/DealListSection'
 import MarketPulse from '../components/MarketPulse'
 import OnboardingBanner from '../components/OnboardingBanner'
 import UpgradeCTA from '../components/UpgradeCTA'
 import HomeTab from '../components/HomeTab'
+import PortfolioTab from '../components/PortfolioTab'
 import { TradingPlan } from '../components/DealCard'
 import TikTokVideoModal from '../components/TikTokVideoModal'
 import PaymentModal from '../components/PaymentModal'
@@ -18,12 +20,12 @@ type StockPickUser = {
   id: string
   name: string
   email: string
-  tier: 'FREE' | 'BRONZE'
+  tier: 'FREE' | 'BRONZE' | 'SILVER'
   credits?: number
   role: string
 }
 
-type Tab = 'home' | 'deals' | 'learn' | 'pulse'
+type Tab = 'home' | 'deals' | 'learn' | 'pulse' | 'portfolio'
 
 export default function StockPickDashboard() {
   const router = useRouter()
@@ -60,7 +62,7 @@ export default function StockPickDashboard() {
   }, [router])
 
   // Fetch deals
-  const fetchDeals = useCallback(async (tier: 'FREE' | 'BRONZE', userId: string) => {
+  const fetchDeals = useCallback(async (tier: 'FREE' | 'BRONZE' | 'SILVER', userId: string) => {
     try {
       const timestamp = new Date().getTime()
       const res = await fetch(`/api/stockpick/deals?tier=${tier}&userId=${userId}&ts=${timestamp}`, { cache: 'no-store' })
@@ -135,6 +137,7 @@ export default function StockPickDashboard() {
 
   const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
     { id: 'home', label: 'Trang chủ', icon: Home },
+    { id: 'portfolio', label: 'Danh mục', icon: PieChart },
     { id: 'deals', label: 'Deals', icon: LayoutGrid },
     { id: 'learn', label: 'Học', icon: BookOpen },
     { id: 'pulse', label: 'Pulse', icon: Zap },
@@ -158,6 +161,17 @@ export default function StockPickDashboard() {
         credits={credits}
       />
 
+      {/* Upgrade to Silver CTA for Bronze users */}
+      {user.tier === 'BRONZE' && (
+        <UpgradeSilverCTA
+          user={user}
+          onUpgradeSuccess={(updatedUser) => {
+            sessionStorage.setItem('stockpick_user', JSON.stringify(updatedUser))
+            setUser(updatedUser)
+          }}
+        />
+      )}
+
       {/* Tab bar */}
       <div className="sticky top-[72px] z-30 px-4"
         style={{
@@ -169,8 +183,8 @@ export default function StockPickDashboard() {
           {TABS.map(tab => {
             const Icon = tab.icon
             const isActive = activeTab === tab.id
-            // Lock pulse tab for FREE
-            const isLocked = tab.id === 'pulse' && user.tier === 'FREE'
+            // Lock pulse tab for FREE, and portfolio tab for non-SILVER
+            const isLocked = (tab.id === 'pulse' && user.tier === 'FREE') || (tab.id === 'portfolio' && user.tier !== 'SILVER')
             return (
               <button
                 key={tab.id}
@@ -227,6 +241,19 @@ export default function StockPickDashboard() {
                 tier={user.tier}
                 onNavigateToTab={(tab) => setActiveTab(tab as Tab)}
               />
+            </motion.div>
+          )}
+
+          {/* PORTFOLIO TAB */}
+          {activeTab === 'portfolio' && (
+            <motion.div
+              key="portfolio"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              transition={{ duration: 0.25 }}
+            >
+              <PortfolioTab userId={user.id} />
             </motion.div>
           )}
 

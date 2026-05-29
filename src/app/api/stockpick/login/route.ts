@@ -41,9 +41,10 @@ export async function POST(req: NextRequest) {
     }
 
     // Determine tier based on stockpick_plan column
-    // bronze/silver/gold → BRONZE, default free → FREE
     const plan = user.stockpick_plan || 'free'
-    const tier: 'FREE' | 'BRONZE' = plan === 'free' ? 'FREE' : 'BRONZE'
+    let tier: 'FREE' | 'BRONZE' | 'SILVER' = 'FREE'
+    if (plan === 'silver') tier = 'SILVER'
+    else if (plan === 'bronze') tier = 'BRONZE'
 
     return NextResponse.json({
       user: {
