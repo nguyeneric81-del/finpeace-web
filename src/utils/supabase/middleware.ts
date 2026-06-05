@@ -16,7 +16,7 @@ async function verifyAdvisorToken(token: string): Promise<{ role: string } | nul
 }
 
 // Roles cho phép truy cập Zone 2 (Trading) — advisor subdomain
-const TRADING_ROLES = ['admin', 'agent', 'customer_trading', 'customer_trading_kb']
+const TRADING_ROLES = ['admin', 'agent', 'customer', 'customer_trading', 'customer_trading_kb']
 
 // Routes trong advisor không yêu cầu auth (public)
 const ADVISOR_PUBLIC_PATHS = [
