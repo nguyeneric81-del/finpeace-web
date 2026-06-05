@@ -11,6 +11,16 @@ export interface SalesAgentConfig {
 }
 
 export const SALES_CONFIG: Record<string, SalesAgentConfig> = {
+  nlinh07: {
+    name: 'Trần Nhật Linh (2006)',
+    email: 'tr.nhlinh.2006@gmail.com',
+    agentCode: 'nlinh07',
+  },
+  nlinh08: {
+    name: 'Trần Nhật Linh (Study)',
+    email: 'trannhatlinh.forstudy@gmail.com',
+    agentCode: 'nlinh08',
+  },
   joice06: {
     name: 'Joice Lê',
     email: 'info@finpeace.vn', // Email For Joice
