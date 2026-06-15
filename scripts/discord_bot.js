@@ -60,6 +60,8 @@ client.on('messageCreate', async (message) => {
   let commandType = null
   let ticker = ''
   let kbQuery = ''
+  let tickerA = ''
+  let tickerB = ''
 
   if (lowerText.startsWith('!fa ') || lowerText.startsWith('!coban ')) {
     commandType = 'FA'
@@ -70,6 +72,11 @@ client.on('messageCreate', async (message) => {
   } else if (lowerText.startsWith('!kb ')) {
     commandType = 'KB'
     kbQuery = text.substring(4).trim()
+  } else if (lowerText.startsWith('!ss ') || lowerText.startsWith('!sosanh ')) {
+    commandType = 'SS'
+    const parts = text.split(/\s+/)
+    tickerA = parts[1]?.trim().toUpperCase()
+    tickerB = parts[2]?.trim().toUpperCase()
   }
 
   if (commandType) {
@@ -131,6 +138,40 @@ client.on('messageCreate', async (message) => {
       } catch (err) {
         console.error('KB API Error:', err)
         await thinkingMsg.edit('❌ Gặp sự cố đường truyền về trung tâm dữ liệu Local. Vui lòng check lại Cloudflare Tunnel.')
+      }
+      return
+    }
+
+    if (commandType === 'SS') {
+      if (!tickerA || !tickerB) {
+        return message.reply('Vui lòng nhập 2 mã cổ phiếu để so sánh. VD: `!ss HPG HSG`')
+      }
+
+      const thinkingMsg = await message.reply('⏳ **Bot đang phân tích và so sánh 2 mã cổ phiếu...**')
+
+      try {
+        const { exec } = require('child_process')
+        const path = require('path')
+        const scriptPath = path.resolve(__dirname, 'compare_tickers.py')
+        
+        exec(`python3 "${scriptPath}" ${tickerA} ${tickerB}`, (error, stdout, stderr) => {
+          if (error) {
+            console.error('Compare Error:', error, stderr)
+            return thinkingMsg.edit('❌ Gặp sự cố khi chạy phân tích so sánh kỹ thuật.')
+          }
+          
+          if (stdout.trim().startsWith('{') && stdout.includes('"error"')) {
+            try {
+              const errObj = JSON.parse(stdout)
+              return thinkingMsg.edit(`❌ ${errObj.error}`)
+            } catch (e) {}
+          }
+          
+          thinkingMsg.edit(stdout || 'Không có kết quả trả về.')
+        })
+      } catch (err) {
+        console.error('Compare Spawning Error:', err)
+        await thinkingMsg.edit('❌ Không thể kích hoạt module so sánh kỹ thuật.')
       }
       return
     }
