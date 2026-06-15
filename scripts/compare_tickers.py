@@ -139,14 +139,41 @@ def main():
     output.append(f"⚔️ **SO SÁNH KỸ THUẬT: {res_a['ticker']} vs {res_b['ticker']}**")
     output.append(f"*(Cập nhật giá đóng cửa gần nhất)*\n")
     
-    # Table comparison
-    output.append(f"| Chỉ số | **{res_a['ticker']}** | **{res_b['ticker']}** |")
-    output.append(f"| :--- | :---: | :---: |")
-    output.append(f"| **Giá hiện tại** | {res_a['close']:,.0f} | {res_b['close']:,.0f} |")
-    output.append(f"| **RSI (14 ngày)** | {res_a['RSI_14']:.1f} | {res_b['RSI_14']:.1f} |")
-    output.append(f"| **Stochastic %K / %D** | {res_a['Stoch_K']:.1f} / {res_a['Stoch_D']:.1f} | {res_b['Stoch_K']:.1f} / {res_b['Stoch_D']:.1f} |")
-    output.append(f"| **Động lượng MACD** | {'Tăng' if res_a['MACD_Hist'] > 0 else 'Giảm'} | {'Tăng' if res_b['MACD_Hist'] > 0 else 'Giảm'} |")
-    output.append(f"| **SMA200 Kháng cự** | {'Dưới SMA200' if res_a['close'] < res_a['MA200'] else 'Trên SMA200'} | {'Dưới SMA200' if res_b['close'] < res_b['MA200'] else 'Trên SMA200'} |\n")
+    # Table comparison (Monospace for perfect alignment in Discord)
+    col1_w = 17
+    col2_w = 13
+    col3_w = 13
+    
+    header = f"{res_a['ticker']}".center(col2_w)
+    header_b = f"{res_b['ticker']}".center(col3_w)
+    
+    table_lines = []
+    table_lines.append(f"```text")
+    table_lines.append(f"{' Chỉ số'.ljust(col1_w)}|{header}|{header_b}")
+    table_lines.append(f"{'-'*col1_w}+{'-'*col2_w}+{'-'*col3_w}")
+    
+    val_close_a = f"{res_a['close']:,.0f}"
+    val_close_b = f"{res_b['close']:,.0f}"
+    table_lines.append(f"{' Giá hiện tại'.ljust(col1_w)}| {val_close_a.ljust(col2_w-1)}| {val_close_b.ljust(col3_w-1)}")
+    
+    val_rsi_a = f"{res_a['RSI_14']:.1f}"
+    val_rsi_b = f"{res_b['RSI_14']:.1f}"
+    table_lines.append(f"{' RSI (14 ngày)'.ljust(col1_w)}| {val_rsi_a.ljust(col2_w-1)}| {val_rsi_b.ljust(col3_w-1)}")
+    
+    val_stoch_a = f"{res_a['Stoch_K']:.1f}/{res_a['Stoch_D']:.1f}"
+    val_stoch_b = f"{res_b['Stoch_K']:.1f}/{res_b['Stoch_D']:.1f}"
+    table_lines.append(f"{' Stoch %K / %D'.ljust(col1_w)}| {val_stoch_a.ljust(col2_w-1)}| {val_stoch_b.ljust(col3_w-1)}")
+    
+    val_macd_a = 'Tăng' if res_a['MACD_Hist'] > 0 else 'Giảm'
+    val_macd_b = 'Tăng' if res_b['MACD_Hist'] > 0 else 'Giảm'
+    table_lines.append(f"{' Động lượng MACD'.ljust(col1_w)}| {val_macd_a.ljust(col2_w-1)}| {val_macd_b.ljust(col3_w-1)}")
+    
+    val_sma_a = 'Dưới SMA200' if res_a['close'] < res_a['MA200'] else 'Trên SMA200'
+    val_sma_b = 'Dưới SMA200' if res_b['close'] < res_b['MA200'] else 'Trên SMA200'
+    table_lines.append(f"{' SMA200 Kháng cự'.ljust(col1_w)}| {val_sma_a.ljust(col2_w-1)}| {val_sma_b.ljust(col3_w-1)}")
+    table_lines.append(f"```\n")
+    
+    output.extend(table_lines)
     
     output.append(f"📊 **Trend Matrix Scoring (0-5)**")
     output.append(f"- **{res_a['ticker']}**: Xu hướng `{res_a['trend_score']}/5` | Dao động `{res_a['sideway_score']}/5` -> **{res_a['evaluation']}**")
