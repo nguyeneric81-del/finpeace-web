@@ -43,6 +43,7 @@ client.on('messageCreate', async (message) => {
     'hỏi-đáp', 'hỏi-đáp-học-viên',
     'hỗ-trợ-dịch-vụ', 'hỗ-trợ-dùng-app',
     'kênh-loãng-hỏi-bot-thoải-mái',
+    'tra-cứu-trading-plan',
   ]
   const parentCategory = message.channel.parent
   const channelName = message.channel.name || ''
