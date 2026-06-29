@@ -1,5 +1,5 @@
 // scripts/discord_bot.js
-const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js')
+const { Client, GatewayIntentBits, EmbedBuilder, ChannelType, Partials } = require('discord.js')
 const { createClient } = require('@supabase/supabase-js')
 const crypto = require('crypto')
 require('dotenv').config({ path: '.env.local' })
@@ -7,6 +7,7 @@ require('dotenv').config({ path: '.env.local' })
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
+const BOT_MODE = process.env.BOT_MODE || 'StockPicks' // 'StockPicks' or 'LionInvest'
 
 if (!DISCORD_BOT_TOKEN || !SUPABASE_URL || !SUPABASE_KEY) {
   console.error('Missing environment variables. Make sure .env.local is configured.')
@@ -21,38 +22,107 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.GuildMembers, // Required to check roles
   ],
+  partials: [
+    Partials.Channel
+  ]
 })
 
 client.once('ready', () => {
-  console.log(`✅ FinPeace Bot đã sẵn sàng as ${client.user.tag}`)
+  console.log(`✅ FinPeace Bot [Mode: ${BOT_MODE}] đã sẵn sàng as ${client.user.tag}`)
 })
-
-// ─── Allowed category name (Discord category = channel group) ───────────────
-const ALLOWED_CATEGORY_NAME = 'StockPicks'
 
 client.on('messageCreate', async (message) => {
   // Ignore bots
   if (message.author.bot) return
 
-  // ✅ Only respond inside the StockPicks category
-  // StockPicks channel names visible in Discord sidebar
-  const STOCKPICKS_CHANNELS = [
-    'thông-báo', 'watchlist-đầu-cơ', 'watchlist-cơ-bản',
-    'quality-stocks-ptcb', 'câu-chuyện-thị-trường',
-    'hỏi-đáp', 'hỏi-đáp-học-viên',
-    'hỗ-trợ-dịch-vụ', 'hỗ-trợ-dùng-app',
-    'kênh-loãng-hỏi-bot-thoải-mái',
-    'tra-cứu-trading-plan',
-  ]
+  const isDM = message.channel.type === ChannelType.DM
   const parentCategory = message.channel.parent
   const channelName = message.channel.name || ''
-  console.log(`[DEBUG] ch="${channelName}" cat="${parentCategory?.name}" msg="${message.content.substring(0,40)}"`)
+  
+  console.log(`[DEBUG][${BOT_MODE}] ch="${channelName}" cat="${parentCategory?.name}" msg="${message.content.substring(0,40)}" DM=${isDM}`)
 
-  const inStockPicksByCategory = parentCategory && parentCategory.name === ALLOWED_CATEGORY_NAME
-  const inStockPicksByChannelName = STOCKPICKS_CHANNELS.some(ch => channelName.includes(ch))
+  // 1. Channel/Category Filter depending on Bot Mode and Authorization
+  let isAuthorized = false
+  let isManagerOrAdmin = false
+  const memberRoleName = BOT_MODE === 'LionInvest' ? 'LionInvest Member' : 'TigerInvest Member'
 
-  if (!inStockPicksByCategory && !inStockPicksByChannelName) return
+  if (BOT_MODE === 'LionInvest' || BOT_MODE === 'TigerInvest') {
+    // Both bots only listen in DM or their respective Category
+    const inAllowedCategory = parentCategory && parentCategory.name.includes(BOT_MODE)
+    if (!isDM && !inAllowedCategory) return
+
+    // Check roles/permissions
+    if (isDM) {
+      // Loop through all guilds to find one where the member is authorized or is admin/manager
+      const guilds = client.guilds.cache
+      for (const [guildId, guild] of guilds) {
+        try {
+          const tempMember = await guild.members.fetch(message.author.id)
+          if (tempMember) {
+            const roles = tempMember.roles.cache.map(role => role.name)
+            const hasAdminPermission = tempMember.permissions.has('Administrator') || tempMember.permissions.has('ManageGuild')
+            
+            let tempIsManagerOrAdmin = false
+            let tempIsAuthorized = false
+            if (BOT_MODE === 'LionInvest') {
+              tempIsManagerOrAdmin = hasAdminPermission || roles.includes('Admin') || roles.includes('KB MG') || roles.includes('KB BR') || roles.includes('KB Admin')
+              tempIsAuthorized = tempIsManagerOrAdmin || roles.includes('LionInvest Member') || roles.includes('KB Member')
+            } else {
+              tempIsManagerOrAdmin = hasAdminPermission || roles.includes('Admin') || roles.includes('KIS MG') || roles.includes('KIS BR') || roles.includes('KIS Admin')
+              tempIsAuthorized = tempIsManagerOrAdmin || roles.includes('TigerInvest Member') || roles.includes('KIS Member') || roles.includes('KIS TigerInvest')
+            }
+
+            if (tempIsAuthorized) {
+              isAuthorized = true
+              isManagerOrAdmin = tempIsManagerOrAdmin
+              break
+            }
+          }
+        } catch (e) {
+          // Ignore
+        }
+      }
+    } else {
+      // Public channel in category
+      const member = message.member
+      if (member) {
+        const roles = member.roles.cache.map(role => role.name)
+        const hasAdminPermission = member.permissions.has('Administrator') || member.permissions.has('ManageGuild')
+        
+        if (BOT_MODE === 'LionInvest') {
+          isManagerOrAdmin = hasAdminPermission || roles.includes('Admin') || roles.includes('KB MG') || roles.includes('KB BR') || roles.includes('KB Admin')
+          isAuthorized = isManagerOrAdmin || roles.includes('LionInvest Member') || roles.includes('KB Member')
+        } else {
+          isManagerOrAdmin = hasAdminPermission || roles.includes('Admin') || roles.includes('KIS MG') || roles.includes('KIS BR') || roles.includes('KIS Admin')
+          isAuthorized = isManagerOrAdmin || roles.includes('TigerInvest Member') || roles.includes('KIS Member') || roles.includes('KIS TigerInvest')
+        }
+      }
+    }
+
+    if (!isAuthorized) {
+      return message.reply(`❌ **Thông báo phân quyền:**\nTính năng tra cứu tự động này chỉ dành riêng cho các thành viên chính thức thuộc nhóm **${BOT_MODE}** (đã được phê duyệt).\n\nNếu anh/chị đã đăng ký tham gia ${BOT_MODE}, vui lòng liên hệ Ban quản trị để được cấp quyền (\`${memberRoleName}\`) truy cập bot.`)
+    }
+  } else {
+    // StockPicks bot logic
+    const STOCKPICKS_CHANNELS = [
+      'thông-báo', 'watchlist-đầu-cơ', 'watchlist-cơ-bản',
+      'quality-stocks-ptcb', 'câu-chuyện-thị-trường',
+      'hỏi-đáp', 'hỏi-đáp-học-viên',
+      'hỗ-trợ-dịch-vụ', 'hỗ-trợ-dùng-app',
+      'kênh-loãng-hỏi-bot-thoải-mái',
+      'tra-cứu-trading-plan',
+    ]
+    const inAllowedCategory = parentCategory && parentCategory.name.includes('StockPicks')
+    const inAllowedChannelName = STOCKPICKS_CHANNELS.some(ch => channelName.includes(ch))
+    
+    // Explicitly ignore any messages coming from LionInvest or TigerInvest categories for StockPicks bot
+    const inOtherBotCategory = parentCategory && (parentCategory.name.includes('LionInvest') || parentCategory.name.includes('TigerInvest'))
+    
+    if (!isDM && (inOtherBotCategory || (!inAllowedCategory && !inAllowedChannelName))) return
+  }
 
   const text = message.content.trim()
   const lowerText = text.toLowerCase()
@@ -80,6 +150,66 @@ client.on('messageCreate', async (message) => {
   }
 
   if (commandType) {
+    // Redirect check for LionInvest / TigerInvest regular members
+    if ((BOT_MODE === 'LionInvest' || BOT_MODE === 'TigerInvest') && !isDM && !isManagerOrAdmin) {
+      return message.reply('Khách vui lòng chat riêng với trợ lý (DM) để tra cứu các kế hoạch giao dịch của mã mà mình quan tâm.')
+    }
+    // ---- QUOTA CHECK START ----
+    let quotaRecord = null;
+    try {
+      const discordId = message.author.id;
+      let { data: existingQuota, error: quotaErr } = await supabase
+        .from('user_quotas')
+        .select('*')
+        .eq('discord_id', discordId)
+        .maybeSingle();
+
+      if (quotaErr) {
+        console.error('Lỗi khi lấy quota:', quotaErr);
+      }
+
+      if (!existingQuota) {
+        console.log(`Người dùng mới phát hiện. Khởi tạo quota 30 lượt cho Discord ID: ${discordId}`);
+        const { data: newRecord, error: createErr } = await supabase
+          .from('user_quotas')
+          .insert({ discord_id: discordId, quota_limit: 30, quota_used: 0 })
+          .select()
+          .single();
+
+        if (createErr) {
+          console.error('Lỗi tạo quota mới:', createErr);
+        } else {
+          existingQuota = newRecord;
+        }
+      }
+
+      if (existingQuota) {
+        if (existingQuota.quota_used >= existingQuota.quota_limit) {
+          return message.reply(`❌ **Thông báo Hạn mức Yêu cầu:**\nBạn đã sử dụng hết hạn mức dùng thử miễn phí (**${existingQuota.quota_limit}/${existingQuota.quota_limit} lượt**).\n\nĐể nâng cấp gói cước Premium hoặc nhận thêm lượt hỗ trợ, anh/chị vui lòng đăng ký trực tiếp tại website [finpeace.vn](https://finpeace.vn) hoặc liên hệ với chuyên viên **Trinhanhthu0504 (FinPeace_Anh Thu)** trên Discord để được hỗ trợ tức thì!`);
+        }
+
+        // Tăng số lượt sử dụng
+        const { error: updateErr } = await supabase
+          .from('user_quotas')
+          .update({ quota_used: existingQuota.quota_used + 1 })
+          .eq('id', existingQuota.id);
+
+        if (updateErr) {
+          console.error('Lỗi khi cập nhật quota_used:', updateErr);
+        } else {
+          existingQuota.quota_used += 1;
+        }
+        quotaRecord = existingQuota;
+      }
+    } catch (err) {
+      console.error('Quota system error:', err);
+    }
+    // ---- QUOTA CHECK END ----
+
+    const footerText = quotaRecord
+      ? `FinPeace · Hiểu đúng — Đầu tư đúng | Số lượt còn lại: ${quotaRecord.quota_limit - quotaRecord.quota_used}/${quotaRecord.quota_limit}`
+      : 'FinPeace · Hiểu đúng — Đầu tư đúng';
+
     if (commandType === 'KB') {
       if (!kbQuery) return message.reply('Vui lòng nhập câu hỏi sau lệnh `!kb`. VD: `!kb Mẫu hình VCP là gì?`')
       
@@ -215,6 +345,20 @@ client.on('messageCreate', async (message) => {
           'FPT': { slug: 'phan-tich-doanh-nghiep/vvia-tech-fpt-2026', title: 'Đánh giá FPT', summary: 'Kịch bản AI bào mòn Outsourcing nhân công giá rẻ và góc nhìn đà phanh gấp.' },
           'HPG': { slug: 'phan-tich-doanh-nghiep/vvia-steel-hpg-2026', title: 'Đánh giá HPG', summary: 'Xác định chu kỳ Phục hồi và Cạm bẫy lợi nhuận từ siêu dự án Dung Quất 2.' },
           'SSI': { slug: 'phan-tich-doanh-nghiep/vvia-securities-ssi-2026', title: 'Đánh giá SSI', summary: 'Ông trùm Chứng khoán với game tăng vốn kinh điển và sự thật về mảng tự doanh.' },
+          'VND': { slug: 'phan-tich-doanh-nghiep/vvia-securities-vnd-2026', title: 'Đánh giá VND', summary: 'Hệ sinh thái khách hàng cá nhân khổng lồ và áp lực rủi ro từ trái phiếu Trung Nam.' },
+          'VCI': { slug: 'phan-tich-doanh-nghiep/vvia-securities-vci-2026', title: 'Đánh giá VCI', summary: 'Bậc thầy về nghiệp vụ ngân hàng đầu tư (IB) và danh mục tự doanh chất lượng cao.' },
+          'HCM': { slug: 'phan-tich-doanh-nghiep/vvia-securities-hcm-2026', title: 'Đánh giá HCM', summary: 'Thế mạnh mảng môi giới tổ chức và nền tảng tài chính an toàn hàng đầu.' },
+          'SHS': { slug: 'phan-tich-doanh-nghiep/vvia-securities-shs-2026', title: 'Đánh giá SHS', summary: 'Khẩu vị rủi ro cao với danh mục tự doanh đồ sộ chiếm tỷ trọng lớn.' },
+          'MBS': { slug: 'phan-tich-doanh-nghiep/vvia-securities-mbs-2026', title: 'Đánh giá MBS', summary: 'Hưởng lợi từ hệ sinh thái MBB và động lực tăng vốn mở rộng thị phần.' },
+          'VIX': { slug: 'phan-tich-doanh-nghiep/vvia-securities-vix-2026', title: 'Đánh giá VIX', summary: 'Cổ phiếu chứng khoán mang đậm tính đầu cơ với lợi nhuận phụ thuộc mạnh vào tự doanh.' },
+          'FTS': { slug: 'phan-tich-doanh-nghiep/vvia-securities-fts-2026', title: 'Đánh giá FTS', summary: 'Tập trung mảng môi giới số và hiệu quả sinh lời trên vốn (ROE) vượt trội.' },
+          'BSI': { slug: 'phan-tich-doanh-nghiep/vvia-securities-bsi-2026', title: 'Đánh giá BSI', summary: 'Sức mạnh cộng hưởng từ cổ đông chiến lược Hana Securities và game tăng vốn.' },
+          'CTS': { slug: 'phan-tich-doanh-nghiep/vvia-securities-cts-2026', title: 'Đánh giá CTS', summary: 'Danh mục tự doanh nhạy bén và bệ phóng từ ngân hàng mẹ VietinBank.' },
+          'AGR': { slug: 'phan-tich-doanh-nghiep/vvia-securities-agr-2026', title: 'Đánh giá AGR', summary: 'Lợi thế mạng lưới nông thôn rộng lớn từ Agribank và nỗ lực tái cơ cấu mảng môi giới.' },
+          'MWG': { slug: 'phan-tich-doanh-nghiep/vvia-retail-mwg-2026', title: 'Đánh giá MWG', summary: 'Đế chế bán lẻ Thế Giới Di Động và công cuộc tái cấu trúc Bách Hóa Xanh vượt ngục.' },
+          'FRT': { slug: 'phan-tich-doanh-nghiep/vvia-retail-frt-2026', title: 'Đánh giá FRT', summary: 'Động lực tăng trưởng bứt phá từ chuỗi nhà thuốc Long Châu và sự bão hòa mảng ICT.' },
+          'PNJ': { slug: 'phan-tich-doanh-nghiep/vvia-retail-pnj-2026', title: 'Đánh giá PNJ', summary: 'Vua trang sức bán lẻ và quyền lực định giá không thể thách thức.' },
+          'DGW': { slug: 'phan-tich-doanh-nghiep/vvia-retail-dgw-2026', title: 'Đánh giá DGW', summary: 'Nhà phân phối sỉ ICT tối ưu vòng quay tồn kho siêu việt.' },
           'VHM': { slug: 'phan-tich-doanh-nghiep/vvia-re-vhm-2026', title: 'Đánh giá VHM', summary: 'Vị vua BĐS sỉ lẻ và gánh nặng dòng tiền nuôi VinFast.' },
           'NVL': { slug: 'phan-tich-doanh-nghiep/vvia-re-nvl-2026', title: 'Đánh giá NVL', summary: 'Quả bom nợ trái phiếu và nút thắt pháp lý của hệ thống đòn bẩy tỷ đô.' },
           'DIG': { slug: 'phan-tich-doanh-nghiep/vvia-re-dig-2026', title: 'Đánh giá DIG', summary: 'Kỳ vọng quỹ đất khổng lồ vs hiện thực đếm cua trong lỗ của phe đầu cơ.' },
@@ -247,7 +391,7 @@ client.on('messageCreate', async (message) => {
               .setAuthor({ name: `Phân tích Cơ bản (FA) | ${ticker}` })
               .setTitle(`${arti.title}`)
               .setDescription(`${arti.summary}\n\n👉 **Xem chi tiết bản X-Ray và Stress Test:** [Đọc bài viết tại Knowledgebase](https://finpeace.cloud/knowledgebase/${arti.slug})`)
-              .setTimestamp().setFooter({ text: 'FinPeace · Hiểu đúng — Đầu tư đúng', iconURL: 'https://finpeace.cloud/logo.png' })
+              .setTimestamp().setFooter({ text: footerText, iconURL: 'https://finpeace.cloud/logo.png' })
             await message.reply({ embeds: [embedKb] });
             return;
           }
@@ -305,7 +449,7 @@ client.on('messageCreate', async (message) => {
         }
         
         if (chunks.length === 1) {
-          embed1.setTimestamp().setFooter({ text: 'FinPeace · Hiểu đúng — Đầu tư đúng', iconURL: 'https://finpeace.cloud/logo.png' })
+          embed1.setTimestamp().setFooter({ text: footerText, iconURL: 'https://finpeace.cloud/logo.png' })
         }
         
         await message.reply({ embeds: [embed1] })
@@ -318,7 +462,7 @@ client.on('messageCreate', async (message) => {
             .setDescription(chunks[i] + (isLastChunk ? extraLinkDesc : ''))
           
           if (isLastChunk) {
-             followUpEmbed.setTimestamp().setFooter({ text: 'FinPeace · Hiểu đúng — Đầu tư đúng', iconURL: 'https://finpeace.cloud/logo.png' })
+             followUpEmbed.setTimestamp().setFooter({ text: footerText, iconURL: 'https://finpeace.cloud/logo.png' })
           }
           await message.channel.send({ embeds: [followUpEmbed] })
         }
@@ -326,7 +470,7 @@ client.on('messageCreate', async (message) => {
       } else {
         const embed = new EmbedBuilder()
           .setTimestamp()
-          .setFooter({ text: 'FinPeace · Hiểu đúng — Đầu tư đúng', iconURL: 'https://finpeace.cloud/logo.png' })
+          .setFooter({ text: footerText, iconURL: 'https://finpeace.cloud/logo.png' })
 
         // Build TA Embed using `trading_plans` table
         const { data: tpData, error: tpError } = await supabase
