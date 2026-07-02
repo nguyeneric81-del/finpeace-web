@@ -332,6 +332,17 @@ export default function TestOrdersPage() {
     }
   }
 
+  // Regenerate a new requestId in the custom payload JSON
+  const refreshRequestId = () => {
+    try {
+      const parsed = JSON.parse(customPayload)
+      parsed.requestId = 'req_loc_' + Math.random().toString(36).substring(2, 12)
+      setCustomPayload(JSON.stringify(parsed, null, 2))
+    } catch {
+      alert('Không thể cập nhật requestId do JSON không hợp lệ')
+    }
+  }
+
   // Cancel Selected Conditional Orders
   const cancelSelectedOrders = async () => {
     if (!user || !selectedAccountId || selectedActiveIds.length === 0) return
@@ -849,9 +860,18 @@ export default function TestOrdersPage() {
                       onChange={(e) => setCustomPayload(e.target.value)}
                       className="w-full bg-slate-950/80 border border-emerald-500/30 p-3 rounded-2xl text-[10px] font-mono text-emerald-400 h-[220px] focus:outline-none focus:ring-1 focus:ring-emerald-500 leading-relaxed"
                     />
-                    <span className="text-[9px] text-slate-400 block leading-normal">
-                      💡 **Tip:** Bạn có thể thêm trường `"channel": "K"` hoặc các giá trị khác trực tiếp vào từng lệnh con trong mảng `"orders"` để test phản hồi từ KBSV.
-                    </span>
+                    <div className="flex justify-between items-center bg-slate-950/40 p-2 rounded-xl border border-white/[0.04]">
+                      <button 
+                        onClick={refreshRequestId}
+                        className="text-[10px] font-bold text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1 cursor-pointer"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        Tạo mới requestId
+                      </button>
+                      <span className="text-[9px] text-slate-400">
+                        💡 Bạn có thể thêm trường `"channel": "K"` để test.
+                      </span>
+                    </div>
                   </div>
                 ) : (
                   <pre className="bg-slate-950/80 border border-white/[0.04] p-3 rounded-2xl text-[10px] font-mono text-emerald-400 overflow-x-auto max-h-[220px] leading-relaxed">
