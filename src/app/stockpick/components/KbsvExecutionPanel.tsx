@@ -778,6 +778,13 @@ export default function KbsvExecutionPanel({ plan, user, onClose, onSuccess }: K
                     )}
                   </div>
 
+                  {errorMsg && (
+                    <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/20 rounded-xl p-3 text-xs text-red-400">
+                      <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                      <span className="font-semibold leading-relaxed">{errorMsg}</span>
+                    </div>
+                  )}
+
                   <button
                     onClick={submitOrderBatch}
                     disabled={loading || otpCode.length < 4}
