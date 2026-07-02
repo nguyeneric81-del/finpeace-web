@@ -143,7 +143,7 @@ export default function PortfolioTab({ userId }: PortfolioTabProps) {
         <p className="text-white/60 text-sm mb-6">{error}</p>
         {error.includes('KBSV account not connected') || error.includes('token expired') ? (
           <button 
-            onClick={() => router.push('/api/kbsv/auth')}
+            onClick={() => router.push(`/api/kbsv/auth?advisor_user_id=${userId}&source=stockpick`)}
             className="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-black font-semibold rounded-xl transition-all"
           >
             Kết nối lại KBSV

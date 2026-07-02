@@ -47,8 +47,10 @@ export async function GET(req: Request) {
       )
     }
 
-    // Generate CSRF state token: base64(userId:timestamp:random)
-    const csrfRaw = `${advisorUserId}:${Date.now()}:${Math.random().toString(36).slice(2)}`
+    const source = searchParams.get('source') || 'advisor'
+
+    // Generate CSRF state token: base64(userId:timestamp:random:source)
+    const csrfRaw = `${advisorUserId}:${Date.now()}:${Math.random().toString(36).slice(2)}:${source}`
     const state = Buffer.from(csrfRaw).toString('base64url')
 
     // Store state temporarily in DB (expires 10 minutes)

@@ -32,17 +32,28 @@ export async function GET(req: Request) {
   const state = searchParams.get('state')
   const error = searchParams.get('error')
 
+  // Decode state to get the redirect source
+  let source = 'advisor'
+  if (state) {
+    try {
+      const decoded = Buffer.from(state, 'base64url').toString('utf8')
+      const parts = decoded.split(':')
+      if (parts[3]) source = parts[3]
+    } catch {}
+  }
+  const dashboardPath = source === 'stockpick' ? '/stockpick/dashboard' : '/advisor/dashboard'
+
   // Handle KBSV error redirect (ví dụ KH nhấn Cancel)
   if (error) {
     console.warn('[kbsv/callback] KBSV returned error:', error)
     return NextResponse.redirect(
-      `${APP_URL}/advisor/dashboard?kbsv=cancelled&reason=${encodeURIComponent(error)}`
+      `${APP_URL}${dashboardPath}?kbsv=cancelled&reason=${encodeURIComponent(error)}`
     )
   }
 
   if (!code || !state) {
     return NextResponse.redirect(
-      `${APP_URL}/advisor/dashboard?kbsv=error&reason=missing_params`
+      `${APP_URL}${dashboardPath}?kbsv=error&reason=missing_params`
     )
   }
 
@@ -57,7 +68,7 @@ export async function GET(req: Request) {
     if (stateError || !stateRecord) {
       console.error('[kbsv/callback] Invalid or expired state:', state)
       return NextResponse.redirect(
-        `${APP_URL}/advisor/dashboard?kbsv=error&reason=invalid_state`
+        `${APP_URL}${dashboardPath}?kbsv=error&reason=invalid_state`
       )
     }
 
@@ -66,7 +77,7 @@ export async function GET(req: Request) {
       // Cleanup
       await supabase.from('kbsv_oauth_states').delete().eq('state', state)
       return NextResponse.redirect(
-        `${APP_URL}/advisor/dashboard?kbsv=error&reason=state_expired`
+        `${APP_URL}${dashboardPath}?kbsv=error&reason=state_expired`
       )
     }
 
@@ -92,7 +103,7 @@ export async function GET(req: Request) {
       const errBody = await tokenRes.text()
       console.error('[kbsv/callback] Token exchange failed:', errBody)
       return NextResponse.redirect(
-        `${APP_URL}/advisor/dashboard?kbsv=error&reason=token_exchange_failed`
+        `${APP_URL}${dashboardPath}?kbsv=error&reason=token_exchange_failed`
       )
     }
 
@@ -133,7 +144,7 @@ export async function GET(req: Request) {
     if (upsertError) {
       console.error('[kbsv/callback] Failed to store tokens:', upsertError)
       return NextResponse.redirect(
-        `${APP_URL}/advisor/dashboard?kbsv=error&reason=storage_failed`
+        `${APP_URL}${dashboardPath}?kbsv=error&reason=storage_failed`
       )
     }
 
@@ -157,12 +168,12 @@ export async function GET(req: Request) {
 
     // 5. Redirect về dashboard với success flag
     return NextResponse.redirect(
-      `${APP_URL}/advisor/dashboard?kbsv=connected`
+      `${APP_URL}${dashboardPath}?kbsv=connected`
     )
   } catch (err) {
     console.error('[kbsv/callback] Unexpected error:', err)
     return NextResponse.redirect(
-      `${APP_URL}/advisor/dashboard?kbsv=error&reason=internal_error`
+      `${APP_URL}${dashboardPath}?kbsv=error&reason=internal_error`
     )
   }
 }
