@@ -708,6 +708,14 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
                         Hủy toàn bộ lệnh tự động (Kill Switch)
                       </button>
                     )}
+                    {plan.exec_status === 'waiting_buy' && (
+                      <button
+                        onClick={() => setShowExecutionPanel(true)}
+                        className="w-full py-3 rounded-xl font-bold flex items-center justify-center gap-1.5 transition-all text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 hover:bg-emerald-500/20 active:scale-[0.98] shadow-lg text-xs uppercase tracking-wider"
+                      >
+                        [Test UAT] Mở bảng đặt lệnh điều kiện KBSV
+                      </button>
+                    )}
                     <button
                       onClick={() => {
                         if (isBuyAction) {
