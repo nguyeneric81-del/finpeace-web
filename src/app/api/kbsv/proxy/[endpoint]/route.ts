@@ -41,24 +41,27 @@ const ENDPOINT_MAP: Record<string, { service: 'profile' | 'order' | 'cond-order'
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 
-function makeKbsvHeaders(token: string, clientIp: string, contentType = 'application/json'): HeadersInit {
-  return {
+function makeKbsvHeaders(token: string, clientIp: string, contentType = 'application/json', via?: string): HeadersInit {
+  const headers: any = {
     'Content-Type': contentType,
     'Authorization': `Bearer ${token}`,
     'x-device': KBSV_DEVICE_ID,
     'x-devicetype': 'UDID',
     'x-client-id': clientIp,
     'x-lang': 'vi',
-    'x-via': '6',
   }
+  if (via) {
+    headers['x-via'] = via
+  }
+  return headers
 }
 
 /** Call KBSV /api/v1/encrypt — returns raw encrypted string/object */
-async function kbsvEncrypt(token: string, plaintext: object, clientIp: string, service: string = 'order'): Promise<string | null> {
+async function kbsvEncrypt(token: string, plaintext: object, clientIp: string, service: string = 'order', via?: string): Promise<string | null> {
   const encryptUrl = `${KBSV_API_URL}/${service}/api/v1/encrypt`
   const resp = await fetch(encryptUrl, {
     method: 'POST',
-    headers: makeKbsvHeaders(token, clientIp),
+    headers: makeKbsvHeaders(token, clientIp, 'application/json', via),
     body: JSON.stringify(plaintext),
   })
 
@@ -143,9 +146,14 @@ async function handleRequest(req: Request, { params }: { params: Promise<{ endpo
   }
 
   try {
-    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0].trim()
+    const testIp = req.headers.get('x-test-ip')
+    const testVia = req.headers.get('x-test-via')
+
+    const clientIp = testIp || req.headers.get('x-forwarded-for')?.split(',')[0].trim()
       || req.headers.get('x-real-ip')
       || '1.1.1.1'
+
+    const viaHeader = testVia === 'remove' ? undefined : (testVia || '6')
 
     // Load token
     const { data: tokenRow, error: tokenError } = await supabase
@@ -183,7 +191,7 @@ async function handleRequest(req: Request, { params }: { params: Promise<{ endpo
       if (ENCRYPTED_ENDPOINTS.has(endpoint)) {
         // Auto-encrypt via KBSV helper (UAT) before sending
         console.log(`[kbsv/proxy] Auto-encrypting body for ${endpoint}`)
-        const encrypted = await kbsvEncrypt(accessToken, reqBody, clientIp, endpointConfig.service)
+        const encrypted = await kbsvEncrypt(accessToken, reqBody, clientIp, endpointConfig.service, viaHeader)
         if (!encrypted) {
           return NextResponse.json({ ok: false, error: 'Encrypt step failed. KBSV /api/v1/encrypt returned no data.' }, { status: 502 })
         }
@@ -199,7 +207,7 @@ async function handleRequest(req: Request, { params }: { params: Promise<{ endpo
     console.log(`[kbsv/proxy] ${endpointConfig.method} ${kbsvUrl}`)
     const kbsvResp = await fetch(kbsvUrl, {
       method:  endpointConfig.method,
-      headers: makeKbsvHeaders(accessToken, clientIp, kbsvContentType),
+      headers: makeKbsvHeaders(accessToken, clientIp, kbsvContentType, viaHeader),
       body:    kbsvBody,
     })
 
