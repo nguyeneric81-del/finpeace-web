@@ -1,56 +1,47 @@
 {
-  "FPT": {
-    "ticker": "FPT",
-    "overview": {
-      "pe": 17.5,
-      "pb": 4.5,
-      "roe": 26.8,
-      "roa": 11.2,
-      "roic": 20.5,
-      "currentRatio": 1.25,
-      "debtEquity": 0.50,
-      "marketCap": 165000,
-      "dividendYield": 2.0
-    },
-    "recent_quarters": [
-      {"quarter": "Năm 2025 (Audited)", "netIncome": 9369, "grossMargin": 0.38, "cfo": 10500, "revenue": 70112},
-      {"quarter": "Năm 2024", "netIncome": 7794, "grossMargin": 0.38, "cfo": 9200, "revenue": 62850}
-    ]
+  "SSI": {
+    "error": "name 'financial_ratio' is not defined"
+  },
+  "TLG": {
+    "error": "name 'financial_ratio' is not defined"
+  },
+  "VNM": {
+    "error": "name 'financial_ratio' is not defined"
   },
   "HPG": {
-    "ticker": "HPG",
-    "overview": {
-      "pe": 12.71,
-      "pb": 1.64,
-      "roe": 12.69,
-      "roa": 6.41,
-      "roic": 11.5,
-      "currentRatio": 1.45,
-      "debtEquity": 0.65,
-      "marketCap": 216831,
-      "dividendYield": 3.0
-    },
-    "recent_quarters": [
-      {"quarter": "Năm 2025 (Audited)", "netIncome": 15515, "grossMargin": 0.16, "cfo": 14000, "revenue": 158332},
-      {"quarter": "Năm 2024", "netIncome": 6800, "grossMargin": 0.11, "cfo": 8000, "revenue": 120000}
-    ]
+    "error": "name 'financial_ratio' is not defined"
   },
-  "SSI": {
-    "ticker": "SSI",
-    "overview": {
-      "pe": 14.2,
-      "pb": 2.1,
-      "roe": 15.5,
-      "roa": 5.2,
-      "roic": 12.0,
-      "currentRatio": 1.15,
-      "debtEquity": 1.25,
-      "marketCap": 55000,
-      "dividendYield": 2.5
-    },
-    "recent_quarters": [
-      {"quarter": "Năm 2025 (Audited)", "netIncome": 3850, "grossMargin": 0.45, "cfo": 2500, "revenue": 12500},
-      {"quarter": "Năm 2024", "netIncome": 2848, "grossMargin": 0.42, "cfo": 1600, "revenue": 9500}
-    ]
+  "BCM": {
+    "error": "name 'financial_ratio' is not defined"
+  },
+  "FOX": {
+    "error": "name 'financial_ratio' is not defined"
+  },
+  "FPT": {
+    "error": "name 'financial_ratio' is not defined"
+  },
+  "GAS": {
+    "error": "name 'financial_ratio' is not defined"
+  },
+  "IMP": {
+    "error": "name 'financial_ratio' is not defined"
+  },
+  "MBB": {
+    "error": "name 'financial_ratio' is not defined"
+  },
+  "MIG": {
+    "error": "name 'financial_ratio' is not defined"
+  },
+  "NLG": {
+    "error": "name 'financial_ratio' is not defined"
+  },
+  "PNJ": {
+    "error": "name 'financial_ratio' is not defined"
+  },
+  "TPB": {
+    "error": "name 'financial_ratio' is not defined"
+  },
+  "VPB": {
+    "error": "name 'financial_ratio' is not defined"
   }
 }

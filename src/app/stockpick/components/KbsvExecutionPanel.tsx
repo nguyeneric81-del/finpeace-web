@@ -213,76 +213,127 @@ export default function KbsvExecutionPanel({ plan, user, onClose, onSuccess }: K
     setOrderProgress('submitting')
 
     try {
-      // 1. Submit Mua SEO Order
-      const buyOrderBody = {
-        otpType: 'core-email-otp',
-        transactionId: transactionId,
-        otp: otpCode,
-        requestId: Math.random().toString(36).substring(2, 15),
-        symbol: plan.ticker,
-        qty: buyQty,
-        side: 'buy',
-        accountId: selectedAccountId,
-        type: 'limit',
-        limitPrice: parsedPrices.entryAvg
-      }
+      const selectedAccount = accounts.find(acc => (acc.id || acc.accountId) === selectedAccountId)
+      const accountNumber = selectedAccount?.accountdesc || selectedAccount?.id || selectedAccountId
 
-      console.log('[KbsvExecution] Placing buy order:', buyOrderBody)
-      const buyRes = await fetch(`/api/kbsv/proxy/place-order?advisor_user_id=${user.id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(buyOrderBody)
-      })
-      const buyData = await buyRes.json()
+      if (useConditional) {
+        // Build the conditional orders array
+        const orders: any[] = [
+          // 1. Buy Stop Entry Order (SEO)
+          {
+            refId: "buy_" + Math.random().toString(36).substring(2, 9),
+            condOrderType: "SEO",
+            accountId: selectedAccountId,
+            accountNumber: accountNumber,
+            symbol: plan.ticker,
+            execType: "B",
+            volume: buyQty,
+            orderPrice: parsedPrices.entryAvg,
+            activeType: "ONE",
+            priceMarketCond: "MATCHING_PRICE",
+            orderSubType: "LO",
+            expireDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+          },
+          // 2. Stop Loss Order (STO)
+          {
+            refId: "sl_" + Math.random().toString(36).substring(2, 9),
+            condOrderType: "STO",
+            accountId: selectedAccountId,
+            accountNumber: accountNumber,
+            symbol: plan.ticker,
+            execType: "S",
+            volume: slQty,
+            orderPrice: parsedPrices.stopLoss,
+            activePrice: parsedPrices.stopLoss,
+            activeType: "ONE",
+            activeCond: "LTE",
+            orderSubType: "LO",
+            expireDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+          },
+          // 3. Take Profit 1 Order (STO)
+          {
+            refId: "tp1_" + Math.random().toString(36).substring(2, 9),
+            condOrderType: "STO",
+            accountId: selectedAccountId,
+            accountNumber: accountNumber,
+            symbol: plan.ticker,
+            execType: "S",
+            volume: tp1Qty,
+            orderPrice: parsedPrices.takeProfit,
+            activePrice: parsedPrices.takeProfit,
+            activeType: "ONE",
+            activeCond: "GTE",
+            orderSubType: "LO",
+            expireDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+          }
+        ]
 
-      if (!buyRes.ok || !buyData.ok) {
-        throw new Error(buyData.kbsv_em || buyData.error || 'Lỗi đặt lệnh Mua. Vui lòng kiểm tra lại OTP.')
-      }
+        // 4. Take Profit 2 Trailing Order
+        if (tp2Qty > 0) {
+          orders.push({
+            refId: "tp2_" + Math.random().toString(36).substring(2, 9),
+            condOrderType: "TRAILING",
+            accountId: selectedAccountId,
+            accountNumber: accountNumber,
+            symbol: plan.ticker,
+            execType: "S",
+            volume: tp2Qty,
+            trailingAmount: 1500, // 1500 VND trailing gap
+            priceStep: 1000,      // 1000 VND price step
+            activePrice: parsedPrices.takeProfit,
+            activeType: "ONE",
+            orderSubType: "LO",
+            expireDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+          })
+        }
 
-      // Simulate placing remaining conditional orders (SL, TP1, TP2) as Bracket Orders
-      // Call mock or sequential requests
-      const simulatePlace = async (body: any) => {
-        await fetch(`/api/kbsv/proxy/place-order?advisor_user_id=${user.id}`, {
+        const reqId = Math.random().toString(36).substring(2, 15)
+        const batchBody = {
+          requestId: reqId,
+          otpType: 'core-email-otp',
+          transactionId: transactionId,
+          otp: otpCode,
+          orders: orders
+        }
+
+        console.log('[KbsvExecution] Placing batch conditional orders:', batchBody)
+        const batchRes = await fetch(`/api/kbsv/proxy/place-batch-order?advisor_user_id=${user.id}&requestId=${reqId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...body,
-            otpType: 'core-email-otp',
-            transactionId: transactionId,
-            otp: otpCode,
-            requestId: Math.random().toString(36).substring(2, 15),
-            accountId: selectedAccountId
-          })
+          body: JSON.stringify(batchBody)
         })
-      }
+        const batchData = await batchRes.json()
 
-      // 2. Submit SL Order
-      await simulatePlace({
-        symbol: plan.ticker,
-        qty: slQty,
-        side: 'sell',
-        type: 'limit',
-        limitPrice: parsedPrices.stopLoss
-      })
+        if (!batchRes.ok || !batchData.ok) {
+          throw new Error(batchData.kbsv_em || batchData.error || 'Lỗi đặt lô lệnh điều kiện. Vui lòng kiểm tra lại OTP.')
+        }
 
-      // 3. Submit TP1 Order
-      await simulatePlace({
-        symbol: plan.ticker,
-        qty: tp1Qty,
-        side: 'sell',
-        type: 'limit',
-        limitPrice: parsedPrices.takeProfit
-      })
-
-      // 4. Submit TP2 (Trailing) Order
-      if (tp2Qty > 0) {
-        await simulatePlace({
+      } else {
+        // Place standard Buy Limit Order only
+        const buyOrderBody = {
+          otpType: 'core-email-otp',
+          transactionId: transactionId,
+          otp: otpCode,
+          requestId: Math.random().toString(36).substring(2, 15),
           symbol: plan.ticker,
-          qty: tp2Qty,
-          side: 'sell',
+          qty: buyQty,
+          side: 'buy',
+          accountId: selectedAccountId,
           type: 'limit',
-          limitPrice: parsedPrices.takeProfit
+          limitPrice: parsedPrices.entryAvg
+        }
+
+        console.log('[KbsvExecution] Placing single buy order:', buyOrderBody)
+        const buyRes = await fetch(`/api/kbsv/proxy/place-order?advisor_user_id=${user.id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(buyOrderBody)
         })
+        const buyData = await buyRes.json()
+
+        if (!buyRes.ok || !buyData.ok) {
+          throw new Error(buyData.kbsv_em || buyData.error || 'Lỗi đặt lệnh Mua. Vui lòng kiểm tra lại OTP.')
+        }
       }
 
       // Update database status of the plan using `/api/admin/trading-plans/[id]/action`
@@ -292,7 +343,9 @@ export default function KbsvExecutionPanel({ plan, user, onClose, onSuccess }: K
         body: JSON.stringify({
           action: 'buy',
           price: parsedPrices.entryAvg,
-          note: 'Đặt bộ 4 lệnh điều kiện thành công qua kết nối KBSV UAT'
+          note: useConditional 
+            ? 'Đặt bộ 4 lệnh điều kiện thành công qua kết nối KBSV UAT'
+            : 'Đặt lệnh Mua thường thành công qua kết nối KBSV UAT'
         })
       })
 

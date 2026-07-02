@@ -22,10 +22,17 @@ async function main() {
   log(`📅 Thời gian chạy: ${new Date().toISOString()}`);
 
   try {
-    log('📡 Bước 1/1: Cào báo cáo Vĩ mô từ VietStock...');
+    log('📡 Bước 1/2: Cào báo cáo Vĩ mô từ VietStock...');
     // Load & run crawler inline (reuse the same logic)
     const crawlerPath = path.join(__dirname, 'vietstock_reports_crawler.js');
     require(crawlerPath);
+    
+    log('📊 Bước 2/2: Đồng bộ chỉ số vĩ mô từ GSO/NSO (GDP, CPI, IIP)...');
+    const pythonPath = path.join(__dirname, '../price_venv/bin/python3');
+    const syncScriptPath = path.join(__dirname, 'sync_gso_macro.py');
+    const stdout = execSync(`"${pythonPath}" "${syncScriptPath}"`, { encoding: 'utf-8' });
+    log(`Kết quả đồng bộ GSO:\n${stdout}`);
+    
     log('✅ Pipeline hoàn tất thành công!');
   } catch (err) {
     log(`❌ Lỗi pipeline: ${err.message}`);

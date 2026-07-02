@@ -1,0 +1,44 @@
+[13:45:22 18/6/2026] 🚀 ===== BẮT ĐẦU MACRO PIPELINE =====
+[13:45:22 18/6/2026] 📅 Thời gian chạy: 2026-06-18T06:45:22.511Z
+[13:45:22 18/6/2026] 📡 Bước 1/2: Cào báo cáo Vĩ mô từ VietStock...
+[13:45:22 18/6/2026] 📊 Bước 2/2: Đồng bộ chỉ số vĩ mô từ GSO/NSO (GDP, CPI, IIP)...
+[13:46:45 18/6/2026] Kết quả đồng bộ GSO:
+Connecting to Supabase...
+=== Seeding Metadata (Categories & Indicators) ===
+  [.] Category exists: Tài khoản quốc gia (GDP)
+  [.] Category exists: Chỉ số giá và lạm phát
+  [.] Category exists: Sản xuất công nghiệp
+  [+] Updated indicator: Tổng sản phẩm quốc nội (GDP thực tế)
+  [+] Updated indicator: Chỉ số giá tiêu dùng (CPI)
+  [+] Updated indicator: Chỉ số sản xuất công nghiệp (IIP)
+
+--- Processing indicator: NGDP_R_PA_XDC ---
+Downloading Excel from GSO: http://nsdp.nso.gov.vn/GSO-chung/Tu%E1%BA%A5n%20Anh/excel%20chung/GDP_VNM.xlsx ...
+  [!] Direct GSO Excel download failed: ConnectTimeout - HTTPConnectionPool(host='nsdp.nso.gov.vn', port=80): Max retries exceeded with url: /GSO-chung/Tu%E1%BA%A5n%20Anh/excel%20chung/GDP_VNM.xlsx (Caused by ConnectTimeoutError(<HTTPConnection(host='nsdp.nso.gov.vn', port=80) at 0x10e306900>, 'Connection to nsdp.nso.gov.vn timed out. (connect timeout=10)'))
+Fallback: Downloading GSO archive database from https://github.com/thanhqtran/gso-macro-monitor/releases/download/v1.2.0/all_data_gso_20250606.json.zip...
+  Successfully parsed 61 points from GSO archive.
+=== Upserting macro data for NGDP_R_PA_XDC ===
+  Processed 61 data points chronologically.
+  [+] Done. Successfully upserted 61/61 points.
+
+--- Processing indicator: PCPI_IX ---
+Downloading Excel from GSO: http://nsdp.nso.gov.vn/GSO-chung/Tu%E1%BA%A5n%20Anh/excel%20chung/CPI_VNM.xlsx ...
+  [!] Direct GSO Excel download failed: ConnectTimeout - HTTPConnectionPool(host='nsdp.nso.gov.vn', port=80): Max retries exceeded with url: /GSO-chung/Tu%E1%BA%A5n%20Anh/excel%20chung/CPI_VNM.xlsx (Caused by ConnectTimeoutError(<HTTPConnection(host='nsdp.nso.gov.vn', port=80) at 0x10e633890>, 'Connection to nsdp.nso.gov.vn timed out. (connect timeout=10)'))
+  Successfully parsed 56 points from GSO archive.
+=== Upserting macro data for PCPI_IX ===
+  Processed 56 data points chronologically.
+  [+] Done. Successfully upserted 56/56 points.
+
+--- Processing indicator: AIP_ISIC4_IX ---
+Downloading Excel from GSO: http://nsdp.nso.gov.vn/GSO-chung/Tu%E1%BA%A5n%20Anh/excel%20chung/IIP_VNM.xlsx ...
+  [!] Direct GSO Excel download failed: ConnectTimeout - HTTPConnectionPool(host='nsdp.nso.gov.vn', port=80): Max retries exceeded with url: /GSO-chung/Tu%E1%BA%A5n%20Anh/excel%20chung/IIP_VNM.xlsx (Caused by ConnectTimeoutError(<HTTPConnection(host='nsdp.nso.gov.vn', port=80) at 0x10ee18690>, 'Connection to nsdp.nso.gov.vn timed out. (connect timeout=10)'))
+  Successfully parsed 99 points from GSO archive.
+=== Upserting macro data for AIP_ISIC4_IX ===
+  Processed 99 data points chronologically.
+  [+] Done. Successfully upserted 99/99 points.
+
+=== Macro Sync Pipeline Completed Successfully ===
+
+[13:46:45 18/6/2026] ✅ Pipeline hoàn tất thành công!
+[13:46:45 18/6/2026] 🏁 ===== KẾT THÚC MACRO PIPELINE =====
+

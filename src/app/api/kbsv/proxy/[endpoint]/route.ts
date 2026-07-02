@@ -13,9 +13,9 @@ const KBSV_CLIENT_SECRET = process.env.KBSV_CLIENT_SECRET ?? ''
 const KBSV_DEVICE_ID  = process.env.KBSV_DEVICE_ID  ?? 'FINPEACE-SERVER-0001'
 
 // Endpoints that require JWE-encrypted body (auto-encrypted by proxy)
-const ENCRYPTED_ENDPOINTS = new Set(['otp-send', 'place-order', 'cancel-order', 'update-order'])
+const ENCRYPTED_ENDPOINTS = new Set(['otp-send', 'place-order', 'cancel-order', 'update-order', 'place-batch-order', 'cancel-batch-order'])
 
-const ENDPOINT_MAP: Record<string, { service: 'profile' | 'order', path: string, method: 'GET' | 'POST' }> = {
+const ENDPOINT_MAP: Record<string, { service: 'profile' | 'order' | 'cond-order', path: string, method: 'GET' | 'POST' }> = {
   // Read-only (profile service)
   'accounts':           { service: 'profile', path: '/api/v1/accounts',           method: 'GET'  },
   'portfolio':          { service: 'profile', path: '/api/v1/portfolio',           method: 'GET'  },
@@ -25,13 +25,18 @@ const ENDPOINT_MAP: Record<string, { service: 'profile' | 'order', path: string,
   'order-match':        { service: 'profile', path: '/api/v1/order-match',         method: 'GET'  },
   'cash-statement-his': { service: 'profile', path: '/api/v1/cash-statement-his',  method: 'GET'  },
   'get-account-trans':  { service: 'profile', path: '/api/v1/get-account-trans',   method: 'GET'  },
+  // Conditional Orders (LĐK)
+  'cond-orders':        { service: 'profile', path: '/api/v1/cond-order/orders',     method: 'GET'  },
+  'cond-order-his':     { service: 'profile', path: '/api/v1/cond-order/order-his',  method: 'GET'  },
   // Encrypt helper (order service, UAT only)
   'encrypt':            { service: 'order',   path: '/api/v1/encrypt',             method: 'POST' },
-  // Mutations (order service, auto-encrypted by proxy)
+  // Mutations (order service/cond-order service, auto-encrypted by proxy)
   'otp-send':           { service: 'order',   path: '/api/v1/otp/send',            method: 'POST' },
   'place-order':        { service: 'order',   path: '/api/v1/place-order',         method: 'POST' },
   'cancel-order':       { service: 'order',   path: '/api/v1/cancel-order',        method: 'POST' },
   'update-order':       { service: 'order',   path: '/api/v1/update-order',        method: 'POST' },
+  'place-batch-order':  { service: 'cond-order', path: '/api/v1/cond-order/place-batch-order',   method: 'POST' },
+  'cancel-batch-order': { service: 'cond-order', path: '/api/v1/cond-order/cancel-batch-order',  method: 'POST' },
 }
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
@@ -48,8 +53,8 @@ function makeKbsvHeaders(token: string, contentType = 'application/json'): Heade
 }
 
 /** Call KBSV /api/v1/encrypt — returns raw encrypted string/object */
-async function kbsvEncrypt(token: string, plaintext: object): Promise<string | null> {
-  const encryptUrl = `${KBSV_API_URL}/order/api/v1/encrypt`
+async function kbsvEncrypt(token: string, plaintext: object, service: string = 'order'): Promise<string | null> {
+  const encryptUrl = `${KBSV_API_URL}/${service}/api/v1/encrypt`
   const resp = await fetch(encryptUrl, {
     method: 'POST',
     headers: makeKbsvHeaders(token),
@@ -160,7 +165,7 @@ async function handleRequest(req: Request, { params }: { params: Promise<{ endpo
     // Forward query params (exclude advisor_user_id)
     const forwardParams = new URLSearchParams()
     url.searchParams.forEach((v, k) => { if (k !== 'advisor_user_id') forwardParams.append(k, v) })
-    if (endpointConfig.method === 'GET' && forwardParams.toString()) {
+    if (forwardParams.toString()) {
       kbsvUrl += `?${forwardParams.toString()}`
     }
 
@@ -173,7 +178,7 @@ async function handleRequest(req: Request, { params }: { params: Promise<{ endpo
       if (ENCRYPTED_ENDPOINTS.has(endpoint)) {
         // Auto-encrypt via KBSV helper (UAT) before sending
         console.log(`[kbsv/proxy] Auto-encrypting body for ${endpoint}`)
-        const encrypted = await kbsvEncrypt(accessToken, reqBody)
+        const encrypted = await kbsvEncrypt(accessToken, reqBody, endpointConfig.service)
         if (!encrypted) {
           return NextResponse.json({ ok: false, error: 'Encrypt step failed. KBSV /api/v1/encrypt returned no data.' }, { status: 502 })
         }

@@ -1,9 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const http = require('http');
-
-const cookieString = process.env.VIETSTOCK_COOKIE || '';
-const verifyToken = 'fplFqxr90mfAUfdO2LRKpsHLODIB6bqbiOtcdfI8MD2VA9Pq0K57y55twIc4GrruxeC-UpCeVzh-zONnaLIppf_lWSbgD_UdPtjHyq5YyYr1mamSsy_dLYfczZaMLnIo7Bj6y6Tf345mB4Wp-0t2GA2';
 
 const THREE_MONTHS_MS = 90 * 24 * 60 * 60 * 1000;
 const now = Date.now();
@@ -11,7 +7,8 @@ const now = Date.now();
 async function downloadFile(url, dest) {
     return new Promise((resolve, reject) => {
         const file = fs.createWriteStream(dest);
-        http.get(url, (response) => {
+        const protocol = url.startsWith('https') ? require('https') : require('http');
+        protocol.get(url, (response) => {
             response.pipe(file);
             file.on('finish', () => {
                 file.close();
@@ -27,6 +24,34 @@ async function downloadFile(url, dest) {
 
 async function crawlReports() {
     console.log("🚀 Bắt đầu quét Báo cáo Vĩ mô & Ngành (3 tháng gần đây)...");
+    
+    // ── Get dynamic cookies and verification token ──
+    console.log("📡 Đang lấy cookie và token xác thực từ VietStock...");
+    let cookieHeader = "";
+    let token = "";
+    try {
+        const res = await fetch("https://finance.vietstock.vn/");
+        const html = await res.text();
+        const cookies = res.headers.getSetCookie();
+        
+        let aspSession = "";
+        let requestTokenCookie = "";
+        for (const c of cookies) {
+            if (c.includes("ASP.NET_SessionId")) aspSession = c.split(";")[0];
+            if (c.includes("__RequestVerificationToken")) requestTokenCookie = c.split(";")[0];
+        }
+        
+        const match = html.match(/name="?__RequestVerificationToken"?\s+type="?hidden"?\s+value="?([A-Za-z0-9_-]+)"?/i);
+        if (!match) throw new Error("Không tìm thấy token trong HTML");
+        
+        token = match[1];
+        cookieHeader = `${aspSession}; ${requestTokenCookie}; language=vi-VN`;
+        console.log("✅ Lấy cookie và token thành công!");
+    } catch (e) {
+        console.error("❌ Lỗi lấy cookie và token:", e.message);
+        return;
+    }
+
     const outDir = path.join(__dirname, '../../finpeace-reports');
     if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
@@ -41,13 +66,13 @@ async function crawlReports() {
                 'type': '2',
                 'page': page.toString(),
                 'pageSize': '20',
-                '__RequestVerificationToken': verifyToken
+                '__RequestVerificationToken': token
             });
 
             const apiRes = await fetch("https://finance.vietstock.vn/Data/GetEDocumentPage", {
                 method: "POST",
                 headers: {
-                    "Cookie": cookieString,
+                    "Cookie": cookieHeader,
                     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
                     "X-Requested-With": "XMLHttpRequest",
                     "User-Agent": "Mozilla/5.0"

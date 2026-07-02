@@ -83,6 +83,20 @@ import { vviaBankSgb2026 as vviaBankSgb } from './phan-tich-doanh-nghiep/vvia-ba
 import { content as vviaTechFpt } from './phan-tich-doanh-nghiep/vvia-tech-fpt-2026'
 import { vviaSteelHpg2026 as vviaSteelHpg } from './phan-tich-doanh-nghiep/vvia-steel-hpg-2026'
 import { vviaSecuritiesSsi2026 as vviaSecuritiesSsi } from './phan-tich-doanh-nghiep/vvia-securities-ssi-2026'
+import { content as vviaSecuritiesVnd } from './phan-tich-doanh-nghiep/vvia-securities-vnd-2026'
+import { content as vviaSecuritiesVci } from './phan-tich-doanh-nghiep/vvia-securities-vci-2026'
+import { content as vviaSecuritiesHcm } from './phan-tich-doanh-nghiep/vvia-securities-hcm-2026'
+import { content as vviaSecuritiesShs } from './phan-tich-doanh-nghiep/vvia-securities-shs-2026'
+import { content as vviaSecuritiesMbs } from './phan-tich-doanh-nghiep/vvia-securities-mbs-2026'
+import { content as vviaSecuritiesVix } from './phan-tich-doanh-nghiep/vvia-securities-vix-2026'
+import { content as vviaSecuritiesFts } from './phan-tich-doanh-nghiep/vvia-securities-fts-2026'
+import { content as vviaSecuritiesBsi } from './phan-tich-doanh-nghiep/vvia-securities-bsi-2026'
+import { content as vviaSecuritiesCts } from './phan-tich-doanh-nghiep/vvia-securities-cts-2026'
+import { content as vviaSecuritiesAgr } from './phan-tich-doanh-nghiep/vvia-securities-agr-2026'
+import { content as vviaRetailMwg } from './phan-tich-doanh-nghiep/vvia-retail-mwg-2026'
+import { content as vviaRetailFrt } from './phan-tich-doanh-nghiep/vvia-retail-frt-2026'
+import { content as vviaRetailPnj } from './phan-tich-doanh-nghiep/vvia-retail-pnj-2026'
+import { content as vviaRetailDgw } from './phan-tich-doanh-nghiep/vvia-retail-dgw-2026'
 import { vviaReVhm2026 as vviaReVhm } from './phan-tich-doanh-nghiep/vvia-re-vhm-2026'
 import { vviaReNvl2026 as vviaReNvl } from './phan-tich-doanh-nghiep/vvia-re-nvl-2026'
 import { vviaReDig2026 as vviaReDig } from './phan-tich-doanh-nghiep/vvia-re-dig-2026'
@@ -176,6 +190,20 @@ export const CONTENT_REGISTRY: Record<string, ContentBlock[]> = {
     'phan-tich-doanh-nghiep/vvia-tech-fpt-2026': vviaTechFpt,
     'phan-tich-doanh-nghiep/vvia-steel-hpg-2026': vviaSteelHpg,
     'phan-tich-doanh-nghiep/vvia-securities-ssi-2026': vviaSecuritiesSsi,
+    'phan-tich-doanh-nghiep/vvia-securities-vnd-2026': vviaSecuritiesVnd,
+    'phan-tich-doanh-nghiep/vvia-securities-vci-2026': vviaSecuritiesVci,
+    'phan-tich-doanh-nghiep/vvia-securities-hcm-2026': vviaSecuritiesHcm,
+    'phan-tich-doanh-nghiep/vvia-securities-shs-2026': vviaSecuritiesShs,
+    'phan-tich-doanh-nghiep/vvia-securities-mbs-2026': vviaSecuritiesMbs,
+    'phan-tich-doanh-nghiep/vvia-securities-vix-2026': vviaSecuritiesVix,
+    'phan-tich-doanh-nghiep/vvia-securities-fts-2026': vviaSecuritiesFts,
+    'phan-tich-doanh-nghiep/vvia-securities-bsi-2026': vviaSecuritiesBsi,
+    'phan-tich-doanh-nghiep/vvia-securities-cts-2026': vviaSecuritiesCts,
+    'phan-tich-doanh-nghiep/vvia-securities-agr-2026': vviaSecuritiesAgr,
+    'phan-tich-doanh-nghiep/vvia-retail-mwg-2026': vviaRetailMwg,
+    'phan-tich-doanh-nghiep/vvia-retail-frt-2026': vviaRetailFrt,
+    'phan-tich-doanh-nghiep/vvia-retail-pnj-2026': vviaRetailPnj,
+    'phan-tich-doanh-nghiep/vvia-retail-dgw-2026': vviaRetailDgw,
     'phan-tich-doanh-nghiep/vvia-re-vhm-2026': vviaReVhm,
     'phan-tich-doanh-nghiep/vvia-re-nvl-2026': vviaReNvl,
     'phan-tich-doanh-nghiep/vvia-re-dig-2026': vviaReDig,

@@ -141,15 +141,35 @@ export default function DealDetailModal({ plan, isBronze, user, credits = 0, onU
     if (!confirm('Xác nhận hủy 3 lệnh điều kiện đang pending? Bạn sẽ tự quản lý vị thế này.')) return
     
     try {
-      // Call mock cancel endpoint via proxy for UAT
-      await fetch(`/api/kbsv/proxy/cancel-order?advisor_user_id=${user.id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId: 'KBSV-PENDING-ALL',
-          accountId: '0001006669'
+      // 1. Fetch active conditional orders to find the ones for this symbol
+      const ordersRes = await fetch(`/api/kbsv/proxy/cond-orders?advisor_user_id=${user.id}&rows=50`)
+      const ordersData = await ordersRes.json()
+      
+      let itemsToCancel = []
+      if (ordersData.ok && (ordersData.data?.items || ordersData.d?.items)) {
+        const items = ordersData.data?.items || ordersData.d?.items || []
+        itemsToCancel = items
+          .filter((item: any) => item.symbol === plan.ticker && ['PENDING', 'ACTIVATED'].includes(item.status))
+          .map((item: any) => ({
+            conditionId: item.id,
+            orderType: item.orderType
+          }))
+      }
+
+      // 2. Call cancel-batch-order with found items via proxy
+      if (itemsToCancel.length > 0) {
+        console.log('[KillSwitch] Cancelling conditional orders:', itemsToCancel)
+        await fetch(`/api/kbsv/proxy/cancel-batch-order?advisor_user_id=${user.id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            otpType: 'core-email-otp',
+            transactionId: 999999, // mock transaction ID for UAT bypass
+            otp: '123456',        // mock OTP for UAT bypass
+            orders: itemsToCancel
+          })
         })
-      })
+      }
 
       // Reset the plan back to waiting_buy
       const res = await fetch(`/api/admin/trading-plans/${plan.id}/action`, {

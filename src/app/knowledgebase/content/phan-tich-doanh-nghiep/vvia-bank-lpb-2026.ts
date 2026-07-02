@@ -9,7 +9,7 @@ export const vviaBankLpb2026: ContentBlock[] = [
     {
         type: 'key-insight',
         title: '📮 Tầng 1 (Tham Vọng Top Đầu Lợi Nhuận)',
-        content: '- **Bộ máy quyết liệt:** LPBank đặt mục tiêu đột phá về lợi nhuận vào thẳng "Câu lạc bộ 10.000 tỷ", tốc độ tăng trưởng điên rồ nhờ việc quyết liệt xử lý vấn đề nhân sự và dọn dẹp các khoản vay cũ.\n- **Mạng lưới Bưu Điện (Bất khả chiến bại):** Kế thừa mạng lưới phòng giao dịch bưu điện sâu rộng xuống tới từng xã/thôn, khả năng huy động vốn của giới Nông thôn là mỏ vàng chưa được khai thác hết.'
+        content: '- **Bộ máy quyết liệt:** LPBank đặt mục tiêu đột phá về lợi nhuận vào thẳng "Câu lạc bộ 10 tỷ", tốc độ tăng trưởng điên rồ nhờ việc quyết liệt xử lý vấn đề nhân sự và dọn dẹp các khoản vay cũ.\n- **Mạng lưới Bưu Điện (Bất khả chiến bại):** Kế thừa mạng lưới phòng giao dịch bưu điện sâu rộng xuống tới từng xã/thôn, khả năng huy động vốn của giới Nông thôn là mỏ vàng chưa được khai thác hết.'
     },
     {
         type: 'warning',
