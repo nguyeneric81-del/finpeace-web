@@ -86,6 +86,10 @@ export default function TestOrdersPage() {
   const [plaintextRequest, setPlaintextRequest] = useState<any>(null)
   const [rawResponse, setRawResponse] = useState<any>(null)
 
+  // Live Payload Editor State
+  const [customPayload, setCustomPayload] = useState<string>('')
+  const [isEditingPayload, setIsEditingPayload] = useState<boolean>(false)
+
   // Auth guard & init
   useEffect(() => {
     const stored = sessionStorage.getItem('stockpick_user')
@@ -214,23 +218,13 @@ export default function TestOrdersPage() {
     setBasket(basket.filter(item => item.id !== id))
   }
 
-  // Submit Batch Conditional Orders
-  const executeBatch = async () => {
-    if (!user || !selectedAccountId) return
-    if (!otpCode || otpCode.length < 4) {
-      alert('Vui lòng nhập mã OTP tối thiểu 4 chữ số')
-      return
-    }
-
-    setActionProgress('executing')
-    setErrorMsg(null)
-    setPlaintextRequest(null)
-    setRawResponse(null)
+  // Auto-generate plaintext payload string
+  useEffect(() => {
+    if (isEditingPayload) return
 
     const selectedAccount = accounts.find(acc => (acc.id || acc.accountId) === selectedAccountId)
     const accountNumber = selectedAccount?.accountdesc || selectedAccount?.id || selectedAccountId
 
-    // Format orders matching KBSV Spec
     const formattedOrders = basket.map(item => {
       const base: any = {
         refId: 'ref_' + item.id + '_' + Math.random().toString(36).substring(2, 6),
@@ -261,17 +255,48 @@ export default function TestOrdersPage() {
       return base
     })
 
-    const reqId = Math.random().toString(36).substring(2, 15)
-    const batchBody = {
-      requestId: reqId,
+    const body = {
+      requestId: 'req_' + Math.random().toString(36).substring(2, 12),
       otpType: 'core-email-otp',
-      transactionId: transactionId,
-      otp: otpCode,
+      transactionId: transactionId || 'kbsv_order.xxxxx',
+      otp: otpCode || 'xxxxxx',
       orders: formattedOrders
+    }
+
+    setCustomPayload(JSON.stringify(body, null, 2))
+  }, [basket, transactionId, otpCode, selectedAccountId, accounts, isEditingPayload])
+
+  // Submit Batch Conditional Orders
+  const executeBatch = async () => {
+    if (!user || !selectedAccountId) return
+    if (!otpCode || otpCode.length < 4) {
+      alert('Vui lòng nhập mã OTP tối thiểu 4 chữ số')
+      return
+    }
+
+    setActionProgress('executing')
+    setErrorMsg(null)
+    setPlaintextRequest(null)
+    setRawResponse(null)
+
+    let batchBody: any
+    try {
+      batchBody = JSON.parse(customPayload)
+      // Override OTP and transaction ID from form inputs
+      batchBody.otp = otpCode
+      batchBody.transactionId = transactionId
+      if (!batchBody.requestId || batchBody.requestId.includes('xxxxx')) {
+        batchBody.requestId = 'req_' + Math.random().toString(36).substring(2, 12)
+      }
+    } catch (e: any) {
+      setErrorMsg('JSON Payload không hợp lệ: ' + e.message)
+      setActionProgress('error')
+      return
     }
 
     // Set plaintext request for inspector
     setPlaintextRequest(batchBody)
+    const reqId = batchBody.requestId
 
     try {
       const res = await fetch(`/api/kbsv/proxy/place-batch-order?advisor_user_id=${user.id}&requestId=${reqId}`, {
@@ -471,7 +496,7 @@ export default function TestOrdersPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* LEFT COLUMN: ORDER BUILDER & OTP */}
-          <div className="lg:col-span-7 space-y-8">
+          <div className="lg:col-span-6 space-y-8">
             
             {/* CARD 1: CONDITIONAL ORDER BUILDER */}
             <div className="bg-slate-900/40 border border-white/[0.05] rounded-3xl p-6 backdrop-blur-xl space-y-6">
@@ -560,7 +585,7 @@ export default function TestOrdersPage() {
                 {formType === 'SEO' && (
                   <>
                     <div>
-                      <label className="block text-xs text-slate-400 mb-1.5 font-bold">Giá đặt mua/bán (orderPrice)</label>
+                      <label className="block text-xs text-slate-400 mb-1.5 font-bold">Giá đặt mua/bán (orderPrice - VND)</label>
                       <input 
                         type="number" 
                         step={100}
@@ -587,7 +612,7 @@ export default function TestOrdersPage() {
                 {formType === 'STO' && (
                   <>
                     <div>
-                      <label className="block text-xs text-slate-400 mb-1.5 font-bold">Giá kích hoạt (activePrice)</label>
+                      <label className="block text-xs text-slate-400 mb-1.5 font-bold">Giá kích hoạt (activePrice - VND)</label>
                       <input 
                         type="number" 
                         step={100}
@@ -608,7 +633,7 @@ export default function TestOrdersPage() {
                       </select>
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-xs text-slate-400 mb-1.5 font-bold">Giá đặt thực thi (orderPrice)</label>
+                      <label className="block text-xs text-slate-400 mb-1.5 font-bold">Giá đặt thực thi (orderPrice - VND)</label>
                       <input 
                         type="number" 
                         step={100}
@@ -623,7 +648,7 @@ export default function TestOrdersPage() {
                 {formType === 'TRAILING' && (
                   <>
                     <div>
-                      <label className="block text-xs text-slate-400 mb-1.5 font-bold">Giá kích hoạt tối thiểu (activePrice)</label>
+                      <label className="block text-xs text-slate-400 mb-1.5 font-bold">Giá kích hoạt tối thiểu (activePrice - VND)</label>
                       <input 
                         type="number" 
                         step={100}
@@ -683,7 +708,7 @@ export default function TestOrdersPage() {
                   Rổ lệnh đang trống. Vui lòng thêm lệnh điều kiện ở trên.
                 </div>
               ) : (
-                <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+                <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1">
                   {basket.map((item, index) => (
                     <div key={item.id} className="bg-slate-950/70 border border-white/[0.04] p-3.5 rounded-2xl flex items-center justify-between gap-4">
                       <div>
@@ -752,7 +777,7 @@ export default function TestOrdersPage() {
                 <div className="flex gap-3 pt-2">
                   <button
                     onClick={executeBatch}
-                    disabled={basket.length === 0 || !otpCode || !transactionId || actionProgress === 'executing'}
+                    disabled={(basket.length === 0 && !customPayload) || !otpCode || !transactionId || actionProgress === 'executing'}
                     className="flex-1 py-3.5 bg-gradient-to-r from-[#00D16E] to-[#048c4d] hover:from-[#05df77] hover:to-[#049d56] text-white text-xs uppercase tracking-wider font-extrabold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-emerald-500/10"
                   >
                     <Play className="w-4 h-4" /> Gửi Rổ Lệnh Đặt ({basket.length})
@@ -771,7 +796,7 @@ export default function TestOrdersPage() {
           </div>
 
           {/* RIGHT COLUMN: INSPECTOR & ACTIVE ORDERS */}
-          <div className="lg:col-span-5 space-y-8">
+          <div className="lg:col-span-6 space-y-8">
             
             {/* CARD 3: RAW INSPECTOR */}
             <div className="bg-slate-900/40 border border-white/[0.05] rounded-3xl p-6 backdrop-blur-xl space-y-5">
@@ -807,10 +832,32 @@ export default function TestOrdersPage() {
 
               {/* Plaintext Request Inspector */}
               <div className="space-y-2">
-                <span className="text-[10px] text-slate-500 font-black uppercase tracking-wider block">Plaintext Payload (Trước JWE hóa)</span>
-                <pre className="bg-slate-950/80 border border-white/[0.04] p-3 rounded-2xl text-[10px] font-mono text-emerald-400 overflow-x-auto max-h-[180px] leading-relaxed">
-                  {plaintextRequest ? JSON.stringify(plaintextRequest, null, 2) : '// Chưa có payload gửi đi'}
-                </pre>
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] text-slate-500 font-black uppercase tracking-wider block">Plaintext Payload (Trước JWE hóa)</span>
+                  <button 
+                    onClick={() => setIsEditingPayload(!isEditingPayload)}
+                    className="text-[10px] font-bold text-emerald-400 hover:underline cursor-pointer flex items-center gap-1"
+                  >
+                    <Code className="w-3.5 h-3.5" />
+                    {isEditingPayload ? 'Khóa tự động sinh' : 'Chỉnh sửa tự do (Edit JSON)'}
+                  </button>
+                </div>
+                {isEditingPayload ? (
+                  <div className="space-y-2">
+                    <textarea
+                      value={customPayload}
+                      onChange={(e) => setCustomPayload(e.target.value)}
+                      className="w-full bg-slate-950/80 border border-emerald-500/30 p-3 rounded-2xl text-[10px] font-mono text-emerald-400 h-[220px] focus:outline-none focus:ring-1 focus:ring-emerald-500 leading-relaxed"
+                    />
+                    <span className="text-[9px] text-slate-400 block leading-normal">
+                      💡 **Tip:** Bạn có thể thêm trường `"channel": "K"` hoặc các giá trị khác trực tiếp vào từng lệnh con trong mảng `"orders"` để test phản hồi từ KBSV.
+                    </span>
+                  </div>
+                ) : (
+                  <pre className="bg-slate-950/80 border border-white/[0.04] p-3 rounded-2xl text-[10px] font-mono text-emerald-400 overflow-x-auto max-h-[220px] leading-relaxed">
+                    {customPayload || '// Chưa có rổ lệnh'}
+                  </pre>
+                )}
               </div>
 
               {/* Raw Response Inspector */}
