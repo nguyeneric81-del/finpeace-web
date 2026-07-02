@@ -308,6 +308,15 @@ export default function KbsvExecutionPanel({ plan, user, onClose, onSuccess }: K
           throw new Error(batchData.kbsv_em || batchData.error || 'Lỗi đặt lô lệnh điều kiện. Vui lòng kiểm tra lại OTP.')
         }
 
+        // Check if any individual order inside the batch failed
+        const items = batchData.data || []
+        if (Array.isArray(items)) {
+          const failedOrder = items.find((item: any) => item.s === 'error')
+          if (failedOrder) {
+            throw new Error(failedOrder.errmsg || failedOrder.em || `Lỗi đặt lệnh điều kiện trong lô (Mã: ${failedOrder.ec})`)
+          }
+        }
+
       } else {
         // Place standard Buy Limit Order only
         const buyOrderBody = {

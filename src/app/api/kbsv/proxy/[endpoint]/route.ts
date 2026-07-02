@@ -47,7 +47,7 @@ function makeKbsvHeaders(token: string, contentType = 'application/json'): Heade
     'Authorization': `Bearer ${token}`,
     'x-device': KBSV_DEVICE_ID,
     'x-devicetype': 'UDID',
-    'x-client-id': '1.1.1.1',
+    'x-client-id': KBSV_CLIENT_ID,
     'x-lang': 'vi',
   }
 }
