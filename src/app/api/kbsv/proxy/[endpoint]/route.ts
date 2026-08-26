@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { importSPKI, CompactEncrypt } from 'jose'
-
+import { importSPKI, GeneralEncrypt } from 'jose'
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -72,13 +71,12 @@ I8F7Py6ddZLf3TYg4N+YyvyBTG/t58aXI1+83TqRWxJO4Ouhck56J9J+zC83kr3k
 async function kbsvEncrypt(token: string, plaintext: object, clientIp: string, service: string = 'order', via?: string): Promise<string | null> {
   try {
     const publicKey = await importSPKI(PUBLIC_KEY_PEM, 'RSA-OAEP-256')
-    const jwe = await new CompactEncrypt(new TextEncoder().encode(JSON.stringify(plaintext)))
+    const jwe = await new GeneralEncrypt(new TextEncoder().encode(JSON.stringify(plaintext)))
       .setProtectedHeader({ alg: 'RSA-OAEP-256', enc: 'A256GCM' })
-      .encrypt(publicKey)
+      .addRecipient(publicKey)
+      .encrypt()
     
-    // Some KBSV APIs might expect the JWE string wrapped in a JSON object like {"d": "ey..."} or {"data": "ey..."}
-    // For now, we return the raw JWE compact string. The proxy will send this in the body.
-    return jwe
+    return JSON.stringify(jwe)
   } catch (err) {
     console.error('[kbsv/proxy] Local JWE Encryption failed:', err)
     return null
