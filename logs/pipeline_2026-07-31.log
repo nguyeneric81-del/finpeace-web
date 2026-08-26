@@ -1,0 +1,48 @@
+[06:00:02 1/8/2026] 🚀 ===== BẮT ĐẦU MACRO PIPELINE =====
+[06:00:02 1/8/2026] 📅 Thời gian chạy: 2026-07-31T23:00:02.233Z
+[06:00:02 1/8/2026] 📡 Bước 1/2: Cào báo cáo Vĩ mô từ VietStock...
+[06:00:02 1/8/2026] 📊 Bước 2/2: Đồng bộ chỉ số vĩ mô từ GSO/NSO (GDP, CPI, IIP)...
+[06:00:59 1/8/2026] Kết quả đồng bộ GSO:
+Connecting to Supabase...
+=== Seeding Metadata (Categories & Indicators) ===
+  [.] Category exists: Tài khoản quốc gia (GDP)
+  [.] Category exists: Chỉ số giá và lạm phát
+  [.] Category exists: Sản xuất công nghiệp
+  [+] Updated indicator: Tổng sản phẩm quốc nội (GDP thực tế)
+  [+] Updated indicator: Chỉ số giá tiêu dùng (CPI)
+  [+] Updated indicator: Chỉ số sản xuất công nghiệp (IIP)
+
+--- Processing indicator: NGDP_R_PA_XDC ---
+Downloading Excel from GSO: http://nsdp.nso.gov.vn/GSO-chung/Tu%E1%BA%A5n%20Anh/excel%20chung/GDP_VNM.xlsx ...
+  Excel file saved to data/GDP_VNM.xlsx
+Parsing sheet Dataset_Q for indicator NGDP_R_PA_XDC...
+  Successfully parsed 64 points from Excel.
+=== Upserting macro data for NGDP_R_PA_XDC ===
+  Processed 64 data points chronologically.
+  [+] Done. Successfully upserted 64/64 points.
+
+--- Processing indicator: PCPI_IX ---
+Downloading Excel from GSO: http://nsdp.nso.gov.vn/GSO-chung/Tu%E1%BA%A5n%20Anh/excel%20chung/CPI_VNM.xlsx ...
+  Excel file saved to data/CPI_VNM.xlsx
+Parsing sheet Dataset base 2019 for indicator PCPI_IX...
+  Successfully parsed 63 points from Excel.
+=== Upserting macro data for PCPI_IX ===
+  Processed 63 data points chronologically.
+  [+] Done. Successfully upserted 63/63 points.
+
+--- Processing indicator: AIP_ISIC4_IX ---
+Downloading Excel from GSO: http://nsdp.nso.gov.vn/GSO-chung/Tu%E1%BA%A5n%20Anh/excel%20chung/IIP_VNM.xlsx ...
+  Excel file saved to data/IIP_VNM.xlsx
+Parsing sheet Chi so so nam goc for indicator AIP_ISIC4_IX...
+  [!] Direct GSO Excel download failed: KeyError - "Indicator 'AIP_ISIC4_IX' not found in Excel sheet."
+Fallback: Downloading GSO archive database from https://github.com/thanhqtran/gso-macro-monitor/releases/download/v1.2.0/all_data_gso_20250606.json.zip...
+  Successfully parsed 99 points from GSO archive.
+=== Upserting macro data for AIP_ISIC4_IX ===
+  Processed 99 data points chronologically.
+  [+] Done. Successfully upserted 99/99 points.
+
+=== Macro Sync Pipeline Completed Successfully ===
+
+[06:00:59 1/8/2026] ✅ Pipeline hoàn tất thành công!
+[06:00:59 1/8/2026] 🏁 ===== KẾT THÚC MACRO PIPELINE =====
+

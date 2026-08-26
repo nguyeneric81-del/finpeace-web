@@ -1,15 +1,17 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { importSPKI, CompactEncrypt } from 'jose'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-const KBSV_API_URL    = process.env.KBSV_API_URL    ?? 'https://mablesasapiuat.kbsec.com.vn/kb-connect-api-2'
-const KBSV_OPENID_URL = process.env.KBSV_OPENID_URL ?? 'https://openiduat.kbsec.com.vn/keycloak'
+const KBSV_API_URL    = process.env.KBSV_API_URL    ?? 'https://api.kbsec.com.vn/kb-connect-api-2'
+const KBSV_OPENID_URL = process.env.KBSV_OPENID_URL ?? 'https://openid.kbsec.com.vn'
+const KBSV_REALM      = process.env.KBSV_REALM      ?? 'finpeace'
 const KBSV_CLIENT_ID  = process.env.KBSV_CLIENT_ID  ?? 'finpeace'
-const KBSV_CLIENT_SECRET = process.env.KBSV_CLIENT_SECRET ?? ''
+const KBSV_CLIENT_SECRET = process.env.KBSV_CLIENT_SECRET ?? 'VS7ELh1gICpCYlzyYGV5cAXZ4bdQqOBO'
 const KBSV_DEVICE_ID  = process.env.KBSV_DEVICE_ID  ?? 'FINPEACE-SERVER-0001'
 
 // Endpoints that require JWE-encrypted body (auto-encrypted by proxy)
@@ -56,30 +58,30 @@ function makeKbsvHeaders(token: string, clientIp: string, contentType = 'applica
   return headers
 }
 
-/** Call KBSV /api/v1/encrypt — returns raw encrypted string/object */
+const PUBLIC_KEY_PEM = `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArvnGDDY+9LrRLTEQV9ge
+cwyzMJHoSyeQGduxZbA0l/YHpQZLfTVaxlVz0zVh6kYiJxDhKkol9NQTgjgfrRlG
+PJkI61izdYtmyykIPP/+kjVBKRM4xh4xSMC/Z0CIhX0U3DMbkMIQtUNIilL0GWTt
+0dy+BHy7ITG9cAnEX6UYS05BBrqDnAB4fgQG8lKAvVTggBbxcMt8jPMGeMXh540P
+XvBo73tuR02BD4d/+QbPKRqw2Fw3fNZxD7Wi2jumvXG9ZVDEyTdHHHsI3g7qKn/e
+I8F7Py6ddZLf3TYg4N+YyvyBTG/t58aXI1+83TqRWxJO4Ouhck56J9J+zC83kr3k
+0QIDAQAB
+-----END PUBLIC KEY-----`
+
+/** Encrypt payload using JWE RSA-OAEP-256 with provided Public Key */
 async function kbsvEncrypt(token: string, plaintext: object, clientIp: string, service: string = 'order', via?: string): Promise<string | null> {
-  const encryptUrl = `${KBSV_API_URL}/${service}/api/v1/encrypt`
-  const resp = await fetch(encryptUrl, {
-    method: 'POST',
-    headers: makeKbsvHeaders(token, clientIp, 'application/json', via),
-    body: JSON.stringify(plaintext),
-  })
-
-  const text = await resp.text()
-  console.log(`[kbsv/encrypt] status=${resp.status} body=${text.slice(0, 200)}`)
-
-  if (!resp.ok) return null
-
-  // Try parse as JSON — if KBSV wraps in {s,d}, extract d
   try {
-    const json = JSON.parse(text)
-    if (json.d !== undefined) return typeof json.d === 'string' ? json.d : JSON.stringify(json.d)
-    if (json.data !== undefined) return typeof json.data === 'string' ? json.data : JSON.stringify(json.data)
-    // Return the whole JSON as string if no wrapper
-    return text
-  } catch {
-    // Raw string (JWE compact)
-    return text
+    const publicKey = await importSPKI(PUBLIC_KEY_PEM, 'RSA-OAEP-256')
+    const jwe = await new CompactEncrypt(new TextEncoder().encode(JSON.stringify(plaintext)))
+      .setProtectedHeader({ alg: 'RSA-OAEP-256', enc: 'A256GCM' })
+      .encrypt(publicKey)
+    
+    // Some KBSV APIs might expect the JWE string wrapped in a JSON object like {"d": "ey..."} or {"data": "ey..."}
+    // For now, we return the raw JWE compact string. The proxy will send this in the body.
+    return jwe
+  } catch (err) {
+    console.error('[kbsv/proxy] Local JWE Encryption failed:', err)
+    return null
   }
 }
 
@@ -91,7 +93,7 @@ async function refreshTokenIfNeeded(userId: string, tokenRow: Record<string, str
 
   console.log(`[kbsv/proxy] Refreshing token for user ${userId}`)
   const resp = await fetch(
-    `${KBSV_OPENID_URL}/realms/kbsv/protocol/openid-connect/token`,
+    `${KBSV_OPENID_URL}/realms/${KBSV_REALM}/protocol/openid-connect/token`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

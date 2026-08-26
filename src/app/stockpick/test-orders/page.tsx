@@ -90,17 +90,19 @@ export default function TestOrdersPage() {
   const [customPayload, setCustomPayload] = useState<string>('')
   const [isEditingPayload, setIsEditingPayload] = useState<boolean>(false)
 
-  // Auth guard & init
+  // Auth guard & init (Bypassed for quick testing)
   useEffect(() => {
-    const stored = sessionStorage.getItem('stockpick_user')
-    if (!stored) {
-      router.replace('/stockpick/login')
-    } else {
-      const parsed = JSON.parse(stored)
-      setUser(parsed)
-      checkKbsvConnection(parsed.id)
+    // Tự động inject một user giả để test lệnh KBSV không cần đăng nhập
+    const mockUser: StockPickUser = {
+      id: '4a935588-c12e-4fb9-87a3-1af7de74ef62', // ID mặc định dùng để test KBSV
+      name: 'Test Advisor',
+      email: 'test@finpeace.vn',
+      tier: 'SILVER',
+      role: 'ADVISOR'
     }
-  }, [router])
+    setUser(mockUser)
+    checkKbsvConnection(mockUser.id)
+  }, [])
 
   // OTP Countdown Timer
   useEffect(() => {

@@ -6,9 +6,9 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-const KBSV_OPENID_URL = process.env.KBSV_OPENID_URL ?? 'https://openiduat.kbsec.com.vn/keycloak'
-const KBSV_CLIENT_ID = process.env.KBSV_CLIENT_ID ?? 'kbsv-openid'
-const KBSV_CLIENT_SECRET = process.env.KBSV_CLIENT_SECRET ?? ''
+const KBSV_OPENID_URL = process.env.KBSV_OPENID_URL ?? 'https://openid.kbsec.com.vn'
+const KBSV_CLIENT_ID = process.env.KBSV_CLIENT_ID ?? 'finpeace'
+const KBSV_CLIENT_SECRET = process.env.KBSV_CLIENT_SECRET ?? 'VS7ELh1gICpCYlzyYGV5cAXZ4bdQqOBO'
 const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL}/api/kbsv/callback`
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://finpeace.cloud'
 
@@ -84,7 +84,7 @@ export async function GET(req: Request) {
     const advisorUserId = stateRecord.advisor_user_id
 
     // 2. Exchange code → tokens
-    const tokenUrl = `${KBSV_OPENID_URL}/realms/kbsv/protocol/openid-connect/token`
+    const tokenUrl = `${KBSV_OPENID_URL}/realms/finpeace/protocol/openid-connect/token`
     const tokenBody = new URLSearchParams({
       grant_type: 'authorization_code',
       code,
