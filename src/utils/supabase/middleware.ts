@@ -26,6 +26,7 @@ const ADVISOR_PUBLIC_PATHS = [
   '/advisor/landing-plan',
   '/advisor/landing-trust',
   '/advisor/agent/login',   // Agent login — public
+  '/advisor/sip',           // SIP Sales WebApp Portal — public cho Sales & Khách
 ]
 
 // Roles cho phép vào Agent Portal
@@ -189,6 +190,7 @@ export async function updateSession(request: NextRequest) {
         effectivePath.startsWith('/api/agent') ||
         (effectivePath.startsWith('/advisor') && !effectivePath.startsWith('/advisor/admin')) || // admin cần auth
         effectivePath.startsWith('/stockpick') || // StockPick — tự quản lý auth bằng sessionStorage
+        effectivePath.startsWith('/sip') || // SIP Sales WebApp Portal — công cụ tư vấn Sales
         effectivePath.startsWith('/knowledgebase') || // KB là public content
         effectivePath.startsWith('/training') || // Training Deck là public content
         effectivePath.startsWith('/lp') || // Sales landing pages - public
