@@ -188,6 +188,7 @@ export async function updateSession(request: NextRequest) {
         effectivePath.startsWith('/login') ||
         effectivePath.startsWith('/auth') ||
         effectivePath.startsWith('/api/agent') ||
+        effectivePath.startsWith('/canvas-lv3') ||
         (effectivePath.startsWith('/advisor') && !effectivePath.startsWith('/advisor/admin')) || // admin cần auth
         effectivePath.startsWith('/stockpick') || // StockPick — tự quản lý auth bằng sessionStorage
         effectivePath.startsWith('/sip') || // SIP Sales WebApp Portal — công cụ tư vấn Sales
