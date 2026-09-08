@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinPeace Canvas LV3: FPT Corporation (FPT) · Institutional Research Series</title>
+  
+  <!-- Typography: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       FINPEACE DESIGN SYSTEM: INSTITUTIONAL HEALING DARK TOKENS
+       ========================================================= */
+    :root {
+      --bg-dark: #070a12;
+      --bg-card: rgba(13, 20, 36, 0.75);
+      --bg-card-hover: rgba(20, 30, 52, 0.85);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(245, 158, 11, 0.35);
+      
+      --accent-ember: #f59e0b;
+      --accent-orange: #f97316;
+      --accent-gold: #fbbf24;
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-purple: #c084fc;
+      --accent-rose: #fb7185;
+      
+      --text-main: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      /* =========================================================
+         CHUẨN HÓA FONT-SIZE SCALE TỪ LEVEL CAO XUỐNG THẤP
+         Level 1: Slide Title (Cover: h1, Slides: h2)
+         Level 2: Slide Takeaway / Subtitle
+         Level 3: Card Title / Section Heading
+         Level 4: Breadcrumb Sublink / Subtitle / Metric Text
+         Level 5: Body Text / Card Description / Table Cell
+         Level 6: Kicker / Tagline / Badge / Footnote / Caption
+         ========================================================= */
+      --fs-h1: clamp(28px, 3.5vw, 44px);        /* Level 1: Cover */
+      --fs-h2: clamp(20px, 2.2vw, 30px);        /* Level 1: Slide Title */
+      --fs-takeaway: clamp(13px, 1.1vw, 15px);  /* Level 2: Takeaway / Subtitle */
+      --fs-h3: clamp(15px, 1.2vw, 18px);        /* Level 3: Card Heading */
+      --fs-sub: clamp(12.5px, 1.05vw, 14px);    /* Level 4: Sub-heading / Sublink */
+      --fs-body: clamp(12px, 0.95vw, 13.5px);   /* Level 5: Body Text / Desc */
+      --fs-caption: clamp(10.5px, 0.85vw, 11.5px); /* Level 6: Badge / Footnote */
+      
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      overflow: hidden;
+      height: 100vh;
+      height: 100dvh;
+      width: 100vw;
+      position: relative;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(56, 189, 248, 0.05) 0%, transparent 40%),
+        linear-gradient(to bottom, #070a12, #0a0f1d);
+    }
+
+    /* Ambient noise & grid */
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* =========================================================
+       HEADER & NAVIGATION BAR: TUYỆT ĐỐI CĂN GIỮA & THOÁNG ĐÃNG
+       ========================================================= */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 58px;
+      padding: 0 clamp(16px, 3vw, 40px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1000;
+      background: rgba(7, 10, 18, 0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-card);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      z-index: 2;
+    }
+
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--accent-ember), var(--accent-orange));
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #000;
+      font-size: 13.5px;
+      letter-spacing: -0.5px;
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.4);
+    }
+
+    .brand-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .brand-sub {
+      color: var(--text-dim);
+      font-size: 11px;
+      border-left: 1px solid var(--border-card);
+      padding-left: 10px;
+    }
+
+    /* ĐẶT STEPPER Ở TRUNG TÂM CHÍNH DIỆN (ABSOLUTE CENTER) */
+    .header-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: calc(100vw - 320px);
+      z-index: 10;
+    }
+
+    /* 3-PILLAR STEPPER: NỔI BẬT RÕ RÀNG THEO TỪNG SLIDE */
+    .header-pillar-stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(15, 23, 42, 0.95);
+      padding: 3px 6px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+      transition: opacity 0.3s ease;
+    }
+
+    .pillar-step {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.25s ease;
+      opacity: 0.5;
+      user-select: none;
+    }
+
+    .pillar-step:hover {
+      opacity: 0.9;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .pillar-step .step-num {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    /* HIGHLIGHT RỰC RỠ KHI TRỤ CỘT ĐANG ĐƯỢC CHỨNG MINH */
+    .pillar-step.active {
+      opacity: 1 !important;
+      background: rgba(245, 158, 11, 0.22) !important;
+      color: #ffffff !important;
+      border: 1px solid #f59e0b !important;
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.45);
+    }
+
+    .pillar-step.active .step-num {
+      background: #f59e0b !important;
+      color: #000000 !important;
+      font-weight: 900;
+      box-shadow: 0 0 8px #f59e0b;
+    }
+
+    .pillar-step.active .step-name {
+      color: #fbbf24 !important;
+      font-weight: 700;
+    }
+
+    /* TRẠNG THÁI COMPLETED (ĐÃ ĐI QUA) */
+    .pillar-step.completed {
+      opacity: 0.85;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: var(--text-secondary);
+    }
+
+    .pillar-step.completed .step-num {
+      background: rgba(56, 189, 248, 0.25);
+      color: #38bdf8;
+      font-weight: 800;
+    }
+
+    .pillar-step.completed .step-name {
+      color: #e2e8f0;
+    }
+
+    .step-divider {
+      font-size: 9px;
+      color: var(--text-dim);
+      opacity: 0.4;
+    }
+
+    /* Pillar Breadcrumb in Slides */
+    .pillar-breadcrumb {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 4px 12px 4px 6px;
+      margin-bottom: 6px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .pillar-badge {
+      font-size: var(--fs-caption);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 3px 9px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pillar-sublink {
+      font-size: var(--fs-sub);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 2;
+    }
+
+    .slide-counter {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent-ember);
+      background: rgba(245, 158, 11, 0.1);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .btn-icon {
+      background: transparent;
+      border: 1px solid var(--border-card);
+      color: var(--text-muted);
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-icon:hover {
+      color: #fff;
+      border-color: var(--accent-ember);
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    @media (max-width: 1250px) {
+      .brand-sub { display: none; }
+      .header-center { max-width: calc(100vw - 260px); }
+    }
+
+    @media (max-width: 1024px) {
+      .pillar-step { padding: 3px 6px; }
+      .pillar-step .step-name { font-size: 10px; }
+      .header-controls { gap: 8px; }
+    }
+
+    /* =========================================================
+       SLIDE CONTAINER & LAYOUT: TUYỆT ĐỐI CHỐNG LỖI ĐÈ CHỮ
+       ========================================================= */
+    main.presentation {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 68px clamp(16px, 3.5vw, 44px) 58px;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-start !important; /* TUYỆT ĐỐI BẮT ĐẦU TỪ TRÊN XUỐNG */
+      gap: 12px; /* KHOẢNG CÁCH AN TOÀN CHỐNG TRÀN ĐÈ */
+      background: var(--bg-dark);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.25s var(--ease-out-expo), transform 0.25s var(--ease-out-expo);
+      pointer-events: none;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    #slide-1 {
+      justify-content: center !important;
+      gap: 20px;
+    }
+
+    .slide.active {
+      display: flex !important;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Slide Header Block: LUÔN CỐ ĐỊNH, KHÔNG BỊ CHE KHUẤT */
+    .slide-header {
+      margin-bottom: 0;
+      max-width: 1100px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .tagline {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--fs-caption);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent-ember);
+      margin-bottom: 6px;
+    }
+
+    .tagline::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-ember);
+      box-shadow: 0 0 8px var(--accent-ember);
+    }
+
+    /* Level 1: Tiêu đề Slide */
+    .slide-title {
+      font-size: var(--fs-h2);
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      line-height: 1.2;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    /* Level 2: Takeaway / Subtitle */
+    .slide-takeaway {
+      font-size: var(--fs-takeaway);
+      color: var(--text-muted);
+      line-height: 1.5;
+      font-weight: 400;
+      max-width: 980px;
+    }
+
+    .slide-takeaway strong {
+      color: #f1f5f9;
+      font-weight: 600;
+    }
+
+    /* Content Cards & Grids */
+    .content-area {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start; /* CHỐNG OVERFLOW TRỒI LÊN TRÊN */
+      position: relative;
+      z-index: 1;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(14px, 2vw, 24px);
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(12px, 1.6vw, 20px);
+    }
+
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-card);
+      border-radius: 14px;
+      padding: clamp(14px, 1.8vw, 22px);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-highlight {
+      border-color: var(--border-accent);
+      background: linear-gradient(145deg, rgba(245, 158, 11, 0.08), rgba(15, 23, 42, 0.8));
+    }
+
+    .card-cyan {
+      border-color: rgba(56, 189, 248, 0.3);
+      background: linear-gradient(145deg, rgba(56, 189, 248, 0.07), rgba(15, 23, 42, 0.8));
+    }
+
+    .card-emerald {
+      border-color: rgba(16, 185, 129, 0.3);
+      background: linear-gradient(145deg, rgba(16, 185, 129, 0.07), rgba(15, 23, 42, 0.8));
+    }
+
+    .card-purple {
+      border-color: rgba(192, 132, 252, 0.3);
+      background: linear-gradient(145deg, rgba(192, 132, 252, 0.08), rgba(15, 23, 42, 0.8));
+    }
+
+    /* Level 6: Card Badge */
+    .card-badge {
+      align-self: flex-start;
+      font-size: var(--fs-caption);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    .badge-gold {
+      background: rgba(245, 158, 11, 0.18);
+      color: var(--accent-ember);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .badge-cyan {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .badge-emerald {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-purple {
+      background: rgba(192, 132, 252, 0.18);
+      color: var(--accent-purple);
+      border: 1px solid rgba(192, 132, 252, 0.3);
+    }
+
+    /* Level 3: Card Title */
+    .card-title {
+      font-size: var(--fs-h3);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+      line-height: 1.35;
+    }
+
+    /* Level 5: Card Description / Body */
+    .card-desc {
+      font-size: var(--fs-body);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .card-desc strong {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .stat-number {
+      font-family: var(--font-mono);
+      font-size: clamp(20px, 2.4vw, 34px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: #fff;
+      line-height: 1;
+      margin: 6px 0 3px;
+    }
+
+    .stat-gold { color: var(--accent-ember); }
+    .stat-cyan { color: var(--accent-cyan); }
+    .stat-emerald { color: var(--accent-emerald); }
+    .stat-purple { color: var(--accent-purple); }
+
+    .stat-sub {
+      font-size: var(--fs-caption);
+      color: var(--text-dim);
+      font-weight: 500;
+    }
+
+    /* Data Table styling */
+    .table-responsive {
+      width: 100%;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid var(--border-card);
+      background: var(--bg-card);
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: clamp(11px, 0.95vw, 12.5px);
+      text-align: left;
+    }
+
+    table.data-table th {
+      background: rgba(30, 41, 59, 0.9);
+      color: #cbd5e1;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border-card);
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.5px;
+    }
+
+    table.data-table td {
+      padding: 7px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-secondary);
+    }
+
+    table.data-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: #f1f5f9;
+    }
+
+    table.data-table td.highlight {
+      font-weight: 700;
+      color: var(--accent-ember);
+      font-family: var(--font-mono);
+    }
+
+    /* Visual Flow Steps */
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .flow-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-card);
+      padding: 10px 14px;
+      border-radius: 8px;
+    }
+
+    .flow-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-ember);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+
+    .flow-text {
+      font-size: var(--fs-body);
+      line-height: 1.45;
+      color: var(--text-secondary);
+    }
+
+    .flow-text strong {
+      color: #fff;
+    }
+
+    /* Footer / Bottom Bar */
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 54px;
+      padding: 0 clamp(16px, 3vw, 40px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      background: rgba(7, 10, 18, 0.85);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border-card);
+    }
+
+    .progress-track {
+      flex: 1;
+      max-width: 320px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      margin: 0 20px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-ember), var(--accent-orange));
+      width: 10%;
+      transition: width 0.3s ease;
+    }
+
+    .nav-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-card);
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-nav-primary {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(249, 115, 22, 0.2));
+      border-color: var(--accent-ember);
+      color: #fff;
+    }
+
+    .btn-nav-primary:hover {
+      background: linear-gradient(135deg, var(--accent-ember), var(--accent-orange));
+      color: #000;
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.4);
+    }
+
+    .chart-container-svg {
+      background: rgba(5, 8, 17, 0.85);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 220px;
+    }
+
+    .chart-tabs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .chart-tab-btn {
+      padding: 3px 8px;
+      font-size: 10.5px;
+      font-weight: 600;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-card);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chart-tab-btn.active {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: var(--accent-ember);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER NAVIGATION -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">FP</div>
+      <div>
+        <div class="brand-title">FinPeace Canvas LV3</div>
+        <div class="brand-sub">Institutional Research Series</div>
+      </div>
+    </div>
+    
+    <!-- 3-PILLAR STEPPER: ABSOLUTE CENTER -->
+    <div class="header-center">
+      <div class="header-pillar-stepper" id="pillarStepper">
+        <div class="pillar-step" id="stepPillar1" onclick="presentationController.updateSlide(2)" title="Trụ Cột 1: Làn Sóng IT & AI Factory">
+          <span class="step-num">1</span>
+          <span class="step-name">Làn Sóng IT & AI Factory</span>
+        </div>
+        <div class="step-divider">➔</div>
+        <div class="pillar-step" id="stepPillar2" onclick="presentationController.updateSlide(4)" title="Trụ Cột 2: Bánh Đà Hệ Sinh Thái">
+          <span class="step-num">2</span>
+          <span class="step-name">Bánh Đà Hệ Sinh Thái</span>
+        </div>
+        <div class="step-divider">➔</div>
+        <div class="pillar-step" id="stepPillar3" onclick="presentationController.updateSlide(6)" title="Trụ Cột 3: Định Giá Key Driver">
+          <span class="step-num">3</span>
+          <span class="step-name">Định Giá Key Driver</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <div class="slide-counter" id="slideIndicator">01 / 10</div>
+      <button class="btn-icon" id="btnFullscreen" title="Toàn màn hình (F)">
+        <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN PRESENTATION -->
+  <main class="presentation" id="presentation">
+
+    <!-- =========================================================
+         SLIDE 1: HERO COVER
+         ========================================================= -->
+    <section class="slide" id="slide-1">
+      <div class="slide-header" style="text-align: center; margin: 0 auto 20px;">
+        <div class="tagline" style="margin: 0 auto 10px;">Institutional Equity Research · Tháng 09/2026</div>
+        <h1 class="slide-title" style="font-size: var(--fs-h1); margin-bottom: 12px;">
+          TẬP ĐOÀN FPT <span style="color: var(--accent-ember);">(FPT)</span>
+        </h1>
+        <p class="slide-takeaway" style="margin: 0 auto; font-size: var(--fs-takeaway); max-width: 920px;">
+          BÁNH ĐÀ NHÂN LỰC, LÀN SÓNG AI FACTORY TOÀN CẦU & ĐỊNH GIÁ THEO KEY DRIVER BACKLOG 2026–2030
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-3" style="max-width: 1050px; margin: 0 auto; width: 100%;">
+          <div class="card card-highlight">
+            <div class="card-badge badge-gold">Quy Mô & Vị Thế Toàn Cầu</div>
+            <div class="stat-number stat-gold">82.000+</div>
+            <div class="stat-sub">Nhân sự công nghệ · Top 50 thế giới</div>
+            <p class="card-desc" style="margin-top: 10px;">
+              Xuất khẩu phần mềm vượt mốc 1.5 tỷ USD doanh số ký mới. Đối tác chiến lược cấp 1 của các tập đoàn hàng đầu Nhật Bản & Mỹ.
+            </p>
+          </div>
+
+          <div class="card card-cyan">
+            <div class="card-badge badge-cyan">Kết Quả Kinh Doanh H1/2026</div>
+            <div class="stat-number stat-cyan">5.047 Tỷ</div>
+            <div class="stat-sub">LNST 6 tháng (+14.2% YoY) · DT 30.700 Tỷ</div>
+            <p class="card-desc" style="margin-top: 10px;">
+              Mảng Chuyển đổi số (DX) và Dịch vụ AI & Cloud tăng trưởng 2 chữ số. Biên lợi nhuận gộp duy trì mức vượt trội 38.0%.
+            </p>
+          </div>
+
+          <div class="card card-emerald">
+            <div class="card-badge badge-emerald">Định Giá Key Driver</div>
+            <div class="stat-number stat-emerald">93.300 đ</div>
+            <div class="stat-sub">Giá trị nội tại 2026 (P/E Fair 26x)</div>
+            <p class="card-desc" style="margin-top: 10px;">
+              Thị giá 72.200đ mở ra biên an toàn hấp dẫn (+29.3% Upside). Nằm trong vùng đồng thuận thể chế (90.000 – 105.000 đ/cp).
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 2: 3 TRỤ CỘT STORYBOARD CỦA FPT
+         ========================================================= -->
+    <section class="slide" id="slide-2">
+      <div class="slide-header">
+        <div class="tagline">Khung Phân Tích Thể Chế · 3 Trụ Cột Độc Bản Của FPT</div>
+        <h2 class="slide-title">Hệ Thống 3 Trụ Cột Cho Doanh Nghiệp Công Nghệ Tri Thức</h2>
+        <p class="slide-takeaway">
+          <strong>Tóm tắt:</strong> FPT là doanh nghiệp dịch vụ công nghệ và tri thức — không áp dụng bài học chu kỳ thép hay hạ tầng thô. Luận điểm đầu tư FPT được cấu thành từ <strong>3 Trụ Cột tăng trưởng kép bền vững</strong>:
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-3">
+          <div class="card card-highlight">
+            <div class="card-badge badge-gold">TRỤ CỘT 1 · LÝ LUẬN & TOÀN CẦU</div>
+            <h3 class="card-title">1. Làn Sóng IT & AI Factory</h3>
+            <p class="card-desc">
+              Từ chênh lệch chi phí nhân công (bài học TCS, Infosys Ấn Độ) chuyển dịch sang Chuyển đổi số & Trung tâm siêu máy tính AI Factory kết hợp NVIDIA.
+            </p>
+            <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(245, 158, 11, 0.3); font-size: var(--fs-caption); color: var(--text-muted);">
+              <strong style="color: var(--accent-gold);">📂 Slide Hỗ Trợ:</strong><br>
+              • <strong>Slide 3:</strong> Bài học Ấn Độ & Cơ chế dịch chuyển IT.<br>
+              • <strong>Slide 4:</strong> Bước ngoặt AI Factory & NVIDIA.
+            </div>
+          </div>
+
+          <div class="card card-cyan">
+            <div class="card-badge badge-cyan">TRỤ CỘT 2 · THỰC NGHIỆM & CON HÀO</div>
+            <h3 class="card-title">2. Bánh Đà Hệ Sinh Thái</h3>
+            <p class="card-desc">
+              Bánh đà tự cấp nhân lực độc nhất vô nhị: Đại học FPT (140.000 học sinh sinh viên) cung ứng trực tiếp kỹ sư giá rẻ cho FPT Software + Hạ tầng FPT Telecom.
+            </p>
+            <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(56, 189, 248, 0.3); font-size: var(--fs-caption); color: var(--text-muted);">
+              <strong style="color: var(--accent-cyan);">📂 Slide Hỗ Trợ:</strong><br>
+              • <strong>Slide 5:</strong> Mô hình 3 Bánh đà tự nuôi dưỡng.<br>
+              • <strong>Slide 6:</strong> Con hào văn hóa & Tỷ lệ giữ chân khách hàng.
+            </div>
+          </div>
+
+          <div class="card card-emerald">
+            <div class="card-badge badge-emerald">TRỤ CỘT 3 · ĐỊNH LƯỢNG & TRẦN RỦI RO</div>
+            <h3 class="card-title">3. Key Driver & Trần Kính</h3>
+            <p class="card-desc">
+              Đo lường Doanh số ký mới (Contract Backlog) làm chỉ báo sớm cho tăng trưởng EPS kép 20–25%/năm. Định giá Sanity Check 93.300đ & Phân tích trần tỷ giá Yên Nhật/lương kỹ sư.
+            </p>
+            <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(16, 185, 129, 0.3); font-size: var(--fs-caption); color: var(--text-muted);">
+              <strong style="color: var(--accent-emerald);">📂 Slide Hỗ Trợ:</strong><br>
+              • <strong>Slide 7:</strong> Leading Indicator Backlog ký mới.<br>
+              • <strong>Slide 8:</strong> Định giá Sanity Check & Định chế.<br>
+              • <strong>Slide 9:</strong> The Ceiling (Trần tỷ giá Yên & AI coder).
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 3: TRỤ CỘT 1 — LÀN SÓNG IT TOÀN CẦU & BÀI HỌC ẤN ĐỘ
+         ========================================================= -->
+    <section class="slide" id="slide-3">
+      <div class="slide-header">
+        <div class="pillar-breadcrumb">
+          <span class="pillar-badge badge-gold">TRỤ CỘT 1 · LÀN SÓNG IT & AI FACTORY</span>
+          <span class="pillar-sublink">Phân Tích Dịch Chuyển Công Nghệ Toàn Cầu & Bài Học Ấn Độ</span>
+        </div>
+        <h2 class="slide-title">Làn Sóng Dịch Chuyển Gia Công IT & Bài Học Lịch Sử Ấn Độ</h2>
+        <p class="slide-takeaway">
+          <strong>Tóm tắt:</strong> Ngành IT Outsourcing toàn cầu tuân theo quy luật <strong>Labor Arbitrage (chênh lệch chi phí nhân công)</strong> kết hợp <strong>Nâng cấp chuỗi giá trị</strong>. Doanh nghiệp chỉ đạt vốn hóa tỷ USD khi vượt thoát khỏi gia công cấp thấp sang làm chủ giải pháp kiến trúc.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-2">
+          <!-- Cột 1: Luận điểm kinh tế -->
+          <div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+            <div class="card-badge badge-gold">CƠ CHẾ KINH TẾ HỌC & BÀI HỌC ẤN ĐỘ</div>
+            
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-card); border-radius: 8px; padding: 10px 12px;">
+              <div style="font-size: var(--fs-sub); font-weight: 700; color: #ffffff; margin-bottom: 6px;">
+                1. Ba Giai Đoạn Tiến Hóa Của Các Đế Chế IT (TCS & Infosys):
+              </div>
+              <ul style="list-style: none; padding-left: 0; margin: 0; font-size: var(--fs-body); line-height: 1.5; color: var(--text-secondary);">
+                <li style="margin-bottom: 4px;">• <strong style="color: var(--accent-gold);">1995–2000 (Sóng Y2K):</strong> Phương Tây thiếu hụt lập trình viên, Ấn Độ tận dụng lợi thế tiếng Anh & chi phí lương bằng 1/10 để bùng nổ gia công.</li>
+                <li style="margin-bottom: 4px;">• <strong style="color: var(--accent-cyan);">2000–2015 (Application Modernization):</strong> Nâng cấp lên quản trị toàn diện hệ thống Core Banking, ERP cho Fortune 500.</li>
+                <li>• <strong style="color: var(--accent-emerald);">2015–Nay (Digital Transformation):</strong> Đổi từ tính giá theo giờ công (Time & Material) sang bán giải pháp trọn gói giá trị cao.</li>
+              </ul>
+            </div>
+
+            <div style="background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; padding: 10px 12px;">
+              <div style="font-size: var(--fs-sub); font-weight: 700; color: var(--accent-cyan); margin-bottom: 4px;">
+                🇻🇳 Điểm Khác Biệt & Lợi Thế Chiến Lược Của FPT Tại Việt Nam:
+              </div>
+              <div style="font-size: var(--fs-caption); line-height: 1.5; color: var(--text-secondary);">
+                FPT không cạnh tranh trực diện với Ấn Độ ở thị trường tiếng Anh ngay từ đầu, mà <strong>chọn tử địa Nhật Bản</strong> — thị trường khắt khe nhất hành tinh nhưng biên lợi nhuận cao và sự trung thành tuyệt đối. Khi đã chiếm ngôi vị số 1 tại Nhật, FPT dùng bàn đạp này mở rộng sang Mỹ & Châu Âu.
+              </div>
+            </div>
+
+            <div style="font-size: var(--fs-body); color: var(--accent-ember); background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25); padding: 8px 12px; border-radius: 8px; font-weight: 600; line-height: 1.45;">
+              ⚡ <strong>Quy luật rút ra:</strong> Chỉ có doanh nghiệp giải quyết được bài toán nguồn cung nhân lực giá rẻ và liên tục nâng cấp chuỗi giá trị mới duy trì được ROE > 25% qua nhiều thập kỷ!
+            </div>
+          </div>
+
+          <!-- Cột 2: Bảng so sánh năng lực cạnh tranh -->
+          <div class="card card-highlight" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+            <div class="card-badge badge-cyan">BENCHMARK CHI PHÍ KỸ SƯ TOÀN CẦU</div>
+            
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Quốc Gia</th>
+                    <th>Chi Phí/Giờ ($)</th>
+                    <th>Quy Mô Nhân Lực</th>
+                    <th>Ưu Thế Cạnh Tranh</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Mỹ / Tây Âu</strong></td>
+                    <td class="highlight">$90 – $140</td>
+                    <td>Bão hòa, thiếu hụt</td>
+                    <td>Sáng tạo, kiến trúc hệ thống</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Ấn Độ (TCS/Infy)</strong></td>
+                    <td>$30 – $45</td>
+                    <td>5+ triệu kỹ sư</td>
+                    <td>Quy mô khổng lồ, tiếng Anh bản địa</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Đông Âu (EPAM)</strong></td>
+                    <td>$35 – $50</td>
+                    <td>Rủi ro địa chính trị</td>
+                    <td>Thuật toán cao, gần Châu Âu</td>
+                  </tr>
+                  <tr style="background: rgba(245, 158, 11, 0.1);">
+                    <td><strong style="color: var(--accent-gold);">Việt Nam (FPT)</strong></td>
+                    <td class="highlight" style="color: var(--accent-emerald);">$20 – $32</td>
+                    <td>Dân số vàng (600k IT)</td>
+                    <td>Chi phí rẻ hơn 35%, văn hóa Nhật/Á Đông</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-card); border-radius: 8px; padding: 10px 12px; margin-top: auto;">
+              <div style="font-size: var(--fs-sub); font-weight: 700; color: #fff; margin-bottom: 4px;">
+                Tỷ Trọng Doanh Thu Toàn Cầu Của FPT Software:
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;">
+                <div style="background: rgba(245, 158, 11, 0.08); padding: 6px; border-radius: 6px;">
+                  <div style="font-size: 11px; color: var(--text-dim);">Thị Trường Nhật</div>
+                  <div style="font-size: 15px; font-weight: 800; color: var(--accent-gold);">~38%</div>
+                </div>
+                <div style="background: rgba(56, 189, 248, 0.08); padding: 6px; border-radius: 6px;">
+                  <div style="font-size: 11px; color: var(--text-dim);">Thị Trường Mỹ</div>
+                  <div style="font-size: 15px; font-weight: 800; color: var(--accent-cyan);">~32%</div>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.08); padding: 6px; border-radius: 6px;">
+                  <div style="font-size: 11px; color: var(--text-dim);">APAC & Châu Âu</div>
+                  <div style="font-size: 15px; font-weight: 800; color: var(--accent-emerald);">~30%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 4: TRỤ CỘT 1 (TIẾP) — BƯỚC NGOẶT AI FACTORY & NVIDIA
+         ========================================================= -->
+    <section class="slide" id="slide-4">
+      <div class="slide-header">
+        <div class="pillar-breadcrumb">
+          <span class="pillar-badge badge-gold">TRỤ CỘT 1 · BƯỚC NGOẶT CHIẾN LƯỢC</span>
+          <span class="pillar-sublink">Từ Gia Công Phần Mềm Đến Nhà Máy AI (AI Factory) & Bán Dẫn</span>
+        </div>
+        <h2 class="slide-title">Bước Ngoặt AI Factory, Hợp Tác NVIDIA & Bán Dẫn</h2>
+        <p class="slide-takeaway">
+          <strong>Tóm tắt:</strong> FPT đang chuyển dịch mạnh mẽ từ một "Nhà thầu gia công IT" sang vị thế <strong>Nhà cung cấp Hạ tầng Trí tuệ Nhân tạo Chủ quyền (Sovereign AI Provider)</strong> thông qua dự án AI Factory 200 triệu USD cùng NVIDIA.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-2">
+          <!-- Cột 1: Hệ sinh thái AI & Bán dẫn -->
+          <div class="card card-purple" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+            <div class="card-badge badge-purple">ĐỘNG LỰC TĂNG TRƯỞNG MỚI: AI & AUTOMOTIVE</div>
+            
+            <div class="flow-steps">
+              <div class="flow-item">
+                <div class="flow-num" style="background: rgba(192, 132, 252, 0.2); color: var(--accent-purple);">1</div>
+                <div class="flow-text">
+                  <strong style="color: var(--accent-purple);">Hợp tác toàn diện NVIDIA (AI Factory):</strong> Đầu tư hệ thống siêu máy tính GPU H100/B200 đặt tại Việt Nam và Nhật Bản, cung cấp dịch vụ huấn luyện mô hình AI độc quyền cho doanh nghiệp.
+                </div>
+              </div>
+
+              <div class="flow-item">
+                <div class="flow-num" style="background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan);">2</div>
+                <div class="flow-text">
+                  <strong style="color: var(--accent-cyan);">FPT Automotive (Phần mềm xe hơi thông minh):</strong> Đơn vị chuyên biệt phát triển hệ điều hành xe điện, tự động hóa Autosar cho các hãng xe hàng đầu thế giới (VinFast, Honda, Hyundai).
+                </div>
+              </div>
+
+              <div class="flow-item">
+                <div class="flow-num" style="background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald);">3</div>
+                <div class="flow-text">
+                  <strong style="color: var(--accent-emerald);">FPT Semiconductor (Thiết kế Chip vi mạch):</strong> Đã xuất khẩu hàng chục triệu chip "Make in Vietnam" cho thiết bị IoT y tế và điện máy tại Nhật Bản, Đài Loan.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cột 2: Chuỗi giá trị chuyển đổi số -->
+          <div class="card card-highlight" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+            <div class="card-badge badge-gold">SỰ DỊCH CHUYỂN CƠ CẤU DOANH THU THEO CHUỖI GIÁ TRỊ</div>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px;">
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                  <span style="color: var(--text-dim);">1. Gia công truyền thống (Legacy Coding / Testing)</span>
+                  <span style="color: var(--text-muted); font-family: var(--font-mono);">Giảm dần còn ~22%</span>
+                </div>
+                <div style="height: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; overflow: hidden;">
+                  <div style="width: 22%; height: 100%; background: var(--text-dim);"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                  <span style="color: var(--accent-cyan); font-weight: 600;">2. Chuyển đổi số (Digital Transformation - Cloud, Low-code)</span>
+                  <span style="color: var(--accent-cyan); font-family: var(--font-mono); font-weight: 700;">Tăng lên ~46%</span>
+                </div>
+                <div style="height: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; overflow: hidden;">
+                  <div style="width: 46%; height: 100%; background: var(--accent-cyan);"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                  <span style="color: var(--accent-purple); font-weight: 700;">3. High-Value AI, Automotive & Chip Design</span>
+                  <span style="color: var(--accent-purple); font-family: var(--font-mono); font-weight: 800;">Tăng vọt ~32% (Biên lãi cao nhất)</span>
+                </div>
+                <div style="height: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; overflow: hidden;">
+                  <div style="width: 32%; height: 100%; background: linear-gradient(90deg, var(--accent-purple), var(--accent-gold));"></div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-card); border-radius: 8px; padding: 10px 12px; margin-top: auto;">
+              <div style="font-size: var(--fs-caption); color: var(--text-muted); line-height: 1.45;">
+                💡 <strong>Tác động thể chế:</strong> Khi tỷ trọng dịch vụ giá trị cao vượt 75%, doanh thu tính trên mỗi kỹ sư (Revenue per head) tăng từ $25.000 lên $42.000/năm, trực tiếp kéo giãn biên lợi nhuận ròng của toàn tập đoàn.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 5: TRỤ CỘT 2 — BÁNH ĐÀ HỆ SINH THÁI TỰ CẤP NHÂN LỰC
+         ========================================================= -->
+    <section class="slide" id="slide-5">
+      <div class="slide-header">
+        <div class="pillar-breadcrumb">
+          <span class="pillar-badge badge-cyan">TRỤ CỘT 2 · THỰC NGHIỆM ĐỐI CHIẾU</span>
+          <span class="pillar-sublink">Bánh Đà Hệ Sinh Thái & Con Hào Kinh Tế Nhân Lực</span>
+        </div>
+        <h2 class="slide-title">Bánh Đà Hệ Sinh Thái: Con Hào Tự Cấp Nguồn Lực Độc Nhất</h2>
+        <p class="slide-takeaway">
+          <strong>Tóm tắt:</strong> FPT sở hữu mô hình <strong>"Bánh đà tự nuôi dưỡng" (Self-sustaining Flywheel)</strong> mà không bất kỳ công ty công nghệ nào tại Đông Nam Á sao chép được: Tự đào tạo nhân lực ➔ Tự xuất khẩu thu ngoại tệ ➔ Tự làm chủ hạ tầng đám mây.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-3">
+          <!-- Bánh đà 1: Giáo dục -->
+          <div class="card card-highlight">
+            <div class="card-badge badge-gold">BÁNH ĐÀ 1: NGUỒN CUNG NHÂN TÀI</div>
+            <h3 class="card-title">FPT Education</h3>
+            <div class="stat-number stat-gold">140.000+</div>
+            <div class="stat-sub">Học sinh & sinh viên toàn quốc</div>
+            <p class="card-desc" style="margin-top: 10px;">
+              Cung cấp trực tiếp <strong>20% – 30% kỹ sư đầu vào</strong> mỗi năm cho FPT Software với chi phí tuyển dụng (Customer Acquisition Cost of Talent) gần như bằng 0. Sinh viên được đào tạo đúng chuẩn dự án thực tế.
+            </p>
+          </div>
+
+          <!-- Bánh đà 2: Xuất khẩu phần mềm -->
+          <div class="card card-cyan">
+            <div class="card-badge badge-cyan">BÁNH ĐÀ 2: CỖ MÁY IN NGOẠI TỆ</div>
+            <h3 class="card-title">FPT Software</h3>
+            <div class="stat-number stat-cyan">> 1.5 Tỷ $</div>
+            <div class="stat-sub">Doanh số ký mới thị trường quốc tế</div>
+            <p class="card-desc" style="margin-top: 10px;">
+              Chiếm hơn 50% tổng doanh thu tập đoàn, mang về dòng tiền mặt ròng (FCF) ngoại tệ USD và JPY dồi dào, đóng vai trò là "Cột thu lôi" tài chính bảo vệ FPT trước mọi biến động kinh tế trong nước.
+            </p>
+          </div>
+
+          <!-- Bánh đà 3: Viễn thông & Hạ tầng -->
+          <div class="card card-emerald">
+            <div class="card-badge badge-emerald">BÁNH ĐÀ 3: HẠ TẦNG SỐ SOVEREIGN</div>
+            <h3 class="card-title">FPT Telecom & Data Center</h3>
+            <div class="stat-number stat-emerald">Tier III/IV</div>
+            <div class="stat-sub">Hệ thống Data Center lớn nhất Việt Nam</div>
+            <p class="card-desc" style="margin-top: 10px;">
+              Làm chủ đường truyền băng rộng, trung tâm dữ liệu siêu máy tính đặt AI Factory, cung cấp dịch vụ Cloud nội địa độc lập, không phụ thuộc vào hạ tầng bên thứ ba.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 6: TRỤ CỘT 2 (TIẾP) — CON HÀO GIỮ CHÂN KHÁCH HÀNG
+         ========================================================= -->
+    <section class="slide" id="slide-6">
+      <div class="slide-header">
+        <div class="pillar-breadcrumb">
+          <span class="pillar-badge badge-cyan">TRỤ CỘT 2 · CON HÀO KINH TẾ</span>
+          <span class="pillar-sublink">Văn Hóa Onsite-Offshore & Tỷ Lệ Giữ Chân Khách Hàng Triệu Đô</span>
+        </div>
+        <h2 class="slide-title">Con Hào Văn Hóa & Tỷ Lệ Giữ Chân Khách Hàng Triệu Đô</h2>
+        <p class="slide-takeaway">
+          <strong>Tóm tắt:</strong> Khách hàng của FPT là các định chế tài chính, hãng sản xuất và tập đoàn viễn thông toàn cầu. Chi phí chuyển đổi (Switching Cost) cực cao giúp FPT duy trì <strong>Tỷ lệ giữ chân khách hàng (Net Retention Rate) vượt 95%</strong>.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-2">
+          <!-- Cột 1: Mô hình Hybrid Delivery -->
+          <div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+            <div class="card-badge badge-cyan">MÔ HÌNH TRIỂN KHAI HYBRID DELIVERY TOÀN CẦU</div>
+            
+            <div class="flow-steps">
+              <div class="flow-item">
+                <div class="flow-num">20%</div>
+                <div class="flow-text">
+                  <strong>Đội ngũ Onsite (Tại chỗ):</strong> Đặt tại Tokyo, Texas, Frankfurt, Singapore trực tiếp làm việc với ban giám đốc khách hàng, nắm bắt yêu cầu nghiệp vụ và tạo dựng niềm tin tuyệt đối.
+                </div>
+              </div>
+
+              <div class="flow-item">
+                <div class="flow-num" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);">80%</div>
+                <div class="flow-text">
+                  <strong>Đội ngũ Offshore (Hậu phương):</strong> Tập trung tại các FPT Campus (Hòa Lạc, Đà Nẵng, Quy Nhơn, TP.HCM) thực hiện coding và kiểm thử 24/7 với chi phí nhân sự tối ưu.
+                </div>
+              </div>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-card); border-radius: 8px; padding: 10px 12px; margin-top: auto;">
+              <div style="font-size: var(--fs-sub); font-weight: 700; color: #fff; margin-bottom: 4px;">
+                Văn Hóa Doanh Nghiệp STCo:
+              </div>
+              <div style="font-size: var(--fs-caption); line-height: 1.5; color: var(--text-secondary);">
+                Khả năng "chiến đấu chịu cày" phi thường của kỹ sư FPT trong việc hoàn thành deadline khẩn cấp đã trở thành thương hiệu nổi tiếng tại Nhật Bản, tạo ra rào cản vô hình bảo vệ hợp đồng trước các đối thủ Trung Quốc và Ấn Độ.
+              </div>
+            </div>
+          </div>
+
+          <!-- Cột 2: Sự gia tăng khách hàng triệu đô -->
+          <div class="card card-highlight" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+            <div class="card-badge badge-gold">SỰ TĂNG TRƯỞNG KHÁCH HÀNG TRIỆU ĐÔ (TIER 1 CLIENTS)</div>
+            
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Nhóm Khách Hàng</th>
+                    <th>Năm 2020</th>
+                    <th>Năm 2023</th>
+                    <th>H1/2026 (Hiện Tại)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Khách hàng > $1 Triệu</strong></td>
+                    <td>82 khách</td>
+                    <td>146 khách</td>
+                    <td class="highlight">> 185 khách</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Khách hàng > $5 Triệu</strong></td>
+                    <td>18 khách</td>
+                    <td>35 khách</td>
+                    <td class="highlight">> 52 khách</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Khách hàng > $10 Triệu</strong></td>
+                    <td>5 khách</td>
+                    <td>12 khách</td>
+                    <td class="highlight">19 khách lớn</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px; padding: 10px 12px; margin-top: auto;">
+              <div style="font-size: var(--fs-caption); color: var(--accent-gold); line-height: 1.45;">
+                🏆 <strong>Tác động dòng tiền:</strong> Nhóm khách hàng Tier 1 mang tính "Recurring Revenue" (Doanh thu lặp lại định kỳ) chiếm trên 70% tổng doanh số xuất khẩu phần mềm, bảo đảm nền lợi nhuận không bị đảo chiều đột ngột.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 7: TRỤ CỘT 3 — ĐỊNH LƯỢNG THEO KEY DRIVER BACKLOG
+         ========================================================= -->
+    <section class="slide" id="slide-7">
+      <div class="slide-header">
+        <div class="pillar-breadcrumb">
+          <span class="pillar-badge badge-emerald">TRỤ CỘT 3 · ĐỊNH LƯỢNG THỂ CHẾ</span>
+          <span class="pillar-sublink">Mô Hình Định Lượng Key Driver: Doanh Số Ký Mới (Contract Backlog)</span>
+        </div>
+        <h2 class="slide-title">Định Lượng Theo Key Driver: Doanh Số Ký Mới (Backlog)</h2>
+        <p class="slide-takeaway">
+          <strong>Tóm tắt:</strong> Đối với doanh nghiệp gia công công nghệ, Key Driver số 1 không phải là công suất máy móc mà là <strong>Doanh số ký mới (Contract Backlog)</strong> — Chỉ báo sớm (Leading Indicator) dự báo chuẩn xác doanh thu và EPS trong 6–12 tháng tới.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-2">
+          <!-- Cột 1: Cơ chế Backlog -->
+          <div class="card card-highlight" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+            <div class="card-badge badge-gold">CƠ CHẾ HOẠT ĐỘNG CỦA CHỈ BÁO BACKLOG</div>
+            
+            <div class="flow-steps">
+              <div class="flow-item">
+                <div class="flow-num">T0</div>
+                <div class="flow-text">
+                  <strong>Doanh số Ký Mới (Backlog Order Inflow):</strong> Khách hàng ký hợp đồng khung dài hạn (Master Service Agreement). Tăng trưởng Backlog bình quân đạt <strong>22% – 26%/năm</strong>.
+                </div>
+              </div>
+
+              <div class="flow-item">
+                <div class="flow-num" style="background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan);">T+1</div>
+                <div class="flow-text">
+                  <strong>Chuyển hóa Doanh thu (Revenue Recognition):</strong> Hợp đồng được FPT Software phân rã và nghiệm thu theo tiến độ trong vòng 3–12 tháng.
+                </div>
+              </div>
+
+              <div class="flow-item">
+                <div class="flow-num" style="background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald);">T+2</div>
+                <div class="flow-text">
+                  <strong>Lợi Nhuận Thuần Phản Ánh (Compounding EPS):</strong> Nhờ cấu trúc chi phí nhân sự ổn định, tăng trưởng doanh thu tự động phóng đại biên lợi nhuận ròng (Operating Leverage).
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cột 2: Dự phóng tăng trưởng EPS 2026-2030 -->
+          <div class="card card-emerald" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+            <div class="card-badge badge-emerald">DỰ PHÓNG TĂNG TRƯỞNG KÉP FPT (2026 – 2030)</div>
+            
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Chỉ Tiêu (Tỷ VNĐ)</th>
+                    <th>2024</th>
+                    <th>2025</th>
+                    <th>2026F (Kế hoạch)</th>
+                    <th>2028F (Tầm nhìn)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Doanh Thu Thuần</strong></td>
+                    <td>52.618</td>
+                    <td>63.100</td>
+                    <td class="highlight">74.500 (+18%)</td>
+                    <td class="highlight">> 108.000</td>
+                  </tr>
+                  <tr>
+                    <td><strong>LNST Cổ Đông Mẹ</strong></td>
+                    <td>7.788</td>
+                    <td>9.250</td>
+                    <td class="highlight">10.850 (+17%)</td>
+                    <td class="highlight">> 16.500</td>
+                  </tr>
+                  <tr>
+                    <td><strong>EPS Chuẩn Hóa (đ)</strong></td>
+                    <td>2.650</td>
+                    <td>3.150</td>
+                    <td class="highlight">3.690 đ</td>
+                    <td class="highlight">> 5.600 đ</td>
+                  </tr>
+                  <tr>
+                    <td><strong>ROE Hàng Năm</strong></td>
+                    <td>26.5%</td>
+                    <td>27.2%</td>
+                    <td class="highlight" style="color: var(--accent-emerald);">27.8%</td>
+                    <td class="highlight" style="color: var(--accent-emerald);">> 28%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; padding: 8px 12px; margin-top: auto;">
+              <div style="font-size: var(--fs-caption); color: var(--accent-emerald); line-height: 1.45;">
+                📈 <strong>Độ tin cậy:</strong> FPT duy trì chuỗi 15 năm liên tiếp hoàn thành và vượt kế hoạch ĐHCĐ đề ra. Độ biến động lợi nhuận thấp nhất trong rổ VN30.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 8: TRỤ CỘT 3 (TIẾP) — SANITY CHECK ĐỊNH GIÁ NỘI TẠI
+         ========================================================= -->
+    <section class="slide" id="slide-8">
+      <div class="slide-header">
+        <div class="pillar-breadcrumb">
+          <span class="pillar-badge badge-emerald">TRỤ CỘT 3 · ĐỊNH GIÁ THỂ CHẾ</span>
+          <span class="pillar-sublink">Sanity Check Định Giá Giá Trị Nội Tại FinPeace vs Market Consensus</span>
+        </div>
+        <h2 class="slide-title">Sanity Check Định Giá: P/E Tái Định Vị & Biên An Toàn</h2>
+        <p class="slide-takeaway">
+          <strong>Tóm tắt:</strong> Áp dụng nguyên tắc Sanity Check thể chế: FinPeace chuẩn hóa Định giá Nội tại FPT đạt <strong>93.300 đ/cp</strong> (tương đương P/E Fair 25.5x – 26x). Với thị giá 72.200đ, FPT mang lại biên an toàn cao (+29.3% Upside).
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-3">
+          <!-- Thẻ 1: Khung định giá P/E Fair -->
+          <div class="card card-highlight">
+            <div class="card-badge badge-gold">TÁI ĐỊNH VỊ P/E THỜI KỲ AI</div>
+            <h3 class="card-title">P/E Fair: 25.5x – 26.0x</h3>
+            <div class="stat-number stat-gold">93.300 đ</div>
+            <div class="stat-sub">Giá trị nội tại FinPeace 2026</div>
+            <p class="card-desc" style="margin-top: 10px;">
+              Thời kỳ 2018–2022 FPT giao dịch ở P/E 16–19x. Khi mảng Chuyển đổi số & AI trở thành lõi, thị trường quốc tế sẵn sàng trả P/E 25–28x cho các công ty tăng trưởng EPS 20%/năm (như Infosys, Accenture).
+            </p>
+          </div>
+
+          <!-- Thẻ 2: Market Consensus Sanity Check -->
+          <div class="card card-cyan">
+            <div class="card-badge badge-cyan">MARKET CONSENSUS ĐỒNG THUẬN</div>
+            <h3 class="card-title">Khảo Sát Các CTCK Lớn</h3>
+            <div class="stat-number stat-cyan">94.800 đ</div>
+            <div class="stat-sub">Trung vị mục tiêu 12 tháng của CTCK</div>
+            <div style="font-size: var(--fs-caption); line-height: 1.5; color: var(--text-secondary); margin-top: 10px;">
+              • <strong>SSI Research:</strong> 92.500 đ (Khả quan)<br>
+              • <strong>HSC Research:</strong> 96.000 đ (Mua)<br>
+              • <strong>Vietcap (VCSC):</strong> 102.000 đ (Mua mạnh)<br>
+              • <strong>VNDirect:</strong> 89.000 đ (Khả quan)<br>
+              ➔ Định giá 93.300đ của FinPeace nằm hoàn hảo trong vùng đồng thuận thể chế.
+            </div>
+          </div>
+
+          <!-- Thẻ 3: Khuyến nghị hành động -->
+          <div class="card card-emerald">
+            <div class="card-badge badge-emerald">VÙNG MUA TÍCH SẢN SIP AN TOÀN</div>
+            <h3 class="card-title">Khuyến Nghị: 🟢 MUA TỐT</h3>
+            <div class="stat-number stat-emerald">< 83.970 đ</div>
+            <div class="stat-sub">Giá mua tích sản tối đa (Biên an toàn 10%)</div>
+            <p class="card-desc" style="margin-top: 10px;">
+              Thị giá hiện tại: <strong>72.200 đ</strong>.<br>
+              Khoảng cách đến giá mua tối đa: <strong>-14%</strong> (Rất hấp dẫn).<br>
+              Tiềm năng tăng giá (Upside): <strong style="color: var(--accent-emerald);">+29.3%</strong>.<br>
+              Phù hợp chiến lược tích lũy định kỳ hàng tháng cho nhà đầu tư cá nhân và quỹ hưu trí.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 9: TRỤ CỘT 3 (TIẾP) — THE CEILING ANALYSIS (TRẦN RỦI RO)
+         ========================================================= -->
+    <section class="slide" id="slide-9">
+      <div class="slide-header">
+        <div class="pillar-breadcrumb">
+          <span class="pillar-badge badge-gold">TRỤ CỘT 3 · PHÂN TÍCH RỦI RO CỐT TỬ</span>
+          <span class="pillar-sublink">The Ceiling Analysis: Ba Trần Kính Kháng Cự Cần Giám Sát</span>
+        </div>
+        <h2 class="slide-title">The Ceiling Analysis: Ba Trần Kính Rủi Ro Cần Giám Sát</h2>
+        <p class="slide-takeaway">
+          <strong>Tóm tắt:</strong> Nhà đầu tư thể chế không chỉ nhìn vào tiềm năng tăng giá mà luôn tìm kiếm <strong>"Thiên nga đen" và "Trần kính kháng cự" (The Ceiling)</strong> — nơi doanh nghiệp có thể bị suy giảm tốc độ tăng trưởng.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-3">
+          <!-- Rủi ro 1: Tỷ giá Yên Nhật -->
+          <div class="card" style="border-color: rgba(245, 158, 11, 0.3);">
+            <div class="card-badge badge-gold">RỦI RO 1 · TỶ GIÁ YÊN NHẬT (JPY)</div>
+            <h3 class="card-title">Biến Động Tỷ Giá JPY/VND</h3>
+            <p class="card-desc">
+              Doanh thu từ Nhật Bản chiếm gần <strong>38% – 40% mảng Global IT</strong>. Đồng Yên suy yếu kéo dài làm suy giảm biên lợi nhuận khi quy đổi về VNĐ.
+            </p>
+            <div style="margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border-card); font-size: var(--fs-caption); color: var(--accent-gold);">
+              🛡️ <strong>Bộ đệm phòng vệ:</strong> FPT áp dụng hợp đồng phái sinh tỷ giá (Hedging) và chuyển dịch ký kết bằng USD ngay tại thị trường Nhật.
+            </div>
+          </div>
+
+          <!-- Rủi ro 2: Lạm phát tiền lương -->
+          <div class="card" style="border-color: rgba(56, 189, 248, 0.3);">
+            <div class="card-badge badge-cyan">RỦI RO 2 · LẠM PHÁT TIỀN LƯƠNG IT</div>
+            <h3 class="card-title">Cạnh Tranh Nhân Lực AI</h3>
+            <p class="card-desc">
+              Lương kỹ sư AI, Cloud và Bán dẫn tại Việt Nam đang tăng 15% – 20%/năm. Nếu năng suất lao động không tăng tương ứng, biên lợi nhuận gộp sẽ bị xói mòn.
+            </p>
+            <div style="margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border-card); font-size: var(--fs-caption); color: var(--accent-cyan);">
+              🛡️ <strong>Bộ đệm phòng vệ:</strong> FPT Education đào tạo sẵn nguồn cung sinh viên giá thấp và ứng dụng AI tự động hóa coding để bù đắp chi phí.
+            </div>
+          </div>
+
+          <!-- Rủi ro 3: AI Code Generation -->
+          <div class="card" style="border-color: rgba(251, 113, 133, 0.3);">
+            <div class="card-badge" style="background: rgba(251, 113, 133, 0.15); color: var(--accent-rose); border: 1px solid rgba(251, 113, 133, 0.3);">
+              RỦI RO 3 · AI GENERATION CƠ BẢN
+            </div>
+            <h3 class="card-title">Nguy Cơ Thay Thế Junior Coder</h3>
+            <p class="card-desc">
+              Các công cụ AI (Cursor, Copilot, Devin) có thể thay thế 30% – 50% khối lượng công việc kiểm thử và viết mã sơ cấp. Doanh nghiệp gia công thuần túy sẽ mất hợp đồng giờ công.
+            </p>
+            <div style="margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border-card); font-size: var(--fs-caption); color: var(--accent-rose);">
+              🛡️ <strong>Lối thoát FPT:</strong> Bắt buộc đưa kỹ sư lên nấc thang Thiết kế Kiến trúc (Solution Architecture) và bán giải pháp AI trọn gói.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 10: TỔNG KẾT KHUYẾN NGHỊ & CHECKLIST HÀNH ĐỘNG
+         ========================================================= -->
+    <section class="slide" id="slide-10">
+      <div class="slide-header" style="text-align: center; margin: 0 auto 16px;">
+        <div class="tagline" style="margin: 0 auto 8px;">Tổng Kết Khuyến Nghị Đầu Tư Thể Chế · FinPeace Canvas LV3</div>
+        <h2 class="slide-title">Bản Đồ Hành Động: FPT — Cổ Phiếu Tích Sản Hàng Đầu Thập Kỷ</h2>
+        <p class="slide-takeaway" style="margin: 0 auto;">
+          <strong>Tóm tắt:</strong> FPT hội tụ đầy đủ 3 yếu tố của một cổ phiếu Compounder vĩ đại: Vĩ mô thuận lợi (AI/DX), Con hào độc quyền (Bánh đà Giáo dục) và Dòng tiền đo lường bằng Backlog.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-2">
+          <!-- Tóm tắt 3 trụ cột -->
+          <div class="card card-highlight" style="padding: 16px;">
+            <div class="card-badge badge-gold">TỔNG HỢP 3 TRỤ CỘT LUẬN ĐIỂM</div>
+            <div class="flow-steps" style="margin-top: 8px;">
+              <div class="flow-item">
+                <div class="flow-num">1</div>
+                <div class="flow-text">
+                  <strong>Trụ Cột 1:</strong> Cưỡi trên làn sóng IT toàn cầu & chuyển dịch thành công sang AI Factory hợp tác cùng NVIDIA.
+                </div>
+              </div>
+              <div class="flow-item">
+                <div class="flow-num" style="background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan);">2</div>
+                <div class="flow-text">
+                  <strong>Trụ Cột 2:</strong> Bánh đà tự cấp nhân lực độc nhất (Đại học FPT ➔ Phần mềm ➔ Viễn thông) với tỷ lệ giữ chân khách hàng > 95%.
+                </div>
+              </div>
+              <div class="flow-item">
+                <div class="flow-num" style="background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald);">3</div>
+                <div class="flow-text">
+                  <strong>Trụ Cột 3:</strong> Doanh số ký mới (Backlog) bảo chứng tăng trưởng EPS kép 20%/năm. Giá trị nội tại <strong>93.300đ</strong> (Upside +29.3%).
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Khuyến nghị hành động -->
+          <div class="card card-emerald" style="padding: 16px; display: flex; flex-direction: column;">
+            <div class="card-badge badge-emerald">CHIẾN LƯỢC HÀNH ĐỘNG DÀNH CHO NHÀ ĐẦU TƯ</div>
+            
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 12px; margin-top: 8px;">
+              <div style="font-size: 14px; font-weight: 800; color: var(--accent-emerald); margin-bottom: 6px;">
+                🟢 KHUYẾN NGHỊ: MUA TÍCH SẢN (SIP)
+              </div>
+              <ul style="list-style: none; padding-left: 0; font-size: var(--fs-body); line-height: 1.55; color: var(--text-secondary);">
+                <li>• <strong>Vùng mua tích sản tối ưu:</strong> Từ 70.000đ đến 83.970đ.</li>
+                <li>• <strong>Giá trị nội tại 2026:</strong> 93.300đ (Biên an toàn +29.3%).</li>
+                <li>• <strong>Mục tiêu vốn hóa 2028:</strong> Vượt 10 tỷ USD (Giá cổ phiếu kỳ vọng > 125.000đ).</li>
+                <li>• <strong>Chiến lược phân bổ:</strong> Chiếm 20% – 30% tỷ trọng danh mục Tích sản dài hạn.</li>
+              </ul>
+            </div>
+
+            <div style="margin-top: auto; padding-top: 10px; font-size: var(--fs-caption); color: var(--text-dim); text-align: center;">
+              FinPeace Wealth Management · Hotline: 098.888.8888 · Website: finpeace.vn
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-dim);">
+      <span>Dùng phím</span>
+      <kbd style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; color: #fff;">←</kbd>
+      <kbd style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; color: #fff;">→</kbd>
+      <span>hoặc</span>
+      <kbd style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; color: #fff;">Space</kbd>
+      <span>để chuyển slide</span>
+      <span style="margin-left: 6px;">·</span>
+      <kbd style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; color: #fff;">F</kbd>
+      <span>Toàn màn hình</span>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="progressBar"></div>
+    </div>
+
+    <div class="nav-btn-group">
+      <button class="btn-nav" id="btnPrev">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        Trước
+      </button>
+      <button class="btn-nav btn-nav-primary" id="btnNext">
+        Tiếp theo
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+  </footer>
+
+  <!-- CONTROLLER SCRIPT -->
+  <script>
+    class PresentationController {
+      constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.totalSlides = this.slides.length;
+        this.currentIndex = 0;
+        
+        this.indicator = document.getElementById('slideIndicator');
+        this.progressBar = document.getElementById('progressBar');
+        this.btnPrev = document.getElementById('btnPrev');
+        this.btnNext = document.getElementById('btnNext');
+        this.btnFullscreen = document.getElementById('btnFullscreen');
+        
+        // 3-Pillar Stepper elements
+        this.pillarStepper = document.getElementById('pillarStepper');
+        this.stepPillar1 = document.getElementById('stepPillar1');
+        this.stepPillar2 = document.getElementById('stepPillar2');
+        this.stepPillar3 = document.getElementById('stepPillar3');
+
+        this.init();
+      }
+
+      init() {
+        // Hash routing support (e.g. #slide-3)
+        let initialSlide = 0;
+        const hashMatch = window.location.hash.match(/slide-(\d+)/) || window.location.hash.match(/#(\d+)/);
+        if (hashMatch) {
+          const num = parseInt(hashMatch[1], 10);
+          if (!isNaN(num) && num >= 1 && num <= this.totalSlides) {
+            initialSlide = num - 1;
+          }
+        }
+        this.updateSlide(initialSlide);
+
+        // Navigation button listeners
+        this.btnPrev.addEventListener('click', () => this.prev());
+        this.btnNext.addEventListener('click', () => this.next());
+        this.btnFullscreen.addEventListener('click', () => this.toggleFullscreen());
+
+        // Pillar Step interactive jump clicks
+        if (this.stepPillar1) {
+          this.stepPillar1.addEventListener('click', () => this.updateSlide(2));
+        }
+        if (this.stepPillar2) {
+          this.stepPillar2.addEventListener('click', () => this.updateSlide(4));
+        }
+        if (this.stepPillar3) {
+          this.stepPillar3.addEventListener('click', () => this.updateSlide(6));
+        }
+
+        // Keyboard listeners
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this.next();
+          } else if (e.key === 'ArrowLeft' || e.key === 'Backspace') {
+            e.preventDefault();
+            this.prev();
+          } else if (e.key === 'f' || e.key === 'F') {
+            this.toggleFullscreen();
+          } else if (e.key === 'Home') {
+            this.updateSlide(0);
+          } else if (e.key === 'End') {
+            this.updateSlide(this.totalSlides - 1);
+          }
+        });
+
+        // Touch swipe support
+        let startX = 0;
+        document.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+          const diffX = startX - e.changedTouches[0].clientX;
+          if (Math.abs(diffX) > 50) {
+            if (diffX > 0) this.next();
+            else this.prev();
+          }
+        }, { passive: true });
+
+        // Wheel navigation (debounced)
+        let wheelTimeout = null;
+        document.addEventListener('wheel', (e) => {
+          if (wheelTimeout) return;
+          if (Math.abs(e.deltaY) > 30) {
+            wheelTimeout = setTimeout(() => { wheelTimeout = null; }, 500);
+            if (e.deltaY > 0) this.next();
+            else this.prev();
+          }
+        }, { passive: true });
+      }
+
+      next() {
+        if (this.currentIndex < this.totalSlides - 1) {
+          this.updateSlide(this.currentIndex + 1);
+        }
+      }
+
+      prev() {
+        if (this.currentIndex > 0) {
+          this.updateSlide(this.currentIndex - 1);
+        }
+      }
+
+      updateSlide(index) {
+        this.slides.forEach((s, idx) => {
+          s.classList.toggle('active', idx === index);
+        });
+
+        this.currentIndex = index;
+        
+        // Update Indicator
+        const pad = (n) => n < 10 ? '0' + n : n;
+        this.indicator.textContent = `${pad(index + 1)} / ${pad(this.totalSlides)}`;
+
+        // Update Progress Bar
+        const percent = ((index + 1) / this.totalSlides) * 100;
+        this.progressBar.style.width = percent + '%';
+
+        // Sync URL hash without scrolling
+        try {
+          history.replaceState(null, '', `#slide-${index + 1}`);
+        } catch(e) {}
+
+        // Update 3-Pillar Stepper State: HIGHLIGHT ĐỘNG TỪNG TRỤ CỘT
+        if (this.pillarStepper) {
+          // Reset all steps
+          const steps = [this.stepPillar1, this.stepPillar2, this.stepPillar3];
+          steps.forEach(step => {
+            if (step) {
+              step.classList.remove('active', 'completed');
+              step.style.opacity = '';
+            }
+          });
+
+          if (index === 0) {
+            // Slide 1 (Bìa)
+            this.pillarStepper.style.opacity = '0.35';
+            this.pillarStepper.style.pointerEvents = 'none';
+          } else {
+            this.pillarStepper.style.opacity = '1';
+            this.pillarStepper.style.pointerEvents = 'auto';
+          }
+
+          if (index === 1) {
+            // Slide 2: Khung 3 Trụ Cột (Tổng quan)
+            steps.forEach(s => { if (s) s.style.opacity = '0.75'; });
+          } else if (index === 2 || index === 3) {
+            // Slide 3-4: TRỤ CỘT 1 (Làn Sóng IT & AI Factory)
+            if (this.stepPillar1) this.stepPillar1.classList.add('active');
+            if (this.stepPillar2) this.stepPillar2.style.opacity = '0.35';
+            if (this.stepPillar3) this.stepPillar3.style.opacity = '0.35';
+          } else if (index === 4 || index === 5) {
+            // Slide 5-6: TRỤ CỘT 2 (Bánh Đà Hệ Sinh Thái)
+            if (this.stepPillar1) this.stepPillar1.classList.add('completed');
+            if (this.stepPillar2) this.stepPillar2.classList.add('active');
+            if (this.stepPillar3) this.stepPillar3.style.opacity = '0.35';
+          } else if (index >= 6 && index <= 8) {
+            // Slide 7-8-9: TRỤ CỘT 3 (Định Giá Key Driver & The Ceiling)
+            if (this.stepPillar1) this.stepPillar1.classList.add('completed');
+            if (this.stepPillar2) this.stepPillar2.classList.add('completed');
+            if (this.stepPillar3) this.stepPillar3.classList.add('active');
+          } else if (index === 9) {
+            // Slide 10: Tổng Kết Khuyến Nghị
+            steps.forEach(s => { if (s) s.classList.add('completed'); });
+          }
+        }
+      }
+
+      toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      }
+    }
+
+    // Initialize controller on DOM load
+    document.addEventListener('DOMContentLoaded', () => {
+      window.presentationController = new PresentationController();
+    });
+  </script>
+</body>
+</html>

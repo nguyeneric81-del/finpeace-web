@@ -263,7 +263,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 6.424 tỷ (+50.7%) | H1/26: 15.480 tỷ (+103%) | DT Q2/26: 55.159 tỷ | Giá TT: 21.600 | NT Mới: 56.546 | Upside: +162%',
     updateDate: '25/08/2026',
     grahamPoints: ['Dung Quất 2 chính thức chuyển sang giai đoạn thu hoạch dòng tiền', 'Chi phí sản xuất thép thấp nhất thế giới nhờ quy trình khép kín lò cao', 'Thị phần thép xây dựng và HRC số 1 Đông Nam Á', 'Lợi nhuận H1/2026 bùng nổ tăng gấp đôi (+103%)'],
-    salesScript: 'HPG là cơ hội ngàn vàng của chu kỳ tích sản 10 năm có một. Dung Quất 2 hoàn thành biến Hòa Phát thành gã khổng lồ công nghiệp với dòng tiền tự do hàng chục nghìn tỷ mỗi năm.'
+    salesScript: 'HPG là cơ hội ngàn vàng của chu kỳ tích sản 10 năm có một. Dung Quất 2 hoàn thành biến Hòa Phát thành gã khổng lồ công nghiệp với dòng tiền tự do hàng chục nghìn tỷ mỗi năm.',
+    canvasPresentationUrl: '/canvas-lv3/hpg.html',
+    canvasReportTitle: 'Bản Thuyết Trình Thể Chế HPG Canvas LV3 (Dung Quất 2 & Key Driver)'
   },
   {
     ticker: 'VNM',
@@ -479,7 +481,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 2.570 tỷ (+14.0%) | H1/26: 5.047 tỷ (+14.2%) | Mảng AI/Cloud +2 chữ số | Giá TT: 72.200 | NT Mới: 93.300 | Upside: +29.2%',
     updateDate: '25/08/2026',
     grahamPoints: ['Tập đoàn công nghệ số 1 Việt Nam với doanh thu phần mềm xuất khẩu tỷ USD', 'Hợp tác chiến lược toàn cầu với NVIDIA xây dựng AI Factory', 'Tăng trưởng lợi nhuận 2 chữ số liên tục hơn 15 năm', 'Đội ngũ kỹ sư CNTT và mảng giáo dục đào tạo lớn mạnh'],
-    salesScript: 'FPT là cổ phiếu tăng trưởng công nghệ không thể thiếu trong mọi danh mục dài hạn. Mỗi khi thị trường điều chỉnh đưa FPT về dưới giá mua tối đa 83.970đ, đó là món quà cho nhà đầu tư tích sản.'
+    salesScript: 'FPT là cổ phiếu tăng trưởng công nghệ không thể thiếu trong mọi danh mục dài hạn. Mỗi khi thị trường điều chỉnh đưa FPT về dưới giá mua tối đa 83.970đ, đó là món quà cho nhà đầu tư tích sản.',
+    canvasPresentationUrl: '/canvas-lv3/fpt.html',
+    canvasReportTitle: 'Bản Thuyết Trình Thể Chế FPT Canvas LV3 (Bánh Đà Nhân Lực & AI Factory)'
   },
   {
     ticker: 'POW',

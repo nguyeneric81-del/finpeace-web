@@ -28,6 +28,8 @@ export interface SIPStock {
   grahamPoints?: string[];
   salesScript?: string;
   stockType?: 'defensive' | 'core_growth' | 'super_cycle'; // Phân loại theo Tháp tài sản CFP
+  canvasPresentationUrl?: string; // Link đến bản thuyết trình thể chế Canvas LV3
+  canvasReportTitle?: string;
 }
 
 export interface FinancialGoal {

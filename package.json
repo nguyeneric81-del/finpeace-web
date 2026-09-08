@@ -11,6 +11,7 @@
   "dependencies": {
     "@antv/infographic": "^0.2.16",
     "@google/generative-ai": "^0.24.1",
+    "@mathieuc/tradingview": "^3.5.2",
     "@radix-ui/react-slot": "^1.2.4",
     "@remixicon/react": "^4.9.0",
     "@supabase/ssr": "^0.8.0",
@@ -44,6 +45,7 @@
     "rss-parser": "^3.13.0",
     "tailwind-merge": "^3.5.0",
     "tailwindcss-animate": "^1.0.7",
+    "telegraf": "^4.16.3",
     "web-push": "^3.6.7",
     "zustand": "^5.0.11"
   },

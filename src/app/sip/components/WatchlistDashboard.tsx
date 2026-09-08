@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import {
   Search, Filter, ArrowUpDown, ChevronRight, TrendingUp,
-  ShieldCheck, AlertCircle, Sparkles, Building2, Eye, Award
+  ShieldCheck, AlertCircle, Sparkles, Building2, Eye, Award, ExternalLink
 } from 'lucide-react';
 import { SIPStock } from '../types';
 import StockDetailDrawer from './StockDetailDrawer';
@@ -322,16 +322,31 @@ export default function WatchlistDashboard({ stocks, onSelectForAdvisory }: Prop
 
                     {/* Action Button */}
                     <td className="py-3.5 px-4 text-center">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveStock(stock);
-                        }}
-                        className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-amber-400 hover:bg-slate-750 transition"
-                        title="Xem Factsheet chi tiết"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center justify-center gap-1.5">
+                        {stock.canvasPresentationUrl && (
+                          <a
+                            href={stock.canvasPresentationUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="px-2 py-1 rounded-lg bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/40 text-amber-300 hover:text-white hover:border-amber-400 text-[11px] font-bold flex items-center gap-1 transition shadow-sm"
+                            title="Mở Bản Thuyết Trình Thể Chế Canvas LV3"
+                          >
+                            <span>LV3</span>
+                            <ExternalLink className="w-3 h-3 text-amber-400" />
+                          </a>
+                        )}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveStock(stock);
+                          }}
+                          className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-amber-400 hover:bg-slate-750 transition"
+                          title="Xem Factsheet chi tiết"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
