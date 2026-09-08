@@ -109,8 +109,11 @@ export default function SIPSalesPortalPage() {
         });
 
         const updated = stocks.map(s => {
-          const livePrice = latestPriceMap.get(s.ticker);
-          if (livePrice && livePrice > 0) {
+          const rawPrice = latestPriceMap.get(s.ticker);
+          if (rawPrice && rawPrice > 0) {
+            // Giá trong bảng stock_prices được lưu theo nghìn đồng (ví dụ: 58.1 = 58.100đ).
+            // Quy đổi về đơn vị đồng (VND) để đồng nhất với newIntrinsicValue & maxBuyPrice.
+            const livePrice = rawPrice < 1000 ? Math.round(rawPrice * 1000) : rawPrice;
             const upside = Math.round(((s.newIntrinsicValue - livePrice) / livePrice) * 1000) / 10;
             // Cập nhật CTA theo quy tắc nếu giá vượt max buy
             let cta = s.cta;

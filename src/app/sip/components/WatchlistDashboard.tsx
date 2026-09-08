@@ -25,9 +25,9 @@ export default function WatchlistDashboard({ stocks, onSelectForAdvisory }: Prop
   // Thống kê nhanh
   const stats = useMemo(() => {
     const total = stocks.length;
-    const buyCount = stocks.filter(s => s.cta.includes('MUA')).length;
+    const buyCount = stocks.filter(s => s.cta.includes('MUA TỐT') || (s.cta.includes('MUA') && !s.cta.includes('TẠM DỪNG'))).length;
     const pauseCount = stocks.filter(s => s.cta.includes('TẠM DỪNG')).length;
-    const avgUpside = Math.round((stocks.reduce((acc, s) => acc + s.upsidePct, 0) / total) * 10) / 10;
+    const avgUpside = total > 0 ? Math.round((stocks.reduce((acc, s) => acc + s.upsidePct, 0) / total) * 10) / 10 : 0;
     return { total, buyCount, pauseCount, avgUpside };
   }, [stocks]);
 
@@ -46,7 +46,7 @@ export default function WatchlistDashboard({ stocks, onSelectForAdvisory }: Prop
         if (!matchSearch) return false;
 
         // Filter tab
-        if (selectedFilter === 'buy') return stock.cta.includes('MUA');
+        if (selectedFilter === 'buy') return stock.cta.includes('MUA TỐT') || (stock.cta.includes('MUA') && !stock.cta.includes('TẠM DỪNG'));
         if (selectedFilter === 'pause') return stock.cta.includes('TẠM DỪNG');
         if (selectedFilter === 'tier1') return stock.tier === 'Tier 1';
         if (selectedFilter === 'bank') return stock.sector.toLowerCase().includes('ngân hàng');
