@@ -23,7 +23,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 14.551 tỷ (+64.7% YoY) | H1/26: 24.013 tỷ | Tổng TS: 2.657.441 tỷ | Giá TT: 58.700 | NT Mới: 85.800 | Upside: +46%',
     updateDate: '25/08/2026',
     grahamPoints: ['Tỷ lệ nợ xấu thấp nhất hệ thống (<1%)', 'Bộ đệm bao phủ nợ xấu dẫn đầu ngành', 'Lợi nhuận ròng tăng trưởng vững chắc 5 năm', 'Định chế tài chính quốc gia an toàn tuyệt đối'],
-    salesScript: 'Khách hàng ưu tiên sự bảo toàn vốn và an tâm tuyệt đối hãy chọn VCB làm nền móng. Đây là cổ phiếu trụ cột số 1 của kinh tế Việt Nam với khả năng chống chịu khủng hoảng cao nhất.'
+    salesScript: 'Khách hàng ưu tiên sự bảo toàn vốn và an tâm tuyệt đối hãy chọn VCB làm nền móng. Đây là cổ phiếu trụ cột số 1 của kinh tế Việt Nam với khả năng chống chịu khủng hoảng cao nhất.',
+    canvasPresentationUrl: '/canvas-lv3/vcb.html',
+    canvasReportTitle: 'Vietcombank Canvas LV3'
   },
   {
     ticker: 'CTG',
@@ -47,7 +49,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 11.783 tỷ (+20.8% YoY) | H1/26: 20.743 tỷ | Tổng TS: 2.962.004 tỷ | Giá TT: 31.500 | NT Mới: 54.008 | Upside: +71%',
     updateDate: '25/08/2026',
     grahamPoints: ['Big 4 ngân hàng thương mại nhà nước', 'Tăng trưởng tín dụng tập trung sản xuất kinh doanh', 'P/E chiết khấu sâu so với lịch sử (6.2x)', 'Biên an toàn định giá vượt trội 35%'],
-    salesScript: 'CTG đang có mức P/E rẻ hiếm thấy cho một ngân hàng top đầu. Mua tích sản ở vùng giá này cho phép khách hàng vừa hưởng tăng trưởng tín dụng vừa có biên an toàn cực dày.'
+    salesScript: 'CTG đang có mức P/E rẻ hiếm thấy cho một ngân hàng top đầu. Mua tích sản ở vùng giá này cho phép khách hàng vừa hưởng tăng trưởng tín dụng vừa có biên an toàn cực dày.',
+    canvasPresentationUrl: '/canvas-lv3/ctg.html',
+    canvasReportTitle: 'VietinBank Canvas LV3'
   },
   {
     ticker: 'BID',
@@ -71,7 +75,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 8.295 tỷ (+20.3% YoY) | H1/26: 15.174 tỷ | Tổng TS: 3.441 triệu tỷ | Giá TT: 36.450 | NT Mới: 49.183 | Upside: +35%',
     updateDate: '25/08/2026',
     grahamPoints: ['Tổng tài sản số 1 toàn quốc (3.4 triệu tỷ)', 'Chất lượng tài sản cải thiện rõ rệt', 'Kế hoạch phát hành thêm cổ phiếu củng cố CAR', 'Tăng trưởng lợi nhuận 2 chữ số bền vững'],
-    salesScript: 'BIDV sở hữu mạng lưới phủ sóng khắp toàn quốc với tổng tài sản lớn nhất ngành. Tích sản BID giúp hưởng lợi trọn vẹn từ chu kỳ bơm vốn phát triển hạ tầng đất nước.'
+    salesScript: 'BIDV sở hữu mạng lưới phủ sóng khắp toàn quốc với tổng tài sản lớn nhất ngành. Tích sản BID giúp hưởng lợi trọn vẹn từ chu kỳ bơm vốn phát triển hạ tầng đất nước.',
+    canvasPresentationUrl: '/canvas-lv3/bid.html',
+    canvasReportTitle: 'BIDV Canvas LV3'
   },
   {
     ticker: 'MBB',
@@ -95,7 +101,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 8.445 tỷ (+40.7% YoY) | H1/26: 16.148 tỷ (+27.4%) | Tổng TS: 1.733.013 tỷ (+34.4%) | Giá TT: 20.600 | NT Mới: 31.000 | Upside: +50%',
     updateDate: '25/08/2026',
     grahamPoints: ['Tỷ lệ CASA vượt 40% đứng đầu khối TMCP', 'ROE bền bỉ trên 22% suốt nhiều năm', 'Hệ sinh thái số dẫn đầu ngành (App MBBank)', 'Định giá P/B chỉ quanh 1.0x'],
-    salesScript: 'MBB là cỗ máy sinh lời hiệu quả hàng đầu ngành ngân hàng nhờ CASA cực rẻ từ quân đội và giới trẻ. P/B chỉ quanh 1.0x trong khi ROE >23% là món hời tích sản không thể bỏ lỡ.'
+    salesScript: 'MBB là cỗ máy sinh lời hiệu quả hàng đầu ngành ngân hàng nhờ CASA cực rẻ từ quân đội và giới trẻ. P/B chỉ quanh 1.0x trong khi ROE >23% là món hời tích sản không thể bỏ lỡ.',
+    canvasPresentationUrl: '/canvas-lv3/mbb.html',
+    canvasReportTitle: 'MBBank Canvas LV3'
   },
   {
     ticker: 'VPB',
@@ -119,7 +127,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 8.776 tỷ (+77.7% YoY) | H1/26: 15.105 tỷ | Tổng TS: 1.502.526 tỷ | Giá TT: 26.950 | NT Mới: 38.000 | Upside: +41%',
     updateDate: '25/08/2026',
     grahamPoints: ['Quy mô vốn chủ sở hữu đứng top 2 ngành ngân hàng', 'Hậu thuẫn vốn từ cổ đông chiến lược Nhật Bản SMBC', 'FE Credit phục hồi tạo bước ngoặt lợi nhuận', 'Tăng trưởng tổng tài sản bứt phá +36%'],
-    salesScript: 'VPB có đệm vốn lớn bậc nhất nhờ SMBC rót vốn. Khi thị trường tiêu dùng phục hồi, FE Credit và mảng ngân hàng bán lẻ sẽ bùng nổ lợi nhuận gấp đôi.'
+    salesScript: 'VPB có đệm vốn lớn bậc nhất nhờ SMBC rót vốn. Khi thị trường tiêu dùng phục hồi, FE Credit và mảng ngân hàng bán lẻ sẽ bùng nổ lợi nhuận gấp đôi.',
+    canvasPresentationUrl: '/canvas-lv3/vpb.html',
+    canvasReportTitle: 'VPBank Canvas LV3'
   },
   {
     ticker: 'ACB',
@@ -143,7 +153,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 4.292 tỷ | H1/26: 8.613 tỷ | Tổng TS: 1.067.845 tỷ | Giá TT: 22.200 | NT Mới: 27.242 | Upside: +23%',
     updateDate: '25/08/2026',
     grahamPoints: ['Chuẩn mực quản trị rủi ro hàng đầu Việt Nam', 'Không có rủi ro trái phiếu doanh nghiệp', 'Trả cổ tức tiền mặt và cổ phiếu đều đặn hàng năm', 'Tỷ lệ nợ xấu luôn nằm trong vùng an toàn tuyệt đối'],
-    salesScript: 'ACB là hình mẫu về sự cẩn trọng và chuẩn mực. Cổ đông ACB nhận cổ tức tiền mặt bền bỉ bất kể thăng trầm thị trường.'
+    salesScript: 'ACB là hình mẫu về sự cẩn trọng và chuẩn mực. Cổ đông ACB nhận cổ tức tiền mặt bền bỉ bất kể thăng trầm thị trường.',
+    canvasPresentationUrl: '/canvas-lv3/acb.html',
+    canvasReportTitle: 'Asia Commercial Bank Canvas LV3'
   },
   {
     ticker: 'SSI',
