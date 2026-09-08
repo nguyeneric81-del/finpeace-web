@@ -179,7 +179,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 1.232 tỷ (+27.3%) | H1/26: 2.509 tỷ (+38.5%) | Tổng TS: 96.461 tỷ | Giá TT: 20.900 | NT Mới: 31.000 | Upside: +48%',
     updateDate: '25/08/2026',
     grahamPoints: ['Thương hiệu chứng khoán dẫn đầu uy tín nhất', 'Vốn chủ sở hữu vượt 40 nghìn tỷ đồng', 'Hưởng lợi trực tiếp từ nâng hạng FTSE và KRX', 'Biên lợi nhuận gộp hoạt động vượt 73%'],
-    salesScript: 'Tích sản cổ phiếu chứng khoán như SSI là cách sở hữu "vé tàu" hưởng lợi từ thanh khoản bùng nổ của thị trường tài chính Việt Nam khi nâng hạng.'
+    salesScript: 'Tích sản cổ phiếu chứng khoán như SSI là cách sở hữu "vé tàu" hưởng lợi từ thanh khoản bùng nổ của thị trường tài chính Việt Nam khi nâng hạng.',
+    canvasPresentationUrl: '/canvas-lv3/ssi.html',
+    canvasReportTitle: 'SSI Securities Canvas LV3'
   },
   {
     ticker: 'TCX',
@@ -203,7 +205,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 1.692 tỷ (+19.1%) | H1/26: 2.840 tỷ (+16.8%) | Tổng TS: 100.592 tỷ | Giá TT: 39.400 | NT Mới: 55.000 | Upside: +40%',
     updateDate: '25/08/2026',
     grahamPoints: ['Tổng tài sản vượt 100 nghìn tỷ dẫn đầu ngành', 'Quán quân thị phần cho vay margin toàn quốc', 'Mô hình Wealthtech tối ưu hóa chi phí vận hành', 'Sắp hoàn tất niêm yết chính thức sàn HOSE'],
-    salesScript: 'TCBS không chỉ là công ty chứng khoán đơn thuần mà là một nền tảng Fintech quản lý tài sản lớn nhất. Lợi nhuận của TCBS vượt xa mọi đối thủ cùng ngành.'
+    salesScript: 'TCBS không chỉ là công ty chứng khoán đơn thuần mà là một nền tảng Fintech quản lý tài sản lớn nhất. Lợi nhuận của TCBS vượt xa mọi đối thủ cùng ngành.',
+    canvasPresentationUrl: '/canvas-lv3/tcx.html',
+    canvasReportTitle: 'TCBS Wealthtech Canvas LV3'
   },
   {
     ticker: 'VCI',
@@ -227,7 +231,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 250.6 tỷ (+36.3%) | H1/26: 591.3 tỷ (+23.5%) | Tổng TS: 39.727 tỷ | Giá TT: 22.250 | NT Mới: 33.000 | Upside: +48%',
     updateDate: '25/08/2026',
     grahamPoints: ['Số 1 mảng Ngân hàng Đầu tư (IB) và M&A', 'Tự doanh sở hữu danh mục cổ phiếu chọn lọc đỉnh cao', 'Biên lợi nhuận gộp tăng mạnh lên 56.2%', 'Định giá hấp dẫn sau pha loãng'],
-    salesScript: 'Vietcap là bậc thầy về các thương vụ tư vấn tài chính tỷ USD. Khi thị trường vốn sôi động với làn sóng IPO và thoái vốn, VCI luôn là cái tên gặt hái phí tư vấn khủng nhất.'
+    salesScript: 'Vietcap là bậc thầy về các thương vụ tư vấn tài chính tỷ USD. Khi thị trường vốn sôi động với làn sóng IPO và thoái vốn, VCI luôn là cái tên gặt hái phí tư vấn khủng nhất.',
+    canvasPresentationUrl: '/canvas-lv3/vci.html',
+    canvasReportTitle: 'Vietcap Canvas LV3'
   },
   {
     ticker: 'MIG',
@@ -251,7 +257,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 92.16 tỷ (+9.7%) | H1/26: 194.4 tỷ (+13.3%) | DT phí BH: 1.766 tỷ | Giá TT: 15.950 | NT Mới: 25.000 | Upside: +57%',
     updateDate: '25/08/2026',
     grahamPoints: ['Tiền gửi ngân hàng chiếm 50% tổng tài sản', 'Doanh thu phí bảo hiểm tăng trưởng mạnh >30%', 'Tận dụng trọn vẹn tệp 25 triệu khách hàng của MBBank', 'Cổ tức tiền mặt cao và đều đặn'],
-    salesScript: 'MIG sở hữu "kho tiền gửi" khổng lồ sinh lãi an toàn. Đây là mã phòng thủ kinh điển cho khách hàng muốn nhận cổ tức tiền mặt và tránh sóng gió thị trường.'
+    salesScript: 'MIG sở hữu "kho tiền gửi" khổng lồ sinh lãi an toàn. Đây là mã phòng thủ kinh điển cho khách hàng muốn nhận cổ tức tiền mặt và tránh sóng gió thị trường.',
+    canvasPresentationUrl: '/canvas-lv3/mig.html',
+    canvasReportTitle: 'MIG Insurance Canvas LV3'
   },
   {
     ticker: 'HPG',
