@@ -309,7 +309,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 3.184 tỷ (+28.0%) | H1/26: 5.642 tỷ (+38.5%) | DT Q2/26: 18.847 tỷ | Cổ tức: 6.82% | Giá TT: 61.200 | NT Mới: 77.000 | Upside: +26%',
     updateDate: '25/08/2026',
     grahamPoints: ['Dòng tiền kinh doanh tự do hàng năm trên 9.000 tỷ đồng', 'Tỷ suất cổ tức tiền mặt hấp dẫn quanh 6.8%', 'Thị phần sữa số 1 áp đảo trên 50%', 'Biên lợi nhuận gộp mở rộng trở lại vùng đỉnh 43.5%'],
-    salesScript: 'Vinamilk như một "cỗ máy in tiền mặt". Với cổ tức tiền mặt gần 7%/năm, VNM thay thế hoàn hảo cho tiền gửi tiết kiệm mà vẫn có cơ hội tăng giá tài sản.'
+    salesScript: 'Vinamilk như một "cỗ máy in tiền mặt". Với cổ tức tiền mặt gần 7%/năm, VNM thay thế hoàn hảo cho tiền gửi tiết kiệm mà vẫn có cơ hội tăng giá tài sản.',
+    canvasPresentationUrl: '/canvas-lv3/vnm.html',
+    canvasReportTitle: 'Vinamilk Canvas LV3'
   },
   {
     ticker: 'MCH',
@@ -333,7 +335,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 1.484 tỷ (+10.2%) | H1/26: 3.284 tỷ (+10.9%) | Biên gộp: 44.6% | Giá TT: 142.000 | NT Mới: 139.949 | Max Buy: 125.954 | CTA: 🔴 Tạm dừng mua',
     updateDate: '25/08/2026',
     grahamPoints: ['Thương hiệu quốc dân Chin-su, Nam Ngư, Omachi hiện diện trong 98% gian bếp Việt', 'Biên lợi nhuận gộp dẫn đầu ngành tiêu dùng >44%', 'Sức mạnh định giá (Pricing Power) tuyệt đối', 'Đang giao dịch sát hoặc cao hơn giá trị nội tại'],
-    salesScript: 'MCH là doanh nghiệp tuyệt vời nhưng giá hiện tại đã phản ánh trọn vẹn giá trị thực. Kỷ luật FinPeace là không mua đuổi khi thiếu biên an toàn 10%, kiên nhẫn chờ nhịp chỉnh.'
+    salesScript: 'MCH là doanh nghiệp tuyệt vời nhưng giá hiện tại đã phản ánh trọn vẹn giá trị thực. Kỷ luật FinPeace là không mua đuổi khi thiếu biên an toàn 10%, kiên nhẫn chờ nhịp chỉnh.',
+    canvasPresentationUrl: '/canvas-lv3/mch.html',
+    canvasReportTitle: 'Masan Consumer Canvas LV3'
   },
   {
     ticker: 'MWG',
@@ -357,7 +361,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 3.355 tỷ (+102.4%) | H1/26: 6.112 tỷ (+90.7%) | DT Q2/26: 48.751 tỷ | Giá TT: 73.200 | NT Mới: 102.000 | Max Buy: 91.800 | CTA: 🟢 MUA TỐT',
     updateDate: '25/08/2026',
     grahamPoints: ['Bách Hóa Xanh chính thức trở thành cỗ máy sinh lời tỷ USD', 'Năng lực logistics và quản trị bán lẻ vượt trội', 'Lợi nhuận ròng tăng gấp đôi cùng kỳ (+102%)', 'Thị phần ICT củng cố vững chắc'],
-    salesScript: 'Nỗi lo về Bách Hóa Xanh đã qua. MWG hiện sở hữu hai động cơ tên lửa: chuỗi ICT thống lĩnh thị phần và chuỗi BHX bắt đầu giai đoạn hái quả ngọt.'
+    salesScript: 'Nỗi lo về Bách Hóa Xanh đã qua. MWG hiện sở hữu hai động cơ tên lửa: chuỗi ICT thống lĩnh thị phần và chuỗi BHX bắt đầu giai đoạn hái quả ngọt.',
+    canvasPresentationUrl: '/canvas-lv3/mwg.html',
+    canvasReportTitle: 'Mobile World Group Canvas LV3'
   },
   {
     ticker: 'FRT',
@@ -381,7 +387,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 450.5 tỷ (+186.5%) | H1/26: 825.1 tỷ (+123%) | DT Q2/26: 15.626 tỷ | >2.600 nhà thuốc, 236 TT tiêm chủng | Giá TT: 142.900 | NT Mới: 216.900 | Upside: +52%',
     updateDate: '25/08/2026',
     grahamPoints: ['Long Châu chiếm lĩnh vị thế số 1 tuyệt đối mảng dược phẩm bán lẻ', 'Mảng trung tâm tiêm chủng biên lợi nhuận cao mở rộng thần tốc', 'Tăng trưởng doanh thu duy trì >35%/năm', 'Sự hiệp lực công nghệ mạnh mẽ từ tập đoàn FPT'],
-    salesScript: 'Ngành chăm sóc sức khỏe là xu hướng không thể đảo ngược khi dân số già hóa. Long Châu của FRT đã chiếm lĩnh thị trường và đang gặt hái siêu lợi nhuận.'
+    salesScript: 'Ngành chăm sóc sức khỏe là xu hướng không thể đảo ngược khi dân số già hóa. Long Châu của FRT đã chiếm lĩnh thị trường và đang gặt hái siêu lợi nhuận.',
+    canvasPresentationUrl: '/canvas-lv3/frt.html',
+    canvasReportTitle: 'FPT Retail Canvas LV3'
   },
   {
     ticker: 'IMP',
@@ -405,7 +413,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 93.93 tỷ (+4.0%) | H1/26: 175.95 tỷ (+9.0%) | Biên gộp: 41.9% | Giá TT: 39.400 | NT Mới: 49.547 | Upside: +26%',
     updateDate: '25/08/2026',
     grahamPoints: ['3 cụm nhà máy EU-GMP tiêu chuẩn quốc tế', 'Chiếm lĩnh các gói thầu thuốc kênh bệnh viện (ETC) Nhóm 1 & 2', 'Được SK Group (Hàn Quốc) hậu thuẫn công nghệ toàn diện', 'Biên lợi nhuận gộp bền vững trên 40%'],
-    salesScript: 'Thuốc chất lượng cao chuẩn EU-GMP của IMP khó có đối thủ cạnh tranh tại các bệnh viện lớn. Cổ phiếu dược phẩm phòng thủ tuyệt vời cho danh mục hưu trí.'
+    salesScript: 'Thuốc chất lượng cao chuẩn EU-GMP của IMP khó có đối thủ cạnh tranh tại các bệnh viện lớn. Cổ phiếu dược phẩm phòng thủ tuyệt vời cho danh mục hưu trí.',
+    canvasPresentationUrl: '/canvas-lv3/imp.html',
+    canvasReportTitle: 'Imexpharm Canvas LV3'
   },
   {
     ticker: 'CTR',
@@ -429,7 +439,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 171.85 tỷ (+18.3%) | H1/26: 321.7 tỷ (+23.2%) | DT Q2/26: 4.154 tỷ | Kế hoạch DT: 15.653 tỷ | Giá TT: 75.500 | NT Mới: 91.905 | Upside: +22%',
     updateDate: '25/08/2026',
     grahamPoints: ['Thành viên cốt lõi của Tập đoàn Viettel', 'Sở hữu hàng chục nghìn trạm TowerCo cho thuê tài sản định kỳ', 'Tăng trưởng doanh thu và lợi nhuận liên tục 8 năm liên tiếp', 'Hưởng lợi trọn vẹn từ cuộc đua phủ sóng 5G'],
-    salesScript: 'CTR như người thợ xây hạ tầng cho kỷ nguyên số. Trạm phát sóng 5G của CTR cho thuê định kỳ mang lại dòng tiền đều như vắt chanh.'
+    salesScript: 'CTR như người thợ xây hạ tầng cho kỷ nguyên số. Trạm phát sóng 5G của CTR cho thuê định kỳ mang lại dòng tiền đều như vắt chanh.',
+    canvasPresentationUrl: '/canvas-lv3/ctr.html',
+    canvasReportTitle: 'Viettel Construction Canvas LV3'
   },
   {
     ticker: 'GMD',
@@ -453,7 +465,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 1.285 tỷ (+112.8%) | H1/26: 1.936 tỷ (+71%) | DT Q2/26: 1.762 tỷ | Kế hoạch DT: 6.500 tỷ | Giá TT: 77.600 | NT Mới: 93.366 | Upside: +20%',
     updateDate: '25/08/2026',
     grahamPoints: ['Cảng nước sâu Gemalink đón được tàu mẹ lớn nhất thế giới đi thẳng bờ Tây Mỹ', 'Biên lợi nhuận gộp dịch vụ cảng biển tiệm cận 50%', 'Dòng tiền thu về bằng ngoại tệ USD', 'Vị thế cửa ngõ xuất nhập khẩu của vùng kinh tế trọng điểm phía Nam'],
-    salesScript: 'Việt Nam là trung tâm sản xuất công xưởng thế giới. Hàng hóa muốn đi Mỹ và Châu Âu bắt buộc phải qua các cảng nước sâu của Gemadept.'
+    salesScript: 'Việt Nam là trung tâm sản xuất công xưởng thế giới. Hàng hóa muốn đi Mỹ và Châu Âu bắt buộc phải qua các cảng nước sâu của Gemadept.',
+    canvasPresentationUrl: '/canvas-lv3/gmd.html',
+    canvasReportTitle: 'Gemadept Canvas LV3'
   },
   {
     ticker: 'VTP',
@@ -477,7 +491,9 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 72.76 tỷ (-25.0%) | H1/26: 111.8 tỷ (-37.5%) | DT Q2/26: 5.472 tỷ | Giá TT: 52.200 | NT Mới: 61.306 | Upside: +17%',
     updateDate: '25/08/2026',
     grahamPoints: ['Mạng lưới bưu chính phủ kín 100% xã phường toàn quốc', 'Độc quyền vận hành dịch vụ bưu chính công ích và logistics cửa khẩu', 'Hạ tầng kho tự động hóa thông minh bậc nhất', 'Đang giao dịch chiết khấu sâu so với tài sản'],
-    salesScript: 'VTP đang tái cấu trúc và đầu tư hạ tầng kho thông minh. Mua tích sản ở vùng chiết khấu này là đón đầu điểm rơi hiệu quả hoạt động trong giai đoạn tới.'
+    salesScript: 'VTP đang tái cấu trúc và đầu tư hạ tầng kho thông minh. Mua tích sản ở vùng chiết khấu này là đón đầu điểm rơi hiệu quả hoạt động trong giai đoạn tới.',
+    canvasPresentationUrl: '/canvas-lv3/vtp.html',
+    canvasReportTitle: 'Viettel Post Canvas LV3'
   },
   {
     ticker: 'FPT',
@@ -527,6 +543,8 @@ export const SIP_STOCKS_DATA: SIPStock[] = [
     quickReview: 'LNST Q2/26: 3.708 tỷ (+387.1%) | H1/26: 5.008 tỷ (+306%) | DT Q2/26: 20.308 tỷ | Giá TT: 12.950 | NT Mới: 15.500 | Max Buy: 13.950 | CTA: 🟢 MUA TỐT',
     updateDate: '25/08/2026',
     grahamPoints: ['Nhơn Trạch 3 & 4 phát điện thương mại mở ra chu kỳ bùng nổ lợi nhuận', 'Doanh nghiệp phát điện khí lớn nhất Việt Nam', 'Nhu cầu tiêu thụ điện năng toàn quốc tăng trưởng 10-12%/năm', 'Biên an toàn định giá mở rộng sau khi COD thành công'],
-    salesScript: 'POW đã vượt qua giai đoạn nặng nề về chi phí đầu tư khi Nhơn Trạch 3&4 phát điện thương mại. Lợi nhuận tăng gấp 4 lần là minh chứng rõ nhất cho bước ngoặt của doanh nghiệp.'
+    salesScript: 'POW đã vượt qua giai đoạn nặng nề về chi phí đầu tư khi Nhơn Trạch 3&4 phát điện thương mại. Lợi nhuận tăng gấp 4 lần là minh chứng rõ nhất cho bước ngoặt của doanh nghiệp.',
+    canvasPresentationUrl: '/canvas-lv3/pow.html',
+    canvasReportTitle: 'PV Power Canvas LV3'
   }
 ];

@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinPeace Canvas LV3: FRT — FPT Retail</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* =========================================================
+       CORE DESIGN TOKENS & TYPOGRAPHY SCALE (FINPEACE LV3 STANDARD)
+       ========================================================= */
+    :root {
+      --bg-dark: #070a12;
+      --card-bg: #0f172a;
+      --card-inner: #131d35;
+      --border-card: #1e293b;
+      --border-highlight: #334155;
+      
+      --accent-gold: #f59e0b;
+      --accent-ember: #fbbf24;
+      --accent-orange: #f97316;
+      --accent-cyan: #38bdf8;
+      --accent-blue: #0284c7;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-purple: #a855f7;
+      
+      --text-main: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --type-h1: clamp(24px, 3.2vw, 38px);
+      --type-h2: clamp(16px, 2.2vw, 24px);
+      --type-h3: clamp(13px, 1.4vw, 17px);
+      --type-body: clamp(12px, 1.05vw, 14px);
+      --type-small: clamp(10.5px, 0.9vw, 12px);
+      --type-tiny: clamp(9.5px, 0.78vw, 10.5px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      overflow: hidden;
+      height: 100vh;
+      height: 100dvh;
+      width: 100vw;
+      position: relative;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(56, 189, 248, 0.05) 0%, transparent 40%),
+        linear-gradient(to bottom, #070a12, #0a0f1d);
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 58px;
+      padding: 0 clamp(16px, 3vw, 40px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1000;
+      background: rgba(7, 10, 18, 0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-card);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      z-index: 2;
+    }
+
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #000;
+      font-size: 13.5px;
+      letter-spacing: -0.5px;
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.4);
+    }
+
+    .brand-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .brand-sub {
+      color: var(--text-dim);
+      font-size: 11px;
+      border-left: 1px solid var(--border-card);
+      padding-left: 10px;
+    }
+
+    .header-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: calc(100vw - 320px);
+      z-index: 10;
+    }
+
+    .header-pillar-stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(15, 23, 42, 0.95);
+      padding: 3px 6px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+      transition: opacity 0.3s ease;
+    }
+
+    .pillar-step {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.25s ease;
+      opacity: 0.5;
+      user-select: none;
+    }
+
+    .pillar-step:hover {
+      opacity: 0.9;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .pillar-step .step-num {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .pillar-step.active {
+      opacity: 1 !important;
+      background: rgba(245, 158, 11, 0.22) !important;
+      color: #ffffff !important;
+      border: 1px solid #f59e0b !important;
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.45);
+    }
+
+    .pillar-step.active .step-num {
+      background: #f59e0b !important;
+      color: #000000 !important;
+      font-weight: 900;
+      box-shadow: 0 0 8px #f59e0b;
+    }
+
+    .pillar-step.active .step-name {
+      color: #fbbf24 !important;
+      font-weight: 700;
+    }
+
+    .pillar-step.completed {
+      opacity: 0.85;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: var(--text-secondary);
+    }
+
+    .pillar-step.completed .step-num {
+      background: rgba(56, 189, 248, 0.25);
+      color: #38bdf8;
+      font-weight: 800;
+    }
+
+    .pillar-step.completed .step-name {
+      color: #e2e8f0;
+    }
+
+    .step-divider {
+      font-size: 9px;
+      color: var(--text-dim);
+      opacity: 0.4;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      z-index: 2;
+    }
+
+    .btn-fullscreen {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-card);
+      color: var(--text-muted);
+      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-fullscreen:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-color: var(--text-muted);
+    }
+
+    .slide-counter {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--accent-ember);
+      background: rgba(245, 158, 11, 0.1);
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    main.deck-container {
+      position: relative;
+      height: 100vh;
+      height: 100dvh;
+      width: 100vw;
+      padding-top: 58px;
+      padding-bottom: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .slide {
+      position: absolute;
+      top: 58px;
+      bottom: 52px;
+      left: 0;
+      right: 0;
+      padding: clamp(12px, 2vh, 24px) clamp(16px, 3.5vw, 48px);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(12px);
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                  transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                  visibility 0.35s;
+      pointer-events: none;
+      box-sizing: border-box;
+      max-width: 1540px;
+      margin: 0 auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .slide-header {
+      margin-bottom: clamp(10px, 1.6vh, 18px);
+      flex-shrink: 0;
+    }
+
+    .slide-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--type-tiny);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      width: fit-content;
+    }
+
+    .tag-gold { background: rgba(245, 158, 11, 0.15); color: var(--accent-ember); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .tag-cyan { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.3); }
+    .tag-emerald { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .tag-purple { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); border: 1px solid rgba(168, 85, 247, 0.3); }
+
+    .slide-title {
+      font-size: var(--type-h1);
+      font-weight: 800;
+      line-height: 1.2;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .slide-subtitle {
+      font-size: var(--type-h3);
+      color: var(--text-muted);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .slide-content {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(10px, 1.5vh, 18px);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(12px, 1.8vw, 24px);
+      height: 100%;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(10px, 1.4vw, 20px);
+      height: 100%;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(8px, 1.2vw, 16px);
+      height: 100%;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: clamp(12px, 1.6vh, 20px);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .card-highlight {
+      border-color: rgba(245, 158, 11, 0.3);
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(15, 23, 42, 0.85) 100%);
+    }
+
+    .card-emerald {
+      border-color: rgba(16, 185, 129, 0.3);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(15, 23, 42, 0.85) 100%);
+    }
+
+    .card-cyan {
+      border-color: rgba(56, 189, 248, 0.3);
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.05) 0%, rgba(15, 23, 42, 0.85) 100%);
+    }
+
+    .card-title {
+      font-size: var(--type-h2);
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .card-desc {
+      font-size: var(--type-body);
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .metric-chip {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: clamp(18px, 2.2vw, 28px);
+      color: var(--accent-ember);
+    }
+
+    .metric-unit {
+      font-size: var(--type-small);
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .metric-label {
+      font-size: var(--type-tiny);
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 2px;
+      font-weight: 700;
+    }
+
+    .highlight-box {
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--accent-gold);
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 10px;
+      font-size: var(--type-body);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Stepper Navigation Pills at Bottom */
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      padding: 0 clamp(16px, 3vw, 40px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1000;
+      background: rgba(7, 10, 18, 0.92);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border-card);
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-card);
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-color: var(--text-muted);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .progress-dots {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--border-card);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .dot.active {
+      background: var(--accent-gold);
+      width: 22px;
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+    }
+
+    .progress-bar-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--accent-gold), var(--accent-cyan));
+      width: 10%;
+      transition: width 0.35s ease;
+      z-index: 1001;
+    }
+
+    /* COVER SLIDE SPECIAL STYLES */
+    .hero-glow {
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
+      filter: blur(50px);
+      pointer-events: none;
+    }
+
+    .hero-ticker {
+      font-size: clamp(48px, 8vw, 84px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1;
+      background: linear-gradient(135deg, #ffffff 30%, var(--accent-ember) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+      font-family: var(--font-mono);
+    }
+
+    /* Comparison Table Style */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--type-small);
+      text-align: left;
+    }
+
+    .comp-table th {
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-dim);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 1px solid var(--border-card);
+    }
+
+    .comp-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-secondary);
+    }
+
+    .comp-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: #fff;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+    .badge-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-cyan { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-rose { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
+  </style>
+</head>
+<body>
+  <div class="progress-bar-top" id="progressBar"></div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">FP</div>
+      <div>
+        <div class="brand-title">FINPEACE CANVAS LV3</div>
+      </div>
+      <div class="brand-sub">FRT — FPT Retail</div>
+    </div>
+
+    <!-- 3-PILLAR STEPPER (CENTERED) -->
+    <div class="header-center">
+      <nav class="header-pillar-stepper" id="pillarStepper">
+        <button class="pillar-step" id="stepPillar1" onclick="presentationController.goToSlide(2)">
+          <span class="step-num">1</span>
+          <span class="step-name">Lợi Thế Vốn & CASA</span>
+        </button>
+        <span class="step-divider">❯</span>
+        <button class="pillar-step" id="stepPillar2" onclick="presentationController.goToSlide(4)">
+          <span class="step-num">2</span>
+          <span class="step-name">Đệm Dự Phòng & LLR</span>
+        </button>
+        <span class="step-divider">❯</span>
+        <button class="pillar-step" id="stepPillar3" onclick="presentationController.goToSlide(6)">
+          <span class="step-num">3</span>
+          <span class="step-name">Định Giá & Vùng Mua</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="header-controls">
+      <div class="slide-counter" id="slideCounter">1 / 10</div>
+      <button class="btn-fullscreen" onclick="presentationController.toggleFullscreen()" title="Toàn màn hình">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- DECK CONTAINER -->
+  <main class="deck-container">
+    
+    <!-- SLIDE 1: COVER -->
+    <section class="slide active" id="slide-1">
+      <div class="hero-glow"></div>
+      <div style="margin: auto 0;">
+        <div class="slide-tag tag-gold">PHƯƠNG PHÁP LUẬN ĐỘC QUYỀN FINPEACE CANVAS LV3</div>
+        <div class="hero-ticker">FRT</div>
+        <h1 style="font-size: var(--type-h1); font-weight: 800; color: #fff; margin-bottom: 8px;">
+          Công ty Cổ phần Bán lẻ Kỹ thuật số FPT
+        </h1>
+        <p style="font-size: var(--type-h2); color: var(--accent-cyan); font-weight: 600; margin-bottom: 24px;">
+          Cỗ Máy Tăng Trưởng Thần Tốc Long Châu & Hệ Sinh Thái Chăm Sóc Sức Khỏe
+        </p>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px;">
+          <div class="badge badge-amber" style="padding: 6px 14px; font-size: 12px;">📊 Tier 1 (Growth Retail Pioneer)</div>
+          <div class="badge badge-cyan" style="padding: 6px 14px; font-size: 12px;">🏛️ Archetype: Bán lẻ Dược phẩm & Chuỗi Tiêm chủng, Tăng trưởng Doanh thu/Cửa hàng (SSSG)</div>
+          <div class="badge badge-green" style="padding: 6px 14px; font-size: 12px;">🗓️ Dữ liệu BCTC Soát xét Q2/2026</div>
+          <div class="badge badge-rose" style="padding: 6px 14px; font-size: 12px;">🎯 Khuyến nghị: 🟢 MUA TỐT (Upside +47.1%)</div>
+        </div>
+
+        <div style="display: flex; gap: 16px;">
+          <button class="nav-btn" style="background: var(--accent-gold); color: #000; font-weight: 800; padding: 10px 24px; font-size: 13px; border: none;" onclick="presentationController.nextSlide()">
+            Bắt đầu khám phá Storyboard 3 Trụ Cột ➔
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: 3-PILLAR OVERVIEW -->
+    <section class="slide" id="slide-2">
+      <div class="slide-header">
+        <div class="slide-tag tag-cyan">EXECUTIVE SUMMARY</div>
+        <h2 class="slide-title">Khung Storyboard 3 Trụ Cột — FRT</h2>
+        <div class="slide-subtitle">Tổng quan luận điểm đầu tư theo triết lý Ngân hàng & Định chế tài chính</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-3">
+          <div class="card card-highlight">
+            <div style="color: var(--accent-gold); font-size: 12px; font-weight: 800; font-family: var(--font-mono); margin-bottom: 6px;">TRỤ CỘT 1</div>
+            <div class="card-title">ĐỘC TÔN BÁN LẺ DƯỢC PHẨM VỚI HƠN 2.600 NHÀ THUỐC LONG CHÂU</div>
+            <div class="card-desc" style="margin-bottom: 14px;">Thị phần thuốc kê đơn số 1 cả nước, doanh thu trung bình cửa hàng đạt trên 1.2 tỷ/tháng</div>
+            <div style="margin-top: auto; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);">
+              <div class="metric-chip">undefined</div>
+              <div class="metric-label">Tỷ lệ CASA & Chi phí vốn undefined</div>
+            </div>
+          </div>
+
+          <div class="card card-cyan">
+            <div style="color: var(--accent-cyan); font-size: 12px; font-weight: 800; font-family: var(--font-mono); margin-bottom: 6px;">TRỤ CỘT 2</div>
+            <div class="card-title">ĐỘNG CƠ MỚI TỪ 236 TRUNG TÂM TIÊM CHỦNG & HEALTHCARE ECOSYSTEM</div>
+            <div class="card-desc" style="margin-bottom: 14px;">Biên lợi nhuận gộp tiêm chủng vượt 30%, biến Long Châu thành điểm đến y tế toàn diện</div>
+            <div style="margin-top: auto; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);">
+              <div class="metric-chip" style="color: var(--accent-cyan);">undefined</div>
+              <div class="metric-label">Đệm bao nợ xấu LLR | NPL undefined</div>
+            </div>
+          </div>
+
+          <div class="card card-emerald">
+            <div style="color: var(--accent-emerald); font-size: 12px; font-weight: 800; font-family: var(--font-mono); margin-bottom: 6px;">TRỤ CỘT 3</div>
+            <div class="card-title">SANITY CHECK ĐỊNH GIÁ & VÙNG MUA TÍCH SẢN</div>
+            <div class="card-desc" style="margin-bottom: 14px;">Định giá nội tại tịnh tiến 216.900đ, Upside +47.1% từ thị giá 147.500đ</div>
+            <div style="margin-top: auto; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);">
+              <div class="metric-chip" style="color: var(--accent-emerald);">+47.1%</div>
+              <div class="metric-label">Biên an toàn định giá | NT: 216.900 đ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: PILLAR 1 - FUNDING MOAT & CASA -->
+    <section class="slide" id="slide-3">
+      <div class="slide-header">
+        <div class="slide-tag tag-gold">TRỤ CỘT 1 — VỊ THẾ NGUỒN VỐN</div>
+        <h2 class="slide-title">Lợi Thế Vốn Rẻ Tuyệt Đối & CASA Dồi Dào</h2>
+        <div class="slide-subtitle">Chi phí vốn (COF) thấp tạo cơ chế tự phòng hộ NIM bền vững</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Cơ Cấu Nguồn Vốn & Lợi Thế Chi Phí</div>
+            <div class="card-desc">FPT Retail đã tạo nên một kỳ tích bán lẻ hiện đại tại Việt Nam với chuỗi nhà thuốc FPT Long Châu. Với mạng lưới hơn 2.600 cửa hàng phủ kín khắp 63 tỉnh thành, Long Châu đã xây dựng được "con hào kinh tế" vững chắc dựa trên danh mục thuốc kê đơn đầy đủ nhất, giá rẻ nhất và ứng dụng công nghệ AI FPT trong quản trị tồn kho và điều phối đơn hàng.</div>
+            
+            <div class="highlight-box">
+              <strong>Điểm nhấn chiến lược:</strong> Nguồn CASA dồi dào là "vũ khí tối thượng" của FRT. Khi mặt bằng lãi suất tăng, ngân hàng ít bị áp lực tăng chi phí trả lãi tiền gửi; khi lãi suất giảm, chi phí vốn giảm nhanh hơn tốc độ hạ lãi suất cho vay.
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; padding-top: 12px;">
+              <div style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border: 1px solid var(--border-card);">
+                <div class="metric-chip">undefined</div>
+                <div class="metric-label">Tỷ lệ CASA Tiền gửi</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border: 1px solid var(--border-card);">
+                <div class="metric-chip" style="color: var(--accent-cyan);">undefined</div>
+                <div class="metric-label">Chi phí vốn bình quân (COF)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Benchmark Tỷ Lệ CASA & Biên Lãi Thuần NIM</div>
+            <div style="margin-bottom: 12px; font-size: var(--type-small); color: var(--text-muted);">So sánh tương quan vị thế nguồn vốn trong hệ thống ngân hàng Việt Nam 2026:</div>
+            
+            <table class="comp-table">
+              <thead>
+                <tr>
+                  <th>Chỉ số tài chính</th>
+                  <th>FRT</th>
+                  <th>Toàn ngành (Avg)</th>
+                  <th>Đánh giá FinPeace</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Tỷ lệ CASA</td>
+                  <td style="font-weight: 700; color: var(--accent-ember);">undefined</td>
+                  <td>~20.5%</td>
+                  <td><span class="badge badge-green">Vượt trội</span></td>
+                </tr>
+                <tr>
+                  <td>Biên lãi thuần NIM</td>
+                  <td style="font-weight: 700; color: var(--accent-cyan);">undefined</td>
+                  <td>~3.2%</td>
+                  <td><span class="badge badge-green">Cực kỳ vững chắc</span></td>
+                </tr>
+                <tr>
+                  <td>Tăng trưởng Tổng tài sản</td>
+                  <td style="font-weight: 700; color: #fff;">tỷ</td>
+                  <td>+12.8%</td>
+                  <td><span class="badge badge-amber">Quy mô khổng lồ</span></td>
+                </tr>
+                <tr>
+                  <td>Tỷ lệ CIR</td>
+                  <td style="font-weight: 700; color: #fff;">&lt; 32%</td>
+                  <td>~38.5%</td>
+                  <td><span class="badge badge-cyan">Tối ưu chi phí</span></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top: auto; padding: 12px; background: rgba(56, 189, 248, 0.05); border: 1px dashed rgba(56, 189, 248, 0.25); border-radius: 8px; font-size: var(--type-small); color: var(--text-secondary);">
+              💡 <strong>Kết luận FinPeace:</strong> Chi phí vốn thấp là con hào kinh tế tự nhiên không thể sao chép, giúp FRT duy trì biên lợi nhuận ròng an toàn trong mọi chu kỳ kinh tế.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: PILLAR 1 (CONT) - CREDIT PORTFOLIO -->
+    <section class="slide" id="slide-4">
+      <div class="slide-header">
+        <div class="slide-tag tag-gold">TRỤ CỘT 1 (TIẾP) — DANH MỤC TÍN DỤNG</div>
+        <h2 class="slide-title">Cơ Cấu Tín Dụng & Chất Lượng Tài Sản Sinh Lời</h2>
+        <div class="slide-subtitle">Dòng vốn phân bổ vào các lĩnh vực kinh tế thực chất và an toàn</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Chiến Lược Phân Bổ Tín Dụng Lõi</div>
+            <div class="card-desc">Hiệu quả vận hành vượt trội: Doanh thu trung bình mỗi nhà thuốc duy trì ổn định ở mức 1.2 tỷ đồng/tháng - cao gấp 2-3 lần so với các đối thủ cùng ngành. Hơn 85% cửa hàng Long Châu đã đạt điểm hòa vốn LBITDA chỉ sau 6 tháng khai trương.</div>
+
+            <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 10px;">
+              <div style="padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; border-left: 3px solid var(--accent-emerald);">
+                <div style="font-size: var(--type-small); font-weight: 700; color: #fff;">Quy mô Dư nợ Cho vay Khách hàng</div>
+                <div style="font-size: var(--type-h2); font-weight: 800; color: var(--accent-emerald); font-family: var(--font-mono); margin-top: 2px;">undefined</div>
+              </div>
+              <div style="padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; border-left: 3px solid var(--accent-cyan);">
+                <div style="font-size: var(--type-small); font-weight: 700; color: #fff;">Tổng Thu nhập Hoạt động (TOI) Q2/2026</div>
+                <div style="font-size: var(--type-h2); font-weight: 800; color: var(--accent-cyan); font-family: var(--font-mono); margin-top: 2px;">undefined <span style="font-size: 13px; font-weight: 600; color: #38bdf8;">(undefined)</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Mô Hình Dòng Tiền Hoạt Động (TOI Engine)</div>
+            <div class="card-desc" style="margin-bottom: 16px;">
+              Cơ cấu thu nhập cân bằng giữa Thu nhập lãi thuần (NII) và Thu nhập ngoài lãi (Non-interest income: phí dịch vụ thẻ, thanh toán, FX và bảo hiểm).
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: auto;">
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                  <span style="color: var(--text-secondary);">Thu nhập Lãi thuần (NII)</span>
+                  <span style="font-weight: 700; color: var(--accent-ember);">~76% - 80%</span>
+                </div>
+                <div style="height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;">
+                  <div style="width: 78%; height: 100%; background: var(--accent-gold);"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                  <span style="color: var(--text-secondary);">Thu nhập Dịch vụ, FX & Phí</span>
+                  <span style="font-weight: 700; color: var(--accent-cyan);">~20% - 24%</span>
+                </div>
+                <div style="height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;">
+                  <div style="width: 22%; height: 100%; background: var(--accent-cyan);"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 20px; border-left-color: var(--accent-cyan);">
+              Tăng tỷ trọng thu nhập ngoài lãi giúp ngân hàng giảm mức độ thâm dụng vốn tự có và duy trì tốc độ sinh lời ROE cao ngay cả khi tăng trưởng tín dụng chậm lại.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: PILLAR 2 - BALANCE SHEET & LLR BUFFER -->
+    <section class="slide" id="slide-5">
+      <div class="slide-header">
+        <div class="slide-tag tag-cyan">TRỤ CỘT 2 — BẢNG CÂN ĐỐI & QUẢN TRỊ RỦI RO</div>
+        <h2 class="slide-title">Pháo Đài Bảng Cân Đối & Đệm Dự Phòng Kỷ Lục</h2>
+        <div class="slide-subtitle">Nợ xấu dưới tầm kiểm soát, LLR dày củng cố độ an toàn tài chính tuyệt đối</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Chất Lượng Tài Sản & Bộ Đệm LLR</div>
+            <div class="card-desc">Bước đi chiến lược với chuỗi Trung tâm Tiêm chủng Long Châu: Tận dụng sẵn tệp hơn 16 triệu khách hàng thân thiết, FRT đã mở rộng thần tốc 236 trung tâm tiêm chủng vắc xin thế hệ mới. Mảng tiêm chủng có biên lợi nhuận gộp lên tới trên 30%, giúp nâng tầm chuỗi giá trị chăm sóc sức khỏe.</div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: auto; padding-top: 14px;">
+              <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 12px; border-radius: 8px;">
+                <div class="metric-chip" style="color: var(--accent-emerald);">undefined</div>
+                <div class="metric-label">Tỷ lệ Nợ xấu NPL</div>
+              </div>
+              <div style="background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); padding: 12px; border-radius: 8px;">
+                <div class="metric-chip" style="color: var(--accent-cyan);">undefined</div>
+                <div class="metric-label">Tỷ lệ Bao phủ Nợ xấu LLR</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Cơ Chế "Của Chìm" Từ Trích Lập Dự Phòng</div>
+            <div class="card-desc" style="margin-bottom: 14px;">
+              Khoản trích lập dự phòng rủi ro tín dụng lũy kế hàng chục nghìn tỷ đồng không hề biến mất mà đóng vai trò như một kho dự trữ lợi nhuận tiềm năng:
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="padding: 10px 14px; background: rgba(255,255,255,0.03); border-radius: 8px; border-left: 3px solid var(--accent-gold);">
+                <div style="font-weight: 700; color: #fff; font-size: 13px;">1. Hấp thụ cú sốc nợ xấu tự nhiên</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Khi nợ xấu phát sinh, ngân hàng sử dụng quỹ dự phòng để xử lý rủi ro mà không làm suy giảm lợi nhuận trong kỳ.</div>
+              </div>
+
+              <div style="padding: 10px 14px; background: rgba(255,255,255,0.03); border-radius: 8px; border-left: 3px solid var(--accent-emerald);">
+                <div style="font-weight: 700; color: #fff; font-size: 13px;">2. Hoàn nhập dòng tiền khi thu hồi nợ</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Khi khách hàng phục hồi và thanh toán nợ gốc/lãi, số tiền thu hồi được hạch toán thẳng vào thu nhập khác.</div>
+              </div>
+
+              <div style="padding: 10px 14px; background: rgba(255,255,255,0.03); border-radius: 8px; border-left: 3px solid var(--accent-cyan);">
+                <div style="font-weight: 700; color: #fff; font-size: 13px;">3. Chi phí dự phòng Q2/2026</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Ghi nhận undefined, duy trì kỷ luật thận trọng tối đa.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: PILLAR 2 (CONT) - DIGITAL SCALE & OPERATIONAL LEVERAGE -->
+    <section class="slide" id="slide-6">
+      <div class="slide-header">
+        <div class="slide-tag tag-cyan">TRỤ CỘT 2 (TIẾP) — ĐÒN BẨY SỐ HÓA</div>
+        <h2 class="slide-title">Đòn Bẩy Vận Hành & Hiệu Quả Chi Phí (CIR Tối Ưu)</h2>
+        <div class="slide-subtitle">Quy mô số hóa giúp phục vụ hàng triệu khách hàng với chi phí tăng thêm gần như bằng 0</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Hiệu Ứng Quy Mô Số Hóa (Digital Scale)</div>
+            <div class="card-desc">Hệ sinh thái y tế toàn diện: Kết hợp ứng dụng khám chữa bệnh từ xa, giao thuốc tận nhà 24/7 và bảo hiểm sức khỏe cá nhân, biến FRT từ một công ty bán lẻ thuần túy thành nền tảng chăm sóc sức khỏe gia đình số 1 Việt Nam.</div>
+
+            <div class="highlight-box" style="margin-top: 16px;">
+              <strong>Quy luật kinh tế:</strong> Tỷ lệ giao dịch trực tuyến trên ứng dụng số đạt trên 95%. Chi phí biên cho mỗi giao dịch số chỉ bằng 1/10 so với giao dịch tại quầy, giúp giải phóng năng suất lao động cho đội ngũ chuyên viên bán hàng trực tiếp.
+            </div>
+
+            <div style="margin-top: auto; padding-top: 12px; display: flex; gap: 16px;">
+              <div>
+                <div class="metric-chip" style="color: var(--accent-purple);">undefined</div>
+                <div class="metric-label">Hệ số An toàn vốn (CAR)</div>
+              </div>
+              <div>
+                <div class="metric-chip" style="color: var(--accent-ember);">24.5%</div>
+                <div class="metric-label">Tỷ suất sinh lời ROE</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Vòng Lặp Bánh Đà (Flywheel) Của FRT</div>
+            <div style="display: flex; flex-direction: column; gap: 12px; margin: auto 0;">
+              <div style="padding: 12px; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px;">
+                <span style="font-weight: 800; color: var(--accent-gold);">Bước 1:</span> Nền tảng thương hiệu uy tín & Công nghệ số thu hút tệp tiền gửi CASA rẻ.
+              </div>
+              <div style="padding: 12px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px;">
+                <span style="font-weight: 800; color: var(--accent-cyan);">Bước 2:</span> Chi phí vốn thấp cho phép cho vay các khách hàng tốt nhất với lãi suất cạnh tranh.
+              </div>
+              <div style="padding: 12px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px;">
+                <span style="font-weight: 800; color: var(--accent-emerald);">Bước 3:</span> Nợ xấu siêu thấp giúp tiết kiệm chi phí dự phòng và tối ưu hóa tỷ suất ROE.
+              </div>
+              <div style="padding: 12px; background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 8px;">
+                <span style="font-weight: 800; color: var(--accent-purple);">Bước 4:</span> Lợi nhuận giữ lại khổng lồ tái đầu tư mở rộng vốn chủ sở hữu, tiếp tục gia cố vị thế dẫn đầu.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: PILLAR 3 - KEY DRIVERS QUANTIFICATION -->
+    <section class="slide" id="slide-7">
+      <div class="slide-header">
+        <div class="slide-tag tag-emerald">TRỤ CỘT 3 — ĐỊNH LƯỢNG KEY DRIVERS</div>
+        <h2 class="slide-title">Động Cơ Sinh Lời & Kết Quả Kinh Doanh Soát Xét</h2>
+        <div class="slide-subtitle">Bóc tách các chỉ số tài chính cốt lõi Q2/2026 và tiến độ hoàn thành kế hoạch năm</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-4" style="height: auto; margin-bottom: 8px;">
+          <div class="card" style="padding: 12px;">
+            <div class="metric-chip" style="font-size: 22px;">450.5 tỷ (+186.5% YoY)</div>
+            <div class="metric-label">LNST Q2/2026 (undefined)</div>
+          </div>
+          <div class="card" style="padding: 12px;">
+            <div class="metric-chip" style="font-size: 22px; color: var(--accent-cyan);">825.1 tỷ</div>
+            <div class="metric-label">Lũy kế H1/2026 LNST</div>
+          </div>
+          <div class="card" style="padding: 12px;">
+            <div class="metric-chip" style="font-size: 22px; color: var(--accent-emerald);">24.5%</div>
+            <div class="metric-label">Tỷ suất ROE Bền Vững</div>
+          </div>
+          <div class="card" style="padding: 12px;">
+            <div class="metric-chip" style="font-size: 22px; color: var(--accent-purple);">19.5x</div>
+            <div class="metric-label">Hệ số P/E Hiện Tại</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="flex: 1;">
+          <div class="card">
+            <div class="card-title">Phân Tích Động Lực Lợi Nhuận</div>
+            <div class="card-desc">Định lượng Key Drivers: LNST Q2/2026 bùng nổ đạt 450.5 tỷ đồng (+186.5% YoY), lũy kế 6 tháng đạt 825.1 tỷ đồng (+123% YoY). Kế hoạch cả năm 2026 đạt doanh thu gần 60.000 tỷ đồng và LNST vượt 1.500 tỷ.</div>
+            
+            <div class="highlight-box" style="margin-top: 14px;">
+              <strong>Kế hoạch kinh doanh 2026:</strong> Doanh thu 59.500 tỷ (+16%), chuỗi Long Châu vượt 3.000 nhà thuốc toàn quốc.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Dự Phóng Tăng Trưởng Lũy Tiến 2026–2028</div>
+            <div class="card-desc" style="margin-bottom: 12px;">
+              Mô hình FinPeace SIP dự phóng tốc độ tăng trưởng EPS kép đạt > 20% trong 3 năm tới nhờ tăng trưởng tín dụng lành mạnh và tối ưu hóa hệ số đòn bẩy vốn.
+            </div>
+
+            <table class="comp-table" style="margin-top: auto;">
+              <thead>
+                <tr>
+                  <th>Năm tài chính</th>
+                  <th>LNST (Dự phóng)</th>
+                  <th>ROE</th>
+                  <th>EPS Forward</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Năm 2025 (Thực tế)</td>
+                  <td>Đạt kế hoạch</td>
+                  <td>~18% - 21%</td>
+                  <td>Đã phản ánh</td>
+                </tr>
+                <tr>
+                  <td style="color: var(--accent-ember); font-weight: 700;">Năm 2026 (Forward)</td>
+                  <td style="color: var(--accent-ember); font-weight: 700;">Doanh thu 59.500 tỷ (+16%)</td>
+                  <td style="color: var(--accent-ember); font-weight: 700;">24.5%</td>
+                  <td style="color: var(--accent-ember); font-weight: 700;">Tăng 15-20%</td>
+                </tr>
+                <tr>
+                  <td>Năm 2027 (Kỳ vọng)</td>
+                  <td>+15% YoY</td>
+                  <td>&gt; 18%</td>
+                  <td>Tiếp tục mở rộng</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: PILLAR 3 (CONT) - SANITY CHECK VALUATION -->
+    <section class="slide" id="slide-8">
+      <div class="slide-header">
+        <div class="slide-tag tag-emerald">TRỤ CỘT 3 (TIẾP) — SANITY CHECK ĐỊNH GIÁ</div>
+        <h2 class="slide-title">Sanity Check Định Giá & Vùng Mua Tích Sản SIP</h2>
+        <div class="slide-subtitle">Đối chiếu Market Consensus, chuẩn hóa pha loãng và xác định biên an toàn thực tế</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div class="card card-highlight">
+            <div class="card-title" style="color: var(--accent-gold);">Định Giá Giá Trị Nội Tại FinPeace</div>
+            <div class="card-desc">Sanity Check & Vùng mua an toàn: Tịnh tiến theo mức tăng trưởng EPS vượt bậc, FinPeace xác định Giá trị nội tại 2026 đạt 216.900đ (Giá mua tối đa 195.210đ). Thị giá 147.500đ mang lại Upside +47.1%, mở ra cơ hội tích sản cổ phiếu tăng trưởng xuất sắc nhất sàn chứng khoán.</div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: auto; padding-top: 14px;">
+              <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border: 1px solid var(--border-card);">
+                <div class="metric-label">Giá Trị Nội Tại Mới (2026)</div>
+                <div class="metric-chip" style="font-size: 26px;">216.900 <span class="metric-unit">đ</span></div>
+                <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Kỳ vọng tịnh tiến 12-24 tháng</div>
+              </div>
+
+              <div style="background: rgba(16, 185, 129, 0.08); padding: 12px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.25);">
+                <div class="metric-label" style="color: var(--accent-emerald);">Giá Mua Tích Sản Tối Đa</div>
+                <div class="metric-chip" style="font-size: 26px; color: var(--accent-emerald);">195.210 <span class="metric-unit">đ</span></div>
+                <div style="font-size: 11px; color: #34d399; margin-top: 2px;">Biên an toàn bắt buộc &gt; 10%</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Đối Chiếu Định Giá Thị Trường (Market Consensus)</div>
+            <div class="card-desc" style="margin-bottom: 12px;">
+              Định giá của FinPeace tuân thủ nguyên tắc khách quan, không phóng đại và luôn kiểm định chéo với các định chế phân tích hàng đầu:
+            </div>
+
+            <table class="comp-table">
+              <thead>
+                <tr>
+                  <th>Nguồn Định Giá</th>
+                  <th>Mức Định Giá</th>
+                  <th>P/B Mục Tiêu</th>
+                  <th>Khuyến Nghị</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background: rgba(245, 158, 11, 0.06);">
+                  <td style="font-weight: 800; color: var(--accent-ember);">FinPeace Intrinsic Value</td>
+                  <td style="font-weight: 800; color: var(--accent-ember);">216.900 đ</td>
+                  <td style="font-weight: 800;">4.8x</td>
+                  <td><span class="badge badge-green">🟢 MUA TỐT</span></td>
+                </tr>
+                <tr>
+                  <td>Market Consensus (Đồng thuận)</td>
+                  <td style="font-weight: 700; color: #fff;">210.000đ – 225.000đ</td>
+                  <td>Tương đương</td>
+                  <td><span class="badge badge-green">Khả quan</span></td>
+                </tr>
+                <tr>
+                  <td>Thị giá hiện tại (Live)</td>
+                  <td style="font-weight: 700; color: var(--accent-cyan);">147.500 đ</td>
+                  <td>4.8x</td>
+                  <td><span class="badge badge-cyan">Vùng mua chiết khấu</span></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top: auto; padding: 12px; background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-dim);">Upside Kỳ Vọng Thực Tế</div>
+                <div style="font-size: 22px; font-weight: 800; color: var(--accent-emerald); font-family: var(--font-mono);">+47.1%</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 11px; color: var(--text-muted);">Trạng thái Tích sản</div>
+                <div style="font-weight: 800; color: #34d399; font-size: 14px;">🟢 MUA TỐT</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: PILLAR 3 (CONT) - THE CEILING ANALYSIS (RISKS) -->
+    <section class="slide" id="slide-9">
+      <div class="slide-header">
+        <div class="slide-tag tag-rose" style="background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.3);">TRỤ CỘT 3 (TIẾP) — THE CEILING ANALYSIS</div>
+        <h2 class="slide-title">Trần Kính Rủi Ro & Các Điểm Nghẽn Cần Giám Sát</h2>
+        <div class="slide-subtitle">3 yếu tố cốt tử có thể cản trở đà tăng trưởng định giá của FRT</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-3">
+          <div class="card" style="border-top: 3px solid var(--accent-rose);">
+            <div style="color: var(--accent-rose); font-size: 11px; font-weight: 800; font-family: var(--font-mono); margin-bottom: 6px;">RỦI RO CỐT TỬ 1</div>
+            <div class="card-title" style="font-size: 16px;">Áp Lực Vốn Cấp 1 & CAR</div>
+            <div class="card-desc" style="font-size: 13px;">Tốc độ mở mới nhà thuốc có thể chạm ngưỡng bão hòa tại các đô thị lớn (Hà Nội, TP.HCM).</div>
+            <div class="highlight-box" style="margin-top: auto; border-left-color: var(--accent-rose); font-size: 11.5px;">
+              <strong>Hành động giám sát:</strong> Theo dõi nghị quyết ĐHĐCĐ thường niên về tỷ lệ chia cổ tức cổ phiếu và kế hoạch phát hành riêng lẻ tăng vốn điều lệ.
+            </div>
+          </div>
+
+          <div class="card" style="border-top: 3px solid var(--accent-orange);">
+            <div style="color: var(--accent-orange); font-size: 11px; font-weight: 800; font-family: var(--font-mono); margin-bottom: 6px;">RỦI RO CỐT TỬ 2</div>
+            <div class="card-title" style="font-size: 16px;">Tốc Độ Hấp Thụ Tín Dụng</div>
+            <div class="card-desc" style="font-size: 13px;">Quản trị chuỗi cung ứng thuốc đòi hỏi kiểm soát chặt chẽ hạn sử dụng và tiêu chuẩn bảo quản GSP.</div>
+            <div class="highlight-box" style="margin-top: auto; border-left-color: var(--accent-orange); font-size: 11.5px;">
+              <strong>Hành động giám sát:</strong> Đo lường tốc độ tăng trưởng tín dụng từng quý so với hạn mức (room) được Ngân hàng Nhà nước cấp phép.
+            </div>
+          </div>
+
+          <div class="card" style="border-top: 3px solid var(--accent-gold);">
+            <div style="color: var(--accent-gold); font-size: 11px; font-weight: 800; font-family: var(--font-mono); margin-bottom: 6px;">RỦI RO CỐT TỬ 3</div>
+            <div class="card-title" style="font-size: 16px;">Nén Biên Lãi Thuần (NIM)</div>
+            <div class="card-desc" style="font-size: 13px;">Chi phí vốn tài trợ cho mạng lưới hàng tồn kho mở rộng trong chu kỳ lãi suất biến động.</div>
+            <div class="highlight-box" style="margin-top: auto; border-left-color: var(--accent-gold); font-size: 11.5px;">
+              <strong>Hành động giám sát:</strong> Giám sát biến động lãi suất liên ngân hàng và chi phí huy động vốn kỳ hạn 12 tháng qua các kỳ công bố BCTC.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: ACTION MAP & RECOMMENDATIONS -->
+    <section class="slide" id="slide-10">
+      <div class="slide-header">
+        <div class="slide-tag tag-emerald">ACTION MAP</div>
+        <h2 class="slide-title">Khuyến Nghị Đầu Tư & Chiến Lược Phân Bổ SIP</h2>
+        <div class="slide-subtitle">Tổng hợp luận điểm hành động cho Chuyên viên Tư vấn và Khách hàng Tích sản</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div class="card card-emerald">
+            <div class="card-title" style="color: var(--accent-emerald);">Khuyến Nghị Hành Động (Action Plan)</div>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+              <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                <span style="color: var(--text-muted);">Trạng thái Khuyến nghị:</span>
+                <span style="font-weight: 800; color: #34d399;">🟢 MUA TỐT</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                <span style="color: var(--text-muted);">Tỷ trọng Danh mục Khuyến nghị:</span>
+                <span style="font-weight: 800; color: var(--accent-cyan);">10% – 15% Tổng danh mục Tích sản SIP</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                <span style="color: var(--text-muted);">Vùng mua gom Tích sản (DCA):</span>
+                <span style="font-weight: 800; color: var(--accent-ember);">&lt; 195.210 đ (Upside +47.1%)</span>
+              </div>
+            </div>
+
+            <div class="card-title" style="font-size: 15px; margin-top: 10px;">Checklist 4 Tiêu Chí Tích Sản FinPeace:</div>
+            <div style="display: flex; flex-direction: column; gap: 6px; font-size: var(--type-small);">
+              
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="color: #34d399; font-weight: 800;">✓</span>
+                  <span style="color: var(--text-secondary);">Chuỗi nhà thuốc hiện đại số 1 Việt Nam với hơn 2.600 cửa hàng có lãi</span>
+                </div>
+              
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="color: #34d399; font-weight: 800;">✓</span>
+                  <span style="color: var(--text-secondary);">Động cơ tăng trưởng mới từ 236 trung tâm tiêm chủng biên lợi nhuận cao</span>
+                </div>
+              
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="color: #34d399; font-weight: 800;">✓</span>
+                  <span style="color: var(--text-secondary);">LNST Q2 bứt phá +186.5% YoY, lợi nhuận gộp đạt 20.2%</span>
+                </div>
+              
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="color: #34d399; font-weight: 800;">✓</span>
+                  <span style="color: var(--text-secondary);">Cổ phiếu tăng trưởng dẫn đầu (Growth Compounder) với Upside +47.1%</span>
+                </div>
+              
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Kịch Bản Tư Vấn Bán Hàng (Sales Script)</div>
+            <div class="highlight-box" style="border-left-color: var(--accent-gold); font-size: 13.5px; line-height: 1.6; margin-top: 0;">
+              "FRT là câu chuyện tăng trưởng bán lẻ dược phẩm ngoạn mục nhất thập kỷ. Khi người dân ngày càng chú trọng đến sức khỏe và vắc xin, Long Châu chính là "con gà đẻ trứng vàng" mang lại lợi nhuận cấp số nhân cho nhà đầu tư tích sản."
+            </div>
+
+            <div style="margin-top: 16px;">
+              <div style="font-weight: 700; color: #fff; font-size: 13px; margin-bottom: 8px;">Quy tắc phân bổ giải ngân:</div>
+              <ul style="padding-left: 20px; font-size: var(--type-small); color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
+                <li>Giải ngân định kỳ hàng tháng/quý theo kỷ luật tích sản khi thị giá thấp hơn Giá mua tối đa (195.210 đ).</li>
+                <li>Không mua đuổi khi thị giá vượt qua Giá trị nội tại (216.900 đ) — lúc đó chuyển trạng thái sang Tạm dừng mua.</li>
+                <li>Tái đầu tư 100% cổ tức tiền mặt để tận dụng tối đa sức mạnh của lãi kép dài hạn.</li>
+              </ul>
+            </div>
+
+            <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-card); display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; color: var(--text-dim);">Hệ Thống Quản Trị Tích Sản FinPeace © 2026</span>
+              <a href="/sip" style="text-decoration: none; font-size: 12px; font-weight: 700; color: var(--accent-ember); display: flex; align-items: center; gap: 4px;">
+                Trở về Watchlist SIP ➔
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER CONTROLS -->
+  <footer>
+    <button class="nav-btn" id="prevBtn" onclick="presentationController.prevSlide()">
+      ❮ Trang trước
+    </button>
+
+    <div class="progress-dots" id="progressDots"></div>
+
+    <button class="nav-btn" id="nextBtn" onclick="presentationController.nextSlide()">
+      Trang sau ❯
+    </button>
+  </footer>
+
+  <!-- CONTROLLER SCRIPT -->
+  <script>
+    class PresentationController {
+      constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.totalSlides = this.slides.length;
+        this.currentSlideIndex = 0;
+
+        this.prevBtn = document.getElementById('prevBtn');
+        this.nextBtn = document.getElementById('nextBtn');
+        this.slideCounter = document.getElementById('slideCounter');
+        this.progressBar = document.getElementById('progressBar');
+        this.progressDotsContainer = document.getElementById('progressDots');
+        
+        this.pillarStepper = document.getElementById('pillarStepper');
+        this.stepPillar1 = document.getElementById('stepPillar1');
+        this.stepPillar2 = document.getElementById('stepPillar2');
+        this.stepPillar3 = document.getElementById('stepPillar3');
+
+        this.init();
+      }
+
+      init() {
+        this.renderDots();
+        this.bindEvents();
+
+        // Check hash
+        const hash = window.location.hash;
+        if (hash && hash.startsWith('#slide-')) {
+          const slideNum = parseInt(hash.replace('#slide-', ''), 10);
+          if (slideNum >= 1 && slideNum <= this.totalSlides) {
+            this.goToSlide(slideNum - 1);
+            return;
+          }
+        }
+        this.updateSlideState(0);
+      }
+
+      renderDots() {
+        this.progressDotsContainer.innerHTML = '';
+        for (let i = 0; i < this.totalSlides; i++) {
+          const dot = document.createElement('div');
+          dot.className = 'dot' + (i === 0 ? ' active' : '');
+          dot.addEventListener('click', () => this.goToSlide(i));
+          this.progressDotsContainer.appendChild(dot);
+        }
+      }
+
+      bindEvents() {
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+            this.nextSlide();
+          } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+            this.prevSlide();
+          } else if (e.key === 'f' || e.key === 'F') {
+            this.toggleFullscreen();
+          }
+        });
+
+        // Touch support
+        let touchStartX = 0;
+        document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, {passive: true});
+        document.addEventListener('touchend', e => {
+          let touchEndX = e.changedTouches[0].screenX;
+          if (touchStartX - touchEndX > 50) this.nextSlide();
+          if (touchEndX - touchStartX > 50) this.prevSlide();
+        }, {passive: true});
+      }
+
+      nextSlide() {
+        if (this.currentSlideIndex < this.totalSlides - 1) {
+          this.goToSlide(this.currentSlideIndex + 1);
+        }
+      }
+
+      prevSlide() {
+        if (this.currentSlideIndex > 0) {
+          this.goToSlide(this.currentSlideIndex - 1);
+        }
+      }
+
+      goToSlide(index) {
+        if (index < 0 || index >= this.totalSlides) return;
+        this.slides[this.currentSlideIndex].classList.remove('active');
+        this.currentSlideIndex = index;
+        this.slides[this.currentSlideIndex].classList.add('active');
+        this.updateSlideState(index);
+      }
+
+      updateSlideState(index) {
+        // Update Counter
+        this.slideCounter.textContent = `${index + 1} / ${this.totalSlides}`;
+
+        // Update Nav buttons
+        this.prevBtn.disabled = index === 0;
+        this.nextBtn.disabled = index === this.totalSlides - 1;
+
+        // Update Dots
+        const dots = this.progressDotsContainer.querySelectorAll('.dot');
+        dots.forEach((dot, i) => {
+          if (i === index) dot.classList.add('active');
+          else dot.classList.remove('active');
+        });
+
+        // Update Progress Bar
+        const percent = ((index + 1) / this.totalSlides) * 100;
+        this.progressBar.style.width = percent + '%';
+
+        // Hash sync
+        try {
+          history.replaceState(null, '', `#slide-${index + 1}`);
+        } catch(e) {}
+
+        // Stepper State Highlight
+        if (this.pillarStepper) {
+          const steps = [this.stepPillar1, this.stepPillar2, this.stepPillar3];
+          steps.forEach(step => {
+            if (step) {
+              step.classList.remove('active', 'completed');
+              step.style.opacity = '';
+            }
+          });
+
+          if (index === 0) {
+            this.pillarStepper.style.opacity = '0.35';
+            this.pillarStepper.style.pointerEvents = 'none';
+          } else {
+            this.pillarStepper.style.opacity = '1';
+            this.pillarStepper.style.pointerEvents = 'auto';
+          }
+
+          if (index === 1) {
+            steps.forEach(s => { if (s) s.style.opacity = '0.75'; });
+          } else if (index === 2 || index === 3) {
+            if (this.stepPillar1) this.stepPillar1.classList.add('active');
+            if (this.stepPillar2) this.stepPillar2.style.opacity = '0.35';
+            if (this.stepPillar3) this.stepPillar3.style.opacity = '0.35';
+          } else if (index === 4 || index === 5) {
+            if (this.stepPillar1) this.stepPillar1.classList.add('completed');
+            if (this.stepPillar2) this.stepPillar2.classList.add('active');
+            if (this.stepPillar3) this.stepPillar3.style.opacity = '0.35';
+          } else if (index >= 6 && index <= 8) {
+            if (this.stepPillar1) this.stepPillar1.classList.add('completed');
+            if (this.stepPillar2) this.stepPillar2.classList.add('completed');
+            if (this.stepPillar3) this.stepPillar3.classList.add('active');
+          } else if (index === 9) {
+            steps.forEach(s => { if (s) s.classList.add('completed'); });
+          }
+        }
+      }
+
+      toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          if (document.exitFullscreen) document.exitFullscreen();
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      window.presentationController = new PresentationController();
+    });
+  </script>
+</body>
+</html>
