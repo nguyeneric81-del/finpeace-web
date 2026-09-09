@@ -78,20 +78,21 @@ async function main() {
   console.log(`\n🔄 VPS Price Fetcher — ${new Date().toLocaleString('vi-VN')}`)
   console.log('━'.repeat(50))
 
-  // 1. Lấy tất cả tickers đang active từ trading_plans
-  const { data: plans, error } = await supabase
+  // 1. Lấy tickers: Danh mục Tích sản SIP (22 mã) + Trading Plans đang active
+  const SIP_TICKERS = [
+    'ACB', 'BID', 'CTG', 'MBB', 'VPB', 'VCB', 'SSI', 'VCI', 'TCX', 'MIG',
+    'HPG', 'VNM', 'MCH', 'MWG', 'FRT', 'IMP', 'GMD', 'CTR', 'VTP', 'FPT',
+    'POW', 'TLG'
+  ]
+
+  const { data: plans } = await supabase
     .from('trading_plans')
     .select('ticker')
     .eq('status', 'active')
-  
-  if (error || !plans?.length) {
-    console.error('❌ Không lấy được danh sách tickers:', error)
-    process.exit(1)
-  }
 
-  // Deduplicate
-  const tickers = [...new Set(plans.map(p => p.ticker))]
-  console.log(`📋 ${tickers.length} tickers cần cập nhật: ${tickers.join(', ')}`)
+  const planTickers = (plans || []).map(p => p.ticker)
+  const tickers = [...new Set([...SIP_TICKERS, ...planTickers])]
+  console.log(`📋 ${tickers.length} tickers cần cập nhật (${SIP_TICKERS.length} SIP + ${planTickers.length} Trading Plans): ${tickers.join(', ')}`)
 
   // 2. Fetch prices từ VPS (parallel, max 5 at a time to avoid rate limit)
   const prices = []
