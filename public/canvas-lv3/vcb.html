@@ -610,6 +610,163 @@
     .badge-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
     .badge-cyan { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
     .badge-rose { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
+  
+    /* Chart Container & Lightbox Protocol */
+    .chart-container {
+      position: relative;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: zoom-in;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .chart-container:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+    .chart-img-wrap {
+      width: 100%;
+      height: 100%;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0b0f19;
+      position: relative;
+    }
+    .chart-img-wrap img {
+      max-width: 100%;
+      max-height: 250px;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+    .chart-container:hover .chart-img-wrap img {
+      transform: scale(1.02);
+    }
+    .chart-zoom-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #38bdf8;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      pointer-events: none;
+      backdrop-filter: blur(4px);
+    }
+    .chart-caption {
+      padding: 10px 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 12px;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chart-caption strong {
+      color: #f1f5f9;
+    }
+    .chart-wrapper-with-tabs {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      gap: 8px;
+    }
+    .chart-tabs-bar {
+      display: flex;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .chart-tab-btn {
+      flex: 1;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #94a3b8;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .chart-tab-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(7, 10, 18, 0.92);
+      backdrop-filter: blur(10px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      box-sizing: border-box;
+    }
+    .lightbox-modal.active {
+      display: flex;
+    }
+    .lightbox-content {
+      position: relative;
+      max-width: 90vw;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    }
+    .lightbox-close {
+      position: absolute;
+      top: -36px;
+      right: 0;
+      background: none;
+      border: none;
+      color: #f8fafc;
+      font-size: 28px;
+      cursor: pointer;
+      padding: 4px 10px;
+      line-height: 1;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    .lightbox-close:hover {
+      opacity: 1;
+      color: #38bdf8;
+    }
+    .lightbox-caption {
+      margin-top: 12px;
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+    }
+
   </style>
 </head>
 <body>
@@ -727,138 +884,142 @@
     </section>
 
     <!-- SLIDE 3: PILLAR 1 - FUNDING MOAT & CASA -->
-    <section class="slide" id="slide-3">
+        <section class="slide" id="slide-3">
       <div class="slide-header">
-        <div class="slide-tag tag-gold">TRỤ CỘT 1 — VỊ THẾ NGUỒN VỐN</div>
-        <h2 class="slide-title">Lợi Thế Vốn Rẻ Tuyệt Đối & CASA Dồi Dào</h2>
-        <div class="slide-subtitle">Chi phí vốn (COF) thấp tạo cơ chế tự phòng hộ NIM bền vững</div>
+        <div class="slide-tag tag-gold">TRỤ CỘT 1 — S-CURVE NGUỒN VỐN & CON HÀO CASA</div>
+        <h2 class="slide-title">Lợi Thế Vốn Rẻ Tuyệt Đối & Phân Hóa Biên Lãi Thuần NIM</h2>
+        <div class="slide-subtitle">Chi phí vốn (COF) là con hào phòng thủ tối thượng giúp VCB duy trì tỷ suất sinh lời vượt trội</div>
       </div>
       <div class="slide-content">
         <div class="grid-2">
           <div class="card">
-            <div class="card-title">Cơ Cấu Nguồn Vốn & Lợi Thế Chi Phí</div>
-            <div class="card-desc">Nắm giữ vị thế độc quyền quản lý dòng tiền Kho bạc Nhà nước (KBNN) và các tập đoàn kinh tế nhà nước lớn nhất, Vietcombank sở hữu nguồn tiền gửi chi phí 0% dồi dào, duy trì tỷ lệ CASA ổn định ở mức ~34%. Chi phí huy động vốn (COF) chỉ ~2.8%, thấp nhất toàn hệ thống ngân hàng Việt Nam, cho phép ngân hàng luôn duy trì biên lãi thuần NIM >3.3% ngay cả trong chu kỳ lãi suất điều hành biến động.</div>
+            <div class="card-title">Cơ Cấu Nguồn Vốn & Lợi Thế Cạnh Tranh</div>
+            <div class="card-desc">Vua chi phí vốn thấp & Quản lý dòng tiền KBNN. Trong bối cảnh kinh tế vĩ mô biến động và áp lực lãi suất huy động, các ngân hàng sở hữu tỷ lệ tiền gửi không kỳ hạn (CASA) cao nắm giữ lợi thế tuyệt đối trong việc kiểm soát chi phí huy động vốn (COF), qua đó duy trì biên lãi thuần NIM an toàn hơn toàn ngành.</div>
             
-            <div class="highlight-box">
-              <strong>Điểm nhấn chiến lược:</strong> Nguồn CASA dồi dào là "vũ khí tối thượng" của VCB. Khi mặt bằng lãi suất tăng, ngân hàng ít bị áp lực tăng chi phí trả lãi tiền gửi; khi lãi suất giảm, chi phí vốn giảm nhanh hơn tốc độ hạ lãi suất cho vay.
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; padding-top: 12px;">
-              <div style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border: 1px solid var(--border-card);">
-                <div class="metric-chip">~34%</div>
-                <div class="metric-label">Tỷ lệ CASA Tiền gửi</div>
-              </div>
-              <div style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border: 1px solid var(--border-card);">
-                <div class="metric-chip" style="color: var(--accent-cyan);">2.8% (thấp nhất hệ thống)</div>
-                <div class="metric-label">Chi phí vốn bình quân (COF)</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-title">Benchmark Tỷ Lệ CASA & Biên Lãi Thuần NIM</div>
-            <div style="margin-bottom: 12px; font-size: var(--type-small); color: var(--text-muted);">So sánh tương quan vị thế nguồn vốn trong hệ thống ngân hàng Việt Nam 2026:</div>
-            
-            <table class="comp-table">
+            <table class="comp-table" style="margin-top: 12px; font-size: 11.5px;">
               <thead>
                 <tr>
-                  <th>Chỉ số tài chính</th>
+                  <th>Chỉ số Ngân Hàng</th>
                   <th>VCB</th>
-                  <th>Toàn ngành (Avg)</th>
-                  <th>Đánh giá FinPeace</th>
+                  <th>Trung Bình Ngành</th>
+                  <th>Đánh Giá FinPeace</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>Tỷ lệ CASA</td>
-                  <td style="font-weight: 700; color: var(--accent-ember);">~34%</td>
+                  <td>Tỷ lệ CASA Tiền gửi</td>
+                  <td style="color: var(--accent-ember); font-weight: 700;">~34%</td>
                   <td>~20.5%</td>
                   <td><span class="badge badge-green">Vượt trội</span></td>
                 </tr>
                 <tr>
-                  <td>Biên lãi thuần NIM</td>
-                  <td style="font-weight: 700; color: var(--accent-cyan);">3.3%</td>
-                  <td>~3.2%</td>
-                  <td><span class="badge badge-green">Cực kỳ vững chắc</span></td>
+                  <td>Chi phí vốn (COF)</td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">~2.8%</td>
+                  <td>~3.8 - 4.2%</td>
+                  <td><span class="badge badge-green">Cực kỳ tối ưu</span></td>
                 </tr>
                 <tr>
-                  <td>Tăng trưởng Tổng tài sản</td>
-                  <td style="font-weight: 700; color: #fff;">tỷ</td>
-                  <td>+12.8%</td>
-                  <td><span class="badge badge-amber">Quy mô khổng lồ</span></td>
-                </tr>
-                <tr>
-                  <td>Tỷ lệ CIR</td>
-                  <td style="font-weight: 700; color: #fff;">&lt; 32%</td>
-                  <td>~38.5%</td>
-                  <td><span class="badge badge-cyan">Tối ưu chi phí</span></td>
+                  <td>Con hào phòng thủ</td>
+                  <td style="color: var(--accent-gold); font-weight: 700;">Quy mô & Tệp KH</td>
+                  <td>Cạnh tranh lãi suất</td>
+                  <td><span class="badge badge-cyan">Khó sao chép</span></td>
                 </tr>
               </tbody>
             </table>
 
-            <div style="margin-top: auto; padding: 12px; background: rgba(56, 189, 248, 0.05); border: 1px dashed rgba(56, 189, 248, 0.25); border-radius: 8px; font-size: var(--type-small); color: var(--text-secondary);">
-              💡 <strong>Kết luận FinPeace:</strong> Chi phí vốn thấp là con hào kinh tế tự nhiên không thể sao chép, giúp VCB duy trì biên lợi nhuận ròng an toàn trong mọi chu kỳ kinh tế.
+            <div style="margin-top: auto; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-card);">
+              <div style="font-size: 11px; color: var(--accent-ember); font-weight: 700;">ĐÁNH GIÁ CHUYÊN GIA FINPEACE</div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Ngân hàng nào làm chủ nguồn vốn rẻ sẽ là ngân hàng chiến thắng chung cuộc trong chu kỳ nới lỏng tín dụng và mở rộng tài sản.</div>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 10px;">
+            <div class="chart-container" data-zoom-src="images/banking_casa_moat.png" data-zoom-title="Tỷ lệ CASA & Chi phí vốn (COF) các ngân hàng hàng đầu Việt Nam 2026">
+              <div class="chart-zoom-badge">🔍 Click để phóng to</div>
+              <div class="chart-img-wrap">
+                <img src="images/banking_casa_moat.png" alt="Tỷ lệ CASA & Chi phí vốn ngân hàng">
+              </div>
+              <div class="chart-caption">
+                <span class="chart-caption-text"><strong>Landscape:</strong> So sánh tương quan CASA & COF toàn hệ thống ngân hàng</span>
+                <span style="color: var(--accent-cyan); font-weight: 600;">SBV / FinPeace</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SLIDE 4: PILLAR 1 (CONT) - CREDIT PORTFOLIO -->
-    <section class="slide" id="slide-4">
-      <div class="slide-header">
+        <section class="slide" id="slide-4">
+<div class="slide-header">
         <div class="slide-tag tag-gold">TRỤ CỘT 1 (TIẾP) — DANH MỤC TÍN DỤNG</div>
         <h2 class="slide-title">Cơ Cấu Tín Dụng & Chất Lượng Tài Sản Sinh Lời</h2>
         <div class="slide-subtitle">Dòng vốn phân bổ vào các lĩnh vực kinh tế thực chất và an toàn</div>
       </div>
+      
       <div class="slide-content">
         <div class="grid-2">
-          <div class="card">
-            <div class="card-title">Chiến Lược Phân Bổ Tín Dụng Lõi</div>
-            <div class="card-desc">Cơ cấu tín dụng chọn lọc tối ưu: Dư nợ cho vay đạt 1.728.183 tỷ đồng, tập trung vào nhóm khách hàng doanh nghiệp Top 1 Việt Nam, các tập đoàn đa quốc gia FDI và nhóm khách hàng cá nhân có điểm tín dụng cao nhất. Vietcombank không cần phải chạy đua lãi suất cho vay rủi ro để tìm kiếm lợi nhuận, mà hưởng lợi nhuận tự nhiên từ chênh lệch lãi suất an toàn tuyệt đối.</div>
-
-            <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 10px;">
-              <div style="padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; border-left: 3px solid var(--accent-emerald);">
-                <div style="font-size: var(--type-small); font-weight: 700; color: #fff;">Quy mô Dư nợ Cho vay Khách hàng</div>
-                <div style="font-size: var(--type-h2); font-weight: 800; color: var(--accent-emerald); font-family: var(--font-mono); margin-top: 2px;">1.728.183 tỷ (+14% KH)</div>
-              </div>
-              <div style="padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; border-left: 3px solid var(--accent-cyan);">
-                <div style="font-size: var(--type-small); font-weight: 700; color: #fff;">Tổng Thu nhập Hoạt động (TOI) Q2/2026</div>
-                <div style="font-size: var(--type-h2); font-weight: 800; color: var(--accent-cyan); font-family: var(--font-mono); margin-top: 2px;">26.372 tỷ <span style="font-size: 13px; font-weight: 600; color: #38bdf8;">(+47.6% YoY)</span></div>
-              </div>
-            </div>
+          <!-- Cột 1: Bảng Đối Chiếu 4D Landscape Trụ Cột 1 -->
+          <div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div class="card-badge badge-emerald" style="margin-bottom: 4px;">TRỤ CỘT 1 · ĐỊNH CHẾ TÀI CHÍNH QUỐC GIA & THƯƠNG HIỆU SỐ 1 (4D LANDSCAPE)</div>
+            <p class="card-desc" style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Đối chiếu đa chiều: Quá khứ · Đối thủ toàn ngành · Chuẩn quốc tế · Giá trị dòng tiền:</p>
+            <table class="comp-table" style="margin-top: 4px; font-size: 11px; width: 100%;">
+              <thead>
+                <tr>
+                  <th>Hệ Quy Chiếu</th>
+                  <th>Chỉ Số Cốt Lõi</th>
+                  <th>Đối Chiếu Ngành / Quốc Tế</th>
+                  <th>Ý Nghĩa Tăng Trưởng</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Delta Quá Khứ</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Dư nợ tín dụng 1.73 triệu tỷ</td>
+                  <td>Năm 2016: 500k tỷ (Tăng trưởng 3.5 lần)</td>
+                  <td><span class="badge badge-green">Tăng trưởng an toàn, không nợ xấu</span></td>
+                </tr>
+                <tr>
+                  <td><strong>2. Peer Benchmark</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Xử lý >20% kim ngạch XNK toàn quốc</td>
+                  <td>Thị phần thẻ tín dụng cao cấp & FX số 1</td>
+                  <td><span class="badge badge-amber">Vị thế độc tôn thanh toán quốc tế</span></td>
+                </tr>
+                <tr>
+                  <td><strong>3. Chuẩn Quốc Tế</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Xếp hạng Fitch BB+ (Trần quốc gia)</td>
+                  <td>Định giá thương hiệu ngân hàng lớn nhất VN</td>
+                  <td><span class="badge badge-cyan">Định chế tài chính chuẩn thể chế</span></td>
+                </tr>
+                <tr>
+                  <td><strong>4. Unit Economics</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">TOI Q2/2026 đạt 26.372 tỷ (+47.6%)</td>
+                  <td>Thu nhập ngoài lãi chiếm 22-24%</td>
+                  <td><span class="badge badge-green">Lợi nhuận ròng >35.000 tỷ/năm</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <div class="card">
-            <div class="card-title">Mô Hình Dòng Tiền Hoạt Động (TOI Engine)</div>
-            <div class="card-desc" style="margin-bottom: 16px;">
-              Cơ cấu thu nhập cân bằng giữa Thu nhập lãi thuần (NII) và Thu nhập ngoài lãi (Non-interest income: phí dịch vụ thẻ, thanh toán, FX và bảo hiểm).
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: auto;">
-              <div>
-                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
-                  <span style="color: var(--text-secondary);">Thu nhập Lãi thuần (NII)</span>
-                  <span style="font-weight: 700; color: var(--accent-ember);">~76% - 80%</span>
-                </div>
-                <div style="height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;">
-                  <div style="width: 78%; height: 100%; background: var(--accent-gold);"></div>
-                </div>
-              </div>
-
-              <div>
-                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
-                  <span style="color: var(--text-secondary);">Thu nhập Dịch vụ, FX & Phí</span>
-                  <span style="font-weight: 700; color: var(--accent-cyan);">~20% - 24%</span>
-                </div>
-                <div style="height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden;">
-                  <div style="width: 22%; height: 100%; background: var(--accent-cyan);"></div>
-                </div>
+          <!-- Cột 2: Visual Chart Trực Quan Hóa Đối Chiếu -->
+          <div class="card card-emerald chart-wrapper-with-tabs" style="padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div class="card-badge badge-emerald" style="margin-bottom: 0;">Bao Phủ Nợ Xấu LLR</div>
+              <div class="chart-tabs">
+                <button class="chart-tab-btn active" data-target-src="images/vcb_llr_credit_scale.png" data-target-title="Tỷ Lệ Bao Phủ Nợ Xấu >250%: Vietcombank Sở Hữu Kho Dự Phòng >25.000 Tỷ">Tỷ Lệ LLR (%)</button>
               </div>
             </div>
 
-            <div class="highlight-box" style="margin-top: 20px; border-left-color: var(--accent-cyan);">
-              Tăng tỷ trọng thu nhập ngoài lãi giúp ngân hàng giảm mức độ thâm dụng vốn tự có và duy trì tốc độ sinh lời ROE cao ngay cả khi tăng trưởng tín dụng chậm lại.
+            <div class="chart-container" data-zoom-src="images/vcb_llr_credit_scale.png" data-zoom-title="Tỷ Lệ Bao Phủ Nợ Xấu >250%: Vietcombank Sở Hữu Kho Dự Phòng >25.000 Tỷ" style="flex: 1; min-height: 220px;">
+              <div class="chart-img-wrap" style="min-height: 200px;">
+                <img src="images/vcb_llr_credit_scale.png" alt="Tỷ Lệ Bao Phủ Nợ Xấu >250%: Vietcombank Sở Hữu Kho Dự Phòng >25.000 Tỷ">
+              </div>
+              <div class="chart-caption">
+                <span class="chart-caption-text">Chất lượng tài sản số 1 toàn ngành, rủi ro tín dụng gần như bằng 0 qua mọi chu kỳ</span>
+                <span class="chart-zoom-hint">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path></svg>
+                  Click xem lớn
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -866,100 +1027,165 @@
     </section>
 
     <!-- SLIDE 5: PILLAR 2 - BALANCE SHEET & LLR BUFFER -->
-    <section class="slide" id="slide-5">
+        <section class="slide" id="slide-5">
       <div class="slide-header">
-        <div class="slide-tag tag-cyan">TRỤ CỘT 2 — BẢNG CÂN ĐỐI & QUẢN TRỊ RỦI RO</div>
-        <h2 class="slide-title">Pháo Đài Bảng Cân Đối & Đệm Dự Phòng Kỷ Lục</h2>
-        <div class="slide-subtitle">Nợ xấu dưới tầm kiểm soát, LLR dày củng cố độ an toàn tài chính tuyệt đối</div>
+        <div class="tagline">TRỤ CỘT 2 — NỀN TẢNG THỰC NGHIỆM & CON HÀO KINH TẾ</div>
+        <h2 class="slide-title">PHÁO ĐÀI CHẤT LƯỢNG TÀI SẢN & BỘ ĐỆM DỰ PHÒNG BAO NỢ XẤU LLR >250%</h2>
+        <p class="slide-takeaway">
+          <strong>Bối cảnh & Landscape:</strong> Nợ xấu dưới 0.9% và kho dự phòng trích lập hàng chục nghìn tỷ sẵn sàng hoàn nhập lợi nhuận
+        </p>
       </div>
-      <div class="slide-content">
-        <div class="grid-2">
-          <div class="card">
-            <div class="card-title">Chất Lượng Tài Sản & Bộ Đệm LLR</div>
-            <div class="card-desc">Chất lượng tài sản chuẩn mực toàn cầu: Tỷ lệ nợ xấu (NPL) được kiểm soát nghiêm ngặt ở mức dưới 0.9%, thấp nhất toàn ngành. Tỷ lệ bao phủ nợ xấu (LLR) duy trì ở mức kỷ lục >250%, nghĩa là với mỗi 1 đồng nợ xấu tiềm ẩn, Vietcombank đã chuẩn bị sẵn hơn 2.5 đồng dự phòng. Trong Q2/2026, chi phí trích lập dự phòng chỉ là 503 tỷ đồng, đóng vai trò như một "kho của chìm" sẵn sàng hoàn nhập lợi nhuận.</div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: auto; padding-top: 14px;">
-              <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 12px; border-radius: 8px;">
-                <div class="metric-chip" style="color: var(--accent-emerald);">< 0.9%</div>
-                <div class="metric-label">Tỷ lệ Nợ xấu NPL</div>
-              </div>
-              <div style="background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); padding: 12px; border-radius: 8px;">
-                <div class="metric-chip" style="color: var(--accent-cyan);">> 250% (số 1 toàn ngành)</div>
-                <div class="metric-label">Tỷ lệ Bao phủ Nợ xấu LLR</div>
-              </div>
+      <div class="content-area">
+        <div class="grid-2">
+          <!-- Cột 1: Landscape 4 Chiều Cốt Lõi -->
+          <div class="card">
+            <div class="card-title">Hệ Quy Chiếu 4 Chiều · Chất Lượng Tài Sản Ngân Hàng</div>
+            <p class="card-desc">Đối chiếu vị thế của VCB trên 4 trục tọa độ then chốt: Tốc độ tăng trưởng so với quá khứ, mức độ vượt trội trước đối thủ cạnh tranh, dư địa theo chuẩn quốc tế và hiệu quả kinh tế trên từng đồng vốn.</p>
+            
+            <table class="comp-table" style="margin-top: 10px; font-size: 11.5px;">
+              <thead>
+                <tr>
+                  <th>Hệ Quy Chiếu</th>
+                  <th>Chỉ Số VCB</th>
+                  <th>Đối Chiếu Ngành / Quá Khứ</th>
+                  <th>Ý Nghĩa Dòng Tiền</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Delta Quá Khứ</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">LLR >250% (Đỉnh cao)</td>
+                  <td>10 năm trước: LLR chỉ quanh 120%</td>
+                  <td><span class="badge badge-green">Gấp đôi đệm an toàn</span></td>
+                </tr>
+                <tr>
+                  <td><strong>2. Peer Benchmark</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">NPL <0.9% (Thấp nhất ngành)</td>
+                  <td>Toàn ngành trung bình: 2.2 - 2.8%</td>
+                  <td><span class="badge badge-amber">Phòng thủ tuyệt đối</span></td>
+                </tr>
+                <tr>
+                  <td><strong>3. S-Curve Quốc Tế</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Tín nhiệm Fitch BB+</td>
+                  <td>Ngang trần quốc gia · Chuẩn Basel III</td>
+                  <td><span class="badge badge-cyan">Đẳng cấp thể chế</span></td>
+                </tr>
+                <tr>
+                  <td><strong>4. Unit Economics</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Chi phí tín dụng chỉ 0.25%</td>
+                  <td>Kho dự phòng dư thừa >25.000 tỷ sẵn sàng hoàn nhập</td>
+                  <td><span class="badge badge-green">Lợi nhuận >42.000 tỷ</span></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top: auto; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-card);">
+              <div style="font-size: 11px; color: var(--accent-ember); font-weight: 700;">KHO CỦA CHÌM DỰ PHÒNG BẢO VỆ LỢI NHUẬN TRONG MỌI CHU KỲ</div>
+              <div style="font-size: 12.5px; color: var(--text-secondary); margin-top: 3px;">Mỗi 1 đồng nợ xấu tiềm ẩn được VCB chuẩn bị sẵn hơn 2.5 đồng dự phòng. Khi các khoản nợ được thu hồi, dòng tiền hoàn nhập sẽ chảy thẳng vào lợi nhuận ròng cổ đông.</div>
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">Cơ Chế "Của Chìm" Từ Trích Lập Dự Phòng</div>
-            <div class="card-desc" style="margin-bottom: 14px;">
-              Khoản trích lập dự phòng rủi ro tín dụng lũy kế hàng chục nghìn tỷ đồng không hề biến mất mà đóng vai trò như một kho dự trữ lợi nhuận tiềm năng:
+          <!-- Cột 2: Bóc Tách Năng Lực Cạnh Tranh & Chuỗi Giá Trị -->
+          <div class="card card-highlight">
+            <div class="card-title" style="color: var(--accent-gold);">Bóc Tách Con Hào Kinh Tế Độc Quyền (Economic Moat)</div>
+            <p class="card-desc" style="margin-bottom: 12px;">Các yếu tố cốt lõi giúp VCB bảo vệ biên lợi nhuận, cản bước đối thủ mới gia nhập và thu hoạch dòng tiền tự do (FCF) vượt trội qua các chu kỳ kinh tế:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 9px; margin-top: 8px; font-size: 12.5px;">
+              <div style="padding: 11px; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px;">
+                <strong style="color: var(--accent-ember);">1. Rào cản chi phí vốn & Quy mô tài sản:</strong> Quy mô dẫn đầu cho phép doanh nghiệp tối ưu hóa giá vốn, đạt suất đầu tư rẻ hơn 20-30% so với đối thủ đi sau.
+              </div>
+              <div style="padding: 11px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px;">
+                <strong style="color: var(--accent-cyan);">2. Lợi thế vị trí & Hạ tầng không thể sao chép:</strong> Sở hữu vị trí độc tôn hoặc mạng lưới phân phối sâu rộng mà đối thủ phải mất 5-10 năm và hàng tỷ USD mới có thể tái tạo.
+              </div>
+              <div style="padding: 11px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px;">
+                <strong style="color: var(--accent-emerald);">3. Sức mạnh định giá & Trung thành thương hiệu:</strong> Nắm giữ tệp khách hàng trung thành lớn nhất, dễ dàng chuyển hóa chi phí biến đổi sang giá bán mà không làm suy giảm thị phần.
+              </div>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-              <div style="padding: 10px 14px; background: rgba(255,255,255,0.03); border-radius: 8px; border-left: 3px solid var(--accent-gold);">
-                <div style="font-weight: 700; color: #fff; font-size: 13px;">1. Hấp thụ cú sốc nợ xấu tự nhiên</div>
-                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Khi nợ xấu phát sinh, ngân hàng sử dụng quỹ dự phòng để xử lý rủi ro mà không làm suy giảm lợi nhuận trong kỳ.</div>
-              </div>
-
-              <div style="padding: 10px 14px; background: rgba(255,255,255,0.03); border-radius: 8px; border-left: 3px solid var(--accent-emerald);">
-                <div style="font-weight: 700; color: #fff; font-size: 13px;">2. Hoàn nhập dòng tiền khi thu hồi nợ</div>
-                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Khi khách hàng phục hồi và thanh toán nợ gốc/lãi, số tiền thu hồi được hạch toán thẳng vào thu nhập khác.</div>
-              </div>
-
-              <div style="padding: 10px 14px; background: rgba(255,255,255,0.03); border-radius: 8px; border-left: 3px solid var(--accent-cyan);">
-                <div style="font-weight: 700; color: #fff; font-size: 13px;">3. Chi phí dự phòng Q2/2026</div>
-                <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Ghi nhận 503 tỷ (giảm mạnh nhờ nợ sạch), duy trì kỷ luật thận trọng tối đa.</div>
-              </div>
+            <div style="margin-top: auto; padding: 10px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px;">
+              <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">ĐÁNH GIÁ CỦA CHUYÊN GIA FINPEACE</div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">Con hào kinh tế vững chắc là tấm khiên bảo vệ tăng trưởng EPS kép, đảm bảo khoản đầu tư tích sản luôn an toàn và sinh lời vượt trội chỉ số VN-Index.</div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SLIDE 6: PILLAR 2 (CONT) - DIGITAL SCALE & OPERATIONAL LEVERAGE -->
+    <!-- SLIDE 6: PILLAR 2 - PART 2 -->
     <section class="slide" id="slide-6">
       <div class="slide-header">
-        <div class="slide-tag tag-cyan">TRỤ CỘT 2 (TIẾP) — ĐÒN BẨY SỐ HÓA</div>
-        <h2 class="slide-title">Đòn Bẩy Vận Hành & Hiệu Quả Chi Phí (CIR Tối Ưu)</h2>
-        <div class="slide-subtitle">Quy mô số hóa giúp phục vụ hàng triệu khách hàng với chi phí tăng thêm gần như bằng 0</div>
+        <div class="tagline">TRỤ CỘT 3 — BẢO CHỨNG THỰC TIỄN & SỨC KHỎE TÀI CHÍNH</div>
+        <h2 class="slide-title">Chi Phí Vốn COF 2.8% Thấp Nhất Hệ Thống: VCB Thiết Lập Con Hào Lợi Nhuận Bất Khả Xâm Phạm</h2>
+        <p class="slide-takeaway">
+          Lợi thế CASA 38% và uy tín Big4 giúp VCB duy trì COF 2.8%, NIM 3.2% vững bền bảo toàn ROE >21% xuyên chu kỳ
+        </p>
       </div>
-      <div class="slide-content">
+
+      <div class="content-area">
         <div class="grid-2">
-          <div class="card">
-            <div class="card-title">Hiệu Ứng Quy Mô Số Hóa (Digital Scale)</div>
-            <div class="card-desc">Đòn bẩy số hóa và vị thế thanh toán quốc tế: Hệ thống ngân hàng số VCB Digibank phục vụ hơn 15 triệu người dùng cá nhân và dịch vụ thanh toán ngoại tệ FX dẫn đầu thị phần xuất nhập khẩu. Tỷ lệ chi phí trên thu nhập (CIR) duy trì ở mức 29.5%, mang lại biên lợi nhuận ròng thuộc hàng cao nhất khu vực Đông Nam Á.</div>
-
-            <div class="highlight-box" style="margin-top: 16px;">
-              <strong>Quy luật kinh tế:</strong> Tỷ lệ giao dịch trực tuyến trên ứng dụng số đạt trên 95%. Chi phí biên cho mỗi giao dịch số chỉ bằng 1/10 so với giao dịch tại quầy, giúp giải phóng năng suất lao động cho đội ngũ chuyên viên bán hàng trực tiếp.
-            </div>
-
-            <div style="margin-top: auto; padding-top: 12px; display: flex; gap: 16px;">
-              <div>
-                <div class="metric-chip" style="color: var(--accent-purple);">> 12.5%</div>
-                <div class="metric-label">Hệ số An toàn vốn (CAR)</div>
-              </div>
-              <div>
-                <div class="metric-chip" style="color: var(--accent-ember);">21.5%</div>
-                <div class="metric-label">Tỷ suất sinh lời ROE</div>
-              </div>
-            </div>
+          <!-- Cột 1: Bảng Đối Chiếu 4D Sức Khỏe Tài Chính & Đòn Bẩy Vận Hành -->
+          <div class="card card-cyan" style="padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div class="card-badge badge-cyan" style="margin-bottom: 4px;">BẢNG ĐỐI CHIẾU 4D SỨC KHỎE TÀI CHÍNH & ĐÒN BẨY VẬN HÀNH</div>
+            <p class="card-desc" style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Định vị cấu trúc sinh lời và bộ đệm an toàn vốn so với toàn ngành và chuẩn mực quốc tế:</p>
+            <table class="comp-table" style="margin-top: 4px; font-size: 11px; width: 100%;">
+              <thead>
+                <tr>
+                  <th>Chỉ Số Tài Chính</th>
+                  <th>Chỉ Số Hiện Tại</th>
+                  <th>Quá Khứ & Toàn Ngành / Quốc Tế</th>
+                  <th>Ý Nghĩa Bảo Vệ Cổ Đông</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Tỷ Lệ Bao Phủ LLR</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">>250% (Đỉnh cao lịch sử VN)</td>
+                  <td>Toàn ngành ngân hàng: 95% · Quá khứ 120%</td>
+                  <td><span class="badge badge-green">Kho dự phòng 25.000 tỷ sẵn sàng hoàn nhập</span></td>
+                </tr>
+                <tr>
+                  <td><strong>2. Tối Ưu Hóa CIR</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">29.5% (Chi phí biên cực thấp)</td>
+                  <td>Quá khứ 38% · Toàn ngành 38-45% · DBS 39%</td>
+                  <td><span class="badge badge-cyan">Chi phí phục vụ người dùng số tiệm cận 0</span></td>
+                </tr>
+                <tr>
+                  <td><strong>3. Tỷ Suất ROE</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">21.5% (8 năm liền >20%)</td>
+                  <td>Ngân hàng sinh lời bền vững nhất Việt Nam</td>
+                  <td><span class="badge badge-amber">Tái tạo vốn tự có cổ đông bền bỉ</span></td>
+                </tr>
+                <tr>
+                  <td><strong>4. An Toàn Vốn CAR</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">>12.5% (Đạt chuẩn Basel III)</td>
+                  <td>Quy định tối thiểu 8.0% · Fitch BB+ trần QG</td>
+                  <td><span class="badge badge-green">Cổ phiếu tích sản chuẩn thể chế (Sovereign)</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <div class="card">
-            <div class="card-title">Vòng Lặp Bánh Đà (Flywheel) Của VCB</div>
-            <div style="display: flex; flex-direction: column; gap: 12px; margin: auto 0;">
-              <div style="padding: 12px; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px;">
-                <span style="font-weight: 800; color: var(--accent-gold);">Bước 1:</span> Nền tảng thương hiệu uy tín & Công nghệ số thu hút tệp tiền gửi CASA rẻ.
+          <!-- Cột 2: Visual Chart Trực Quan Hóa Đối Chiếu Trụ Cột 3 -->
+          <div class="card card-emerald chart-wrapper-with-tabs" style="padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div class="card-badge badge-emerald" style="margin-bottom: 0;">Động Cơ Sinh Lời & Chi Phí Vốn</div>
+              <div class="chart-tabs">
+                <button class="chart-tab-btn active" data-target-src="images/vcb_profit_roe_growth.png" data-target-title="TĂNG TRƯỞNG LỢI NHUẬN & ROE VCB (2018 - 2027E): CỖ MÁY 42.000 TỶ LNST KỶ LỤC">Tăng Trưởng 2018–2027E</button>
+                <button class="chart-tab-btn" data-target-src="images/vcb_nim_cof_profit.png" data-target-title="SO SÁNH CHI PHÍ VỐN (COF) CÁC NGÂN HÀNG: VCB THẤP NHẤT HỆ THỐNG NHỜ CASA & TÍN NHIỆM">So Sánh COF Ngành</button>
               </div>
-              <div style="padding: 12px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px;">
-                <span style="font-weight: 800; color: var(--accent-cyan);">Bước 2:</span> Chi phí vốn thấp cho phép cho vay các khách hàng tốt nhất với lãi suất cạnh tranh.
+            </div>
+
+            <div class="chart-container" data-zoom-src="images/vcb_profit_roe_growth.png" data-zoom-title="TĂNG TRƯỞNG LỢI NHUẬN & ROE VCB (2018 - 2027E): CỖ MÁY 42.000 TỶ LNST KỶ LỤC" style="flex: 1; min-height: 220px;">
+              <div class="chart-img-wrap" style="min-height: 200px;">
+                <img src="images/vcb_profit_roe_growth.png" alt="TĂNG TRƯỞNG LỢI NHUẬN & ROE VCB (2018 - 2027E): CỖ MÁY 42.000 TỶ LNST KỶ LỤC">
               </div>
-              <div style="padding: 12px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px;">
-                <span style="font-weight: 800; color: var(--accent-emerald);">Bước 3:</span> Nợ xấu siêu thấp giúp tiết kiệm chi phí dự phòng và tối ưu hóa tỷ suất ROE.
-              </div>
-              <div style="padding: 12px; background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 8px;">
-                <span style="font-weight: 800; color: var(--accent-purple);">Bước 4:</span> Lợi nhuận giữ lại khổng lồ tái đầu tư mở rộng vốn chủ sở hữu, tiếp tục gia cố vị thế dẫn đầu.
+              <div class="chart-caption">
+                <span class="chart-caption-text">VCB duy trì tăng trưởng LNST kép 16.2%/năm suốt 10 năm, ROE bền vững >20%, kế hoạch 2026 đạt 42.000 tỷ (+15% YoY)</span>
+                <span class="chart-zoom-hint">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path></svg>
+                  Click xem lớn
+                </span>
               </div>
             </div>
           </div>
@@ -1409,7 +1635,8 @@
         }
       }
 
-      toggleFullscreen() {
+      
+    toggleFullscreen() {
         if (!document.fullscreenElement) {
           document.documentElement.requestFullscreen().catch(() => {});
         } else {
@@ -1418,9 +1645,90 @@
       }
     }
 
+    // Lightbox Controller
+    class LightboxController {
+      constructor() {
+        this.modal = document.getElementById('lightboxModal');
+        this.img = document.getElementById('lightboxImg');
+        this.title = document.getElementById('lightboxTitle');
+        this.closeBtn = document.getElementById('lightboxClose');
+
+        if (!this.modal) return;
+        this.initEvents();
+      }
+
+      initEvents() {
+        document.addEventListener('click', (e) => {
+          const chartBox = e.target.closest('[data-zoom-src]');
+          if (chartBox) {
+            const src = chartBox.getAttribute('data-zoom-src');
+            const title = chartBox.getAttribute('data-zoom-title') || 'Biểu đồ phân tích FinPeace';
+            this.open(src, title);
+          }
+        });
+
+        if (this.closeBtn) this.closeBtn.addEventListener('click', () => this.close());
+        this.modal.addEventListener('click', (e) => {
+          if (e.target === this.modal) this.close();
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+            this.close();
+          }
+        });
+
+        // Tab switcher support for charts
+        document.querySelectorAll('.chart-tab-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const container = btn.closest('.chart-wrapper-with-tabs');
+            if (!container) return;
+            const targetSrc = btn.getAttribute('data-target-src');
+            const targetTitle = btn.getAttribute('data-target-title');
+            
+            container.querySelectorAll('.chart-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const mainImg = container.querySelector('.chart-img-wrap img');
+            const mainContainer = container.querySelector('.chart-container');
+            const captionText = container.querySelector('.chart-caption-text');
+            
+            if (mainImg) mainImg.src = targetSrc;
+            if (mainContainer) {
+              mainContainer.setAttribute('data-zoom-src', targetSrc);
+              mainContainer.setAttribute('data-zoom-title', targetTitle);
+            }
+            if (captionText) captionText.textContent = targetTitle;
+          });
+        });
+      }
+
+      open(src, title) {
+        this.img.src = src;
+        this.title.textContent = title;
+        this.modal.classList.add('active');
+      }
+
+      close() {
+        this.modal.classList.remove('active');
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       window.presentationController = new PresentationController();
+      window.lightboxController = new LightboxController();
     });
+
   </script>
+
+  <!-- LIGHTBOX MODAL -->
+  <div class="lightbox-modal" id="lightboxModal">
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightboxClose" title="Đóng (Esc)">&times;</button>
+      <img id="lightboxImg" src="" alt="Zoomed Chart">
+      <div class="lightbox-caption" id="lightboxTitle"></div>
+    </div>
+  </div>
+
 </body>
 </html>

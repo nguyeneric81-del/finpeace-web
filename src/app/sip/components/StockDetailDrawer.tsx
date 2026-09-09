@@ -43,12 +43,23 @@ export default function StockDetailDrawer({ stock, onClose, onSelectForAdvisory 
             {/* Drawer Header */}
             <div className="p-6 bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border-b border-slate-800 flex items-start justify-between">
               <div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 flex-wrap">
                   <span className="text-3xl font-black tracking-tight text-amber-400 font-mono">
                     {stock.ticker}
                   </span>
+                  {stock.sipCategory === 'keep_updated' ? (
+                    <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-wide">
+                      Keep Updated
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 uppercase tracking-wide">
+                      Active SIP
+                    </span>
+                  )}
                   <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${
-                    stock.cta.includes('TỐT')
+                    stock.cta.includes('THEO DÕI')
+                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                      : stock.cta.includes('TỐT')
                       ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                       : stock.cta.includes('TẠM DỪNG')
                       ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'

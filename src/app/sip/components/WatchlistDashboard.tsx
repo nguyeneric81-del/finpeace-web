@@ -17,7 +17,7 @@ const fmt = (n: number) => new Intl.NumberFormat('vi-VN').format(n);
 
 export default function WatchlistDashboard({ stocks, onSelectForAdvisory }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'buy' | 'pause' | 'tier1' | 'bank' | 'sec' | 'retail'>('all');
+  const [selectedFilter, setSelectedFilter] = useState<'all' | 'active' | 'keep_updated' | 'buy' | 'pause' | 'tier1' | 'bank' | 'sec' | 'retail'>('all');
   const [sortBy, setSortBy] = useState<'ticker' | 'upside' | 'growth' | 'price'>('upside');
   const [sortAsc, setSortAsc] = useState(false);
   const [activeStock, setActiveStock] = useState<SIPStock | null>(null);
@@ -25,10 +25,12 @@ export default function WatchlistDashboard({ stocks, onSelectForAdvisory }: Prop
   // Thống kê nhanh
   const stats = useMemo(() => {
     const total = stocks.length;
+    const activeCount = stocks.filter(s => s.sipCategory !== 'keep_updated').length;
+    const keepUpdatedCount = stocks.filter(s => s.sipCategory === 'keep_updated').length;
     const buyCount = stocks.filter(s => s.cta.includes('MUA TỐT') || (s.cta.includes('MUA') && !s.cta.includes('TẠM DỪNG'))).length;
     const pauseCount = stocks.filter(s => s.cta.includes('TẠM DỪNG')).length;
     const avgUpside = total > 0 ? Math.round((stocks.reduce((acc, s) => acc + s.upsidePct, 0) / total) * 10) / 10 : 0;
-    return { total, buyCount, pauseCount, avgUpside };
+    return { total, activeCount, keepUpdatedCount, buyCount, pauseCount, avgUpside };
   }, [stocks]);
 
   // Bộ lọc và sắp xếp
@@ -46,6 +48,8 @@ export default function WatchlistDashboard({ stocks, onSelectForAdvisory }: Prop
         if (!matchSearch) return false;
 
         // Filter tab
+        if (selectedFilter === 'active') return stock.sipCategory !== 'keep_updated';
+        if (selectedFilter === 'keep_updated') return stock.sipCategory === 'keep_updated';
         if (selectedFilter === 'buy') return stock.cta.includes('MUA TỐT') || (stock.cta.includes('MUA') && !stock.cta.includes('TẠM DỪNG'));
         if (selectedFilter === 'pause') return stock.cta.includes('TẠM DỪNG');
         if (selectedFilter === 'tier1') return stock.tier === 'Tier 1';
@@ -84,10 +88,14 @@ export default function WatchlistDashboard({ stocks, onSelectForAdvisory }: Prop
             <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Danh Mục SIP 2026</span>
             <Award className="w-4 h-4 text-amber-400" />
           </div>
-          <div className="text-2xl font-black text-white mt-2 font-mono">
-            {stats.total} <span className="text-sm font-normal text-slate-400">Mã Cổ Phiếu</span>
+          <div className="text-xl sm:text-2xl font-black text-white mt-2 font-mono flex items-baseline gap-1.5 flex-wrap">
+            <span className="text-emerald-400">{stats.activeCount}</span>
+            <span className="text-xs font-normal text-emerald-400/80">Active</span>
+            <span className="text-slate-500">+</span>
+            <span className="text-amber-400">{stats.keepUpdatedCount}</span>
+            <span className="text-xs font-normal text-amber-400/80">Keep Updated</span>
           </div>
-          <div className="text-xs text-slate-400 mt-1">Sàng lọc 4 tiêu chí cốt lõi</div>
+          <div className="text-xs text-slate-400 mt-1">21 mã tích sản cốt lõi + 1 mã theo dõi</div>
         </div>
 
         <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-900 border border-emerald-500/20 shadow-lg">
@@ -152,6 +160,28 @@ export default function WatchlistDashboard({ stocks, onSelectForAdvisory }: Prop
           </button>
 
           <button
+            onClick={() => setSelectedFilter('active')}
+            className={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition ${
+              selectedFilter === 'active'
+                ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
+                : 'bg-slate-800 text-slate-300 hover:bg-slate-750'
+            }`}
+          >
+            🟢 Active SIP ({stats.activeCount})
+          </button>
+
+          <button
+            onClick={() => setSelectedFilter('keep_updated')}
+            className={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition ${
+              selectedFilter === 'keep_updated'
+                ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
+                : 'bg-slate-800 text-slate-300 hover:bg-slate-750'
+            }`}
+          >
+            🟠 Keep Updated ({stats.keepUpdatedCount})
+          </button>
+
+          <button
             onClick={() => setSelectedFilter('buy')}
             className={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition ${
               selectedFilter === 'buy'
@@ -159,7 +189,7 @@ export default function WatchlistDashboard({ stocks, onSelectForAdvisory }: Prop
                 : 'bg-slate-800 text-slate-300 hover:bg-slate-750'
             }`}
           >
-            🟢 Mua Tốt ({stats.buyCount})
+            Mua Tốt ({stats.buyCount})
           </button>
 
           <button
@@ -170,7 +200,7 @@ export default function WatchlistDashboard({ stocks, onSelectForAdvisory }: Prop
                 : 'bg-slate-800 text-slate-300 hover:bg-slate-750'
             }`}
           >
-            🔴 Tạm Dừng ({stats.pauseCount})
+            Tạm Dừng ({stats.pauseCount})
           </button>
 
           <button
@@ -260,9 +290,20 @@ export default function WatchlistDashboard({ stocks, onSelectForAdvisory }: Prop
                     {/* Ticker & Name */}
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-2.5">
-                        <span className="font-mono font-black text-base text-amber-400 group-hover:text-amber-300">
-                          {stock.ticker}
-                        </span>
+                        <div className="flex flex-col items-start gap-1">
+                          <span className="font-mono font-black text-base text-amber-400 group-hover:text-amber-300">
+                            {stock.ticker}
+                          </span>
+                          {stock.sipCategory === 'keep_updated' ? (
+                            <span className="px-1.5 py-0.5 text-[9px] font-bold rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase tracking-wide whitespace-nowrap">
+                              Keep Updated
+                            </span>
+                          ) : (
+                            <span className="px-1.5 py-0.5 text-[9px] font-medium rounded bg-emerald-500/10 text-emerald-400/90 border border-emerald-500/30 uppercase tracking-wide whitespace-nowrap hidden sm:inline-block">
+                              Active SIP
+                            </span>
+                          )}
+                        </div>
                         <div>
                           <div className="font-medium text-slate-200 text-xs sm:text-sm">{stock.name}</div>
                           <div className="text-[11px] text-slate-500 truncate max-w-[180px]">{stock.quickReview}</div>
@@ -310,7 +351,9 @@ export default function WatchlistDashboard({ stocks, onSelectForAdvisory }: Prop
                     {/* CTA Badge */}
                     <td className="py-3.5 px-4 text-center">
                       <span className={`inline-flex items-center px-2.5 py-1 text-xs font-bold rounded-full border ${
-                        isBuyGood
+                        stock.cta.includes('THEO DÕI')
+                          ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-sm'
+                          : isBuyGood
                           ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                           : isPause
                           ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'

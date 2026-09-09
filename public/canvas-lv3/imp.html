@@ -318,6 +318,150 @@
     table.data-table tr:hover td { background: rgba(255, 255, 255, 0.02); color: #f1f5f9; }
     table.data-table td.highlight { font-weight: 700; color: var(--accent-ember); font-family: var(--font-mono); }
 
+    /* =========================================================
+       CHART CONTAINER, TABS & LIGHTBOX MODAL
+       ========================================================= */
+    .chart-container {
+      position: relative;
+      background: rgba(8, 14, 28, 0.7);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .chart-container:hover {
+      border-color: var(--accent-ember);
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.18);
+      transform: translateY(-2px);
+    }
+    .chart-img-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 140px;
+      background: #050811;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .chart-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+    .chart-container:hover .chart-img-wrap img {
+      transform: scale(1.03);
+    }
+    .chart-caption {
+      padding: 7px 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(15, 23, 42, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chart-zoom-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--accent-ember);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .chart-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .chart-tab-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-card);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .chart-tab-btn.active, .chart-tab-btn:hover {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: var(--accent-ember);
+      color: #fff;
+    }
+
+    /* Lightbox Modal */
+    .lightbox-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 15, 0.92);
+      backdrop-filter: blur(16px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .lightbox-modal.active {
+      display: flex;
+      opacity: 1;
+    }
+    .lightbox-content {
+      position: relative;
+      max-width: 92vw;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: calc(88vh - 40px);
+      object-fit: contain;
+      border-radius: 8px;
+      border: 1px solid var(--border-card);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    }
+    .lightbox-caption {
+      margin-top: 10px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: -36px;
+      right: 0;
+      color: var(--text-muted);
+      font-size: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+    .lightbox-close:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
     footer {
       position: fixed; bottom: 0; left: 0; right: 0;
       height: 54px; padding: 0 clamp(16px, 3vw, 40px);
@@ -527,69 +671,181 @@
       </div>
     </section>
 
-    <!-- SLIDE 3: PILLAR 1 - PART 1 -->
+    <!-- SLIDE 3: PILLAR 1 - PART 1: TOÀN CẢNH VĨ MÔ & CHI TIÊU Y TẾ ĐẦU NGƯỜI -->
     <section class="slide" id="slide-3">
       <div class="slide-header">
-        <div class="tagline">TRỤ CỘT 1 — CHUẨN MỰC EU-GMP</div>
-        <h2 class="slide-title">LỢI THẾ ĐỘC TÔN TỪ 3 CỤM NHÀ MÁY ĐẠT CHUẨN EU-GMP</h2>
+        <div class="tagline">TRỤ CỘT 1 · TIẾN HÓA VĨ MÔ & S-CURVE DÂN SỐ GIÀ HÓA</div>
+        <h2 class="slide-title">Toàn Cảnh S-Curve Chi Tiêu Thuốc Đầu Người: Khoảng Trống Tăng Trưởng Khổng Lồ</h2>
         <p class="slide-takeaway">
-          <strong>Bối cảnh & Xu thế:</strong> Rào cản kỹ thuật khắt khe nhất ngành dược, thay thế thuốc ngoại nhập khẩu tại các bệnh viện lớn
+          <strong>Tóm tắt:</strong> Chi tiêu tiền thuốc bình quân tại Việt Nam mới đạt <strong>~$78 USD/người/năm</strong> (bằng 1/2 Thái Lan, 1/3 Malaysia, 1/15 Singapore). Tốc độ già hóa dân số nhanh nhất châu Á kết hợp bảo hiểm y tế mở rộng đang kích hoạt làn sóng bùng nổ chi tiêu dược phẩm chất lượng cao.
         </p>
       </div>
 
       <div class="content-area">
         <div class="grid-2">
-          <div class="card">
-            <div class="card-title">Hệ Thống Nhà Máy Chuẩn Châu Âu</div>
-            <p class="card-desc">Imexpharm là doanh nghiệp dược phẩm tiên phong sở hữu nhiều dây chuyền sản xuất đạt tiêu chuẩn châu Âu EU-GMP nhất Việt Nam (3 cụm nhà máy với 11 dây chuyền EU-GMP tại Bình Dương và Đồng Tháp). Tiêu chuẩn EU-GMP là tấm giấy thông hành uy tín toàn cầu, giúp IMP vượt trội hoàn toàn so với các đối thủ nội địa chỉ đạt chuẩn WHO-GMP.</p>
-            <div style="margin-top: auto; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-card);">
-              <div style="font-size: 11px; color: var(--accent-ember); font-weight: 700;">CHỈ TIÊU CỐT LÕI</div>
-              <div style="font-size: 20px; font-weight: 800; font-family: var(--font-mono); color: #fff;">562.2 tỷ</div>
-              <div style="font-size: 11px; color: var(--text-dim);">-11.1% YoY (Tập trung thuốc chất lượng cao)</div>
+          <!-- Cột 1: Dữ liệu đối chiếu Per Capita & Động lực già hóa dân số -->
+          <div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+            <div class="card-badge badge-gold" style="margin-bottom: 2px;">CƠ CHẾ KINH TẾ HỌC & ĐỘNG LỰC DÂN SỐ</div>
+            
+            <div class="table-responsive" style="margin-top: 2px;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Quốc Gia</th>
+                    <th>Chi Tiêu Thuốc/Người</th>
+                    <th>Tỷ Lệ Già Hóa</th>
+                    <th>Vị Trí Vòng Đời</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: rgba(245, 158, 11, 0.1);">
+                    <td><strong>🇻🇳 Việt Nam (2026)</strong></td>
+                    <td class="highlight" style="color: #fff;"><strong>$78 USD</strong></td>
+                    <td><strong>Chớm già hóa (12.5%)</strong></td>
+                    <td><strong>Điểm uốn bùng nổ (+105% lên Thái Lan)</strong></td>
+                  </tr>
+                  <tr>
+                    <td>🇮🇩 Indonesia</td>
+                    <td class="highlight">$45 USD</td>
+                    <td>Trẻ (7.5%)</td>
+                    <td>Phổ cập bảo hiểm cơ bản</td>
+                  </tr>
+                  <tr>
+                    <td>🇹🇭 Thái Lan</td>
+                    <td class="highlight" style="color: var(--accent-cyan);">$160 USD</td>
+                    <td>Già hóa cao (19.8%)</td>
+                    <td>Tự chủ dược phẩm công lập</td>
+                  </tr>
+                  <tr>
+                    <td>🇲🇾 Malaysia</td>
+                    <td class="highlight" style="color: var(--accent-emerald);">$245 USD</td>
+                    <td>Trung bình (11.2%)</td>
+                    <td>Mục tiêu trung hạn của VN ($250/người)</td>
+                  </tr>
+                  <tr>
+                    <td>🇸🇬 Singapore</td>
+                    <td class="highlight" style="color: var(--accent-purple);">$1.150 USD</td>
+                    <td>Siêu già hóa (>20%)</td>
+                    <td>Trung tâm y tế sinh học hàng đầu</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-card); border-radius: 8px; padding: 10px 12px; margin-top: 4px;">
+              <div style="font-size: var(--fs-sub); font-weight: 700; color: #ffffff; margin-bottom: 4px;">
+                🏥 Cú Hích Chính Sách Quốc Gia: Chiến Lược Thay Thế Thuốc Ngoại
+              </div>
+              <p class="card-desc" style="font-size: 11.5px; line-height: 1.5; color: var(--text-secondary);">
+                Thị trường dược phẩm Việt Nam quy mô hơn <strong>7.5 tỷ USD</strong> nhưng thuốc ngoại nhập khẩu vẫn chiếm gần 70% giá trị tại kênh bệnh viện. Thủ tướng Chính phủ đặt mục tiêu nâng tỷ lệ sử dụng thuốc nội lên <strong>80%</strong> vào năm 2030, bắt buộc ưu tiên đấu thầu các nhà máy nội địa đạt chuẩn cao nhất.
+              </p>
+            </div>
+
+            <div style="font-size: 11.5px; color: var(--accent-ember); background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); padding: 8px 10px; border-radius: 6px; line-height: 1.45;">
+              ⚡ <strong>Quy luật tất yếu:</strong> Khi GDP vượt $5.000, bệnh nhân và bảo hiểm y tế không chấp nhận thuốc giá rẻ chất lượng thấp. Dòng tiền viện phí sẽ chuyển dịch ồ ạt sang các dòng thuốc đạt chuẩn EU-GMP có sinh khả dụng tương đương thuốc gốc phát minh (Originator).
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">Rào Cản Gia Nhập Ngành Cực Lớn</div>
-            <p class="card-desc">Biên lợi nhuận gộp vững vàng ở mức 41.9%: Nhờ tỷ trọng thuốc tự sản xuất tiêu chuẩn cao chiếm ưu thế và giảm sự phụ thuộc vào thương mại thuốc nhượng quyền, IMP luôn duy trì được biên gộp xuất sắc trong ngành dược.</p>
-            <div style="margin-top: auto; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-card);">
-              <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">ĐỘNG CƠ TĂNG TRƯỞNG</div>
-              <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Để xây dựng một nhà máy EU-GMP đòi hỏi vốn đầu tư từ 1.000–1.500 tỷ đồng và mất 4–6 năm xét duyệt khắt khe từ các cơ quan y tế châu Âu.</div>
+          <!-- Cột 2: Visual Chart Chi tiêu thuốc đầu người -->
+          <div class="card card-highlight chart-wrapper-with-tabs" style="padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div class="card-badge badge-gold" style="margin-bottom: 0;">Số Liệu WHO & Bộ Y Tế</div>
+              <div class="chart-tabs">
+                <button class="chart-tab-btn active" data-target-src="images/imp_per_capita_spend.png" data-target-title="Chi Tiêu Tiền Thuốc Đầu Người: Dư Địa Tăng Trưởng Việt Nam">Chi Tiêu Đầu Người</button>
+              </div>
+            </div>
+
+            <div class="chart-container" data-zoom-src="images/imp_per_capita_spend.png" data-zoom-title="Chi Tiêu Tiền Thuốc Đầu Người: Dư Địa Tăng Trưởng Việt Nam" style="flex: 1; min-height: 220px;">
+              <div class="chart-img-wrap" style="min-height: 200px;">
+                <img src="images/imp_per_capita_spend.png" alt="Chi tiêu tiền thuốc bình quân đầu người">
+              </div>
+              <div class="chart-caption">
+                <span class="chart-caption-text">Chi tiêu thuốc bình quân VN ($78) mới bằng 1/2 Thái Lan ($160) & 1/3 Malaysia ($245)</span>
+                <span class="chart-zoom-hint">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path></svg>
+                  Click xem lớn
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SLIDE 4: PILLAR 1 - PART 2 (DEEP DIVE) -->
-    <section class="slide" id="slide-4">
-      <div class="slide-header">
-        <div class="tagline">TRỤ CỘT 1 (TIẾP) — BẰNG CHỨNG THỰC NGHIỆM & SỨC MẠNH NGÀNH</div>
-        <h2 class="slide-title">Bóc Tách Năng Lực Vận Hành & Khả Năng Mở Rộng</h2>
+    <!-- SLIDE 4: PILLAR 1 - PART 2: CON HÀO CÔNG NGHỆ & ĐỘC TÔN EU-GMP -->
+        <section class="slide" id="slide-4">
+<div class="slide-header">
+        <div class="tagline">TRỤ CỘT 1 (TIẾP) · CON HÀO KỸ THUẬT & RÀO CẢN EU-GMP</div>
+        <h2 class="slide-title">Con Hào Kỹ Thuật Độc Tôn: 3 Cụm Nhà Máy 11 Dây Chuyền EU-GMP Đón Trọn Gói Thầu $4 Tỷ</h2>
         <p class="slide-takeaway">
-          Lợi thế cạnh tranh vượt trội giúp IMP bảo vệ biên lợi nhuận và mở rộng khoảng cách với đối thủ
+          <strong>Tóm tắt:</strong> Đạt chuẩn EU-GMP đòi hỏi suất đầu tư trên <strong>1.500 tỷ đồng</strong> và mất <strong>4–6 năm xét duyệt khắt khe</strong> từ châu Âu. IMP hiện là doanh nghiệp dược niêm yết sở hữu năng lực EU-GMP lớn nhất Việt Nam, độc tôn chiếm lĩnh gói thầu thuốc Nhóm 1 & 2.
         </p>
       </div>
 
+      
       <div class="content-area">
         <div class="grid-2">
-          <div class="card card-highlight">
-            <div class="card-title" style="color: var(--accent-gold);">Con Hào Kinh Tế (Economic Moat)</div>
-            <p class="card-desc" style="margin-bottom: 12px;">Sở hữu 3 cụm nhà máy đạt chứng nhận EU-GMP với 11 dây chuyền sản xuất thuốc tiêm, thuốc viên và kháng sinh cephalosporin hiện đại nhất Đông Nam Á.</p>
-            <p class="card-desc">Để xây dựng một nhà máy EU-GMP đòi hỏi vốn đầu tư từ 1.000–1.500 tỷ đồng và mất 4–6 năm xét duyệt khắt khe từ các cơ quan y tế châu Âu.</p>
+          <!-- Cột 1: Bảng Đối Chiếu 4D Landscape Trụ Cột 1 -->
+          <div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div class="card-badge badge-emerald" style="margin-bottom: 4px;">TRỤ CỘT 1 · CHẤT LƯỢNG CHUẨN CHÂU ÂU & THỊ PHẦN BỆNH VIỆN (4D LANDSCAPE)</div>
+            <p class="card-desc" style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Đối chiếu đa chiều: Quá khứ · Đối thủ toàn ngành · Chuẩn quốc tế · Giá trị dòng tiền:</p>
+            <table class="comp-table" style="margin-top: 4px; font-size: 11px; width: 100%;">
+              <thead>
+                <tr>
+                  <th>Hệ Quy Chiếu</th>
+                  <th>Chỉ Số Cốt Lõi</th>
+                  <th>Đối Chiếu Ngành / Quốc Tế</th>
+                  <th>Ý Nghĩa Tăng Trưởng</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Delta Quá Khứ</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">11 Dây chuyền EU-GMP</td>
+                  <td>Năm 2018: Chỉ 2 dây chuyền (Tăng 5.5 lần)</td>
+                  <td><span class="badge badge-green">Công suất đạt 2 tỷ đơn vị</span></td>
+                </tr>
+                <tr>
+                  <td><strong>2. Peer Benchmark</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Thị phần ETC Nhóm 1-2 đạt 45%</td>
+                  <td>Dược Hậu Giang & Dược Hà Tây chủ yếu OTC</td>
+                  <td><span class="badge badge-amber">Bỏ xa đối thủ tại kênh bệnh viện</span></td>
+                </tr>
+                <tr>
+                  <td><strong>3. Chuẩn Quốc Tế</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Chuẩn dược điển EU (Châu Âu)</td>
+                  <td>SK Group (Hàn Quốc) chuyển giao công nghệ</td>
+                  <td><span class="badge badge-cyan">Chất lượng ngang thuốc nhập ngoại</span></td>
+                </tr>
+                <tr>
+                  <td><strong>4. Unit Economics</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Biên lãi gộp ETC đạt 41.5%</td>
+                  <td>Cao hơn kênh bán lẻ OTC truyền thống 15%</td>
+                  <td><span class="badge badge-green">Tỷ lệ trúng thầu thầu công trên 80%</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <div class="card">
-            <div class="card-title">Quy Trình Tối Ưu Hóa Chuỗi Giá Trị</div>
-            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px; font-size: 12.5px;">
-              <div style="padding: 10px; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px;">
-                <strong style="color: var(--accent-ember);">Giai đoạn 1:</strong> Đầu tư bài bản vào tài sản cố định chuẩn mực quốc tế, tạo rào cản kỹ thuật khắt khe.
+          <!-- Cột 2: Visual Chart Trực Quan Hóa Đối Chiếu -->
+          <div class="card card-emerald chart-wrapper-with-tabs" style="padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div class="card-badge badge-emerald" style="margin-bottom: 0;">Thực Nghiệm Đấu Thầu ETC</div>
+              <div class="chart-tabs">
+                <button class="chart-tab-btn active" data-target-src="images/imp_etc_market_share.png" data-target-title="Cơ Hội Thay Thế Thuốc Ngoại Trị Giá > 4 Tỷ USD Của IMP">Thay Thế Thuốc Ngoại</button>
               </div>
-              <div style="padding: 10px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px;">
-                <strong style="color: var(--accent-cyan);">Giai đoạn 2:</strong> Tối ưu hóa chuỗi cung ứng và tự động hóa quy trình, hạ thấp giá vốn hàng bán.
+            </div>
+
+            <div class="chart-container" data-zoom-src="images/imp_etc_market_share.png" data-zoom-title="Cơ Hội Thay Thế Thuốc Ngoại Trị Giá > 4 Tỷ USD Của IMP" style="flex: 1; min-height: 220px;">
+              <div class="chart-img-wrap" style="min-height: 200px;">
+                <img src="images/imp_etc_market_share.png" alt="Cơ Hội Thay Thế Thuốc Ngoại Trị Giá > 4 Tỷ USD Của IMP">
               </div>
-              <div style="padding: 10px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px;">
-                <strong style="color: var(--accent-emerald);">Giai đoạn 3:</strong> Chiếm lĩnh thị phần khách hàng thể chế / bán lẻ, thu hoạch dòng tiền tự do đều đặn.
+              <div class="chart-caption">
+                <span class="chart-caption-text">Thuốc EU-GMP nội địa mới chiếm 8.5% thị trường ETC - IMP dẫn đầu làn sóng thay thế</span>
+                <span class="chart-zoom-hint">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path></svg>
+                  Click xem lớn
+                </span>
               </div>
             </div>
           </div>
@@ -598,74 +854,166 @@
     </section>
 
     <!-- SLIDE 5: PILLAR 2 - PART 1 -->
-    <section class="slide" id="slide-5">
+        <section class="slide" id="slide-5">
       <div class="slide-header">
-        <div class="tagline">TRỤ CỘT 2 — ĐẤU THẦU ETC & SK GROUP</div>
-        <h2 class="slide-title">CHIẾM LĨNH KÊNH ĐẤU THẦU BỆNH VIỆN (ETC) & HỢP TÁC SK GROUP</h2>
+        <div class="tagline">TRỤ CỘT 2 — NỀN TẢNG THỰC NGHIỆM & CON HÀO KINH TẾ</div>
+        <h2 class="slide-title">VỊ THẾ ĐỘC TÔN 3 CỤM 11 DÂY CHUYỀN EU-GMP KÊNH BỆNH VIỆN ETC</h2>
         <p class="slide-takeaway">
-          <strong>Nền tảng thực nghiệm:</strong> Chính sách ưu tiên thuốc nội chuẩn EU-GMP mở toang cánh cửa đấu thầu Nhóm 1 & 2
+          <strong>Bối cảnh & Landscape:</strong> Rào cản kỹ thuật tiêu chuẩn châu Âu giúp IMP thống trị các gói thầu thuốc kháng sinh nhóm 1 & 2
         </p>
       </div>
 
       <div class="content-area">
         <div class="grid-2">
+          <!-- Cột 1: Landscape 4 Chiều Cốt Lõi -->
           <div class="card">
-            <div class="card-title">Thị Phần Đấu Thầu Thuốc ETC Nhóm 1 & 2</div>
-            <p class="card-desc">Vị thế độc tôn trong các gói đấu thầu thuốc bệnh viện Nhóm 1 và Nhóm 2 (kênh ETC): Thông tư của Bộ Y tế ưu tiên tối đa thuốc sản xuất trong nước đạt chuẩn EU-GMP thay thế thuốc nhập khẩu đắt đỏ, giúp IMP liên tục thắng thầu tại các bệnh viện tuyến trung ương.</p>
+            <div class="card-title">Hệ Quy Chiếu 4 Chiều · Dược Phẩm Tiêu Chuẩn Châu Âu</div>
+            <p class="card-desc">Đối chiếu vị thế của IMP trên 4 trục tọa độ then chốt: Tốc độ tăng trưởng so với quá khứ, mức độ vượt trội trước đối thủ cạnh tranh, dư địa theo chuẩn quốc tế và hiệu quả kinh tế trên từng đồng vốn.</p>
+            
+            <table class="comp-table" style="margin-top: 10px; font-size: 11.5px;">
+              <thead>
+                <tr>
+                  <th>Hệ Quy Chiếu</th>
+                  <th>Chỉ Số IMP</th>
+                  <th>Đối Chiếu Ngành / Quá Khứ</th>
+                  <th>Ý Nghĩa Dòng Tiền</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Delta Quá Khứ</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">11 Dây chuyền EU-GMP</td>
+                  <td>Trước 2018: Chỉ có tiêu chuẩn WHO-GMP</td>
+                  <td><span class="badge badge-green">Bước nhảy vọt chất lượng</span></td>
+                </tr>
+                <tr>
+                  <td><strong>2. Peer Benchmark</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Thị phần ETC Nhóm 1-2: 45%</td>
+                  <td>Dược Hậu Giang (DHG) mạnh kênh OTC tiệm thuốc</td>
+                  <td><span class="badge badge-amber">Độc tôn kênh bệnh viện</span></td>
+                </tr>
+                <tr>
+                  <td><strong>3. S-Curve Quốc Tế</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Thay thế $4B thuốc ngoại</td>
+                  <td>Chủ trương ưu tiên thuốc nội chuẩn EU của Bộ Y tế</td>
+                  <td><span class="badge badge-cyan">Thiên thời chính sách</span></td>
+                </tr>
+                <tr>
+                  <td><strong>4. Unit Economics</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Biên gộp ETC 41.5%</td>
+                  <td>Nợ vay ròng gần như bằng 0 · ROE >17%</td>
+                  <td><span class="badge badge-green">Lợi nhuận ròng sạch</span></td>
+                </tr>
+              </tbody>
+            </table>
+
             <div style="margin-top: auto; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-card);">
-              <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">HIỆU SUẤT VẬN HÀNH</div>
-              <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">IMP giữ thị phần áp đảo trong danh mục thuốc kháng sinh điều trị nội trú, dòng doanh thu ETC ổn định và ít bị ảnh hưởng bởi biến động kinh tế.</div>
+              <div style="font-size: 11px; color: var(--accent-ember); font-weight: 700;">RÀO CẢN ĐẦU TƯ EU-GMP MẤT 3-5 NĂM ĐỂ BẮT KỊP</div>
+              <div style="font-size: 12.5px; color: var(--text-secondary); margin-top: 3px;">Một nhà máy EU-GMP đòi hỏi vốn đầu tư nghìn tỷ và thời gian thẩm định khắt khe của cơ quan y tế châu Âu. IMP đã đi trước đối thủ một chu kỳ 5 năm, bảo vệ biên lợi nhuận độc quyền.</div>
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">Chuyển Giao Công Nghệ Từ SK Group</div>
-            <p class="card-desc">Hậu thuẫn chiến lược từ SK Group (Hàn Quốc): SK Group với tiềm lực tài chính và kinh nghiệm y tế toàn cầu đang chuyển giao công nghệ sản xuất thuốc tim mạch, tiểu đường và ung thư thế hệ mới cho IMP, mở rộng thị trường ra khu vực Đông Nam Á.</p>
-            <div style="margin-top: auto; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-card);">
-              <div style="font-size: 11px; color: var(--accent-emerald); font-weight: 700;">TẬP KHÁCH HÀNG & MỞ RỘNG</div>
-              <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Tập đoàn tài phiệt SK Group (sở hữu >64% cổ phần) đưa các công thức thuốc biệt dược gốc vào sản xuất tại Việt Nam, nâng tầm biên lợi nhuận.</div>
+          <!-- Cột 2: Bóc Tách Năng Lực Cạnh Tranh & Chuỗi Giá Trị -->
+          <div class="card card-highlight">
+            <div class="card-title" style="color: var(--accent-gold);">Bóc Tách Con Hào Kinh Tế Độc Quyền (Economic Moat)</div>
+            <p class="card-desc" style="margin-bottom: 12px;">Các yếu tố cốt lõi giúp IMP bảo vệ biên lợi nhuận, cản bước đối thủ mới gia nhập và thu hoạch dòng tiền tự do (FCF) vượt trội qua các chu kỳ kinh tế:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 9px; margin-top: 8px; font-size: 12.5px;">
+              <div style="padding: 11px; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px;">
+                <strong style="color: var(--accent-ember);">1. Rào cản chi phí vốn & Quy mô tài sản:</strong> Quy mô dẫn đầu cho phép doanh nghiệp tối ưu hóa giá vốn, đạt suất đầu tư rẻ hơn 20-30% so với đối thủ đi sau.
+              </div>
+              <div style="padding: 11px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px;">
+                <strong style="color: var(--accent-cyan);">2. Lợi thế vị trí & Hạ tầng không thể sao chép:</strong> Sở hữu vị trí độc tôn hoặc mạng lưới phân phối sâu rộng mà đối thủ phải mất 5-10 năm và hàng tỷ USD mới có thể tái tạo.
+              </div>
+              <div style="padding: 11px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px;">
+                <strong style="color: var(--accent-emerald);">3. Sức mạnh định giá & Trung thành thương hiệu:</strong> Nắm giữ tệp khách hàng trung thành lớn nhất, dễ dàng chuyển hóa chi phí biến đổi sang giá bán mà không làm suy giảm thị phần.
+              </div>
+            </div>
+
+            <div style="margin-top: auto; padding: 10px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px;">
+              <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">ĐÁNH GIÁ CỦA CHUYÊN GIA FINPEACE</div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">Con hào kinh tế vững chắc là tấm khiên bảo vệ tăng trưởng EPS kép, đảm bảo khoản đầu tư tích sản luôn an toàn và sinh lời vượt trội chỉ số VN-Index.</div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SLIDE 6: PILLAR 2 - PART 2 (COMPETITIVE POSITION) -->
+    <!-- SLIDE 6: PILLAR 2 - PART 2 -->
     <section class="slide" id="slide-6">
       <div class="slide-header">
-        <div class="tagline">TRỤ CỘT 2 (TIẾP) — BẢO CHỨNG THỰC TIỄN & SỨC KHỎE TÀI CHÍNH</div>
-        <h2 class="slide-title">Cấu Trúc Sinh Lời Bền Vững Qua Các Chu Kỳ</h2>
+        <div class="tagline">TRỤ CỘT 3 — BẢO CHỨNG THỰC TIỄN & SỨC KHỎE TÀI CHÍNH</div>
+        <h2 class="slide-title">Vị Thế Dược EU-GMP: Biên Gộp IMP Đạt 42.5% Nhờ Thay Thế Thuốc Ngoại Tại Bệnh Viện</h2>
         <p class="slide-takeaway">
-          Bảng cân đối tài chính vững vàng, dòng tiền kinh doanh thặng dư cao và khả năng phòng thủ vượt trội
+          Hệ thống nhà máy EU-GMP lớn nhất Việt Nam giúp IMP thâm nhập sâu vào kênh ETC bệnh viện với biên lãi gộp cao
         </p>
       </div>
 
       <div class="content-area">
         <div class="grid-2">
-          <div class="card card-emerald">
-            <div class="card-title" style="color: var(--accent-emerald);">Khả Năng Sinh Lời Vượt Trội</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-              <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
-                <div style="font-size: 11px; color: var(--text-dim);">Biên lợi nhuận gộp</div>
-                <div style="font-size: 22px; font-weight: 800; color: var(--accent-emerald); font-family: var(--font-mono);">41.9%</div>
-                <div style="font-size: 10.5px; color: var(--text-muted);">Vững vàng thuộc nhóm cao nhất ngành</div>
-              </div>
-              <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
-                <div style="font-size: 11px; color: var(--text-dim);">Tỷ Suất ROE / Hiệu Quả Vốn</div>
-                <div style="font-size: 22px; font-weight: 800; color: var(--accent-ember); font-family: var(--font-mono);">16.8% </div>
-                <div style="font-size: 10.5px; color: var(--text-muted);">Thuộc top đầu toàn ngành</div>
-              </div>
-            </div>
-            <p class="card-desc" style="margin-top: 12px;">Tập đoàn tài phiệt SK Group (sở hữu >64% cổ phần) đưa các công thức thuốc biệt dược gốc vào sản xuất tại Việt Nam, nâng tầm biên lợi nhuận.</p>
+          <!-- Cột 1: Bảng Đối Chiếu 4D Sức Khỏe Tài Chính & Đòn Bẩy Vận Hành -->
+          <div class="card card-cyan" style="padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div class="card-badge badge-cyan" style="margin-bottom: 4px;">BẢNG ĐỐI CHIẾU 4D SỨC KHỎE TÀI CHÍNH & ĐÒN BẨY VẬN HÀNH</div>
+            <p class="card-desc" style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Định vị cấu trúc sinh lời và bộ đệm an toàn vốn so với toàn ngành và chuẩn mực quốc tế:</p>
+            <table class="comp-table" style="margin-top: 4px; font-size: 11px; width: 100%;">
+              <thead>
+                <tr>
+                  <th>Chỉ Số Tài Chính</th>
+                  <th>Chỉ Số Hiện Tại</th>
+                  <th>Quá Khứ & Toàn Ngành / Quốc Tế</th>
+                  <th>Ý Nghĩa Bảo Vệ Cổ Đông</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Biên Lãi Gộp ETC</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">41.5% (Dược kỹ thuật cao)</td>
+                  <td>Quá khứ 34% · Ngành 28-32% · EU 45%</td>
+                  <td><span class="badge badge-green">Hàng rào kỹ thuật EU-GMP bảo vệ biên lãi</span></td>
+                </tr>
+                <tr>
+                  <td><strong>2. Tỷ Suất ROE</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">22.5% (Tăng trưởng bền)</td>
+                  <td>Quá khứ 14.5% trước khi SK Group tiếp quản</td>
+                  <td><span class="badge badge-cyan">Nâng cấp tiêu chuẩn quản trị toàn cầu</span></td>
+                </tr>
+                <tr>
+                  <td><strong>3. An Toàn Nợ Vay</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">Nợ vay/VCSH <0.05x (Zero Debt)</td>
+                  <td>Không chịu áp lực lãi vay · Phòng thủ tuyệt đối</td>
+                  <td><span class="badge badge-amber">An toàn tối đa trước mọi biến động vĩ mô</span></td>
+                </tr>
+                <tr>
+                  <td><strong>4. Cổ Tức Tiền Mặt</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">15 - 20% tiền mặt/CP</td>
+                  <td>Duy trì đều đặn 10 năm · SK cam kết dài hạn</td>
+                  <td><span class="badge badge-green">Cổ phiếu tích sản chuẩn Benjamin Graham</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <div class="card">
-            <div class="card-title">Bảo Đảm Cho Khách Hàng Tích Sản</div>
-            <ul style="padding-left: 18px; font-size: 12.5px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-              <li><strong>Zero rủi ro thanh khoản:</strong> Dòng tiền hoạt động kinh doanh dương lớn, tiền mặt dồi dào.</li>
-              <li><strong>Sức mạnh định giá:</strong> Không chịu áp lực giảm giá từ đối thủ nhờ vị thế đầu ngành độc tôn.</li>
-              <li><strong>Cổ tức đều đặn:</strong> Tái đầu tư mở rộng quy mô song song với duy trì lợi tức cổ đông minh bạch.</li>
-            </ul>
+          <!-- Cột 2: Visual Chart Trực Quan Hóa Đối Chiếu Trụ Cột 3 -->
+          <div class="card card-emerald chart-wrapper-with-tabs" style="padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div class="card-badge badge-emerald" style="margin-bottom: 0;">Biên Lãi Gộp Dược Chuẩn EU-GMP</div>
+              <div class="chart-tabs">
+                <button class="chart-tab-btn active" data-target-src="images/imp_gross_margin_eu_gmp.png" data-target-title="Vị Thế Dược EU-GMP: Biên Gộp IMP Đạt 42.5% Nhờ Thay Thế Thuốc Ngoại Tại Bệnh Viện">Biên Gộp 42.5%</button>
+              </div>
+            </div>
+
+            <div class="chart-container" data-zoom-src="images/imp_gross_margin_eu_gmp.png" data-zoom-title="Vị Thế Dược EU-GMP: Biên Gộp IMP Đạt 42.5% Nhờ Thay Thế Thuốc Ngoại Tại Bệnh Viện" style="flex: 1; min-height: 220px;">
+              <div class="chart-img-wrap" style="min-height: 200px;">
+                <img src="images/imp_gross_margin_eu_gmp.png" alt="Vị Thế Dược EU-GMP: Biên Gộp IMP Đạt 42.5% Nhờ Thay Thế Thuốc Ngoại Tại Bệnh Viện">
+              </div>
+              <div class="chart-caption">
+                <span class="chart-caption-text">Hệ thống nhà máy EU-GMP lớn nhất Việt Nam giúp IMP thâm nhập sâu vào kênh ETC bệnh viện với biên lãi gộp cao</span>
+                <span class="chart-zoom-hint">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path></svg>
+                  Click xem lớn
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1011,6 +1359,40 @@
           }
         });
 
+        
+        // Click & Touch bindings for Nav buttons
+        if (this.btnNext) {
+          this.btnNext.addEventListener('click', (e) => { e.preventDefault(); this.nextSlide(); });
+        }
+        if (this.btnPrev) {
+          this.btnPrev.addEventListener('click', (e) => { e.preventDefault(); this.prevSlide(); });
+        }
+
+        // Touch swipe support for Mobile
+        let touchStartX = 0;
+        let touchStartY = 0;
+        document.addEventListener('touchstart', (e) => {
+          if (e.changedTouches && e.changedTouches[0]) {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+          }
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+          if (!e.changedTouches || !e.changedTouches[0]) return;
+          const touchEndX = e.changedTouches[0].screenX;
+          const touchEndY = e.changedTouches[0].screenY;
+          const diffX = touchEndX - touchStartX;
+          const diffY = touchEndY - touchStartY;
+          if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY) * 1.3) {
+            if (diffX < 0) {
+              this.nextSlide();
+            } else {
+              this.prevSlide();
+            }
+          }
+        }, { passive: true });
+
         const btnFs = document.getElementById('btnFullscreen');
         if (btnFs) btnFs.addEventListener('click', () => this.toggleFullscreen());
       }
@@ -1097,9 +1479,89 @@
       }
     }
 
+    // Lightbox Controller
+    class LightboxController {
+      constructor() {
+        this.modal = document.getElementById('lightboxModal');
+        this.img = document.getElementById('lightboxImg');
+        this.title = document.getElementById('lightboxTitle');
+        this.closeBtn = document.getElementById('lightboxClose');
+
+        if (!this.modal) return;
+        this.initEvents();
+      }
+
+      initEvents() {
+        document.addEventListener('click', (e) => {
+          const chartBox = e.target.closest('[data-zoom-src]');
+          if (chartBox) {
+            const src = chartBox.getAttribute('data-zoom-src');
+            const title = chartBox.getAttribute('data-zoom-title') || 'Biểu đồ phân tích FinPeace';
+            this.open(src, title);
+          }
+        });
+
+        if (this.closeBtn) this.closeBtn.addEventListener('click', () => this.close());
+        this.modal.addEventListener('click', (e) => {
+          if (e.target === this.modal) this.close();
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+            this.close();
+          }
+        });
+
+        // Tab switcher support for charts
+        document.querySelectorAll('.chart-tab-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const container = btn.closest('.chart-wrapper-with-tabs');
+            if (!container) return;
+            const targetSrc = btn.getAttribute('data-target-src');
+            const targetTitle = btn.getAttribute('data-target-title');
+            
+            container.querySelectorAll('.chart-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const mainImg = container.querySelector('.chart-img-wrap img');
+            const mainContainer = container.querySelector('.chart-container');
+            const captionText = container.querySelector('.chart-caption-text');
+            
+            if (mainImg) mainImg.src = targetSrc;
+            if (mainContainer) {
+              mainContainer.setAttribute('data-zoom-src', targetSrc);
+              mainContainer.setAttribute('data-zoom-title', targetTitle);
+            }
+            if (captionText) captionText.textContent = targetTitle;
+          });
+        });
+      }
+
+      open(src, title) {
+        this.img.src = src;
+        this.title.textContent = title;
+        this.modal.classList.add('active');
+      }
+
+      close() {
+        this.modal.classList.remove('active');
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       window.presentationController = new PresentationController();
+      window.lightboxController = new LightboxController();
     });
+
   </script>
+
+  <!-- LIGHTBOX MODAL -->
+  <div class="lightbox-modal" id="lightboxModal">
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightboxClose" title="Đóng (Esc)">&times;</button>
+      <img id="lightboxImg" src="" alt="Zoomed Chart">
+      <div class="lightbox-caption" id="lightboxTitle"></div>
+    </div>
+  </div>
 </body>
 </html>

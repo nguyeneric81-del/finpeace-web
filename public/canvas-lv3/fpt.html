@@ -744,6 +744,57 @@
       min-height: 220px;
     }
 
+    /* Chart Container & Lightbox Protocol */
+    .chart-container {
+      position: relative;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: zoom-in;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .chart-container:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+    .chart-img-wrap {
+      width: 100%;
+      height: 100%;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0b0f19;
+      position: relative;
+    }
+    .chart-img-wrap img {
+      max-width: 100%;
+      max-height: 250px;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+    .chart-container:hover .chart-img-wrap img {
+      transform: scale(1.02);
+    }
+    .chart-caption {
+      padding: 8px 12px;
+      background: rgba(10, 15, 29, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+    .chart-caption-text {
+      font-weight: 500;
+      color: #cbd5e1;
+    }
+
     .chart-tabs {
       display: flex;
       gap: 6px;
@@ -766,6 +817,67 @@
       border-color: var(--accent-ember);
       color: #fff;
     }
+  
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(7, 10, 18, 0.92);
+      backdrop-filter: blur(10px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      box-sizing: border-box;
+    }
+    .lightbox-modal.active {
+      display: flex;
+    }
+    .lightbox-content {
+      position: relative;
+      max-width: 90vw;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    }
+    .lightbox-close {
+      position: absolute;
+      top: -36px;
+      right: 0;
+      background: none;
+      border: none;
+      color: #f8fafc;
+      font-size: 28px;
+      cursor: pointer;
+      padding: 4px 10px;
+      line-height: 1;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    .lightbox-close:hover {
+      opacity: 1;
+      color: #38bdf8;
+    }
+    .lightbox-caption {
+      margin-top: 12px;
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+    }
+
   </style>
 </head>
 <body>
@@ -1030,8 +1142,8 @@
     <!-- =========================================================
          SLIDE 4: TRỤ CỘT 1 (TIẾP) — BƯỚC NGOẶT AI FACTORY & NVIDIA
          ========================================================= -->
-    <section class="slide" id="slide-4">
-      <div class="slide-header">
+        <section class="slide" id="slide-4">
+<div class="slide-header">
         <div class="pillar-breadcrumb">
           <span class="pillar-badge badge-gold">TRỤ CỘT 1 · BƯỚC NGOẶT CHIẾN LƯỢC</span>
           <span class="pillar-sublink">Từ Gia Công Phần Mềm Đến Nhà Máy AI (AI Factory) & Bán Dẫn</span>
@@ -1042,75 +1154,70 @@
         </p>
       </div>
 
+      
       <div class="content-area">
         <div class="grid-2">
-          <!-- Cột 1: Hệ sinh thái AI & Bán dẫn -->
-          <div class="card card-purple" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
-            <div class="card-badge badge-purple">ĐỘNG LỰC TĂNG TRƯỞNG MỚI: AI & AUTOMOTIVE</div>
-            
-            <div class="flow-steps">
-              <div class="flow-item">
-                <div class="flow-num" style="background: rgba(192, 132, 252, 0.2); color: var(--accent-purple);">1</div>
-                <div class="flow-text">
-                  <strong style="color: var(--accent-purple);">Hợp tác toàn diện NVIDIA (AI Factory):</strong> Đầu tư hệ thống siêu máy tính GPU H100/B200 đặt tại Việt Nam và Nhật Bản, cung cấp dịch vụ huấn luyện mô hình AI độc quyền cho doanh nghiệp.
-                </div>
-              </div>
-
-              <div class="flow-item">
-                <div class="flow-num" style="background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan);">2</div>
-                <div class="flow-text">
-                  <strong style="color: var(--accent-cyan);">FPT Automotive (Phần mềm xe hơi thông minh):</strong> Đơn vị chuyên biệt phát triển hệ điều hành xe điện, tự động hóa Autosar cho các hãng xe hàng đầu thế giới (VinFast, Honda, Hyundai).
-                </div>
-              </div>
-
-              <div class="flow-item">
-                <div class="flow-num" style="background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald);">3</div>
-                <div class="flow-text">
-                  <strong style="color: var(--accent-emerald);">FPT Semiconductor (Thiết kế Chip vi mạch):</strong> Đã xuất khẩu hàng chục triệu chip "Make in Vietnam" cho thiết bị IoT y tế và điện máy tại Nhật Bản, Đài Loan.
-                </div>
-              </div>
-            </div>
+          <!-- Cột 1: Bảng Đối Chiếu 4D Landscape Trụ Cột 1 -->
+          <div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div class="card-badge badge-emerald" style="margin-bottom: 4px;">TRỤ CỘT 1 · NĂNG LỰC TOÀN CẦU & CON HÀO CÔNG NGHỆ (4D LANDSCAPE)</div>
+            <p class="card-desc" style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Đối chiếu đa chiều: Quá khứ · Đối thủ toàn ngành · Chuẩn quốc tế · Giá trị dòng tiền:</p>
+            <table class="comp-table" style="margin-top: 4px; font-size: 11px; width: 100%;">
+              <thead>
+                <tr>
+                  <th>Hệ Quy Chiếu</th>
+                  <th>Chỉ Số Cốt Lõi</th>
+                  <th>Đối Chiếu Ngành / Quốc Tế</th>
+                  <th>Ý Nghĩa Tăng Trưởng</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Delta Quá Khứ</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Doanh thu IT ngoại $1.2B (+28%)</td>
+                  <td>Năm 2015: Chỉ $200M (Tăng gấp 6 lần)</td>
+                  <td><span class="badge badge-green">Hợp đồng quy mô >$50M tăng 60%</span></td>
+                </tr>
+                <tr>
+                  <td><strong>2. Peer Benchmark</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Thị phần IT ngoại >75% tại VN</td>
+                  <td>Bỏ xa tất cả các công ty phần mềm nội địa</td>
+                  <td><span class="badge badge-amber">Vị thế độc tôn tuyệt đối</span></td>
+                </tr>
+                <tr>
+                  <td><strong>3. Chuẩn Quốc Tế</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Chi phí $25/h vs Ấn Độ $38/h</td>
+                  <td>Rẻ hơn 35% với chất lượng kỹ sư tương đương</td>
+                  <td><span class="badge badge-cyan">Lợi thế chi phí nhân tài công nghệ</span></td>
+                </tr>
+                <tr>
+                  <td><strong>4. Unit Economics</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Biên EBIT IT ngoại đạt 17.2%</td>
+                  <td>Dòng ngoại tệ USD, JPY dồi dào</td>
+                  <td><span class="badge badge-green">Lợi nhuận ròng tăng trưởng >20%/năm</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <!-- Cột 2: Chuỗi giá trị chuyển đổi số -->
-          <div class="card card-highlight" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
-            <div class="card-badge badge-gold">SỰ DỊCH CHUYỂN CƠ CẤU DOANH THU THEO CHUỖI GIÁ TRỊ</div>
-            
-            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px;">
-              <div>
-                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
-                  <span style="color: var(--text-dim);">1. Gia công truyền thống (Legacy Coding / Testing)</span>
-                  <span style="color: var(--text-muted); font-family: var(--font-mono);">Giảm dần còn ~22%</span>
-                </div>
-                <div style="height: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; overflow: hidden;">
-                  <div style="width: 22%; height: 100%; background: var(--text-dim);"></div>
-                </div>
-              </div>
-
-              <div>
-                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
-                  <span style="color: var(--accent-cyan); font-weight: 600;">2. Chuyển đổi số (Digital Transformation - Cloud, Low-code)</span>
-                  <span style="color: var(--accent-cyan); font-family: var(--font-mono); font-weight: 700;">Tăng lên ~46%</span>
-                </div>
-                <div style="height: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; overflow: hidden;">
-                  <div style="width: 46%; height: 100%; background: var(--accent-cyan);"></div>
-                </div>
-              </div>
-
-              <div>
-                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
-                  <span style="color: var(--accent-purple); font-weight: 700;">3. High-Value AI, Automotive & Chip Design</span>
-                  <span style="color: var(--accent-purple); font-family: var(--font-mono); font-weight: 800;">Tăng vọt ~32% (Biên lãi cao nhất)</span>
-                </div>
-                <div style="height: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; overflow: hidden;">
-                  <div style="width: 32%; height: 100%; background: linear-gradient(90deg, var(--accent-purple), var(--accent-gold));"></div>
-                </div>
+          <!-- Cột 2: Visual Chart Trực Quan Hóa Đối Chiếu -->
+          <div class="card card-emerald chart-wrapper-with-tabs" style="padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div class="card-badge badge-emerald" style="margin-bottom: 0;">Xuất Khẩu IT & Lợi Thế Chi Phí</div>
+              <div class="chart-tabs">
+                <button class="chart-tab-btn active" data-target-src="images/fpt_global_it_scale.png" data-target-title="Doanh Thu Xuất Khẩu IT Vượt $1.2B & Lợi Thế Chi Phí Kỹ Sư Rẻ Hơn Ấn Độ 35%">Doanh Thu & Chi Phí</button>
               </div>
             </div>
 
-            <div style="background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-card); border-radius: 8px; padding: 10px 12px; margin-top: auto;">
-              <div style="font-size: var(--fs-caption); color: var(--text-muted); line-height: 1.45;">
-                💡 <strong>Tác động thể chế:</strong> Khi tỷ trọng dịch vụ giá trị cao vượt 75%, doanh thu tính trên mỗi kỹ sư (Revenue per head) tăng từ $25.000 lên $42.000/năm, trực tiếp kéo giãn biên lợi nhuận ròng của toàn tập đoàn.
+            <div class="chart-container" data-zoom-src="images/fpt_global_it_scale.png" data-zoom-title="Doanh Thu Xuất Khẩu IT Vượt $1.2B & Lợi Thế Chi Phí Kỹ Sư Rẻ Hơn Ấn Độ 35%" style="flex: 1; min-height: 220px;">
+              <div class="chart-img-wrap" style="min-height: 200px;">
+                <img src="images/fpt_global_it_scale.png" alt="Doanh Thu Xuất Khẩu IT Vượt $1.2B & Lợi Thế Chi Phí Kỹ Sư Rẻ Hơn Ấn Độ 35%">
+              </div>
+              <div class="chart-caption">
+                <span class="chart-caption-text">FPT vươn tầm nhà cung cấp giải pháp toàn cầu với chi phí kỹ sư $25/h cạnh tranh vượt trội</span>
+                <span class="chart-zoom-hint">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path></svg>
+                  Click xem lớn
+                </span>
               </div>
             </div>
           </div>
@@ -1121,143 +1228,164 @@
     <!-- =========================================================
          SLIDE 5: TRỤ CỘT 2 — BÁNH ĐÀ HỆ SINH THÁI TỰ CẤP NHÂN LỰC
          ========================================================= -->
-    <section class="slide" id="slide-5">
+        <section class="slide" id="slide-5">
       <div class="slide-header">
-        <div class="pillar-breadcrumb">
-          <span class="pillar-badge badge-cyan">TRỤ CỘT 2 · THỰC NGHIỆM ĐỐI CHIẾU</span>
-          <span class="pillar-sublink">Bánh Đà Hệ Sinh Thái & Con Hào Kinh Tế Nhân Lực</span>
-        </div>
-        <h2 class="slide-title">Bánh Đà Hệ Sinh Thái: Con Hào Tự Cấp Nguồn Lực Độc Nhất</h2>
+        <div class="tagline">TRỤ CỘT 2 — NỀN TẢNG THỰC NGHIỆM & CON HÀO KINH TẾ</div>
+        <h2 class="slide-title">BÁNH ĐÀ HỆ SINH THÁI & CON HÀO NHÂN LỰC ĐH FPT</h2>
         <p class="slide-takeaway">
-          <strong>Tóm tắt:</strong> FPT sở hữu mô hình <strong>"Bánh đà tự nuôi dưỡng" (Self-sustaining Flywheel)</strong> mà không bất kỳ công ty công nghệ nào tại Đông Nam Á sao chép được: Tự đào tạo nhân lực ➔ Tự xuất khẩu thu ngoại tệ ➔ Tự làm chủ hạ tầng đám mây.
-        </p>
-      </div>
-
-      <div class="content-area">
-        <div class="grid-3">
-          <!-- Bánh đà 1: Giáo dục -->
-          <div class="card card-highlight">
-            <div class="card-badge badge-gold">BÁNH ĐÀ 1: NGUỒN CUNG NHÂN TÀI</div>
-            <h3 class="card-title">FPT Education</h3>
-            <div class="stat-number stat-gold">140.000+</div>
-            <div class="stat-sub">Học sinh & sinh viên toàn quốc</div>
-            <p class="card-desc" style="margin-top: 10px;">
-              Cung cấp trực tiếp <strong>20% – 30% kỹ sư đầu vào</strong> mỗi năm cho FPT Software với chi phí tuyển dụng (Customer Acquisition Cost of Talent) gần như bằng 0. Sinh viên được đào tạo đúng chuẩn dự án thực tế.
-            </p>
-          </div>
-
-          <!-- Bánh đà 2: Xuất khẩu phần mềm -->
-          <div class="card card-cyan">
-            <div class="card-badge badge-cyan">BÁNH ĐÀ 2: CỖ MÁY IN NGOẠI TỆ</div>
-            <h3 class="card-title">FPT Software</h3>
-            <div class="stat-number stat-cyan">> 1.5 Tỷ $</div>
-            <div class="stat-sub">Doanh số ký mới thị trường quốc tế</div>
-            <p class="card-desc" style="margin-top: 10px;">
-              Chiếm hơn 50% tổng doanh thu tập đoàn, mang về dòng tiền mặt ròng (FCF) ngoại tệ USD và JPY dồi dào, đóng vai trò là "Cột thu lôi" tài chính bảo vệ FPT trước mọi biến động kinh tế trong nước.
-            </p>
-          </div>
-
-          <!-- Bánh đà 3: Viễn thông & Hạ tầng -->
-          <div class="card card-emerald">
-            <div class="card-badge badge-emerald">BÁNH ĐÀ 3: HẠ TẦNG SỐ SOVEREIGN</div>
-            <h3 class="card-title">FPT Telecom & Data Center</h3>
-            <div class="stat-number stat-emerald">Tier III/IV</div>
-            <div class="stat-sub">Hệ thống Data Center lớn nhất Việt Nam</div>
-            <p class="card-desc" style="margin-top: 10px;">
-              Làm chủ đường truyền băng rộng, trung tâm dữ liệu siêu máy tính đặt AI Factory, cung cấp dịch vụ Cloud nội địa độc lập, không phụ thuộc vào hạ tầng bên thứ ba.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================================
-         SLIDE 6: TRỤ CỘT 2 (TIẾP) — CON HÀO GIỮ CHÂN KHÁCH HÀNG
-         ========================================================= -->
-    <section class="slide" id="slide-6">
-      <div class="slide-header">
-        <div class="pillar-breadcrumb">
-          <span class="pillar-badge badge-cyan">TRỤ CỘT 2 · CON HÀO KINH TẾ</span>
-          <span class="pillar-sublink">Văn Hóa Onsite-Offshore & Tỷ Lệ Giữ Chân Khách Hàng Triệu Đô</span>
-        </div>
-        <h2 class="slide-title">Con Hào Văn Hóa & Tỷ Lệ Giữ Chân Khách Hàng Triệu Đô</h2>
-        <p class="slide-takeaway">
-          <strong>Tóm tắt:</strong> Khách hàng của FPT là các định chế tài chính, hãng sản xuất và tập đoàn viễn thông toàn cầu. Chi phí chuyển đổi (Switching Cost) cực cao giúp FPT duy trì <strong>Tỷ lệ giữ chân khách hàng (Net Retention Rate) vượt 95%</strong>.
+          <strong>Bối cảnh & Landscape:</strong> Cung ứng 20-30% kỹ sư đầu vào giá rẻ, bảo vệ biên lợi nhuận mảng IT xuất khẩu ở mức 17-18%
         </p>
       </div>
 
       <div class="content-area">
         <div class="grid-2">
-          <!-- Cột 1: Mô hình Hybrid Delivery -->
-          <div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
-            <div class="card-badge badge-cyan">MÔ HÌNH TRIỂN KHAI HYBRID DELIVERY TOÀN CẦU</div>
+          <!-- Cột 1: Landscape 4 Chiều Cốt Lõi -->
+          <div class="card">
+            <div class="card-title">Hệ Quy Chiếu 4 Chiều · Xuất Khẩu Phần Mềm & AI</div>
+            <p class="card-desc">Đối chiếu vị thế của FPT trên 4 trục tọa độ then chốt: Tốc độ tăng trưởng so với quá khứ, mức độ vượt trội trước đối thủ cạnh tranh, dư địa theo chuẩn quốc tế và hiệu quả kinh tế trên từng đồng vốn.</p>
             
-            <div class="flow-steps">
-              <div class="flow-item">
-                <div class="flow-num">20%</div>
-                <div class="flow-text">
-                  <strong>Đội ngũ Onsite (Tại chỗ):</strong> Đặt tại Tokyo, Texas, Frankfurt, Singapore trực tiếp làm việc với ban giám đốc khách hàng, nắm bắt yêu cầu nghiệp vụ và tạo dựng niềm tin tuyệt đối.
-                </div>
-              </div>
+            <table class="comp-table" style="margin-top: 10px; font-size: 11.5px;">
+              <thead>
+                <tr>
+                  <th>Hệ Quy Chiếu</th>
+                  <th>Chỉ Số FPT</th>
+                  <th>Đối Chiếu Ngành / Quá Khứ</th>
+                  <th>Ý Nghĩa Dòng Tiền</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Delta Quá Khứ</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">35.000+ Kỹ Sư</td>
+                  <td>Năm 2020: 15.000 Kỹ sư</td>
+                  <td><span class="badge badge-green">Quy mô tăng 2.3x</span></td>
+                </tr>
+                <tr>
+                  <td><strong>2. Peer Benchmark</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Doanh thu IT ngoại >$1B</td>
+                  <td>Doanh nghiệp IT nội địa khác: <$100M</td>
+                  <td><span class="badge badge-amber">Độc tôn vị thế Top 1</span></td>
+                </tr>
+                <tr>
+                  <td><strong>3. S-Curve Quốc Tế</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Chi phí $20-25/giờ</td>
+                  <td>Ấn Độ (TCS/Infosys) $35 · Đông Âu $60</td>
+                  <td><span class="badge badge-cyan">Lợi thế chi phí 35%</span></td>
+                </tr>
+                <tr>
+                  <td><strong>4. Unit Economics</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Biên EBIT IT 17.5%</td>
+                  <td>Duy trì ổn định suốt 5 năm</td>
+                  <td><span class="badge badge-green">ROE >26% bền vững</span></td>
+                </tr>
+              </tbody>
+            </table>
 
-              <div class="flow-item">
-                <div class="flow-num" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);">80%</div>
-                <div class="flow-text">
-                  <strong>Đội ngũ Offshore (Hậu phương):</strong> Tập trung tại các FPT Campus (Hòa Lạc, Đà Nẵng, Quy Nhơn, TP.HCM) thực hiện coding và kiểm thử 24/7 với chi phí nhân sự tối ưu.
-                </div>
-              </div>
-            </div>
-
-            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-card); border-radius: 8px; padding: 10px 12px; margin-top: auto;">
-              <div style="font-size: var(--fs-sub); font-weight: 700; color: #fff; margin-bottom: 4px;">
-                Văn Hóa Doanh Nghiệp STCo:
-              </div>
-              <div style="font-size: var(--fs-caption); line-height: 1.5; color: var(--text-secondary);">
-                Khả năng "chiến đấu chịu cày" phi thường của kỹ sư FPT trong việc hoàn thành deadline khẩn cấp đã trở thành thương hiệu nổi tiếng tại Nhật Bản, tạo ra rào cản vô hình bảo vệ hợp đồng trước các đối thủ Trung Quốc và Ấn Độ.
-              </div>
+            <div style="margin-top: auto; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-card);">
+              <div style="font-size: 11px; color: var(--accent-ember); font-weight: 700;">HỆ SINH THÁI ĐÀO TẠO KHÉP KÍN ĐỘC NHẤT</div>
+              <div style="font-size: 12.5px; color: var(--text-secondary); margin-top: 3px;">Đại học FPT và FPT Software tạo thành vòng tuần hoàn tự sinh nhân lực, giúp FPT nhận các hợp đồng chuyển đổi số và AI quy mô trăm triệu USD mà không lo khủng hoảng thiếu hụt nhân sự.</div>
             </div>
           </div>
 
-          <!-- Cột 2: Sự gia tăng khách hàng triệu đô -->
-          <div class="card card-highlight" style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
-            <div class="card-badge badge-gold">SỰ TĂNG TRƯỞNG KHÁCH HÀNG TRIỆU ĐÔ (TIER 1 CLIENTS)</div>
+          <!-- Cột 2: Bóc Tách Năng Lực Cạnh Tranh & Chuỗi Giá Trị -->
+          <div class="card card-highlight">
+            <div class="card-title" style="color: var(--accent-gold);">Bóc Tách Con Hào Kinh Tế Độc Quyền (Economic Moat)</div>
+            <p class="card-desc" style="margin-bottom: 12px;">Các yếu tố cốt lõi giúp FPT bảo vệ biên lợi nhuận, cản bước đối thủ mới gia nhập và thu hoạch dòng tiền tự do (FCF) vượt trội qua các chu kỳ kinh tế:</p>
             
-            <div class="table-responsive">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Nhóm Khách Hàng</th>
-                    <th>Năm 2020</th>
-                    <th>Năm 2023</th>
-                    <th>H1/2026 (Hiện Tại)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>Khách hàng > $1 Triệu</strong></td>
-                    <td>82 khách</td>
-                    <td>146 khách</td>
-                    <td class="highlight">> 185 khách</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Khách hàng > $5 Triệu</strong></td>
-                    <td>18 khách</td>
-                    <td>35 khách</td>
-                    <td class="highlight">> 52 khách</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Khách hàng > $10 Triệu</strong></td>
-                    <td>5 khách</td>
-                    <td>12 khách</td>
-                    <td class="highlight">19 khách lớn</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div style="display: flex; flex-direction: column; gap: 9px; margin-top: 8px; font-size: 12.5px;">
+              <div style="padding: 11px; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px;">
+                <strong style="color: var(--accent-ember);">1. Rào cản chi phí vốn & Quy mô tài sản:</strong> Quy mô dẫn đầu cho phép doanh nghiệp tối ưu hóa giá vốn, đạt suất đầu tư rẻ hơn 20-30% so với đối thủ đi sau.
+              </div>
+              <div style="padding: 11px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px;">
+                <strong style="color: var(--accent-cyan);">2. Lợi thế vị trí & Hạ tầng không thể sao chép:</strong> Sở hữu vị trí độc tôn hoặc mạng lưới phân phối sâu rộng mà đối thủ phải mất 5-10 năm và hàng tỷ USD mới có thể tái tạo.
+              </div>
+              <div style="padding: 11px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px;">
+                <strong style="color: var(--accent-emerald);">3. Sức mạnh định giá & Trung thành thương hiệu:</strong> Nắm giữ tệp khách hàng trung thành lớn nhất, dễ dàng chuyển hóa chi phí biến đổi sang giá bán mà không làm suy giảm thị phần.
+              </div>
             </div>
 
-            <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px; padding: 10px 12px; margin-top: auto;">
-              <div style="font-size: var(--fs-caption); color: var(--accent-gold); line-height: 1.45;">
-                🏆 <strong>Tác động dòng tiền:</strong> Nhóm khách hàng Tier 1 mang tính "Recurring Revenue" (Doanh thu lặp lại định kỳ) chiếm trên 70% tổng doanh số xuất khẩu phần mềm, bảo đảm nền lợi nhuận không bị đảo chiều đột ngột.
+            <div style="margin-top: auto; padding: 10px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px;">
+              <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">ĐÁNH GIÁ CỦA CHUYÊN GIA FINPEACE</div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">Con hào kinh tế vững chắc là tấm khiên bảo vệ tăng trưởng EPS kép, đảm bảo khoản đầu tư tích sản luôn an toàn và sinh lời vượt trội chỉ số VN-Index.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: PILLAR 2 - PART 2 -->
+    <section class="slide" id="slide-6">
+      <div class="slide-header">
+        <div class="tagline">TRỤ CỘT 3 — BẢO CHỨNG THỰC TIỄN & SỨC KHỎE TÀI CHÍNH</div>
+        <h2 class="slide-title">Tăng Trưởng Kép EPS FPT: 22%/Năm Liên Tục 10 Năm Nhờ Đòn Bẩy Xuất Khẩu Phần Mềm</h2>
+        <p class="slide-takeaway">
+          Đòn bẩy operating leverage từ mảng Global IT đưa EPS tăng trưởng kép 22%/năm, cổ tức tiền mặt đều đặn
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-2">
+          <!-- Cột 1: Bảng Đối Chiếu 4D Sức Khỏe Tài Chính & Đòn Bẩy Vận Hành -->
+          <div class="card card-cyan" style="padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div class="card-badge badge-cyan" style="margin-bottom: 4px;">BẢNG ĐỐI CHIẾU 4D SỨC KHỎE TÀI CHÍNH & ĐÒN BẨY VẬN HÀNH</div>
+            <p class="card-desc" style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Định vị cấu trúc sinh lời và bộ đệm an toàn vốn so với toàn ngành và chuẩn mực quốc tế:</p>
+            <table class="comp-table" style="margin-top: 4px; font-size: 11px; width: 100%;">
+              <thead>
+                <tr>
+                  <th>Chỉ Số Tài Chính</th>
+                  <th>Chỉ Số Hiện Tại</th>
+                  <th>Quá Khứ & Toàn Ngành / Quốc Tế</th>
+                  <th>Ý Nghĩa Bảo Vệ Cổ Đông</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Tỷ Suất ROE</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">26.5% (Bền vững 10 năm)</td>
+                  <td>VN-Index 12-14% · Infosys 28% · TCS 30%</td>
+                  <td><span class="badge badge-green">Cỗ máy tái sinh lợi nhuận kép kỳ quan</span></td>
+                </tr>
+                <tr>
+                  <td><strong>2. Biên EBIT IT Ngoại</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">17.2% (Tăng liên tục)</td>
+                  <td>Quá khứ 14.5% · Ngành IT nội 8-10%</td>
+                  <td><span class="badge badge-cyan">Nâng cấp từ gia công lên AI toàn cầu</span></td>
+                </tr>
+                <tr>
+                  <td><strong>3. Tiền Mặt Ròng</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">Net Cash >28.000 tỷ</td>
+                  <td>Quá khứ 12.000 tỷ · Không nợ vay ròng</td>
+                  <td><span class="badge badge-amber">Tự tài trợ 100% Capex AI Factory</span></td>
+                </tr>
+                <tr>
+                  <td><strong>4. Cổ Tức & Lợi Tức</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">20% tiền + 15% cổ phiếu</td>
+                  <td>Duy trì kỷ luật chi trả hơn 15 năm liên tục</td>
+                  <td><span class="badge badge-green">Tích sản tăng trưởng bền vững số 1 VN</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Cột 2: Visual Chart Trực Quan Hóa Đối Chiếu Trụ Cột 3 -->
+          <div class="card card-emerald chart-wrapper-with-tabs" style="padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div class="card-badge badge-emerald" style="margin-bottom: 0;">Tăng Trưởng Kép EPS & FCF</div>
+              <div class="chart-tabs">
+                <button class="chart-tab-btn active" data-target-src="images/fpt_eps_cashflow_growth.png" data-target-title="Tăng Trưởng Kép EPS FPT: 22%/Năm Liên Tục 10 Năm Nhờ Đòn Bẩy Xuất Khẩu Phần Mềm">EPS 22%/Năm</button>
+              </div>
+            </div>
+
+            <div class="chart-container" data-zoom-src="images/fpt_eps_cashflow_growth.png" data-zoom-title="Tăng Trưởng Kép EPS FPT: 22%/Năm Liên Tục 10 Năm Nhờ Đòn Bẩy Xuất Khẩu Phần Mềm" style="flex: 1; min-height: 220px;">
+              <div class="chart-img-wrap" style="min-height: 200px;">
+                <img src="images/fpt_eps_cashflow_growth.png" alt="Tăng Trưởng Kép EPS FPT: 22%/Năm Liên Tục 10 Năm Nhờ Đòn Bẩy Xuất Khẩu Phần Mềm">
+              </div>
+              <div class="chart-caption">
+                <span class="chart-caption-text">Đòn bẩy operating leverage từ mảng Global IT đưa EPS tăng trưởng kép 22%/năm, cổ tức tiền mặt đều đặn</span>
+                <span class="chart-zoom-hint">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path></svg>
+                  Click xem lớn
+                </span>
               </div>
             </div>
           </div>
@@ -1763,10 +1891,90 @@
       }
     }
 
-    // Initialize controller on DOM load
+    // Lightbox Controller
+    class LightboxController {
+      constructor() {
+        this.modal = document.getElementById('lightboxModal');
+        this.img = document.getElementById('lightboxImg');
+        this.title = document.getElementById('lightboxTitle');
+        this.closeBtn = document.getElementById('lightboxClose');
+
+        if (!this.modal) return;
+        this.initEvents();
+      }
+
+      initEvents() {
+        document.addEventListener('click', (e) => {
+          const chartBox = e.target.closest('[data-zoom-src]');
+          if (chartBox) {
+            const src = chartBox.getAttribute('data-zoom-src');
+            const title = chartBox.getAttribute('data-zoom-title') || 'Biểu đồ phân tích FinPeace';
+            this.open(src, title);
+          }
+        });
+
+        if (this.closeBtn) this.closeBtn.addEventListener('click', () => this.close());
+        this.modal.addEventListener('click', (e) => {
+          if (e.target === this.modal) this.close();
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+            this.close();
+          }
+        });
+
+        // Tab switcher support for charts
+        document.querySelectorAll('.chart-tab-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const container = btn.closest('.chart-wrapper-with-tabs');
+            if (!container) return;
+            const targetSrc = btn.getAttribute('data-target-src');
+            const targetTitle = btn.getAttribute('data-target-title');
+            
+            container.querySelectorAll('.chart-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const mainImg = container.querySelector('.chart-img-wrap img');
+            const mainContainer = container.querySelector('.chart-container');
+            const captionText = container.querySelector('.chart-caption-text');
+            
+            if (mainImg) mainImg.src = targetSrc;
+            if (mainContainer) {
+              mainContainer.setAttribute('data-zoom-src', targetSrc);
+              mainContainer.setAttribute('data-zoom-title', targetTitle);
+            }
+            if (captionText) captionText.textContent = targetTitle;
+          });
+        });
+      }
+
+      open(src, title) {
+        this.img.src = src;
+        this.title.textContent = title;
+        this.modal.classList.add('active');
+      }
+
+      close() {
+        this.modal.classList.remove('active');
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       window.presentationController = new PresentationController();
+      window.lightboxController = new LightboxController();
     });
+
   </script>
+
+  <!-- LIGHTBOX MODAL -->
+  <div class="lightbox-modal" id="lightboxModal">
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightboxClose" title="Đóng (Esc)">&times;</button>
+      <img id="lightboxImg" src="" alt="Zoomed Chart">
+      <div class="lightbox-caption" id="lightboxTitle"></div>
+    </div>
+  </div>
+
 </body>
 </html>

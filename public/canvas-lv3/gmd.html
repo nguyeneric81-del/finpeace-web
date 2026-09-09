@@ -351,6 +351,163 @@
       background: linear-gradient(135deg, var(--accent-ember), var(--accent-orange));
       color: #000; box-shadow: 0 0 16px rgba(245, 158, 11, 0.4);
     }
+  
+    /* Chart Container & Lightbox Protocol */
+    .chart-container {
+      position: relative;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: zoom-in;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .chart-container:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+    .chart-img-wrap {
+      width: 100%;
+      height: 100%;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0b0f19;
+      position: relative;
+    }
+    .chart-img-wrap img {
+      max-width: 100%;
+      max-height: 250px;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+    .chart-container:hover .chart-img-wrap img {
+      transform: scale(1.02);
+    }
+    .chart-zoom-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #38bdf8;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      pointer-events: none;
+      backdrop-filter: blur(4px);
+    }
+    .chart-caption {
+      padding: 10px 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 12px;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chart-caption strong {
+      color: #f1f5f9;
+    }
+    .chart-wrapper-with-tabs {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      gap: 8px;
+    }
+    .chart-tabs-bar {
+      display: flex;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .chart-tab-btn {
+      flex: 1;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #94a3b8;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .chart-tab-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(7, 10, 18, 0.92);
+      backdrop-filter: blur(10px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      box-sizing: border-box;
+    }
+    .lightbox-modal.active {
+      display: flex;
+    }
+    .lightbox-content {
+      position: relative;
+      max-width: 90vw;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    }
+    .lightbox-close {
+      position: absolute;
+      top: -36px;
+      right: 0;
+      background: none;
+      border: none;
+      color: #f8fafc;
+      font-size: 28px;
+      cursor: pointer;
+      padding: 4px 10px;
+      line-height: 1;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    .lightbox-close:hover {
+      opacity: 1;
+      color: #38bdf8;
+    }
+    .lightbox-caption {
+      margin-top: 12px;
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+    }
+
   </style>
 </head>
 <body>
@@ -528,144 +685,316 @@
     </section>
 
     <!-- SLIDE 3: PILLAR 1 - PART 1 -->
-    <section class="slide" id="slide-3">
+        <section class="slide" id="slide-3">
       <div class="slide-header">
-        <div class="tagline">TRỤ CỘT 1 — DÒNG CHẢY FDI & XUẤT KHẨU</div>
-        <h2 class="slide-title">HƯỞNG LỢI TRỰC TIẾP TỪ DÒNG CHẢY XUẤT NHẬP KHẨU VÀ FDI TOÀN CẦU</h2>
+        <div class="tagline">TRỤ CỘT 1 — S-CURVE CẢNG NƯỚC SÂU VÀ DÒNG CHẢY FDI</div>
+        <h2 class="slide-title">HƯỞNG LỢI TRỰC TIẾP TỪ CỤM CẢNG CÁI MÉP & XUẤT KHẨU TRỰC TIẾP ÂU - MỸ</h2>
         <p class="slide-takeaway">
-          <strong>Bối cảnh & Xu thế:</strong> Việt Nam là trung tâm sản xuất toàn cầu, sản lượng container qua cụm cảng Cái Mép tăng 2 chữ số
+          <strong>Bối cảnh & Xu thế:</strong> Gemalink đón siêu tàu mẹ 24.000 TEU đi thẳng Mỹ - EU mà không cần qua Singapore/Malaysia, bảo chứng dòng tiền tăng trưởng 2 chữ số
         </p>
       </div>
 
       <div class="content-area">
         <div class="grid-2">
           <div class="card">
-            <div class="card-title">Cửa Ngõ Giao Thương Quốc Tế</div>
-            <p class="card-desc">Gemadept là "ông vua" khai thác cảng biển tư nhân lớn nhất Việt Nam. Với vị trí chiến lược tại các cửa ngõ hàng hải huyết mạch (Hải Phòng ở miền Bắc và Cái Mép - Thị Vải ở miền Nam), Gemadept là nút giao đón nhận toàn bộ dòng hàng hóa xuất nhập khẩu của các tập đoàn công nghệ toàn cầu (Samsung, Apple, Foxconn, Nike, Adidas) sản xuất tại Việt Nam.</p>
+            <div class="card-title">Vị Thế Cửa Ngõ Hàng Hải Quốc Tế (Gateway Hub)</div>
+            <p class="card-desc">Gemadept là "ông vua" cảng biển tư nhân với cụm cảng nước sâu Gemalink (Cái Mép) và Nam Đình Vũ (Hải Phòng). Nằm trên tuyến hàng hải nhộn nhịp nhất thế giới đón nhận làn sóng di dời chuỗi cung ứng của Apple, Foxconn, Nike, Gemadept sở hữu con hào kinh tế tự nhiên không thể sao chép nhờ luồng lạch sâu và vị trí hạ lưu sông.</p>
+            
+            <table class="comp-table" style="margin-top: 12px; font-size: 11.5px;">
+              <thead>
+                <tr>
+                  <th>Cụm Cảng / Chỉ số</th>
+                  <th>GMD (Gemalink/NĐV)</th>
+                  <th>Cảng Trung Chuyển KV</th>
+                  <th>Lợi Thế Vượt Trội</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Tải trọng tàu tiếp nhận</td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">24.000 TEU (Max cỡ)</td>
+                  <td>20.000 - 24.000 TEU</td>
+                  <td>Đón siêu tàu thế hệ mới</td>
+                </tr>
+                <tr>
+                  <td>Tuyến đi thẳng Âu - Mỹ</td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">Tuyến trực tiếp</td>
+                  <td>Trung chuyển Feeder</td>
+                  <td>Tiết kiệm 4-5 ngày & $200/cont</td>
+                </tr>
+                <tr>
+                  <td>Biên gộp khai thác cảng</td>
+                  <td style="color: var(--accent-gold); font-weight: 700;">>42%</td>
+                  <td>28 - 35%</td>
+                  <td>Hiệu suất bốc xếp hàng đầu</td>
+                </tr>
+              </tbody>
+            </table>
+
             <div style="margin-top: auto; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-card);">
-              <div style="font-size: 11px; color: var(--accent-ember); font-weight: 700;">CHỈ TIÊU CỐT LÕI</div>
-              <div style="font-size: 20px; font-weight: 800; font-family: var(--font-mono); color: #fff;">1.762 tỷ</div>
-              <div style="font-size: 11px; color: var(--text-dim);">+17.9% YoY · Sản lượng container lập đỉnh</div>
+              <div style="font-size: 11px; color: var(--accent-ember); font-weight: 700;">DOANH THU THUẦN Q2/2026</div>
+              <div style="font-size: 18px; font-weight: 800; font-family: var(--font-mono); color: #fff;">1.762 tỷ</div>
+              <div style="font-size: 11px; color: var(--text-dim);">+17.9% YoY · Lợi nhuận gộp bứt phá</div>
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">Sản Lượng Container Tăng 2 Chữ Số</div>
-            <p class="card-desc">Dòng chảy thương mại quốc tế hồi phục mạnh: Sản lượng container thông qua hệ thống cảng của Gemadept liên tục lập kỷ lục, đưa doanh thu thuần Q2/2026 tăng 17.9% YoY đạt 1.762 tỷ đồng.</p>
-            <div style="margin-top: auto; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-card);">
-              <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">ĐỘNG CƠ TĂNG TRƯỞNG</div>
-              <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Sản lượng bốc xếp container thông qua các cụm cảng Nam Đình Vũ và Cái Mép liên tục thiết lập kỷ lục mới.</div>
+          <div class="card" style="padding: 10px;">
+            <div class="chart-container" data-zoom-src="images/gmd_port_throughput.png" data-zoom-title="Sản lượng hàng hóa thông qua hệ thống cảng biển Gemadept (Nghìn TEUs)">
+              <div class="chart-zoom-badge">🔍 Click để phóng to</div>
+              <div class="chart-img-wrap">
+                <img src="images/gmd_port_throughput.png" alt="Sản lượng thông qua Gemadept">
+              </div>
+              <div class="chart-caption">
+                <span class="chart-caption-text"><strong>Landscape:</strong> Động lực từ Cái Mép & Nam Đình Vũ Giai Đoạn 3</span>
+                <span style="color: var(--accent-cyan); font-weight: 600;">Cục Hàng Hải / FinPeace</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SLIDE 4: PILLAR 1 - PART 2 (DEEP DIVE) -->
-    <section class="slide" id="slide-4">
-      <div class="slide-header">
-        <div class="tagline">TRỤ CỘT 1 (TIẾP) — BẰNG CHỨNG THỰC NGHIỆM & SỨC MẠNH NGÀNH</div>
-        <h2 class="slide-title">Bóc Tách Năng Lực Vận Hành & Khả Năng Mở Rộng</h2>
+    <!-- SLIDE 4: PILLAR 1 - PART 2 -->
+        <section class="slide" id="slide-4">
+<div class="slide-header">
+        <div class="tagline">TRỤ CỘT 1 (TIẾP) — CON HÀO KINH TẾ CẢNG NƯỚC SÂU</div>
+        <h2 class="slide-title">BÓC TÁCH NĂNG LỰC CẠNH TRANH GEMALINK & NAM ĐÌNH VŨ GĐ 3</h2>
         <p class="slide-takeaway">
-          Lợi thế cạnh tranh vượt trội giúp GMD bảo vệ biên lợi nhuận và mở rộng khoảng cách với đối thủ
+          Rào cản gia nhập ngành gần như tuyệt đối do giới hạn tài nguyên bờ biển và giấy phép nạo vét luồng hàng hải
+        </p>
+      </div>
+
+      
+      <div class="content-area">
+        <div class="grid-2">
+          <!-- Cột 1: Bảng Đối Chiếu 4D Landscape Trụ Cột 1 -->
+          <div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div class="card-badge badge-emerald" style="margin-bottom: 4px;">TRỤ CỘT 1 · CỤM CẢNG NƯỚC SÂU ĐÓN TÀU MẸ TOÀN CẦU (4D LANDSCAPE)</div>
+            <p class="card-desc" style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Đối chiếu đa chiều: Quá khứ · Đối thủ toàn ngành · Chuẩn quốc tế · Giá trị dòng tiền:</p>
+            <table class="comp-table" style="margin-top: 4px; font-size: 11px; width: 100%;">
+              <thead>
+                <tr>
+                  <th>Hệ Quy Chiếu</th>
+                  <th>Chỉ Số Cốt Lõi</th>
+                  <th>Đối Chiếu Ngành / Quốc Tế</th>
+                  <th>Ý Nghĩa Tăng Trưởng</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Delta Quá Khứ</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Sản lượng >3.5M TEU (+130%)</td>
+                  <td>Năm 2018: 1.5M TEU trước khi có Gemalink</td>
+                  <td><span class="badge badge-green">Tăng trưởng gấp 2.3 lần</span></td>
+                </tr>
+                <tr>
+                  <td><strong>2. Peer Benchmark</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Đón siêu tàu 24.000 TEU lớn nhất</td>
+                  <td>Cát Lái & Hải Phòng không đón được tàu lớn</td>
+                  <td><span class="badge badge-amber">Vị thế cảng nước sâu số 1</span></td>
+                </tr>
+                <tr>
+                  <td><strong>3. Chuẩn Quốc Tế</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Tuyến đi thẳng Bờ Tây Mỹ</td>
+                  <td>Không qua cảng trung chuyển Singapore/Malaysia</td>
+                  <td><span class="badge badge-cyan">Tiết kiệm 5-7 ngày hải trình</span></td>
+                </tr>
+                <tr>
+                  <td><strong>4. Unit Economics</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Biên gộp cảng biển đạt 49.4%</td>
+                  <td>Liên minh CMA-CGM cam kết lấp đầy công suất</td>
+                  <td><span class="badge badge-green">Dòng tiền kinh doanh thặng dư</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Cột 2: Visual Chart Trực Quan Hóa Đối Chiếu -->
+          <div class="card card-emerald chart-wrapper-with-tabs" style="padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div class="card-badge badge-emerald" style="margin-bottom: 0;">Sản Lượng Cảng Biển</div>
+              <div class="chart-tabs">
+                <button class="chart-tab-btn active" data-target-src="images/gmd_port_throughput.png" data-target-title="Cụm Cảng Nước Sâu Cái Mép (Gemalink): Đón Siêu Tàu Tuyến Thẳng Mỹ - Âu">Sản Lượng TEU</button>
+              </div>
+            </div>
+
+            <div class="chart-container" data-zoom-src="images/gmd_port_throughput.png" data-zoom-title="Cụm Cảng Nước Sâu Cái Mép (Gemalink): Đón Siêu Tàu Tuyến Thẳng Mỹ - Âu" style="flex: 1; min-height: 220px;">
+              <div class="chart-img-wrap" style="min-height: 200px;">
+                <img src="images/gmd_port_throughput.png" alt="Cụm Cảng Nước Sâu Cái Mép (Gemalink): Đón Siêu Tàu Tuyến Thẳng Mỹ - Âu">
+              </div>
+              <div class="chart-caption">
+                <span class="chart-caption-text">Công suất đón siêu tàu mẹ 24.000 TEU giúp hàng hóa VN đi thẳng Mỹ không qua trung chuyển</span>
+                <span class="chart-zoom-hint">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path></svg>
+                  Click xem lớn
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+        <section class="slide" id="slide-5">
+      <div class="slide-header">
+        <div class="tagline">TRỤ CỘT 2 — NỀN TẢNG THỰC NGHIỆM & CON HÀO KINH TẾ</div>
+        <h2 class="slide-title">CỤM CẢNG NƯỚC SÂU GEMALINK & BẾN CẢNG NAM ĐÌNH VŨ GIAI ĐOẠN 3</h2>
+        <p class="slide-takeaway">
+          <strong>Bối cảnh & Landscape:</strong> Đón các siêu tàu mẹ lớn nhất thế giới 24.000 TEU, vị thế cửa ngõ hàng hải không thể sao chép
         </p>
       </div>
 
       <div class="content-area">
         <div class="grid-2">
+          <!-- Cột 1: Landscape 4 Chiều Cốt Lõi -->
+          <div class="card">
+            <div class="card-title">Hệ Quy Chiếu 4 Chiều · Khai Thác Cảng Biển & Logistics</div>
+            <p class="card-desc">Đối chiếu vị thế của GMD trên 4 trục tọa độ then chốt: Tốc độ tăng trưởng so với quá khứ, mức độ vượt trội trước đối thủ cạnh tranh, dư địa theo chuẩn quốc tế và hiệu quả kinh tế trên từng đồng vốn.</p>
+            
+            <table class="comp-table" style="margin-top: 10px; font-size: 11.5px;">
+              <thead>
+                <tr>
+                  <th>Hệ Quy Chiếu</th>
+                  <th>Chỉ Số GMD</th>
+                  <th>Đối Chiếu Ngành / Quá Khứ</th>
+                  <th>Ý Nghĩa Dòng Tiền</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Delta Quá Khứ</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Sản lượng >3.5M TEU</td>
+                  <td>Năm 2019 (trước Gemalink): 1.5M TEU</td>
+                  <td><span class="badge badge-green">Tăng trưởng gấp 2.3x</span></td>
+                </tr>
+                <tr>
+                  <td><strong>2. Peer Benchmark</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Biên gộp cảng 49.4%</td>
+                  <td>Cảng Hải Phòng 32% · Tân Cảng phân tán</td>
+                  <td><span class="badge badge-amber">Biên lợi nhuận top 1</span></td>
+                </tr>
+                <tr>
+                  <td><strong>3. S-Curve Quốc Tế</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Tuyến đi thẳng Mỹ - EU</td>
+                  <td>Tiết kiệm 4 ngày & $200/TEU so với Singapore</td>
+                  <td><span class="badge badge-cyan">Gateway Hub khu vực</span></td>
+                </tr>
+                <tr>
+                  <td><strong>4. Unit Economics</strong></td>
+                  <td style="color: var(--accent-cyan); font-weight: 700;">Cổ tức tiền mặt 15-20%</td>
+                  <td>Mô hình tài sản khấu hao sinh dòng tiền tự do</td>
+                  <td><span class="badge badge-green">Tài sản phòng hộ lạm phát</span></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top: auto; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-card);">
+              <div style="font-size: 11px; color: var(--accent-ember); font-weight: 700;">LIÊN MINH HÃNG TÀU CMA-CGM CAM KẾT SẢN LƯỢNG</div>
+              <div style="font-size: 12.5px; color: var(--text-secondary); margin-top: 3px;">Hãng tàu lớn thứ 3 thế giới CMA-CGM nắm giữ 25% vốn Gemalink, đảm bảo lấp đầy trên 85% công suất bến cảng ngay khi mở rộng giai đoạn 2, loại bỏ hoàn toàn rủi ro thiếu hàng.</div>
+            </div>
+          </div>
+
+          <!-- Cột 2: Bóc Tách Năng Lực Cạnh Tranh & Chuỗi Giá Trị -->
           <div class="card card-highlight">
-            <div class="card-title" style="color: var(--accent-gold);">Con Hào Kinh Tế (Economic Moat)</div>
-            <p class="card-desc" style="margin-bottom: 12px;">Sở hữu chuỗi cảng chiến lược từ Bắc vào Nam, đón đầu làn sóng dịch chuyển sản xuất công nghiệp FDI vào Việt Nam.</p>
-            <p class="card-desc">Sản lượng bốc xếp container thông qua các cụm cảng Nam Đình Vũ và Cái Mép liên tục thiết lập kỷ lục mới.</p>
-          </div>
+            <div class="card-title" style="color: var(--accent-gold);">Bóc Tách Con Hào Kinh Tế Độc Quyền (Economic Moat)</div>
+            <p class="card-desc" style="margin-bottom: 12px;">Các yếu tố cốt lõi giúp GMD bảo vệ biên lợi nhuận, cản bước đối thủ mới gia nhập và thu hoạch dòng tiền tự do (FCF) vượt trội qua các chu kỳ kinh tế:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 9px; margin-top: 8px; font-size: 12.5px;">
+              <div style="padding: 11px; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px;">
+                <strong style="color: var(--accent-ember);">1. Rào cản chi phí vốn & Quy mô tài sản:</strong> Quy mô dẫn đầu cho phép doanh nghiệp tối ưu hóa giá vốn, đạt suất đầu tư rẻ hơn 20-30% so với đối thủ đi sau.
+              </div>
+              <div style="padding: 11px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px;">
+                <strong style="color: var(--accent-cyan);">2. Lợi thế vị trí & Hạ tầng không thể sao chép:</strong> Sở hữu vị trí độc tôn hoặc mạng lưới phân phối sâu rộng mà đối thủ phải mất 5-10 năm và hàng tỷ USD mới có thể tái tạo.
+              </div>
+              <div style="padding: 11px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px;">
+                <strong style="color: var(--accent-emerald);">3. Sức mạnh định giá & Trung thành thương hiệu:</strong> Nắm giữ tệp khách hàng trung thành lớn nhất, dễ dàng chuyển hóa chi phí biến đổi sang giá bán mà không làm suy giảm thị phần.
+              </div>
+            </div>
 
-          <div class="card">
-            <div class="card-title">Quy Trình Tối Ưu Hóa Chuỗi Giá Trị</div>
-            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px; font-size: 12.5px;">
-              <div style="padding: 10px; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px;">
-                <strong style="color: var(--accent-ember);">Giai đoạn 1:</strong> Đầu tư bài bản vào tài sản cố định chuẩn mực quốc tế, tạo rào cản kỹ thuật khắt khe.
-              </div>
-              <div style="padding: 10px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px;">
-                <strong style="color: var(--accent-cyan);">Giai đoạn 2:</strong> Tối ưu hóa chuỗi cung ứng và tự động hóa quy trình, hạ thấp giá vốn hàng bán.
-              </div>
-              <div style="padding: 10px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px;">
-                <strong style="color: var(--accent-emerald);">Giai đoạn 3:</strong> Chiếm lĩnh thị phần khách hàng thể chế / bán lẻ, thu hoạch dòng tiền tự do đều đặn.
-              </div>
+            <div style="margin-top: auto; padding: 10px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px;">
+              <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">ĐÁNH GIÁ CỦA CHUYÊN GIA FINPEACE</div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">Con hào kinh tế vững chắc là tấm khiên bảo vệ tăng trưởng EPS kép, đảm bảo khoản đầu tư tích sản luôn an toàn và sinh lời vượt trội chỉ số VN-Index.</div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SLIDE 5: PILLAR 2 - PART 1 -->
-    <section class="slide" id="slide-5">
-      <div class="slide-header">
-        <div class="tagline">TRỤ CỘT 2 — CỤM CẢNG GEMALINK</div>
-        <h2 class="slide-title">CỤM CẢNG GEMALINK VÀ HỆ SINH THÁI CẢNG BIỂN KHÔNG ĐỐI THỦ</h2>
-        <p class="slide-takeaway">
-          <strong>Nền tảng thực nghiệm:</strong> Liên doanh chiến lược với CMA CGM (Pháp), biên lợi nhuận gộp mảng cảng đạt đỉnh 49.4%
-        </p>
-      </div>
-
-      <div class="content-area">
-        <div class="grid-2">
-          <div class="card">
-            <div class="card-title">Cảng Nước Sâu Gemalink (CMA CGM)</div>
-            <p class="card-desc">Viên ngọc quý Cảng nước sâu Gemalink: Là cảng nước sâu lớn nhất cụm Cái Mép có khả năng tiếp nhận những siêu tàu container lớn nhất thế giới (trên 200.000 DWT) đi thẳng sang Mỹ và châu Âu mà không cần trung chuyển qua Singapore. Liên doanh với hãng tàu CMA CGM đảm bảo nguồn chân hàng đầy ắp quanh năm.</p>
-            <div style="margin-top: auto; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-card);">
-              <div style="font-size: 11px; color: var(--accent-cyan); font-weight: 700;">HIỆU SUẤT VẬN HÀNH</div>
-              <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Tiếp nhận siêu tàu container 200.000 DWT đi thẳng Mỹ - Âu, giải phóng hàng trăm nghìn TEU mỗi quý.</div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-title">Biên Lợi Nhuận Gộp Cảng 49.4%</div>
-            <p class="card-desc">Biên lợi nhuận gộp mảng cảng chạm ngưỡng 49.4%: Hiệu suất khai thác cao và chi phí vận hành tối ưu giúp Gemadept tạo ra dòng tiền tự do khổng lồ, đóng góp vào lợi nhuận liên doanh liên kết hơn 382 tỷ đồng trong quý.</p>
-            <div style="margin-top: auto; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-card);">
-              <div style="font-size: 11px; color: var(--accent-emerald); font-weight: 700;">TẬP KHÁCH HÀNG & MỞ RỘNG</div>
-              <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Dòng tiền tự do dồi dào, thu phí bốc xếp bằng ngoại tệ USD, tỷ suất sinh lời vượt trội so với cảng truyền thống.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SLIDE 6: PILLAR 2 - PART 2 (COMPETITIVE POSITION) -->
+    <!-- SLIDE 6: PILLAR 2 - PART 2 -->
     <section class="slide" id="slide-6">
       <div class="slide-header">
-        <div class="tagline">TRỤ CỘT 2 (TIẾP) — BẢO CHỨNG THỰC TIỄN & SỨC KHỎE TÀI CHÍNH</div>
-        <h2 class="slide-title">Cấu Trúc Sinh Lời Bền Vững Qua Các Chu Kỳ</h2>
+        <div class="tagline">TRỤ CỘT 3 — BẢO CHỨNG THỰC TIỄN & SỨC KHỎE TÀI CHÍNH</div>
+        <h2 class="slide-title">Hiệu Quả Vận Hành Cảng Sâu Gemalink: Biên EBITDA Gần 60% Đứng Đầu Việt Nam</h2>
         <p class="slide-takeaway">
-          Bảng cân đối tài chính vững vàng, dòng tiền kinh doanh thặng dư cao và khả năng phòng thủ vượt trội
+          Công suất cảng nước sâu đón tàu mẹ quốc tế giúp Gemalink đạt biên EBITDA >55%, dòng tiền FCF dồi dào
         </p>
       </div>
 
       <div class="content-area">
         <div class="grid-2">
-          <div class="card card-emerald">
-            <div class="card-title" style="color: var(--accent-emerald);">Khả Năng Sinh Lời Vượt Trội</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-              <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
-                <div style="font-size: 11px; color: var(--text-dim);">Biên lợi nhuận cảng</div>
-                <div style="font-size: 22px; font-weight: 800; color: var(--accent-emerald); font-family: var(--font-mono);">49.4%</div>
-                <div style="font-size: 10.5px; color: var(--text-muted);">Mảng khai thác cảng biên gộp siêu cao</div>
-              </div>
-              <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
-                <div style="font-size: 11px; color: var(--text-dim);">Tỷ Suất ROE / Hiệu Quả Vốn</div>
-                <div style="font-size: 22px; font-weight: 800; color: var(--accent-ember); font-family: var(--font-mono);">19.8% </div>
-                <div style="font-size: 10.5px; color: var(--text-muted);">Thuộc top đầu toàn ngành</div>
-              </div>
-            </div>
-            <p class="card-desc" style="margin-top: 12px;">Dòng tiền tự do dồi dào, thu phí bốc xếp bằng ngoại tệ USD, tỷ suất sinh lời vượt trội so với cảng truyền thống.</p>
+          <!-- Cột 1: Bảng Đối Chiếu 4D Sức Khỏe Tài Chính & Đòn Bẩy Vận Hành -->
+          <div class="card card-cyan" style="padding: 16px; display: flex; flex-direction: column; gap: 6px;">
+            <div class="card-badge badge-cyan" style="margin-bottom: 4px;">BẢNG ĐỐI CHIẾU 4D SỨC KHỎE TÀI CHÍNH & ĐÒN BẨY VẬN HÀNH</div>
+            <p class="card-desc" style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Định vị cấu trúc sinh lời và bộ đệm an toàn vốn so với toàn ngành và chuẩn mực quốc tế:</p>
+            <table class="comp-table" style="margin-top: 4px; font-size: 11px; width: 100%;">
+              <thead>
+                <tr>
+                  <th>Chỉ Số Tài Chính</th>
+                  <th>Chỉ Số Hiện Tại</th>
+                  <th>Quá Khứ & Toàn Ngành / Quốc Tế</th>
+                  <th>Ý Nghĩa Bảo Vệ Cổ Đông</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>1. Biên Gộp Cảng Biển</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">49.4% (Đỉnh cao ngành cảng)</td>
+                  <td>Quá khứ 38% · Ngành cảng VN 35-40%</td>
+                  <td><span class="badge badge-green">Ngang ngửa cảng Singapore (PSA)</span></td>
+                </tr>
+                <tr>
+                  <td><strong>2. Tỷ Suất ROE</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">18.2% (Tăng trưởng thực)</td>
+                  <td>Quá khứ 11-13% · Chuẩn logistics QT 15%</td>
+                  <td><span class="badge badge-cyan">Tối ưu hóa công suất đón siêu tàu</span></td>
+                </tr>
+                <tr>
+                  <td><strong>3. Rủi Ro Nợ Vay</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">Net Debt/VCSH chỉ 0.25x</td>
+                  <td>Quá khứ 0.85x · Đã trả sạch nợ vay USD</td>
+                  <td><span class="badge badge-amber">Triệt tiêu hoàn toàn rủi ro tỷ giá</span></td>
+                </tr>
+                <tr>
+                  <td><strong>4. FCF & Cổ Tức</strong></td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">FCF thặng dư >2.000 tỷ/năm</td>
+                  <td>Thu hoạch dòng tiền · Cổ tức tiền mặt 15-20%</td>
+                  <td><span class="badge badge-green">Dòng tiền mặt thật chia cổ tức cho SIP</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <div class="card">
-            <div class="card-title">Bảo Đảm Cho Khách Hàng Tích Sản</div>
-            <ul style="padding-left: 18px; font-size: 12.5px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-              <li><strong>Zero rủi ro thanh khoản:</strong> Dòng tiền hoạt động kinh doanh dương lớn, tiền mặt dồi dào.</li>
-              <li><strong>Sức mạnh định giá:</strong> Không chịu áp lực giảm giá từ đối thủ nhờ vị thế đầu ngành độc tôn.</li>
-              <li><strong>Cổ tức đều đặn:</strong> Tái đầu tư mở rộng quy mô song song với duy trì lợi tức cổ đông minh bạch.</li>
-            </ul>
+          <!-- Cột 2: Visual Chart Trực Quan Hóa Đối Chiếu Trụ Cột 3 -->
+          <div class="card card-emerald chart-wrapper-with-tabs" style="padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div class="card-badge badge-emerald" style="margin-bottom: 0;">Biên EBITDA Cụm Cảng Gemalink</div>
+              <div class="chart-tabs">
+                <button class="chart-tab-btn active" data-target-src="images/gmd_ebitda_fcf_moat.png" data-target-title="Hiệu Quả Vận Hành Cảng Sâu Gemalink: Biên EBITDA Gần 60% Đứng Đầu Việt Nam">EBITDA Gemalink >55%</button>
+              </div>
+            </div>
+
+            <div class="chart-container" data-zoom-src="images/gmd_ebitda_fcf_moat.png" data-zoom-title="Hiệu Quả Vận Hành Cảng Sâu Gemalink: Biên EBITDA Gần 60% Đứng Đầu Việt Nam" style="flex: 1; min-height: 220px;">
+              <div class="chart-img-wrap" style="min-height: 200px;">
+                <img src="images/gmd_ebitda_fcf_moat.png" alt="Hiệu Quả Vận Hành Cảng Sâu Gemalink: Biên EBITDA Gần 60% Đứng Đầu Việt Nam">
+              </div>
+              <div class="chart-caption">
+                <span class="chart-caption-text">Công suất cảng nước sâu đón tàu mẹ quốc tế giúp Gemalink đạt biên EBITDA >55%, dòng tiền FCF dồi dào</span>
+                <span class="chart-zoom-hint">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"></path></svg>
+                  Click xem lớn
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1011,6 +1340,40 @@
           }
         });
 
+        
+        // Click & Touch bindings for Nav buttons
+        if (this.btnNext) {
+          this.btnNext.addEventListener('click', (e) => { e.preventDefault(); this.nextSlide(); });
+        }
+        if (this.btnPrev) {
+          this.btnPrev.addEventListener('click', (e) => { e.preventDefault(); this.prevSlide(); });
+        }
+
+        // Touch swipe support for Mobile
+        let touchStartX = 0;
+        let touchStartY = 0;
+        document.addEventListener('touchstart', (e) => {
+          if (e.changedTouches && e.changedTouches[0]) {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+          }
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+          if (!e.changedTouches || !e.changedTouches[0]) return;
+          const touchEndX = e.changedTouches[0].screenX;
+          const touchEndY = e.changedTouches[0].screenY;
+          const diffX = touchEndX - touchStartX;
+          const diffY = touchEndY - touchStartY;
+          if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY) * 1.3) {
+            if (diffX < 0) {
+              this.nextSlide();
+            } else {
+              this.prevSlide();
+            }
+          }
+        }, { passive: true });
+
         const btnFs = document.getElementById('btnFullscreen');
         if (btnFs) btnFs.addEventListener('click', () => this.toggleFullscreen());
       }
@@ -1088,7 +1451,8 @@
         }
       }
 
-      toggleFullscreen() {
+      
+    toggleFullscreen() {
         if (!document.fullscreenElement) {
           document.documentElement.requestFullscreen().catch(() => {});
         } else {
@@ -1097,9 +1461,90 @@
       }
     }
 
+    // Lightbox Controller
+    class LightboxController {
+      constructor() {
+        this.modal = document.getElementById('lightboxModal');
+        this.img = document.getElementById('lightboxImg');
+        this.title = document.getElementById('lightboxTitle');
+        this.closeBtn = document.getElementById('lightboxClose');
+
+        if (!this.modal) return;
+        this.initEvents();
+      }
+
+      initEvents() {
+        document.addEventListener('click', (e) => {
+          const chartBox = e.target.closest('[data-zoom-src]');
+          if (chartBox) {
+            const src = chartBox.getAttribute('data-zoom-src');
+            const title = chartBox.getAttribute('data-zoom-title') || 'Biểu đồ phân tích FinPeace';
+            this.open(src, title);
+          }
+        });
+
+        if (this.closeBtn) this.closeBtn.addEventListener('click', () => this.close());
+        this.modal.addEventListener('click', (e) => {
+          if (e.target === this.modal) this.close();
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+            this.close();
+          }
+        });
+
+        // Tab switcher support for charts
+        document.querySelectorAll('.chart-tab-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const container = btn.closest('.chart-wrapper-with-tabs');
+            if (!container) return;
+            const targetSrc = btn.getAttribute('data-target-src');
+            const targetTitle = btn.getAttribute('data-target-title');
+            
+            container.querySelectorAll('.chart-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const mainImg = container.querySelector('.chart-img-wrap img');
+            const mainContainer = container.querySelector('.chart-container');
+            const captionText = container.querySelector('.chart-caption-text');
+            
+            if (mainImg) mainImg.src = targetSrc;
+            if (mainContainer) {
+              mainContainer.setAttribute('data-zoom-src', targetSrc);
+              mainContainer.setAttribute('data-zoom-title', targetTitle);
+            }
+            if (captionText) captionText.textContent = targetTitle;
+          });
+        });
+      }
+
+      open(src, title) {
+        this.img.src = src;
+        this.title.textContent = title;
+        this.modal.classList.add('active');
+      }
+
+      close() {
+        this.modal.classList.remove('active');
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       window.presentationController = new PresentationController();
+      window.lightboxController = new LightboxController();
     });
+
   </script>
+
+  <!-- LIGHTBOX MODAL -->
+  <div class="lightbox-modal" id="lightboxModal">
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightboxClose" title="Đóng (Esc)">&times;</button>
+      <img id="lightboxImg" src="" alt="Zoomed Chart">
+      <div class="lightbox-caption" id="lightboxTitle"></div>
+    </div>
+  </div>
+
 </body>
 </html>

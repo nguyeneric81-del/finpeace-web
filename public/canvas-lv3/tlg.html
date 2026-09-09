@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TLG - FinPeace Canvas LV3 Institutional Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070a12;
+      --bg-card: #0f172a;
+      --bg-card-hover: #1e293b;
+      --border-card: rgba(255, 255, 255, 0.08);
+      --border-card-hover: rgba(255, 255, 255, 0.18);
+      --text-main: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent-ember: #f59e0b;
+      --accent-gold: #fbbf24;
+      --accent-orange: #f97316;
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-purple: #c084fc;
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --fs-h1: clamp(26px, 3.2vw, 42px);
+      --fs-h2: clamp(19px, 2.0vw, 28px);
+      --fs-takeaway: clamp(12.5px, 1.05vw, 14.5px);
+      --fs-h3: clamp(14px, 1.15vw, 17px);
+      --fs-body: clamp(12px, 0.95vw, 13.5px);
+      --fs-caption: clamp(10.5px, 0.82vw, 11.5px);
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      height: 58px;
+      padding: 0 clamp(16px, 3vw, 40px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-card);
+      background: rgba(7, 10, 18, 0.9);
+      backdrop-filter: blur(12px);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-logo {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent-ember), var(--accent-orange));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px; color: #000;
+    }
+    .brand-title { font-weight: 800; font-size: 14px; letter-spacing: -0.2px; }
+    .brand-sub { font-size: 10.5px; color: var(--text-muted); }
+
+    .header-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: calc(100vw - 320px);
+      z-index: 10;
+    }
+
+    .header-pillar-stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(15, 23, 42, 0.95);
+      padding: 3px 8px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+      transition: opacity 0.3s ease;
+    }
+
+    .pillar-step {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .pillar-step:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.05); }
+    .pillar-step.active {
+      color: #000;
+      background: linear-gradient(135deg, var(--accent-ember), var(--accent-gold));
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+    }
+    .pillar-step.completed {
+      color: var(--accent-ember);
+    }
+
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-gold);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .control-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .control-btn:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-main);
+      border-color: var(--border-card-hover);
+    }
+
+    main {
+      flex: 1;
+      position: relative;
+      margin-top: 58px;
+      margin-bottom: 54px;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 24px clamp(16px, 3.5vw, 44px) 24px;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-start !important;
+      gap: 12px;
+      background: var(--bg-dark);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.25s var(--ease-out-expo), transform 0.25s var(--ease-out-expo);
+      pointer-events: none;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    #slide-1 { justify-content: center !important; gap: 20px; }
+    .slide.active {
+      display: flex !important;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .slide-header {
+      margin-bottom: 0;
+      max-width: 1100px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .tagline {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--fs-caption);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent-ember);
+      margin-bottom: 6px;
+    }
+    .tagline::before {
+      content: "";
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent-ember);
+      box-shadow: 0 0 8px var(--accent-ember);
+    }
+    .slide-title {
+      font-size: var(--fs-h2);
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      line-height: 1.2;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .slide-takeaway {
+      font-size: var(--fs-takeaway);
+      color: var(--text-muted);
+      line-height: 1.5;
+      font-weight: 400;
+      max-width: 980px;
+    }
+    .slide-takeaway strong { color: #f1f5f9; font-weight: 600; }
+
+    .content-area {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      position: relative;
+      z-index: 1;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; height: 100%; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; height: 100%; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: clamp(14px, 1.6vw, 20px);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-highlight {
+      border-color: rgba(245, 158, 11, 0.3);
+      background: linear-gradient(180deg, rgba(245, 158, 11, 0.04) 0%, rgba(15, 23, 42, 0.95) 100%);
+    }
+    .card-cyan {
+      border-color: rgba(56, 189, 248, 0.3);
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.04) 0%, rgba(15, 23, 42, 0.95) 100%);
+    }
+    .card-emerald {
+      border-color: rgba(16, 185, 129, 0.3);
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.04) 0%, rgba(15, 23, 42, 0.95) 100%);
+    }
+    .card-rose {
+      border-color: rgba(244, 63, 94, 0.3);
+      background: linear-gradient(180deg, rgba(244, 63, 94, 0.04) 0%, rgba(15, 23, 42, 0.95) 100%);
+    }
+
+    .card-title {
+      font-size: var(--fs-h3);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+    }
+    .stat-val {
+      font-family: var(--font-mono);
+      font-size: clamp(20px, 2.2vw, 26px);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--accent-ember);
+    }
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .bullet-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .bullet-list li {
+      position: relative;
+      padding-left: 18px;
+      font-size: var(--fs-body);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .bullet-list li::before {
+      content: "▪";
+      position: absolute;
+      left: 0;
+      color: var(--accent-ember);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .bullet-list li strong { color: #fff; font-weight: 600; }
+
+    /* Chart Containers */
+    .chart-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      cursor: zoom-in;
+      transition: all 0.2s ease;
+      height: 100%;
+    }
+    .chart-container:hover {
+      border-color: var(--accent-ember);
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.15);
+    }
+    .chart-img-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #070a12;
+    }
+    .chart-img-wrap img {
+      max-width: 100%;
+      max-height: 250px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+    .chart-container:hover .chart-img-wrap img {
+      transform: scale(1.02);
+    }
+    .chart-caption {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .zoom-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--accent-ember);
+      font-weight: 600;
+    }
+
+    /* Lightbox Modal */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 10, 18, 0.92);
+      backdrop-filter: blur(16px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .lightbox-modal.active {
+      display: flex;
+      opacity: 1;
+    }
+    .lightbox-content {
+      max-width: 94vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .lightbox-content img {
+      max-width: 92vw;
+      max-height: 82vh;
+      object-fit: contain;
+      border-radius: 8px;
+      border: 1px solid var(--border-card-hover);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.8);
+    }
+    .lightbox-caption {
+      margin-top: 12px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: -36px;
+      right: -8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      color: #fff;
+      font-size: 20px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Footer */
+    footer {
+      height: 54px;
+      padding: 0 clamp(16px, 3vw, 40px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border-card);
+      background: rgba(7, 10, 18, 0.95);
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 100;
+    }
+    .footer-left { display: flex; align-items: center; gap: 16px; font-size: 11px; color: var(--text-dim); }
+    .slide-progress { display: flex; align-items: center; gap: 8px; }
+    .progress-bar {
+      width: 140px; height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-ember), var(--accent-gold));
+      width: 10%;
+      transition: width 0.3s ease;
+    }
+    .footer-nav { display: flex; align-items: center; gap: 8px; }
+    .nav-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      color: var(--text-secondary);
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg-card-hover);
+      color: #fff;
+      border-color: var(--border-card-hover);
+    }
+    .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">FP</div>
+      <div>
+        <div class="brand-title">FINPEACE CANVAS LV3</div>
+        <div class="brand-sub">INSTITUTIONAL EQUITY RESEARCH</div>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <nav class="header-pillar-stepper" id="pillarStepper">
+        <div class="pillar-step active" data-target-slide="1">Tổng Quan</div>
+        <div class="pillar-step" data-target-slide="3">Trụ Cột 1: Vị Thế Độc Quyền</div>
+        <div class="pillar-step" data-target-slide="5">Trụ Cột 2: Thách Thức Số Hóa</div>
+        <div class="pillar-step" data-target-slide="7">Trụ Cột 3: Động Cơ Mới & Cổ Tức</div>
+        <div class="pillar-step" data-target-slide="9">Khung Giám Sát Tích Sản</div>
+      </nav>
+    </div>
+
+    <div class="header-right">
+      <span class="status-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">
+        🟠 KEEP UPDATED (THEO DÕI)
+      </span>
+      <button class="control-btn" id="fsBtn" title="Toàn màn hình (F)">
+        <span>Toàn Màn Hình</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN SLIDES -->
+  <main id="slideDeck">
+
+    <!-- SLIDE 1: COVER / EXECUTIVE SUMMARY -->
+    <section class="slide active" id="slide-1">
+      <div style="max-width: 1100px; margin: 0 auto; width: 100%;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+          <div>
+            <div class="tagline">FINPEACE SIP 2026 • BÁO CÁO ĐẶC TẢ THỂ CHẾ CANVAS LV3</div>
+            <h1 style="font-size: clamp(28px, 3.6vw, 44px); font-weight: 800; letter-spacing: -1px; line-height: 1.15; color: #fff;">
+              TẬP ĐOÀN THIÊN LONG <span style="color: var(--accent-ember);">(HOSE: TLG)</span>
+            </h1>
+            <p style="font-size: 15px; color: var(--text-muted); margin-top: 6px;">
+              "Vua Bút Bi" Quốc Dân: Pháo Đài Biên Gộp >53%, Cổ Tức Bền Vững & Bài Toán Mở Rộng Chuỗi Clever Box
+            </p>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-family: var(--font-mono); font-size: 32px; font-weight: 800; color: #fff;">
+              53.500 <span style="font-size: 14px; font-weight: 400; color: var(--text-muted);">đ</span>
+            </div>
+            <div style="font-size: 12px; color: var(--accent-ember); font-weight: 600;">
+              NT Mới 2026: 68.000 đ (Upside: +27.1%)
+            </div>
+            <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">
+              P/E: 10.2x • Cổ tức tiền mặt: 25–35%/năm (Yield ~5.8%)
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-4" style="margin-bottom: 20px;">
+          <div class="card card-highlight">
+            <div class="stat-lbl">Phân Loại FinPeace</div>
+            <div style="font-size: 16px; font-weight: 800; color: var(--accent-gold); margin-top: 4px;">
+              KEEP UPDATED
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+              Danh sách theo dõi cập nhật định kỳ; cổ tức cao nhưng thanh khoản cô đặc.
+            </div>
+          </div>
+
+          <div class="card card-cyan">
+            <div class="stat-lbl">Thị Phần Bút Viết</div>
+            <div class="stat-val" style="color: var(--accent-cyan);">> 60%</div>
+            <div style="font-size: 11px; color: var(--text-muted);">
+              Thống lĩnh thị phần Việt Nam với mạng lưới hơn 65.000 điểm bán
+            </div>
+          </div>
+
+          <div class="card card-emerald">
+            <div class="stat-lbl">Sức Khỏe Tài Chính</div>
+            <div class="stat-val" style="color: var(--accent-emerald);">Net Cash</div>
+            <div style="font-size: 11px; color: var(--text-muted);">
+              Tiền gửi ròng dồi dào, hầu như không có nợ vay, F-Score 8/9
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="stat-lbl">Biên Lợi Nhuận Gộp</div>
+            <div class="stat-val" style="color: var(--accent-ember);">53.8%</div>
+            <div style="font-size: 11px; color: var(--text-muted);">
+              Tự chủ 95% khuôn mẫu và tự động hóa dây chuyền sản xuất
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="background: rgba(15, 23, 42, 0.7); border-color: rgba(245, 158, 11, 0.25); padding: 16px 20px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--accent-gold); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+            <span>💡 ĐẶC TRƯNG DANH MỤC SIP: TẠI SAO TLG LÀ "KEEP UPDATED"?</span>
+          </div>
+          <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.6;">
+            TLG là doanh nghiệp phòng thủ tuyệt vời với dòng tiền mặt dồi dào và cổ tức tiền mặt đều đặn. Tuy nhiên, FinPeace xếp TLG vào danh sách <strong>Keep Updated</strong> (thay vì 21 mã Active SIP) do 3 lý do: (1) Ngành văn phòng phẩm truyền thống đang bão hòa và chịu tác động từ số hóa giáo dục; (2) Chuỗi bán lẻ tự doanh Clever Box đang mở rộng cần chứng minh hiệu quả sinh lời; (3) Cơ cấu cổ đông rất cô đặc (>75% thuộc gia đình Chủ tịch và cổ đông chiến lược Kokuyo/Newell), thanh khoản khớp lệnh thị trường thấp, dễ gây trượt giá nếu mua tích sản quy mô lớn.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: STORYBOARD OVERVIEW -->
+    <section class="slide" id="slide-2">
+      <div class="slide-header">
+        <div class="tagline">STORYBOARD TỔNG THỂ • ARCHETYPE THƯƠNG HIỆU QUỐC GIA & BÁN LẺ</div>
+        <h2 class="slide-title">Hành Trình 40 Năm Thống Lĩnh, Thách Thức Số Hóa & Động Cơ Mới</h2>
+        <p class="slide-takeaway">
+          Bộ khung 3 Trụ Cột Canvas LV3 phân tích sức mạnh phòng thủ kiên cố của Thiên Long cùng với tiềm năng tăng tốc từ hệ thống bán lẻ thế hệ mới Clever Box và xuất khẩu sang hơn 70 quốc gia.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-3">
+          <div class="card card-highlight">
+            <div class="card-title" style="color: var(--accent-gold);">
+              <span>1. Trụ Cột 1: Hào Kinh Tế Độc Quyền Tự Nhiên</span>
+            </div>
+            <ul class="bullet-list">
+              <li><strong>Thương hiệu ăn sâu vào tiềm thức:</strong> Hơn 60% thị phần bút viết tại Việt Nam; người tiêu dùng mặc định gọi "bút bi" là "bút Thiên Long".</li>
+              <li><strong>Hệ thống phân phối vô địch:</strong> Hơn 65.000 điểm bán tạp hóa, nhà sách, trường học trải khắp 63 tỉnh thành.</li>
+              <li><strong>Tự chủ sản xuất 95%:</strong> Tự thiết kế khuôn mẫu, tự sản xuất đầu bút và mực, đưa biên lợi nhuận gộp lên trên 53%.</li>
+            </ul>
+          </div>
+
+          <div class="card card-rose">
+            <div class="card-title" style="color: var(--accent-rose);">
+              <span>2. Trụ Cột 2: Thách Thức Số Hóa & Chi Phí Bán Hàng</span>
+            </div>
+            <ul class="bullet-list">
+              <li><strong>Xu hướng trường học & văn phòng số:</strong> Sự phổ cập của máy tính bảng, bài giảng điện tử và chữ ký số làm giảm tốc độ tăng trưởng lượng tiêu thụ bút giấy truyền thống.</li>
+              <li><strong>Chi phí bán hàng chuỗi Clever Box:</strong> Mở rộng chuỗi cửa hàng quà tặng/DIY/STEAM đòi hỏi chi phí mặt bằng và nhân sự cao, tạo áp lực lên biên lợi nhuận ròng ngắn hạn.</li>
+              <li><strong>Thanh khoản cô đặc:</strong> Tỷ lệ trôi nổi tự do (free-float) thấp khiến cổ phiếu khó hấp thụ dòng vốn lớn từ các quỹ quy mô khủng.</li>
+            </ul>
+          </div>
+
+          <div class="card card-emerald">
+            <div class="card-title" style="color: var(--accent-emerald);">
+              <span>3. Trụ Cột 3: Động Cơ Mới, Định Giá & Cổ Tức</span>
+            </div>
+            <ul class="bullet-list">
+              <li><strong>Chiến lược "Go Global" & Clever Box:</strong> Xuất khẩu sang Đông Nam Á (Thái Lan, Philippines) và OEM cho Newell Brands sang thị trường Mỹ/Âu.</li>
+              <li><strong>Bảng cân đối Net Cash:</strong> Tiền gửi ngân hàng dồi dào, nợ vay gần như bằng 0, là hầm trú ẩn an toàn tuyệt đối trong mọi chu kỳ kinh tế.</li>
+              <li><strong>Tỷ suất cổ tức 5.5–6.5%:</strong> Trả cổ tức tiền mặt đều đặn 2.500–3.500 đ/cp mỗi năm, mang lại dòng tiền thụ động ổn định cho nhà đầu tư giá trị.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: PILLAR 1 MOAT -->
+    <section class="slide" id="slide-3">
+      <div class="slide-header">
+        <div class="tagline">TRỤ CỘT 1: VỊ THẾ CẠNH TRANH • PHÁO ĐÀI PHÂN PHỐI</div>
+        <h2 class="slide-title">Con Hào Kinh Tế Bất Khả Xâm Phạm Của "Vua Bút Bi" Quốc Dân</h2>
+        <p class="slide-takeaway">
+          Thiên Long sở hữu rào cản gia nhập ngành gần như tuyệt đối nhờ sự kết hợp giữa lòng trung thành thương hiệu truyền đời, chi phí sản xuất siêu rẻ nhờ quy mô và mạng lưới phân phối len lỏi tới từng ngõ ngách.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title">Mạng Lưới 65.000 Điểm Bán</div>
+            <div class="stat-box">
+              <div class="stat-val">> 65.000</div>
+              <div class="stat-lbl">Điểm bán lẻ GT (General Trade) và MT toàn quốc</div>
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">
+              Mỗi cửa hàng tạp hóa trước cổng trường học hay hiệu sách nhỏ ở vùng sâu vùng xa đều là đại lý của Thiên Long. Đối thủ mới gia nhập không thể cạnh tranh nổi về chi phí logistics và độ phủ dày đặc này.
+            </p>
+          </div>
+
+          <div class="card card-highlight">
+            <div class="card-title" style="color: var(--accent-gold);">Tự Chủ Công Nghệ & Khuôn Mẫu</div>
+            <div class="stat-box">
+              <div class="stat-val">> 95%</div>
+              <div class="stat-lbl">Tỷ lệ nội địa hóa & Tự sản xuất đầu bút, mực</div>
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">
+              Nhà máy Nam Cẩm Điền và Vĩnh Lộc tự chủ chế tạo khuôn mẫu chính xác cao và dây chuyền lắp ráp tự động từ Thụy Sĩ/Đức, giúp chi phí giá vốn của TLG luôn thấp hơn 20-30% so với bút nhập khẩu từ Trung Quốc hay Nhật Bản.
+            </p>
+          </div>
+
+          <div class="card card-cyan">
+            <div class="card-title" style="color: var(--accent-cyan);">Hệ Sinh Thái 4 Trụ Cột Nhãn Hàng</div>
+            <div class="stat-box">
+              <div class="stat-val">4 Brands</div>
+              <div class="stat-lbl">Thiên Long, Flexoffice, Colokit, Điểm 10</div>
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">
+              Bao phủ toàn diện các phân khúc: bút viết thông dụng (Thiên Long), văn phòng phẩm cao cấp (Flexoffice), dụng cụ mỹ thuật trẻ em (Colokit) và đồ dùng học sinh (Điểm 10), đáp ứng trọn vẹn mọi nhu cầu văn phòng học đường.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: PILLAR 1 VISUALIZED CHART -->
+    <section class="slide" id="slide-4">
+      <div class="slide-header">
+        <div class="tagline">TRỤ CỘT 1 (VISUALIZED) • BẰNG CHỨNG ĐỊNH LƯỢNG</div>
+        <h2 class="slide-title">Thị Phần Bút Viết Việt Nam & Cơ Cấu Doanh Thu 4 Nhóm Sản Phẩm</h2>
+        <p class="slide-takeaway">
+          Biểu đồ định lượng chứng minh ưu thế áp đảo của Thiên Long: Giữ 62% thị phần bút viết nội địa và toàn bộ 4 nhóm sản phẩm đều đạt biên lợi nhuận gộp cực cao từ 48% đến 56%.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-2">
+          <div class="chart-container" data-zoom-src="images/tlg_stationery_moat.png" data-zoom-title="Thị Phần & Cơ Cấu Doanh Thu Thiên Long (TLG)">
+            <div class="chart-img-wrap">
+              <img src="images/tlg_stationery_moat.png" alt="TLG Stationery Moat Chart">
+            </div>
+            <div class="chart-caption">
+              <span>Biểu đồ 1: Thị phần bút viết nội địa & Cơ cấu doanh thu 4 nhóm sản phẩm</span>
+              <span class="zoom-hint">🔍 Nhấn để phóng to</span>
+            </div>
+          </div>
+
+          <div class="card" style="justify-content: center;">
+            <div class="card-title" style="color: var(--accent-gold); margin-bottom: 12px;">
+              Phân Tích Chi Tiết 4 Nhóm Sản Phẩm
+            </div>
+            <ul class="bullet-list" style="gap: 12px;">
+              <li>
+                <strong>Bút viết (Writing Instruments):</strong> Chiếm 44.5% doanh thu thuần, biên gộp đỉnh cao 56.2%. Đây là pháo đài lợi nhuận cốt lõi với sản lượng tiêu thụ hàng trăm triệu cây bút mỗi năm.
+              </li>
+              <li>
+                <strong>Dụng cụ văn phòng (Office Supplies):</strong> Chiếm 29.8% doanh thu, biên gộp 48.5%. Phục vụ phân khúc doanh nghiệp, cơ quan nhà nước và khối ngân hàng.
+              </li>
+              <li>
+                <strong>Dụng cụ học tập (School Supplies):</strong> Chiếm 15.2% doanh thu, biên gộp 52.0%. Doanh số bùng nổ hàng năm vào Quý 2 và Quý 3 trong chiến dịch "Back to School".
+              </li>
+              <li>
+                <strong>Mỹ thuật & Khác (Art Supplies & DIY):</strong> Chiếm 10.5% doanh thu, biên gộp 54.8%. Dẫn đầu bởi nhãn hàng Colokit và xu hướng đồ chơi sáng tạo STEAM.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: PILLAR 2 DIGITAL THREATS & CLEVER BOX -->
+    <section class="slide" id="slide-5">
+      <div class="slide-header">
+        <div class="tagline">TRỤ CỘT 2: PHẪU THUẬT THÁCH THỨC • TRẦN TĂNG TRƯỞNG & SỐ HÓA</div>
+        <h2 class="slide-title">Thách Thức Từ Chuyển Đổi Số Học Đường & Bài Toán Chi Phí Chuỗi Bán Lẻ</h2>
+        <p class="slide-takeaway">
+          Lý do chính khiến FinPeace xếp TLG vào danh mục Keep Updated: Thị trường cốt lõi tăng trưởng chậm lại, chi phí bán hàng chuỗi Clever Box tăng cao và cơ cấu cổ đông cô đặc hạn chế dòng tiền thị trường.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-3">
+          <div class="card card-rose">
+            <div class="card-title" style="color: var(--accent-rose);">1. Số Hóa Học Đường & Văn Phòng</div>
+            <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin-top: 6px;">
+              Gen Z và Gen Alpha chuyển dần sang ghi chép trên máy tính bảng (iPad, stylus pen), sách giáo khoa điện tử và các bài thi trực tuyến. Nhu cầu sử dụng bút viết truyền thống trên mỗi đầu người có xu hướng đi ngang hoặc giảm nhẹ tại các đô thị lớn.
+            </p>
+          </div>
+
+          <div class="card card-rose">
+            <div class="card-title" style="color: var(--accent-rose);">2. Chi Phí Vận Hành Chuỗi Clever Box</div>
+            <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin-top: 6px;">
+              Để thoát khỏi trần tăng trưởng, TLG mở chuỗi bán lẻ tự doanh Clever Box (concept DIY/STEAM/Quà tặng). Tuy nhiên, mô hình bán lẻ chuỗi đòi hỏi chi phí thuê mặt bằng TTTM và nhân sự đắt đỏ, chi phí bán hàng tăng mạnh và cần thời gian dài để hòa vốn.
+            </p>
+          </div>
+
+          <div class="card card-rose">
+            <div class="card-title" style="color: var(--accent-rose);">3. Cổ Đông Cô Đặc & Thanh Khoản Thấp</div>
+            <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin-top: 6px;">
+              Chủ tịch Cô Gia Thọ, gia đình và các đối tác ngoại chiến lược (NWL Cayman, Kokuyo) nắm giữ hơn 75% vốn điều lệ. Cổ phiếu có khối lượng giao dịch hàng ngày khá thấp (~50k-150k cp/phiên), gây khó khăn cho việc tích sản quy mô lớn cho hàng nghìn khách hàng.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: PILLAR 2 FINANCIAL HEALTH -->
+    <section class="slide" id="slide-6">
+      <div class="slide-header">
+        <div class="tagline">TRỤ CỘT 2: SỨC KHỎE BẢNG CÂN ĐỐI • PHÁO ĐÀI NET CASH</div>
+        <h2 class="slide-title">Bảng Cân Đối Kế Toán Chuẩn Mực: Gần Như Không Có Rủi Ro Nợ Vay</h2>
+        <p class="slide-takeaway">
+          Dù tăng trưởng doanh thu ở mức vừa phải (8–12%/năm), cấu trúc tài chính của Thiên Long thuộc nhóm lành mạnh nhất sàn chứng khoán Việt Nam: Tiền gửi ngân hàng dồi dào, ROE cao ổn định và không chịu áp lực lãi vay.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-2">
+          <div class="card card-emerald">
+            <div class="card-title" style="color: var(--accent-emerald);">Chỉ Số Sức Khỏe Tài Chính (FinPeace Audit)</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+              <div class="stat-box">
+                <div class="stat-val" style="color: var(--accent-emerald);">0.12x</div>
+                <div class="stat-lbl">Nợ vay / Vốn chủ sở hữu (Rất thấp)</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-val" style="color: var(--accent-gold);">18.5%</div>
+                <div class="stat-lbl">Hệ số ROE Trung bình 5 năm</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-val" style="color: var(--accent-cyan);">> 1.200 Tỷ</div>
+                <div class="stat-lbl">Tiền mặt & Tiền gửi ngân hàng ngắn hạn</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-val" style="color: var(--accent-emerald);">8 / 9</div>
+                <div class="stat-lbl">Piotroski F-Score (Cực kỳ xuất sắc)</div>
+              </div>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px; line-height: 1.5;">
+              F-Score 8/9 khẳng định Thiên Long đạt chuẩn mực cao nhất của Graham về an toàn tài chính: Dòng tiền hoạt động kinh doanh (OCF) luôn dương bền bỉ, biên gộp mở rộng và hoàn toàn miễn nhiễm với rủi ro thanh khoản ngân hàng.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Cơ Cấu Dòng Tiền & Cổ Tức Bền Vững</div>
+            <ul class="bullet-list" style="gap: 12px; margin-top: 8px;">
+              <li>
+                <strong>Cỗ máy tạo tiền tự do (FCF):</strong> Mỗi năm TLG sản sinh từ 350 đến 450 tỷ đồng dòng tiền thuần, trong khi nhu cầu vốn đầu tư TSCĐ (Capex) đã qua giai đoạn đỉnh điểm.
+              </li>
+              <li>
+                <strong>Chính sách cổ tức tiền mặt nhất quán:</strong> Doanh nghiệp duy trì cam kết chi trả cổ tức bằng tiền mặt 25% – 35%/mệnh giá suốt hơn 10 năm liên tiếp, là nguồn thu nhập thụ động hấp dẫn cho nhà đầu tư hưu trí.
+              </li>
+              <li>
+                <strong>Doanh thu tài chính ổn định:</strong> Lượng tiền gửi ngân hàng dồi dào đem lại 60–80 tỷ đồng doanh thu lãi tiền gửi mỗi năm, bù đắp thừa chi phí lãi vay ngắn hạn (chỉ khoảng 20-30 tỷ/năm).
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: PILLAR 3 NEW GROWTH DRIVERS -->
+    <section class="slide" id="slide-7">
+      <div class="slide-header">
+        <div class="tagline">TRỤ CỘT 3: ĐỘNG CƠ MỚI • CLEVER BOX & GO GLOBAL</div>
+        <h2 class="slide-title">Khai Phá Thị Trường Trẻ Em Với Chuỗi Bán Lẻ STEAM & Xuất Khẩu Toàn Cầu</h2>
+        <p class="slide-takeaway">
+          Chiến lược tương lai của Thiên Long tập trung vào hai mũi nhọn: Nâng tầm chuỗi giá trị bán lẻ trải nghiệm với Clever Box và đẩy mạnh xuất khẩu nhãn hàng Flexoffice sang thị trường quốc tế.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-3">
+          <div class="card card-cyan">
+            <div class="card-title" style="color: var(--accent-cyan);">1. Chuỗi Bán Lẻ Clever Box</div>
+            <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin-top: 6px;">
+              Định vị là "Thế giới Đồ chơi Sáng tạo & Văn phòng phẩm Thế hệ mới", Clever Box nhắm vào giới trẻ và phụ huynh hiện đại với các sản phẩm DIY, đồ chơi giáo dục STEAM và phụ kiện văn phòng phong cách, giúp tăng giá trị đơn hàng trung bình gấp 3-4 lần.
+            </p>
+          </div>
+
+          <div class="card card-emerald">
+            <div class="card-title" style="color: var(--accent-emerald);">2. Xuất Khẩu Sang Hơn 70 Quốc Gia</div>
+            <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin-top: 6px;">
+              Doanh thu xuất khẩu chiếm gần 25% tổng doanh thu, tăng trưởng mạnh tại khu vực Đông Nam Á (Thái Lan, Philippines, Malaysia) dưới thương hiệu Flexoffice và hợp tác gia công OEM cho tập đoàn Newell Brands (Mỹ).
+            </p>
+          </div>
+
+          <div class="card card-highlight">
+            <div class="card-title" style="color: var(--accent-gold);">3. Tự Động Hóa Dây Chuyền Nhà Máy</div>
+            <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin-top: 6px;">
+              Nhà máy Long Thành và Nam Cẩm Điền tiếp tục đầu tư robot tự động hóa khâu lắp ráp và đóng gói, giữ biên lợi nhuận gộp vững vàng trên 53% ngay cả khi giá nguyên liệu nhựa hạt đầu vào biến động.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: PILLAR 3 VISUALIZED CHART -->
+    <section class="slide" id="slide-8">
+      <div class="slide-header">
+        <div class="tagline">TRỤ CỘT 3 (VISUALIZED) • BẰNG CHỨNG ĐỊNH LƯỢNG</div>
+        <h2 class="slide-title">Tăng Trưởng Doanh Thu, Lợi Nhuận & Biên Gộp Thiên Long (2018 - 2026E)</h2>
+        <p class="slide-takeaway">
+          Quá trình tịnh tiến vững chắc: Doanh thu thuần vượt mốc 4.000 tỷ đồng, lợi nhuận sau thuế tiến sát 480 tỷ và biên gộp bứt phá từ 38% lên trên 54% nhờ tự chủ sản xuất.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-2">
+          <div class="chart-container" data-zoom-src="images/tlg_revenue_cleverbox_growth.png" data-zoom-title="Tăng Trưởng Doanh Thu, Lợi Nhuận & Biên Gộp Thiên Long (2018 - 2026E)">
+            <div class="chart-img-wrap">
+              <img src="images/tlg_revenue_cleverbox_growth.png" alt="TLG Revenue Clever Box Growth Chart">
+            </div>
+            <div class="chart-caption">
+              <span>Biểu đồ 2: Doanh thu thuần, LNST và Biên lợi nhuận gộp (2018 - 2026E)</span>
+              <span class="zoom-hint">🔍 Nhấn để phóng to</span>
+            </div>
+          </div>
+
+          <div class="card" style="justify-content: center;">
+            <div class="card-title" style="color: var(--accent-cyan); margin-bottom: 12px;">
+              Phân Tích Động Lực Tăng Trưởng Tài Chính
+            </div>
+            <ul class="bullet-list" style="gap: 12px;">
+              <li>
+                <strong>2018 - 2021 (Giai đoạn chuyển mình):</strong> Doanh thu đi ngang quanh 2.600 - 3.200 tỷ do dịch bệnh và tái cơ cấu kênh bán hàng, nhưng biên gộp bắt đầu tăng vọt từ 38% lên 42%.
+              </li>
+              <li>
+                <strong>2022 - 2024 (Điểm bùng nổ biên gộp):</strong> Biên lợi nhuận gộp chính thức vượt mốc 52% nhờ hoàn tất nhà máy Nam Cẩm Điền và tự chủ khuôn mẫu, đưa LNST vượt 400 tỷ đồng.
+              </li>
+              <li>
+                <strong>2025 - 2026E (Mở rộng Clever Box & Xuất khẩu):</strong> Doanh thu thuần hướng tới 4.200 tỷ đồng, LNST kỳ vọng đạt 450–480 tỷ đồng, củng cố vững chắc khả năng chi trả cổ tức tiền mặt 3.000 đ/cp.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: VALUATION & ACTIVATION CRITERIA -->
+    <section class="slide" id="slide-9">
+      <div class="slide-header">
+        <div class="tagline">ĐỊNH GIÁ & KHUNG QUẢN TRỊ • KỶ LUẬT ĐẦU TƯ TÍCH SẢN</div>
+        <h2 class="slide-title">Định Giá Nội Tại FinPeace & Điều Kiện Chuyển Sang Danh Mục Active SIP</h2>
+        <p class="slide-takeaway">
+          TLG đang giao dịch ở mức định giá rất hấp dẫn (P/E 10.2x, thấp hơn mức trung bình 13-14x trong quá khứ). FinPeace xác định Giá trị nội tại đạt 68.000 đ với biên an toàn +27.1%.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-2" style="margin-bottom: 14px;">
+          <div class="card card-highlight">
+            <div class="card-title" style="color: var(--accent-gold);">Định Giá Thận Trọng FinPeace</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px;">
+              <div class="stat-box">
+                <div class="stat-val" style="color: #fff;">53.500 đ</div>
+                <div class="stat-lbl">Thị giá hiện tại (HOSE)</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-val" style="color: var(--accent-gold);">68.000 đ</div>
+                <div class="stat-lbl">Giá trị nội tại định giá (NT Mới)</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-val" style="color: var(--accent-emerald);">61.200 đ</div>
+                <div class="stat-lbl">Giá mua an toàn tối đa (0.9x NT)</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-val" style="color: var(--accent-cyan);">+27.1%</div>
+                <div class="stat-lbl">Upside Biên An Toàn Định Giá</div>
+              </div>
+            </div>
+            <p style="font-size: 11.5px; color: var(--text-dim); margin-top: 8px;">
+              * Phương pháp định giá: P/E Fair 13.0x trên EPS dự phóng 5.230 đ/cp, chiết khấu thận trọng so với P/E trung bình 5 năm của ngành tiêu dùng Việt Nam (15.5x).
+            </p>
+          </div>
+
+          <div class="card card-cyan">
+            <div class="card-title" style="color: var(--accent-cyan);">3 Tiêu Chí Chuyển Từ "Keep Updated" Sang "Active SIP"</div>
+            <ul class="bullet-list" style="gap: 10px; margin-top: 6px;">
+              <li>
+                <strong>TIÊU CHÍ 1: ĐIỂM HÒA VỐN & SINH LỜI CỦA CHUỖI CLEVER BOX</strong><br>
+                <span style="font-size: 11.5px; color: var(--text-muted);">Chuỗi bán lẻ Clever Box chứng minh được khả năng sinh lời dương (EBITDA dương) trên toàn bộ hệ thống cửa hàng, giảm áp lực chi phí SG&A.</span>
+              </li>
+              <li>
+                <strong>TIÊU CHÍ 2: TĂNG TRƯỞNG XUẤT KHẨU BỨT PHÁ TRÊN 15%/NĂM</strong><br>
+                <span style="font-size: 11.5px; color: var(--text-muted);">Mảng xuất khẩu Đông Nam Á và đối tác OEM bù đắp hoàn toàn sự chững lại của lượng tiêu thụ bút viết truyền thống trong nước.</span>
+              </li>
+              <li>
+                <strong>TIÊU CHÍ 3: THANH KHOẢN THỊ TRƯỜNG CẢI THIỆN HOẶC CHIẾT KHẤU SÂU</strong><br>
+                <span style="font-size: 11.5px; color: var(--text-muted);">Thanh khoản khớp lệnh bình quân đạt trên 200.000 cp/phiên hoặc thị giá chiết khấu về vùng siêu rẻ (&lt;48.000 đ, P/E &lt;9x) để mở mua gom lớn.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: CONCLUSION & RECOMMENDATION -->
+    <section class="slide" id="slide-10">
+      <div class="slide-header">
+        <div class="tagline">TỔNG KẾT KHUYẾN NGHỊ • BẢN LĨNH NHÀ ĐẦU TƯ GIÁ TRỊ</div>
+        <h2 class="slide-title">Tài Sản Phòng Thủ Tinh Túy: "Theo Dõi Điểm Mua Chiết Khấu Sâu & Hưởng Cổ Tức"</h2>
+        <p class="slide-takeaway">
+          TLG là viên ngọc quý dành cho các nhà đầu tư kiên nhẫn yêu thích dòng tiền cổ tức bền vững. FinPeace khuyến nghị duy trì theo dõi định kỳ để đón đầu nhịp tích lũy hoàn hảo.
+        </p>
+      </div>
+
+      <div class="content-area">
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-title">Hành Động Khách Hàng</div>
+            <div style="font-size: 20px; font-weight: 800; color: var(--accent-gold); margin: 6px 0;">
+              🟠 THEO DÕI THEO PHIÊN
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">
+              Ưu tiên giải ngân dòng tiền hàng tháng vào <strong>21 mã Active SIP</strong> thanh khoản cao. Đối với TLG, chỉ giải ngân thăm dò khi thị giá điều chỉnh sâu về vùng dưới 50.000 đ.
+            </p>
+          </div>
+
+          <div class="card card-highlight">
+            <div class="card-title" style="color: var(--accent-gold);">Định Kỳ Giám Sát FinPeace</div>
+            <div style="font-size: 20px; font-weight: 800; color: var(--accent-cyan); margin: 6px 0;">
+              THEO DÕI HÀNG QUÝ
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">
+              Cập nhật số lượng cửa hàng Clever Box mở mới, doanh thu xuất khẩu và tỷ lệ trả cổ tức tiền mặt sau mỗi mùa ĐHCĐ để kịp thời nâng hạng lên Active SIP.
+            </p>
+          </div>
+
+          <div class="card card-emerald">
+            <div class="card-title" style="color: var(--accent-emerald);">Tỷ Suất Sinh Lời Kỳ Vọng</div>
+            <div style="font-size: 20px; font-weight: 800; color: var(--accent-emerald); margin: 6px 0;">
+              15% – 18% / NĂM
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">
+              Kết hợp giữa tỷ suất cổ tức tiền mặt đều đặn 6% và tiềm năng tăng giá cổ phiếu về Giá trị nội tại 68.000 đ, TLG mang lại lợi nhuận kép bền vững cho danh mục hưu trí dài hạn.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">
+      <div class="slide-progress">
+        <span id="slideCounter" style="font-family: var(--font-mono); font-weight: 700; color: #fff;">1 / 10</span>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+      <div>Dùng phím ← / → để chuyển slide • Nhấn Esc để đóng phóng to • Nhấn F để toàn màn hình</div>
+    </div>
+
+    <div class="footer-nav">
+      <button class="nav-btn" id="prevBtn" title="Slide trước (←)">‹</button>
+      <button class="nav-btn" id="nextBtn" title="Slide tiếp theo (→)">›</button>
+    </div>
+  </footer>
+
+  <!-- SCRIPT CONTROLLERS -->
+  <script>
+    class PresentationController {
+      constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.totalSlides = this.slides.length;
+        this.currentSlide = 1;
+        this.prevBtn = document.getElementById('prevBtn');
+        this.nextBtn = document.getElementById('nextBtn');
+        this.counter = document.getElementById('slideCounter');
+        this.progress = document.getElementById('progressFill');
+        this.stepper = document.getElementById('pillarStepper');
+        this.fsBtn = document.getElementById('fsBtn');
+
+        this.initEvents();
+        this.updateUI();
+      }
+
+      initEvents() {
+        this.prevBtn.addEventListener('click', () => this.goTo(this.currentSlide - 1));
+        this.nextBtn.addEventListener('click', () => this.goTo(this.currentSlide + 1));
+
+        document.addEventListener('keydown', (e) => {
+          if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+          if (e.key === 'ArrowRight' || e.key === 'Space') {
+            e.preventDefault();
+            this.goTo(this.currentSlide + 1);
+          } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            this.goTo(this.currentSlide - 1);
+          } else if (e.key === 'f' || e.key === 'F') {
+            e.preventDefault();
+            this.toggleFullscreen();
+          }
+        });
+
+        if (this.fsBtn) {
+          this.fsBtn.addEventListener('click', () => this.toggleFullscreen());
+        }
+
+        if (this.stepper) {
+          this.stepper.querySelectorAll('.pillar-step').forEach(step => {
+            step.addEventListener('click', () => {
+              const target = parseInt(step.getAttribute('data-target-slide'), 10);
+              if (target) this.goTo(target);
+            });
+          });
+        }
+      }
+
+      goTo(index) {
+        if (index < 1 || index > this.totalSlides) return;
+        this.slides.forEach(s => s.classList.remove('active'));
+        this.currentSlide = index;
+        const activeSlide = document.getElementById(`slide-${this.currentSlide}`);
+        if (activeSlide) activeSlide.classList.add('active');
+        this.updateUI();
+      }
+
+      updateUI() {
+        if (this.counter) this.counter.textContent = `${this.currentSlide} / ${this.totalSlides}`;
+        if (this.progress) {
+          const pct = ((this.currentSlide) / this.totalSlides) * 100;
+          this.progress.style.width = `${pct}%`;
+        }
+        if (this.prevBtn) this.prevBtn.disabled = this.currentSlide === 1;
+        if (this.nextBtn) this.nextBtn.disabled = this.currentSlide === this.totalSlides;
+
+        // Update stepper pills
+        if (this.stepper) {
+          const steps = this.stepper.querySelectorAll('.pillar-step');
+          steps.forEach(s => {
+            s.classList.remove('active', 'completed');
+            const target = parseInt(s.getAttribute('data-target-slide'), 10);
+            if (target === this.currentSlide) s.classList.add('active');
+            else if (target < this.currentSlide) s.classList.add('completed');
+          });
+
+          // Pillar 1: slides 3, 4
+          if (this.currentSlide === 3 || this.currentSlide === 4) {
+            steps[1]?.classList.add('active');
+          }
+          // Pillar 2: slides 5, 6
+          else if (this.currentSlide === 5 || this.currentSlide === 6) {
+            steps[2]?.classList.add('active');
+          }
+          // Pillar 3: slides 7, 8
+          else if (this.currentSlide === 7 || this.currentSlide === 8) {
+            steps[3]?.classList.add('active');
+          }
+          // Pillar 4 / Criteria: slides 9, 10
+          else if (this.currentSlide >= 9) {
+            steps[4]?.classList.add('active');
+          }
+        }
+      }
+
+      toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          if (document.exitFullscreen) document.exitFullscreen();
+        }
+      }
+    }
+
+    // Lightbox Controller
+    class LightboxController {
+      constructor() {
+        this.modal = document.getElementById('lightboxModal');
+        this.img = document.getElementById('lightboxImg');
+        this.title = document.getElementById('lightboxTitle');
+        this.closeBtn = document.getElementById('lightboxClose');
+
+        if (!this.modal) return;
+        this.initEvents();
+      }
+
+      initEvents() {
+        document.addEventListener('click', (e) => {
+          const chartBox = e.target.closest('[data-zoom-src]');
+          if (chartBox) {
+            const src = chartBox.getAttribute('data-zoom-src');
+            const title = chartBox.getAttribute('data-zoom-title') || 'Biểu đồ phân tích FinPeace';
+            this.open(src, title);
+          }
+        });
+
+        if (this.closeBtn) this.closeBtn.addEventListener('click', () => this.close());
+        this.modal.addEventListener('click', (e) => {
+          if (e.target === this.modal) this.close();
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.modal.classList.contains('active')) {
+            this.close();
+          }
+        });
+      }
+
+      open(src, title) {
+        this.img.src = src;
+        this.title.textContent = title;
+        this.modal.classList.add('active');
+      }
+
+      close() {
+        this.modal.classList.remove('active');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      window.presentationController = new PresentationController();
+      window.lightboxController = new LightboxController();
+    });
+  </script>
+
+  <!-- LIGHTBOX MODAL -->
+  <div class="lightbox-modal" id="lightboxModal">
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightboxClose" title="Đóng (Esc)">&times;</button>
+      <img id="lightboxImg" src="" alt="Zoomed Chart">
+      <div class="lightbox-caption" id="lightboxTitle"></div>
+    </div>
+  </div>
+
+</body>
+</html>

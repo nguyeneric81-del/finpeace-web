@@ -10,6 +10,7 @@ export interface SIPStock {
   sector: string;
   tier: 'Tier 1' | 'Tier 2' | 'Tier 3';
   status: string;
+  sipCategory?: 'active' | 'keep_updated'; // 'active' (21 mã Active SIP) hoặc 'keep_updated' (Danh sách Theo dõi cập nhật)
   currentPrice: number;
   oldIntrinsicValue: number;
   newIntrinsicValue: number;
