@@ -21,6 +21,7 @@ interface FollowedPlan {
   status: 'PENDING_ENTRY' | 'HOLDING' | 'TP1_HIT' | 'CLOSED'
   kbsvStatus: string
   batchOrderIds: string[]
+  accountId?: string
   createdAt: string
   pnlVnd: number
   pnlPct: number
@@ -542,7 +543,7 @@ export default function TradingPlanHub({ user, deals, onRefreshDeals }: TradingP
                                 {item.status === 'HOLDING' ? '🟢 Đã Mua (Holding)' : '🟡 Chờ Khớp Mua (SEO)'}
                               </span>
                             </div>
-                            <p className="text-xs text-slate-400 mt-0.5">Tài khoản: 091C103232.MA • Ngày tạo: {item.createdAt}</p>
+                            <p className="text-xs text-slate-400 mt-0.5">Tài khoản: {item.accountId || 'KBSV Account'} • Ngày tạo: {item.createdAt}</p>
                           </div>
                         </div>
 

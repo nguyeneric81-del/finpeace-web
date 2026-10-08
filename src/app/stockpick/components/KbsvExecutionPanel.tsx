@@ -752,7 +752,9 @@ export default function KbsvExecutionPanel({ plan, user, onClose, onSuccess }: K
                     </div>
                     <div>
                       <h3 className="text-base font-bold text-white">Xác thực giao dịch</h3>
-                      <p className="text-xs text-gray-400">Email OTP của tài khoản test 091C006669</p>
+                      <p className="text-xs text-gray-400">
+                        Email OTP của tài khoản {selectedAccountId || accounts[0]?.id || accounts[0]?.accountId || ''}
+                      </p>
                     </div>
                   </div>
 
