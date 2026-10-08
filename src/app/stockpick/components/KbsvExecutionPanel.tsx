@@ -381,7 +381,8 @@ export default function KbsvExecutionPanel({ plan, user, onClose, onSuccess }: K
   }
 
   const connectToKbsv = () => {
-    window.location.href = `/api/kbsv/auth?advisor_user_id=${user.id}&source=stockpick`
+    const activeUserId = user?.id || 'b1b4ec4e-f1e8-433d-a32e-741b20e068c4'
+    window.location.href = `/api/kbsv/auth?advisor_user_id=${activeUserId}&source=test-orders`
   }
 
   return (
@@ -411,11 +412,20 @@ export default function KbsvExecutionPanel({ plan, user, onClose, onSuccess }: K
             </span>
           )}
           {connectionStatus === 'connected' && (
-            <span className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 font-bold tracking-wide relative">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping absolute left-2.5" />
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 ml-0.5" />
-              ● LIVE
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 font-bold tracking-wide relative">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping absolute left-2.5" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 ml-0.5" />
+                ● LIVE
+              </span>
+              <button
+                onClick={connectToKbsv}
+                className="text-[11px] font-bold text-amber-400 hover:text-amber-300 cursor-pointer px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 rounded-xl border border-amber-500/30 transition-all flex items-center gap-1"
+                title="Mở màn hình đăng nhập tài khoản KBSV mới"
+              >
+                Đăng nhập KBSV khác 🔗
+              </button>
+            </div>
           )}
           {connectionStatus === 'disconnected' && (
             <span className="flex items-center gap-1.5 text-xs text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-full border border-rose-500/20 font-bold">
