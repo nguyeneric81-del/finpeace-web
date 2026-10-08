@@ -103,9 +103,14 @@ export default function KbsvExecutionPanel({ plan, user, onClose, onSuccess }: K
         const assetData = await assetRes.json()
         
         if (assetData.ok) {
-          const innerData = assetData.data || assetData.d || {}
-          setCashBalance(innerData.cashBalance ?? innerData.cash ?? 150000000)
-          setPurchasingPower(innerData.purchasingPower ?? innerData.PP ?? 150000000)
+          let innerData = assetData.data || assetData.d || {}
+          if (Array.isArray(innerData)) {
+            innerData = innerData[0] || {}
+          }
+          const cash = innerData.cashBalance ?? innerData.cash ?? innerData.cash_balance ?? innerData.nav ?? 0
+          const pp = innerData.purchasingPower ?? innerData.PP ?? innerData.pp ?? innerData.purchasing_power ?? innerData.maxBuyVal ?? cash
+          setCashBalance(cash)
+          setPurchasingPower(pp)
         }
         setConnectionStatus('connected')
       } else {
@@ -141,9 +146,14 @@ export default function KbsvExecutionPanel({ plan, user, onClose, onSuccess }: K
       const assetRes = await fetch(`/api/kbsv/proxy/account-assets?advisor_user_id=${user.id}&accountId=${accId}`)
       const assetData = await assetRes.json()
       if (assetData.ok) {
-        const innerData = assetData.data || assetData.d || {}
-        setCashBalance(innerData.cashBalance ?? innerData.cash ?? 150000000)
-        setPurchasingPower(innerData.purchasingPower ?? innerData.PP ?? 150000000)
+        let innerData = assetData.data || assetData.d || {}
+        if (Array.isArray(innerData)) {
+          innerData = innerData[0] || {}
+        }
+        const cash = innerData.cashBalance ?? innerData.cash ?? innerData.cash_balance ?? innerData.nav ?? 0
+        const pp = innerData.purchasingPower ?? innerData.PP ?? innerData.pp ?? innerData.purchasing_power ?? innerData.maxBuyVal ?? cash
+        setCashBalance(cash)
+        setPurchasingPower(pp)
       }
     } catch (err) {
       console.error(err)
