@@ -12,9 +12,11 @@ import OnboardingBanner from '../components/OnboardingBanner'
 import UpgradeCTA from '../components/UpgradeCTA'
 import HomeTab from '../components/HomeTab'
 import PortfolioTab from '../components/PortfolioTab'
+import TradingPlanHub from '../components/TradingPlanHub'
 import { TradingPlan } from '../components/DealCard'
 import TikTokVideoModal from '../components/TikTokVideoModal'
 import PaymentModal from '../components/PaymentModal'
+import { Target } from 'lucide-react'
 
 type StockPickUser = {
   id: string
@@ -25,7 +27,7 @@ type StockPickUser = {
   role: string
 }
 
-type Tab = 'home' | 'deals' | 'learn' | 'pulse' | 'portfolio'
+type Tab = 'home' | 'plans' | 'portfolio' | 'deals' | 'learn' | 'pulse'
 
 export default function StockPickDashboard() {
   const router = useRouter()
@@ -137,6 +139,7 @@ export default function StockPickDashboard() {
 
   const TABS: { id: Tab; label: string; icon: React.ElementType }[] = [
     { id: 'home', label: 'Trang chủ', icon: Home },
+    { id: 'plans', label: 'Trading Plans', icon: Target },
     { id: 'portfolio', label: 'Danh mục', icon: PieChart },
     { id: 'deals', label: 'Deals', icon: LayoutGrid },
     { id: 'learn', label: 'Học', icon: BookOpen },
@@ -208,7 +211,7 @@ export default function StockPickDashboard() {
       </div>
 
       {/* Main content */}
-      <div className="max-w-lg mx-auto px-4 pt-5 relative z-10">
+      <div className={`${activeTab === 'plans' ? 'max-w-7xl' : 'max-w-lg'} mx-auto px-4 pt-5 relative z-10 transition-all`}>
 
         {/* Refresh button */}
         <div className="flex justify-end mb-4">
@@ -228,6 +231,19 @@ export default function StockPickDashboard() {
         </div>
 
         <AnimatePresence mode="wait">
+          {/* TRADING PLANS HUB TAB */}
+          {activeTab === 'plans' && (
+            <motion.div
+              key="plans"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25 }}
+            >
+              <TradingPlanHub user={user} deals={deals} onRefreshDeals={handleRefresh} />
+            </motion.div>
+          )}
+
           {/* HOME TAB */}
           {activeTab === 'home' && (
             <motion.div
