@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@supabase/supabase-js';
+import { handleCommodityQuery } from '@/lib/commodityLookup';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
@@ -129,15 +130,51 @@ export async function POST(request: Request) {
         const userText = message.text;
         const chatId = message.chat.id;
 
+        const trimmedText = userText.trim();
+        const lowerText = trimmedText.toLowerCase();
+
+        // Kiểm tra lệnh hàng hóa (vd: /oil, /gold, /steel...)
+        if (
+            lowerText.startsWith('/oil') ||
+            lowerText.startsWith('/gold') ||
+            lowerText.startsWith('/steel') ||
+            lowerText.startsWith('/fertilizer') ||
+            lowerText.startsWith('/ure') ||
+            lowerText.startsWith('/phanbon') ||
+            lowerText.startsWith('/rubber') ||
+            lowerText.startsWith('/caosu') ||
+            lowerText.startsWith('/nhua') ||
+            lowerText.startsWith('/corn') ||
+            lowerText.startsWith('/channuoi') ||
+            lowerText.startsWith('/sugar') ||
+            lowerText.startsWith('/duong') ||
+            lowerText.startsWith('/hanghoa') ||
+            lowerText.startsWith('/daumo') ||
+            lowerText.startsWith('/thep') ||
+            lowerText.startsWith('/vang')
+        ) {
+            const firstWord = trimmedText.split(' ')[0];
+            const argsText = trimmedText.substring(firstWord.length).trim();
+            handleCommodityQuery(firstWord, argsText).then(reply => {
+                sendTelegramMessage(chatId, reply);
+            });
+            return NextResponse.json({ ok: true }, { status: 200 });
+        }
+
         // Lệnh cơ bản - reply nhanh
         if (userText === '/start' || userText === '/help') {
             // Không await - bắn và quên để return 200 ngay
             sendTelegramMessage(chatId,
                 "👋 Chào mừng đến với Trợ lý FinPeace AI!\n\n" +
-                "Nhắn thông tin tài chính của khách, Bot tự nhận diện và cập nhật!\n\n" +
-                "📌 Ví dụ:\n" +
-                "• 'Chị Yến mua bảo hiểm Bảo Việt 2 tỷ'\n" +
-                "• 'Anh Vinh vay ngân hàng 500 triệu mua xe'"
+                "Nhắn thông tin tài chính của khách hoặc tra cứu giá hàng hóa:\n\n" +
+                "📌 Tra cứu Hàng hóa & Cổ phiếu:\n" +
+                "• /oil - Tra cứu giá Dầu thô & cổ phiếu BSR, PLX, HAH\n" +
+                "• /steel - Tra cứu Thép HRC, Quặng sắt & HPG, NKG, HSG\n" +
+                "• /gold - Tra cứu giá Vàng XAU & PNJ\n" +
+                "• /fertilizer - Tra cứu Phân Ure & DCM, DPM, DGC\n" +
+                "• /rubber - Tra cứu Cao su & GVR, PHR, BMP\n" +
+                "• /corn - Tra cứu Ngô, Lợn hơi & DBC, BAF\n" +
+                "• /sugar - Tra cứu giá Đường & SBT, QNS"
             );
             return NextResponse.json({ ok: true }, { status: 200 });
         }

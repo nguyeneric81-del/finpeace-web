@@ -382,7 +382,9 @@ export default function KbsvExecutionPanel({ plan, user, onClose, onSuccess }: K
 
   const connectToKbsv = () => {
     const activeUserId = user?.id || 'b1b4ec4e-f1e8-433d-a32e-741b20e068c4'
-    window.location.href = `/api/kbsv/auth?advisor_user_id=${activeUserId}&source=test-orders`
+    const isStockpick2 = typeof window !== 'undefined' && window.location.pathname.includes('stockpick2')
+    const source = isStockpick2 ? 'stockpick2' : 'test-orders'
+    window.location.href = `/api/kbsv/auth?advisor_user_id=${activeUserId}&source=${source}`
   }
 
   return (

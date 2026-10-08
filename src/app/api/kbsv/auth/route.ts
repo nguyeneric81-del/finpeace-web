@@ -33,18 +33,26 @@ export async function GET(req: Request) {
       )
     }
 
-    // Verify advisor user exists
-    const { data: user, error } = await supabase
+    // Verify user exists in advisor_users or stockpick2_users
+    let { data: user, error } = await supabase
       .from('advisor_users')
       .select('id, email')
       .eq('id', advisorUserId)
       .single()
 
     if (error || !user) {
-      return NextResponse.json(
-        { ok: false, error: 'Không tìm thấy user' },
-        { status: 404 }
-      )
+      const { data: sp2User } = await supabase
+        .from('stockpick2_users')
+        .select('id, email')
+        .eq('id', advisorUserId)
+        .single()
+
+      if (!sp2User) {
+        return NextResponse.json(
+          { ok: false, error: 'Không tìm thấy user' },
+          { status: 404 }
+        )
+      }
     }
 
     const source = searchParams.get('source') || 'advisor'
@@ -60,13 +68,14 @@ export async function GET(req: Request) {
       expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
     })
 
-    // Build KBSV authorization URL
+    // Build KBSV authorization URL with prompt=login to force credential prompt
     const params = new URLSearchParams({
       client_id: KBSV_CLIENT_ID,
       redirect_uri: REDIRECT_URI,
       response_type: 'code',
       scope: 'openid',
       state,
+      prompt: 'login',
     })
 
     const authUrl = `${KBSV_OPENID_URL}/realms/finpeace/protocol/openid-connect/auth?${params.toString()}`

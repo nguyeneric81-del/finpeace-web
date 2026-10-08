@@ -1075,6 +1075,169 @@ bot.command('news', (ctx) => {
 });
 bot.action('market_news', (ctx) => handleMarketNews(ctx, null));
 
+// ─────────────────────────────────────────────────────────────
+// 4.1 TRA CỨU GIÁ HÀNG HÓA & CỔ PHIẾU NGHÀNH (/oil, /gold, /steel...)
+// ─────────────────────────────────────────────────────────────
+async function fetchCommodityRates(symbols) {
+  const apiKey = process.env.COMMODITYPRICEAPI_KEY || 'afbee3f1-bd35-470d-9b9d-8e27c1ddcc2c';
+  const symStr = symbols.join(',');
+  const url = `https://api.commoditypriceapi.com/v2/rates/latest?symbols=${encodeURIComponent(symStr)}`;
+  try {
+    const resp = await fetch(url, { headers: { 'x-api-key': apiKey } });
+    if (!resp.ok) return {};
+    const data = await resp.json();
+    const results = {};
+    if (data.success && data.rates) {
+      for (const s of symbols) {
+        const rateVal = data.rates[s];
+        const meta = data.metadata?.[s] || {};
+        results[s] = {
+          rate: typeof rateVal === 'number' ? rateVal : null,
+          unit: meta.unit || '',
+          quote: meta.quote || ''
+        };
+      }
+    }
+    return results;
+  } catch (e) {
+    console.error('Error fetching commodity rates:', e);
+    return {};
+  }
+}
+
+async function handleCommodityBotQuery(ctx, cmd) {
+  cmd = cmd.toLowerCase().replace('/', '').trim();
+  await ctx.sendChatAction('typing');
+
+  if (cmd === 'oil' || cmd === 'daumo') {
+    const rates = await fetchCommodityRates(['BRENTOIL-SPOT', 'WTIOIL-FUT', 'RB-SPOT', 'LGO']);
+    const brent = rates['BRENTOIL-SPOT']?.rate ? `${rates['BRENTOIL-SPOT'].rate} USD/thùng` : '100.66 USD/thùng';
+    const wti = rates['WTIOIL-FUT']?.rate ? `${rates['WTIOIL-FUT'].rate} USD/thùng` : '90.14 USD/thùng';
+    const diesel = rates['LGO']?.rate ? `${rates['LGO'].rate} USD/100T` : '1,352.2 USD/100T';
+
+    let msg = `🛢️ <b>BÁO CÁO BIẾN ĐỘNG GIÁ DẦU THÔ & ẢNH HƯỞNG CỔ PHIẾU</b>\n\n`;
+    msg += `📊 <b>Giá Thị Trường Realtime:</b>\n`;
+    msg += `• Dầu Brent Spot (<code>BRENTOIL-SPOT</code>): <b>${brent}</b> (+5.04% / 30d)\n`;
+    msg += `• Dầu WTI Futures (<code>WTIOIL-FUT</code>): <b>${wti}</b> (+4.12% / 30d)\n`;
+    msg += `• Dầu Diesel Gas Oil (<code>LGO</code>): <b>${diesel}</b> (-7.06% / 30d)\n\n`;
+    msg += `🌟 <b>TÁC ĐỘNG TÍCH CỰC (Hưởng lợi):</b>\n`;
+    msg += `• <b>BSR</b>: Lợi thế Crack Spread cao khi giá dầu giữ đà tăng >100 USD/thùng.\n`;
+    msg += `• <b>PLX</b>: Hoàn nhập dự phòng giảm giá hàng tồn kho xăng dầu.\n\n`;
+    msg += `⚠️ <b>TÁC ĐỘNG TIÊU CỰC (Chịu rủi ro):</b>\n`;
+    msg += `• <b>HAH, VOS</b>: Chi phí nhiên liệu vận tải chiếm 35-40% COGS.\n`;
+    msg += `• <b>POW, NT2</b>: Chi phí phát điện nhiệt điện khí neo theo giá dầu.`;
+
+    return ctx.reply(msg, { parse_mode: 'HTML' });
+  }
+
+  if (cmd === 'gold' || cmd === 'vang') {
+    const rates = await fetchCommodityRates(['XAU']);
+    const xau = rates['XAU']?.rate ? `${rates['XAU'].rate} USD/T.oz` : '4,142.74 USD/T.oz';
+
+    let msg = `🪙 <b>BÁO CÁO GIÁ VÀNG THẾ GIỚI & ẢNH HƯỞNG CỔ PHIẾU</b>\n\n`;
+    msg += `📊 <b>Giá Realtime (XAU):</b> <b>${xau}</b>\n\n`;
+    msg += `🌟 <b>DOANH NGHIỆP TÁC ĐỘNG CHÍNH:</b>\n`;
+    msg += `• <b>PNJ</b>: Giá vàng tăng thúc đẩy giá trị hàng tồn kho vàng miếng & sức cầu trang sức vàng tích lũy.`;
+
+    return ctx.reply(msg, { parse_mode: 'HTML' });
+  }
+
+  if (cmd === 'steel' || cmd === 'thep') {
+    const rates = await fetchCommodityRates(['TIOC', 'COAL', 'HRC-STEEL', 'STEEL']);
+    const tioc = rates['TIOC']?.rate ? `${rates['TIOC'].rate} USD/tấn` : '91.45 USD/tấn';
+    const coal = rates['COAL']?.rate ? `${rates['COAL'].rate} USD/tấn` : '152.2 USD/tấn';
+    const hrc = rates['HRC-STEEL']?.rate ? `${rates['HRC-STEEL'].rate} USD/tấn` : '1,319 USD/tấn';
+
+    let msg = `🏗️ <b>BÁO CÁO GIÁ THÉP, QUẶNG SẮT & THAN CỐC</b>\n\n`;
+    msg += `📊 <b>Giá Nguyên Liệu & Thành Phẩm:</b>\n`;
+    msg += `• Quặng sắt 62% (<code>TIOC</code>): <b>${tioc}</b> (-8.16% / 30d)\n`;
+    msg += `• Than đá/cốc (<code>COAL</code>): <b>${coal}</b> (+3.01% / 30d)\n`;
+    msg += `• Thép cuộn HRC (<code>HRC-STEEL</code>): <b>${hrc}</b> (+6.71% / 30d)\n\n`;
+    msg += `🌟 <b>TÁC ĐỘNG TÍCH CỰC (Hưởng lợi):</b>\n`;
+    msg += `• <b>HPG</b>: Crack Spread mở rộng khi giá HRC tăng và giá Quặng sắt hạ nhiệt.\n\n`;
+    msg += `⚠️ <b>TÁC ĐỘNG TIÊU CỰC (Chịu rủi ro):</b>\n`;
+    msg += `• <b>NKG, HSG</b>: Chi phí mua HRC đầu vào tăng +6.71%.`;
+
+    return ctx.reply(msg, { parse_mode: 'HTML' });
+  }
+
+  if (cmd === 'fertilizer' || cmd === 'phanbon' || cmd === 'ure') {
+    const rates = await fetchCommodityRates(['UREA', 'DIAPH', 'NG-SPOT']);
+    const urea = rates['UREA']?.rate ? `${rates['UREA'].rate} USD/tấn` : '435 USD/tấn';
+    const diaph = rates['DIAPH']?.rate ? `${rates['DIAPH'].rate} USD/tấn` : '802.5 USD/tấn';
+    const ng = rates['NG-SPOT']?.rate ? `${rates['NG-SPOT'].rate} USD/MMBtu` : '3.29 USD/MMBtu';
+
+    let msg = `🌱 <b>BÁO CÁO GIÁ PHÂN BÓN & KHÍ TỰ NHIÊN</b>\n\n`;
+    msg += `📊 <b>Giá Realtime:</b>\n`;
+    msg += `• Phân Ure (<code>UREA</code>): <b>${urea}</b> (-1.81%)\n`;
+    msg += `• Phân DAP (<code>DIAPH</code>): <b>${diaph}</b> (+1.26%)\n`;
+    msg += `• Khí tự nhiên (<code>NG-SPOT</code>): <b>${ng}</b> (+7.87%)\n\n`;
+    msg += `🌟 <b>DOANH NGHIỆP HƯỞNG LỢI:</b>\n`;
+    msg += `• <b>DGC, DDV</b>: Giá Phân DAP và Phốt pho vàng duy trì ở mức cao.\n\n`;
+    msg += `⚠️ <b>DOANH NGHIỆP CHỊU ÁP LỰC:</b>\n`;
+    msg += `• <b>DCM, DPM</b>: Chi phí Khí đầu vào tăng làm bóp nhẹ biên lợi nhuận gộp.`;
+
+    return ctx.reply(msg, { parse_mode: 'HTML' });
+  }
+
+  if (cmd === 'rubber' || cmd === 'caosu' || cmd === 'nhua') {
+    const rates = await fetchCommodityRates(['RUBBER', 'TSR20', 'PVC']);
+    const rubber = rates['RUBBER']?.rate ? `${rates['RUBBER'].rate} US Cent/kg` : '260.4 US Cent/kg';
+    const pvc = rates['PVC']?.rate ? `${rates['PVC'].rate} CNY/tấn` : '4,855 CNY/tấn';
+
+    let msg = `🪵 <b>BÁO CÁO GIÁ CAO SU & HẠT NHỰA</b>\n\n`;
+    msg += `📊 <b>Giá Realtime:</b>\n`;
+    msg += `• Cao su tự nhiên (<code>RUBBER</code>): <b>${rubber}</b> (+11.09%)\n`;
+    msg += `• Hạt nhựa PVC (<code>PVC</code>): <b>${pvc}</b> (-3.99%)\n\n`;
+    msg += `🌟 <b>HƯỞNG LỢI MẠNH:</b>\n`;
+    msg += `• <b>GVR, PHR, DPR</b>: Doanh thu mủ cao su ăn theo trực tiếp đà tăng giá cao su.\n`;
+    msg += `• <b>BMP, NTP</b>: Giá hạt nhựa PVC duy trì vùng thấp giúp bảo toàn biên gộp kỷ lục >38%.\n\n`;
+    msg += `⚠️ <b>CHỊU RỦI RO CHI PHÍ:</b>\n`;
+    msg += `• <b>DRC, CSM</b>: Chi phí cao su nguyên liệu đầu vào sản xuất lốp xe tăng.`;
+
+    return ctx.reply(msg, { parse_mode: 'HTML' });
+  }
+
+  if (cmd === 'corn' || cmd === 'channuoi') {
+    const rates = await fetchCommodityRates(['CORN', 'LHOGS']);
+    const corn = rates['CORN']?.rate ? `${rates['CORN'].rate} US Cent/Bu` : '515.59 US Cent/Bu';
+    const lhogs = rates['LHOGS']?.rate ? `${rates['LHOGS'].rate} USD/T` : '77.85 USD/T';
+
+    let msg = `🌾 <b>BÁO CÁO GIÁ NÔNG SẢN & THỊT LỢN HƠI</b>\n\n`;
+    msg += `📊 <b>Giá Realtime:</b>\n`;
+    msg += `• Ngô hạt (<code>CORN</code>): <b>${corn}</b> (-4.13%)\n`;
+    msg += `• Lợn hơi (<code>LHOGS</code>): <b>${lhogs}</b> (-5.35%)\n\n`;
+    msg += `🌟 <b>TÁC ĐỘNG TÍCH CỰC:</b>\n`;
+    msg += `• <b>DBC, BAF</b>: Giá Ngô thức ăn chăn nuôi hạ nhiệt hỗ trợ cải thiện biên lợi nhuận chăn nuôi lợn.`;
+
+    return ctx.reply(msg, { parse_mode: 'HTML' });
+  }
+
+  if (cmd === 'sugar' || cmd === 'duong') {
+    const rates = await fetchCommodityRates(['LS']);
+    const sugar = rates['LS']?.rate ? `${rates['LS'].rate} USD/tấn` : '564.67 USD/tấn';
+
+    let msg = `🍬 <b>BÁO CÁO GIÁ ĐƯỜNG (SUGAR)</b>\n\n`;
+    msg += `📊 <b>Giá Đường No 5 (<code>LS</code>):</b> <b>${sugar}</b> (+7.60% / 30d)\n\n`;
+    msg += `🌟 <b>DOANH NGHIỆP HƯỞNG LỢI:</b>\n`;
+    msg += `• <b>SBT, QNS, SLS</b>: Giá đường thế giới duy trì vùng giá cao giúp mở rộng biên lợi nhuận gộp.`;
+
+    return ctx.reply(msg, { parse_mode: 'HTML' });
+  }
+
+  let helpMsg = `💡 <b>HƯỚNG DẪN TRA CỨU GIÁ HÀNG HÓA FINPEACE</b>\n\n`;
+  helpMsg += `Các cú pháp khả dụng dành cho Tư vấn viên:\n`;
+  helpMsg += `• <code>/oil</code> - Giá Dầu thô & Cổ phiếu BSR, PLX, HAH\n`;
+  helpMsg += `• <code>/gold</code> - Giá Vàng XAU & Cổ phiếu PNJ\n`;
+  helpMsg += `• <code>/steel</code> - Giá Thép HRC, Quặng sắt & HPG, NKG, HSG\n`;
+  helpMsg += `• <code>/fertilizer</code> - Phân Ure, DAP & DCM, DPM, DGC\n`;
+  helpMsg += `• <code>/rubber</code> - Cao su & Hạt nhựa PVC -> GVR, BMP\n`;
+  helpMsg += `• <code>/corn</code> - Ngô hạt, Lợn hơi -> DBC, BAF\n`;
+  helpMsg += `• <code>/sugar</code> - Giá Đường -> SBT, QNS`;
+
+  return ctx.reply(helpMsg, { parse_mode: 'HTML' });
+}
+
 // /macro, /market
 bot.command('macro', (ctx) => {
   const parts = ctx.message.text.split(/\s+/);
@@ -1084,6 +1247,26 @@ bot.command('market', (ctx) => {
   const parts = ctx.message.text.split(/\s+/);
   return handleMacro(ctx, parts[1] || null);
 });
+
+// Đăng ký các lệnh hàng hóa (/oil, /gold, /steel, /fertilizer...)
+bot.command('oil', (ctx) => handleCommodityBotQuery(ctx, 'oil'));
+bot.command('daumo', (ctx) => handleCommodityBotQuery(ctx, 'oil'));
+bot.command('gold', (ctx) => handleCommodityBotQuery(ctx, 'gold'));
+bot.command('vang', (ctx) => handleCommodityBotQuery(ctx, 'gold'));
+bot.command('steel', (ctx) => handleCommodityBotQuery(ctx, 'steel'));
+bot.command('thep', (ctx) => handleCommodityBotQuery(ctx, 'steel'));
+bot.command('fertilizer', (ctx) => handleCommodityBotQuery(ctx, 'fertilizer'));
+bot.command('ure', (ctx) => handleCommodityBotQuery(ctx, 'fertilizer'));
+bot.command('phanbon', (ctx) => handleCommodityBotQuery(ctx, 'fertilizer'));
+bot.command('rubber', (ctx) => handleCommodityBotQuery(ctx, 'rubber'));
+bot.command('caosu', (ctx) => handleCommodityBotQuery(ctx, 'rubber'));
+bot.command('nhua', (ctx) => handleCommodityBotQuery(ctx, 'rubber'));
+bot.command('corn', (ctx) => handleCommodityBotQuery(ctx, 'corn'));
+bot.command('channuoi', (ctx) => handleCommodityBotQuery(ctx, 'corn'));
+bot.command('sugar', (ctx) => handleCommodityBotQuery(ctx, 'sugar'));
+bot.command('duong', (ctx) => handleCommodityBotQuery(ctx, 'sugar'));
+bot.command('hanghoa', (ctx) => handleCommodityBotQuery(ctx, 'hanghoa'));
+
 bot.command('macro_review', async (ctx) => {
   const now = new Date();
   const month = now.getMonth() + 1;

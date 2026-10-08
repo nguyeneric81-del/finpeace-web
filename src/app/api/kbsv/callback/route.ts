@@ -42,6 +42,7 @@ export async function GET(req: Request) {
     } catch {}
   }
   const dashboardPath = 
+    source === 'stockpick2' ? '/stockpick2/dashboard' :
     source === 'stockpick' ? '/stockpick/dashboard' :
     source === 'test-orders' ? '/stockpick/test-orders' :
     '/advisor/dashboard'
