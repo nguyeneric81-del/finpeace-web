@@ -41,7 +41,10 @@ export async function GET(req: Request) {
       if (parts[3]) source = parts[3]
     } catch {}
   }
-  const dashboardPath = source === 'stockpick' ? '/stockpick/dashboard' : '/advisor/dashboard'
+  const dashboardPath = 
+    source === 'stockpick' ? '/stockpick/dashboard' :
+    source === 'test-orders' ? '/stockpick/test-orders' :
+    '/advisor/dashboard'
 
   // Handle KBSV error redirect (ví dụ KH nhấn Cancel)
   if (error) {
