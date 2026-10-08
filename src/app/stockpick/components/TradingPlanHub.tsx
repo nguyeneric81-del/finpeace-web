@@ -681,16 +681,39 @@ export default function TradingPlanHub({ user, deals, onRefreshDeals }: TradingP
       {/* EXECUTION MODAL (KBSV BATCH ORDER) */}
       {/* ========================================================================= */}
       {selectedPlanForExecution && (
-        <KbsvExecutionPanel
-          plan={selectedPlanForExecution}
-          user={user}
-          onClose={() => setSelectedPlanForExecution(null)}
-          onSuccess={(boughtPrice) => {
-            alert('Đặt rổ lệnh AutoPilot thành công qua KBSV Proxy!')
-            setSelectedPlanForExecution(null)
-            setActiveSubTab('my_plans')
-          }}
-        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+          <div className="bg-slate-900 border border-white/10 rounded-3xl p-6 md:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div>
+                <h3 className="text-lg font-black text-white flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-emerald-400" /> Thực Thi Rổ Lệnh AutoPilot: {selectedPlanForExecution.ticker}
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">Xác nhận thông số và kích hoạt lô lệnh điều kiện tự động trên KBSV Core</p>
+              </div>
+              <button 
+                onClick={() => setSelectedPlanForExecution(null)} 
+                className="p-2 text-slate-400 hover:text-white rounded-xl bg-white/5 hover:bg-white/10 transition-all cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <KbsvExecutionPanel
+              plan={selectedPlanForExecution}
+              user={{
+                ...user,
+                // Fallback to active connected KBSV account if user ID has no token
+                id: user?.id || 'b1b4ec4e-f1e8-433d-a32e-741b20e068c4'
+              }}
+              onClose={() => setSelectedPlanForExecution(null)}
+              onSuccess={(boughtPrice) => {
+                alert('Đặt rổ lệnh AutoPilot thành công qua KBSV Proxy!')
+                setSelectedPlanForExecution(null)
+                setActiveSubTab('my_plans')
+              }}
+            />
+          </div>
+        </div>
       )}
 
     </div>
