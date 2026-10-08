@@ -397,6 +397,9 @@ export default function KbsvExecutionPanel({ plan, user, onClose, onSuccess }: K
     window.location.href = `/api/kbsv/auth?advisor_user_id=${activeUserId}&source=${source}`
   }
 
+  const selectedAccountObj = accounts.find(acc => (acc.id || acc.accountId) === selectedAccountId)
+  const displayAccountDesc = selectedAccountObj?.accountdesc || selectedAccountObj?.id || selectedAccountId || accounts[0]?.accountdesc || accounts[0]?.id || ''
+
   return (
     <div className="rounded-3xl p-5 relative overflow-hidden"
       style={{
@@ -763,7 +766,7 @@ export default function KbsvExecutionPanel({ plan, user, onClose, onSuccess }: K
                     <div>
                       <h3 className="text-base font-bold text-white">Xác thực giao dịch</h3>
                       <p className="text-xs text-gray-400">
-                        Email OTP của tài khoản {selectedAccountId || accounts[0]?.id || accounts[0]?.accountId || ''}
+                        Email OTP của tài khoản {displayAccountDesc}
                       </p>
                     </div>
                   </div>
