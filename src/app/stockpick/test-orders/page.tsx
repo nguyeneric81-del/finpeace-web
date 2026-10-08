@@ -444,9 +444,9 @@ export default function TestOrdersPage() {
             </Link>
             <div>
               <h1 className="text-lg font-black tracking-tight text-white flex items-center gap-2">
-                KBSV UAT Sandbox <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">DEVELOPER COCKPIT</span>
+                KBSV PROD Live <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">DEVELOPER COCKPIT</span>
               </h1>
-              <p className="text-xs text-slate-400">Trang thử nghiệm kỹ thuật rổ lệnh và các loại Lệnh điều kiện</p>
+              <p className="text-xs text-slate-400">Trang thử nghiệm kỹ thuật rổ lệnh và các loại Lệnh điều kiện (Môi trường Real PROD)</p>
             </div>
           </div>
           
@@ -454,7 +454,7 @@ export default function TestOrdersPage() {
             {kbsvConnected ? (
               <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-1.5 text-xs text-emerald-400 font-bold">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                KBSV UAT connected
+                KBSV PROD Connected
               </div>
             ) : (
               <button 
